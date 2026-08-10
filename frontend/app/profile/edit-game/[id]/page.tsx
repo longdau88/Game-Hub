@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, use } from "react";
+import { useRouter, useParams } from "next/navigation";
 import Cookies from "js-cookie";
 import { Save, FileType2, Loader2, ArrowLeft } from "lucide-react";
 import { useLanguage } from "../../../../contexts/LanguageContext";
 import Link from "next/link";
 
-export default function EditGamePage({ params }: { params: { id: string } }) {
+export default function EditGamePage() {
+  const params = useParams();
+  const id = params?.id as string;
   const router = useRouter();
   const { t } = useLanguage();
   const [title, setTitle] = useState("");
@@ -36,7 +38,8 @@ export default function EditGamePage({ params }: { params: { id: string } }) {
         }
 
         // Fetch game details
-        const gameRes = await fetch(`${apiUrl}/api/games/${params.id}`);
+        if (!id) return;
+        const gameRes = await fetch(`${apiUrl}/api/games/${id}`);
         if (gameRes.ok) {
           const gameData = await gameRes.json();
           setTitle(gameData.title || "");
@@ -62,8 +65,10 @@ export default function EditGamePage({ params }: { params: { id: string } }) {
         setLoading(false);
       }
     };
-    fetchData();
-  }, [params.id]);
+    if (id) {
+      fetchData();
+    }
+  }, [id]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,7 +93,7 @@ export default function EditGamePage({ params }: { params: { id: string } }) {
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/games/${params.id}`, {
+      const res = await fetch(`${apiUrl}/api/games/${id}`, {
         method: "PUT",
         headers: { "Authorization": `Bearer ${token}` },
         body: formData
