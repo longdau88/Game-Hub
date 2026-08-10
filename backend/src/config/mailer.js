@@ -1,65 +1,68 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // upgrade later with STARTTLS
-  requireTLS: true,
-  auth: {
-    user: process.env.EMAIL_USER || 'test@gmail.com',
-    pass: process.env.EMAIL_PASS || 'password',
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Default from email must be verified on Resend, usually onboarding@resend.dev for testing
+const FROM_EMAIL = 'onboarding@resend.dev';
 
 exports.sendVerificationEmail = async (to, token) => {
-  const verificationLink = `http://localhost:3000/verify-email?token=${token}`;
+  const verificationLink = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/verify-email?token=${token}`;
   
-  const mailOptions = {
-    from: '"Game Hub" <no-reply@gamehub.com>',
-    to,
-    subject: 'Verify your Game Hub Account',
-    html: `
-      <h2>Welcome to Game Hub!</h2>
-      <p>Please verify your email address by clicking the link below:</p>
-      <a href="${verificationLink}" style="padding: 10px 20px; background-color: #3b82f6; color: white; text-decoration: none; border-radius: 5px;">Verify Email</a>
-      <p>If you did not request this, please ignore this email.</p>
-    `,
-  };
-
   try {
-    // In a real app we'd verify the env config, for dev we might just log if not configured
-    if (!process.env.EMAIL_USER) {
-      console.log("Mock Email Sent to:", to);
+    if (!process.env.RESEND_API_KEY && !process.env.EMAIL_USER) {
+      console.log("Mock Verification Email Sent to:", to);
       console.log("Verification Link:", verificationLink);
       return;
     }
-    await transporter.sendMail(mailOptions);
+
+    const { data, error } = await resend.emails.send({
+      from: `Game Hub <${FROM_EMAIL}>`,
+      to: [to],
+      subject: 'Verify your Game Hub account',
+      html: `
+        <h1>Welcome to Game Hub!</h1>
+        <p>Please click the link below to verify your email address:</p>
+        <a href="${verificationLink}">${verificationLink}</a>
+      `
+    });
+
+    if (error) {
+      console.error('Resend verification email failed:', error);
+    }
   } catch (error) {
     console.error('Email sending failed:', error);
   }
 };
 
 exports.sendOtpEmail = async (to, code) => {
-  const mailOptions = {
-    from: '"Game Hub" <no-reply@gamehub.com>',
-    to,
-    subject: 'Your Game Hub Verification Code',
-    html: `
-      <h2>Welcome to Game Hub!</h2>
-      <p>Your email verification code is:</p>
-      <h1 style="letter-spacing: 5px; color: #3b82f6; font-size: 32px;">${code}</h1>
-      <p>This code is valid for 1 minute.</p>
-      <p>If you did not request this, please ignore this email.</p>
-    `,
-  };
-
   try {
-    if (!process.env.EMAIL_USER) {
+    if (!process.env.RESEND_API_KEY && !process.env.EMAIL_USER) {
       console.log("Mock OTP Sent to:", to);
       console.log("OTP Code:", code);
       return;
     }
-    await transporter.sendMail(mailOptions);
+
+    const { data, error } = await resend.emails.send({
+      from: `Game Hub <${FROM_EMAIL}>`,
+      to: [to],
+      subject: 'Your Game Hub Verification Code',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+          <h2 style="color: #2563eb; text-align: center;">Welcome to Game Hub!</h2>
+          <p style="font-size: 16px; color: #333;">Hello,</p>
+          <p style="font-size: 16px; color: #333;">Your verification code is:</p>
+          <div style="background-color: #f3f4f6; padding: 15px; text-align: center; border-radius: 5px; margin: 20px 0;">
+            <h1 style="margin: 0; font-family: monospace; letter-spacing: 5px; color: #1f2937;">${code}</h1>
+          </div>
+          <p style="font-size: 14px; color: #666;">This code will expire in 1 minute.</p>
+          <p style="font-size: 14px; color: #666;">If you did not request this code, please ignore this email.</p>
+        </div>
+      `
+    });
+
+    if (error) {
+      console.error('Resend OTP email failed:', error);
+    }
   } catch (error) {
     console.error('Email OTP sending failed:', error);
   }
