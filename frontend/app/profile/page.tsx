@@ -15,6 +15,8 @@ export default function ProfilePage() {
   
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [message, setMessage] = useState({ text: "", isError: false });
 
   useEffect(() => {
@@ -56,6 +58,42 @@ export default function ProfilePage() {
     setSaving(true);
     setMessage({ text: "", isError: false });
 
+    let finalAvatarUrl = avatarUrl;
+
+    if (selectedImage) {
+      try {
+        setUploadingAvatar(true);
+        const formData = new FormData();
+        formData.append("image", selectedImage);
+        formData.append("key", "0e18a17f54e1f13f1f2d7640c7cf1bd8");
+
+        const imgbbRes = await fetch("https://api.imgbb.com/1/upload", {
+          method: "POST",
+          body: formData
+        });
+
+        const imgbbData = await imgbbRes.json();
+        
+        if (imgbbData.success) {
+          finalAvatarUrl = imgbbData.data.url;
+          setAvatarUrl(finalAvatarUrl);
+          setSelectedImage(null);
+        } else {
+          setMessage({ text: "Failed to upload image to Imgbb", isError: true });
+          setSaving(false);
+          setUploadingAvatar(false);
+          return;
+        }
+      } catch (err) {
+        setMessage({ text: "Error uploading image", isError: true });
+        setSaving(false);
+        setUploadingAvatar(false);
+        return;
+      } finally {
+        setUploadingAvatar(false);
+      }
+    }
+
     const token = Cookies.get("token");
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
@@ -65,13 +103,13 @@ export default function ProfilePage() {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ username, avatarUrl })
+        body: JSON.stringify({ username, avatarUrl: finalAvatarUrl })
       });
       
       const data = await res.json();
       if (res.ok) {
         setMessage({ text: "Profile updated successfully!", isError: false });
-        setProfile({ ...profile, username, avatarUrl });
+        setProfile({ ...profile, username, avatarUrl: finalAvatarUrl });
       } else {
         setMessage({ text: data.error || "Failed to update profile", isError: true });
       }
@@ -134,34 +172,57 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">Avatar URL</label>
+                <label className="block text-sm font-medium text-zinc-300 mb-2">Avatar URL or Upload</label>
                 <div className="flex gap-4 items-start">
                   <div className="w-16 h-16 rounded-full bg-zinc-800 flex-shrink-0 border border-zinc-700 overflow-hidden">
-                    {avatarUrl ? (
+                    {selectedImage ? (
+                      <img src={URL.createObjectURL(selectedImage)} alt="Avatar Preview" className="w-full h-full object-cover" />
+                    ) : avatarUrl ? (
                       <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
                       <User className="w-8 h-8 m-4 text-zinc-500" />
                     )}
                   </div>
-                  <input 
-                    type="url" 
-                    value={avatarUrl}
-                    onChange={(e) => setAvatarUrl(e.target.value)}
-                    placeholder="https://example.com/avatar.png"
-                    className="flex-1 bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors mt-2" 
-                  />
+                  <div className="flex-1">
+                    <input 
+                      type="url" 
+                      value={avatarUrl}
+                      onChange={(e) => {
+                        setAvatarUrl(e.target.value);
+                        setSelectedImage(null);
+                      }}
+                      placeholder="https://example.com/avatar.png"
+                      className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors" 
+                    />
+                    <div className="mt-3">
+                      <label className="cursor-pointer bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-block">
+                        Choose File
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            if (e.target.files?.[0]) {
+                              setSelectedImage(e.target.files[0]);
+                              setAvatarUrl("");
+                            }
+                          }}
+                        />
+                      </label>
+                      <span className="text-xs text-zinc-500 ml-3">Max size: 32MB</span>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-xs text-zinc-500 mt-2">Paste a link to an image to use as your avatar.</p>
               </div>
 
               <div className="pt-4">
                 <button 
                   type="submit" 
-                  disabled={saving}
+                  disabled={saving || uploadingAvatar}
                   className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
                 >
                   <Save className="w-4 h-4" />
-                  {saving ? "Saving..." : "Save Changes"}
+                  {uploadingAvatar ? "Uploading Avatar..." : saving ? "Saving..." : "Save Changes"}
                 </button>
               </div>
             </form>
