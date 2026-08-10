@@ -10,6 +10,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const { t } = useLanguage();
   const [profile, setProfile] = useState<any>(null);
+  const [uploadedGames, setUploadedGames] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   
@@ -27,6 +28,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     fetchProfile();
+    fetchUploadedGames();
   }, []);
 
   const fetchProfile = async () => {
@@ -56,6 +58,49 @@ export default function ProfilePage() {
       console.error("Failed to fetch profile", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchUploadedGames = async () => {
+    const token = Cookies.get("token");
+    if (!token) return;
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/games/creator/games`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUploadedGames(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch uploaded games", error);
+    }
+  };
+
+  const handleDeleteGame = async (gameId: string) => {
+    if (!confirm(t("profile.confirmDelete"))) return;
+    
+    const token = Cookies.get("token");
+    if (!token) return;
+    
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/games/${gameId}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      
+      if (res.ok) {
+        alert(t("profile.deleteSuccess"));
+        setUploadedGames(uploadedGames.filter(g => g.id !== gameId));
+        fetchProfile(); // update stats
+      } else {
+        const data = await res.json();
+        alert(data.error || t("profile.deleteError"));
+      }
+    } catch (error) {
+      alert(t("profile.deleteError"));
     }
   };
 
@@ -383,6 +428,62 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Uploaded Games Section */}
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold mb-6">{t("profile.uploadedGames")}</h2>
+        
+        {uploadedGames.length === 0 ? (
+          <div className="text-center py-12 bg-zinc-900/50 border border-zinc-800 rounded-2xl">
+            <Gamepad2 className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
+            <p className="text-zinc-400">Bạn chưa tải lên game nào.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {uploadedGames.map((game) => (
+              <div key={game.id} className="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden group">
+                <div className="aspect-video bg-zinc-800 relative overflow-hidden flex items-center justify-center">
+                  {game.coverImageUrl ? (
+                    <>
+                      <img src={game.coverImageUrl} alt={game.title} className="absolute inset-0 w-full h-full object-cover opacity-60" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                        <Gamepad2 className="w-10 h-10 text-zinc-400 opacity-50 drop-shadow-md" />
+                      </div>
+                    </>
+                  ) : (
+                    <Gamepad2 className="w-10 h-10 text-zinc-600" />
+                  )}
+                  
+                  {/* Status badge */}
+                  <div className="absolute top-3 right-3 px-2 py-1 rounded text-xs font-medium bg-black/60 backdrop-blur-md text-white border border-white/10">
+                    {game.status === 'published' ? 'Đã Xuất Bản' : game.status === 'pending' ? 'Chờ Duyệt' : 'Bị Từ Chối'}
+                  </div>
+                </div>
+                
+                <div className="p-5">
+                  <h3 className="font-semibold text-lg mb-1 truncate">{game.title}</h3>
+                  <p className="text-sm text-zinc-400 mb-4 truncate">{game.description || "Không có mô tả"}</p>
+                  
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => router.push(`/profile/edit-game/${game.id}`)}
+                      className="flex-1 py-2 bg-blue-600/10 hover:bg-blue-600/20 text-blue-500 rounded-lg text-sm font-medium transition-colors border border-blue-500/20"
+                    >
+                      {t("profile.editGame")}
+                    </button>
+                    <button
+                      onClick={() => handleDeleteGame(game.id)}
+                      className="flex-1 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg text-sm font-medium transition-colors border border-red-500/20"
+                    >
+                      {t("profile.deleteGame")}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

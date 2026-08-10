@@ -21,6 +21,8 @@ router.post('/:id/play', gameController.incrementPlayCount); // Called when ifra
 // Protected routes
 router.post('/upload', requireAuth, upload.fields([{ name: 'gameFile', maxCount: 1 }, { name: 'coverImage', maxCount: 1 }]), uploadGame);
 router.get('/creator/games', requireAuth, getMyGames);
+router.put('/:id', requireAuth, upload.fields([{ name: 'coverImage', maxCount: 1 }]), gameController.updateGame);
+router.delete('/:id', requireAuth, gameController.deleteGame);
 router.get('/user/bookmarked', requireAuth, gameController.getBookmarkedGames);
 router.post('/:id/bookmark', requireAuth, gameController.toggleBookmark);
 
