@@ -5,6 +5,8 @@ const gameRoutes = require('./routes/game.routes');
 const authRoutes = require('./routes/auth.routes');
 const adminRoutes = require('./routes/admin.routes');
 const categoryRoutes = require('./routes/category.routes');
+const userRoutes = require('./routes/user.routes');
+const socialRoutes = require('./routes/social.routes');
 const prisma = require('./config/db');
 const bcrypt = require('bcryptjs');
 const path = require('path');
@@ -32,6 +34,8 @@ app.use('/api/games', gameRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/social', socialRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

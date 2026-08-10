@@ -89,7 +89,7 @@ exports.uploadGame = async (req, res) => {
         r2FolderPath: `games/${gameId}/`,
         status: 'pending', // pending approval
         sizeBytes: file.size,
-        uploaderId: req.user.userId,
+        uploaderId: req.user.id, // Fixed from req.user.userId
         ...(categoryConnect.length > 0 && {
           categories: {
             connect: categoryConnect
@@ -111,9 +111,25 @@ exports.uploadGame = async (req, res) => {
 
 exports.getPublishedGames = async (req, res) => {
   try {
+    const { search, category } = req.query;
+    
+    const whereClause = { status: 'published' };
+    
+    if (search) {
+      whereClause.title = { contains: search, mode: 'insensitive' };
+    }
+    
+    if (category) {
+      whereClause.categories = { some: { slug: category } };
+    }
+
     const games = await prisma.game.findMany({
-      where: { status: 'published' },
-      orderBy: { createdAt: 'desc' }
+      where: whereClause,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        categories: true,
+        uploader: { select: { id: true, username: true, avatarUrl: true } }
+      }
     });
     res.json(games);
   } catch (error) {
@@ -125,7 +141,11 @@ exports.getGameDetails = async (req, res) => {
   try {
     const { id } = req.params;
     const game = await prisma.game.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        categories: true,
+        uploader: { select: { id: true, username: true, avatarUrl: true } }
+      }
     });
     if (!game) return res.status(404).json({ error: 'Game not found' });
     res.json(game);
@@ -133,6 +153,78 @@ exports.getGameDetails = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch game details' });
   }
 };
+
+exports.incrementPlayCount = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedGame = await prisma.game.update({
+      where: { id },
+      data: { playCount: { increment: 1 } }
+    });
+    res.json({ message: 'Play count incremented', playCount: updatedGame.playCount });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to increment play count' });
+  }
+};
+
+exports.toggleBookmark = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const existingBookmark = await prisma.userLibrary.findUnique({
+      where: {
+        userId_gameId: {
+          userId,
+          gameId: id
+        }
+      }
+    });
+
+    if (existingBookmark) {
+      await prisma.userLibrary.delete({
+        where: {
+          userId_gameId: { userId, gameId: id }
+        }
+      });
+      return res.json({ message: 'Bookmark removed', bookmarked: false });
+    } else {
+      await prisma.userLibrary.create({
+        data: {
+          userId,
+          gameId: id
+        }
+      });
+      return res.json({ message: 'Bookmark added', bookmarked: true });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to toggle bookmark' });
+  }
+};
+
+exports.getBookmarkedGames = async (req, res) => {
+  try {
+    const library = await prisma.userLibrary.findMany({
+      where: { userId: req.user.id },
+      include: {
+        game: {
+          include: {
+            categories: true,
+            uploader: { select: { id: true, username: true, avatarUrl: true } }
+          }
+        }
+      },
+      orderBy: { addedAt: 'desc' }
+    });
+    
+    // Map to just return games array
+    const games = library.map(item => item.game);
+    res.json(games);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch bookmarked games' });
+  }
+};
+
 
 // Admin Endpoints
 exports.getPendingGames = async (req, res) => {

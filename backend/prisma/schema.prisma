@@ -18,9 +18,12 @@ model User {
   isVerified        Boolean       @default(false) @map("is_verified")
   isBanned          Boolean       @default(false) @map("is_banned")
   verificationToken String?       @map("verification_token") @db.VarChar(255)
+  avatarUrl         String?       @map("avatar_url") @db.Text
   createdAt         DateTime      @default(now()) @map("created_at")
   games        Game[]
   library      UserLibrary[]
+  ratings      Rating[]
+  comments     Comment[]
 
   @@map("users")
 }
@@ -36,9 +39,12 @@ model Game {
   status         String        @default("pending") @db.VarChar(20)
   rejectReason   String?       @map("reject_reason") @db.Text
   sizeBytes      BigInt?       @map("size_bytes")
+  playCount      Int           @default(0) @map("play_count")
   createdAt      DateTime      @default(now()) @map("created_at")
   libraryEntries UserLibrary[]
   categories     Category[]    @relation("GameCategories")
+  ratings        Rating[]
+  comments       Comment[]
 
   @@map("games")
 }
@@ -71,4 +77,28 @@ model OtpCode {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("otp_codes")
+}
+
+model Rating {
+  userId  Int      @map("user_id")
+  gameId  String   @map("game_id") @db.Uuid
+  score   Int      // 1 to 5
+  addedAt DateTime @default(now()) @map("added_at")
+  user    User     @relation(fields: [userId], references: [id])
+  game    Game     @relation(fields: [gameId], references: [id])
+
+  @@id([userId, gameId])
+  @@map("ratings")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  gameId    String   @map("game_id") @db.Uuid
+  content   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
+  game      Game     @relation(fields: [gameId], references: [id])
+
+  @@map("comments")
 }
