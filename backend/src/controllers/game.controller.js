@@ -27,7 +27,7 @@ const getAllFiles = (dirPath, arrayOfFiles) => {
 
 exports.uploadGame = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, categoryIds } = req.body;
     const file = req.file;
 
     if (!file) {
@@ -72,13 +72,29 @@ exports.uploadGame = async (req, res) => {
     }
 
     // Save to Database
+    
+    // Process categories
+    let categoryConnect = [];
+    if (categoryIds) {
+      // categoryIds could be a comma-separated string or an array depending on how formData sends it
+      const ids = Array.isArray(categoryIds) ? categoryIds : categoryIds.split(',').filter(Boolean);
+      categoryConnect = ids.map(id => ({ id: parseInt(id) }));
+    }
+    
     const newGame = await prisma.game.create({
       data: {
         id: gameId,
         title: title || 'Untitled Game',
         description: description || '',
         r2FolderPath: `games/${gameId}/`,
-        status: 'pending' // pending approval
+        status: 'pending', // pending approval
+        sizeBytes: file.size,
+        uploaderId: req.user.userId,
+        ...(categoryConnect.length > 0 && {
+          categories: {
+            connect: categoryConnect
+          }
+        })
       }
     });
 

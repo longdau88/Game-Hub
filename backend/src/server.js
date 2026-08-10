@@ -3,6 +3,8 @@ const cors = require('cors');
 require('dotenv').config();
 const gameRoutes = require('./routes/game.routes');
 const authRoutes = require('./routes/auth.routes');
+const adminRoutes = require('./routes/admin.routes');
+const categoryRoutes = require('./routes/category.routes');
 const prisma = require('./config/db');
 const bcrypt = require('bcryptjs');
 const path = require('path');
@@ -28,6 +30,8 @@ app.get('/', (req, res) => {
 // Routes
 app.use('/api/games', gameRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/categories', categoryRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
