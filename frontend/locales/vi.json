@@ -93,5 +93,22 @@
   "creator.statusPublished": "Đã xuất bản",
   "creator.statusRejected": "Bị từ chối",
   "creator.statusPending": "Chờ duyệt",
-  "creator.noDesc": "Không có mô tả"
+  "creator.noDesc": "Không có mô tả",
+
+  "upload.title": "Tải Game Lên",
+  "upload.subtitle": "Chia sẻ game HTML5 của bạn với cộng đồng Game Hub.",
+  "upload.gameTitle": "Tên Game *",
+  "upload.gameTitlePlaceholder": "VD: Flappy Bird Clone",
+  "upload.description": "Mô tả",
+  "upload.descriptionPlaceholder": "Cho người chơi biết game của bạn nói về điều gì...",
+  "upload.category": "Thể loại",
+  "upload.gameFiles": "Tệp Game (.zip) *",
+  "upload.dropzone": "Nhấp hoặc kéo thả để tải lên file ZIP",
+  "upload.dropzoneHint": "Bắt buộc phải chứa file index.html ở thư mục gốc.",
+  "upload.btnUploading": "Đang tải lên và giải nén... Vui lòng chờ",
+  "upload.btnUpload": "Tải Lên Creator Hub",
+  "upload.selected": "Đã chọn:",
+  "upload.errorNoFile": "Vui lòng chọn một tệp .zip chứa game của bạn.",
+  "upload.errorUploadFailed": "Tải lên thất bại",
+  "upload.errorNetwork": "Đã xảy ra lỗi mạng trong quá trình tải lên."
 }

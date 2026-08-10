@@ -93,5 +93,22 @@
   "creator.statusPublished": "Published",
   "creator.statusRejected": "Rejected",
   "creator.statusPending": "Pending Review",
-  "creator.noDesc": "No description"
+  "creator.noDesc": "No description",
+
+  "upload.title": "Upload Game",
+  "upload.subtitle": "Share your HTML5 game with the Game Hub community.",
+  "upload.gameTitle": "Game Title *",
+  "upload.gameTitlePlaceholder": "e.g. Flappy Bird Clone",
+  "upload.description": "Description",
+  "upload.descriptionPlaceholder": "Tell players what your game is about...",
+  "upload.category": "Category",
+  "upload.gameFiles": "Game Files (.zip) *",
+  "upload.dropzone": "Click or drag to upload ZIP file",
+  "upload.dropzoneHint": "Must contain an index.html file in the root directory.",
+  "upload.btnUploading": "Uploading and extracting on VPS... Please wait",
+  "upload.btnUpload": "Upload to Creator Hub",
+  "upload.selected": "Selected:",
+  "upload.errorNoFile": "Please select a .zip file containing your game.",
+  "upload.errorUploadFailed": "Upload failed",
+  "upload.errorNetwork": "Network error occurred during upload."
 }
