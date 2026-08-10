@@ -18,6 +18,12 @@ export default function ProfilePage() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [message, setMessage] = useState({ text: "", isError: false });
+  
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordMessage, setPasswordMessage] = useState({ text: "", isError: false });
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -118,6 +124,45 @@ export default function ProfilePage() {
       setMessage({ text: "Network error", isError: true });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordMessage({ text: "", isError: false });
+
+    if (newPassword !== confirmPassword) {
+      setPasswordMessage({ text: t("profile.passwordsNotMatch"), isError: true });
+      return;
+    }
+
+    setChangingPassword(true);
+    const token = Cookies.get("token");
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/users/me/password`, {
+        method: "PUT",
+        headers: { 
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+      
+      const data = await res.json();
+      if (res.ok) {
+        setPasswordMessage({ text: data.message, isError: false });
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        alert(data.message);
+      } else {
+        setPasswordMessage({ text: data.error || "Failed to change password", isError: true });
+      }
+    } catch (error) {
+      setPasswordMessage({ text: "Network error", isError: true });
+    } finally {
+      setChangingPassword(false);
     }
   };
 
@@ -225,6 +270,65 @@ export default function ProfilePage() {
                 >
                   <Save className="w-4 h-4" />
                   {uploadingAvatar ? t("profile.uploading") : saving ? t("profile.saving") : t("profile.saveChanges")}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          {/* Security Settings */}
+          <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 md:p-8">
+            <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
+              <Settings className="w-5 h-5 text-blue-400" /> {t("profile.security")}
+            </h2>
+            
+            {passwordMessage.text && (
+              <div className={`p-4 rounded-lg mb-6 ${passwordMessage.isError ? 'bg-red-500/10 border border-red-500/20 text-red-400' : 'bg-green-500/10 border border-green-500/20 text-green-400'}`}>
+                {passwordMessage.text}
+              </div>
+            )}
+
+            <form onSubmit={handleChangePassword} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("profile.currentPassword")}</label>
+                <input 
+                  type="password" 
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  required
+                  className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors" 
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 mb-2">{t("profile.newPassword")}</label>
+                <input 
+                  type="password" 
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors" 
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 mb-2">{t("profile.confirmPassword")}</label>
+                <input 
+                  type="password" 
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors" 
+                />
+              </div>
+
+              <div className="pt-4">
+                <button 
+                  type="submit" 
+                  disabled={changingPassword}
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
+                >
+                  <Save className="w-4 h-4" />
+                  {changingPassword ? t("profile.saving") : t("profile.changePassword")}
                 </button>
               </div>
             </form>

@@ -64,5 +64,11 @@
   "profile.stats": "Your Stats",
   "profile.uploadedGames": "Uploaded Games",
   "profile.totalPlays": "Total Plays",
-  "profile.goCreatorHub": "Go to Creator Hub"
+  "profile.goCreatorHub": "Go to Creator Hub",
+  "profile.security": "Security",
+  "profile.currentPassword": "Current Password",
+  "profile.newPassword": "New Password",
+  "profile.confirmPassword": "Confirm New Password",
+  "profile.changePassword": "Change Password",
+  "profile.passwordsNotMatch": "New passwords do not match!"
 }

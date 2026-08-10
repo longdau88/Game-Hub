@@ -64,5 +64,11 @@
   "profile.stats": "Thống Kê",
   "profile.uploadedGames": "Game Đã Tải Lên",
   "profile.totalPlays": "Tổng Lượt Chơi",
-  "profile.goCreatorHub": "Vào Creator Hub"
+  "profile.goCreatorHub": "Vào Creator Hub",
+  "profile.security": "Bảo Mật",
+  "profile.currentPassword": "Mật khẩu hiện tại",
+  "profile.newPassword": "Mật khẩu mới",
+  "profile.confirmPassword": "Xác nhận mật khẩu mới",
+  "profile.changePassword": "Đổi Mật Khẩu",
+  "profile.passwordsNotMatch": "Mật khẩu mới không khớp!"
 }

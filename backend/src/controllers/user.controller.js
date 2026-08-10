@@ -1,4 +1,5 @@
 const prisma = require('../config/db');
+const bcrypt = require('bcryptjs');
 
 // Get current user profile
 exports.getMe = async (req, res) => {
@@ -82,6 +83,42 @@ exports.updateMe = async (req, res) => {
     });
 
     res.json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// Change Password
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Mật khẩu hiện tại và mật khẩu mới là bắt buộc.' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId }
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Mật khẩu hiện tại không đúng.' });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+      where: { id: req.user.userId },
+      data: { passwordHash }
+    });
+
+    res.json({ message: 'Đổi mật khẩu thành công!' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
