@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Gamepad2, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
@@ -13,6 +13,48 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [code, setCode] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+
+  // Handle OTP countdown
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [countdown]);
+
+  const handleSendOtp = async () => {
+    if (!email) {
+      setError(t("error.missingFields"));
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/auth/send-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, username }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setOtpSent(true);
+        setCountdown(60);
+      } else {
+        const errorMsg = data.error || "Failed to send OTP";
+        let mappedError = "error.default";
+        if (errorMsg.includes("already exists")) mappedError = "error.userExists";
+        setError(t(mappedError));
+      }
+    } catch (err) {
+      setError(t("error.default"));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +66,7 @@ export default function RegisterPage() {
       const res = await fetch(`${apiUrl}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, email, password, code }),
       });
 
       const data = await res.json();
@@ -37,6 +79,9 @@ export default function RegisterPage() {
         
         if (errorMsg.includes("already exists")) mappedError = "error.userExists";
         else if (errorMsg.includes("Missing required fields")) mappedError = "error.missingFields";
+        else if (errorMsg.includes("first")) mappedError = "error.needOtp";
+        else if (errorMsg.includes("Invalid verification")) mappedError = "error.invalidOtp";
+        else if (errorMsg.includes("expired")) mappedError = "error.expiredOtp";
         
         setError(t(mappedError));
       }
@@ -98,15 +143,42 @@ export default function RegisterPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.email")}</label>
-              <input
-                type="email"
-                required
-                className="appearance-none relative block w-full px-3 py-2 border border-border bg-card placeholder-zinc-500 text-foreground rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder={t("register.email")}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  required
+                  className="appearance-none relative block w-full px-3 py-2 border border-border bg-card placeholder-zinc-500 text-foreground rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder={t("register.email")}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={countdown > 0}
+                />
+                <button
+                  type="button"
+                  onClick={handleSendOtp}
+                  disabled={loading || countdown > 0 || !email}
+                  className="whitespace-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none disabled:opacity-50 disabled:bg-zinc-600 transition-colors"
+                >
+                  {countdown > 0 ? t("register.resendCode").replace("{s}", countdown.toString()) : t("register.sendCode")}
+                </button>
+              </div>
             </div>
+
+            {otpSent && (
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.code")}</label>
+                <input
+                  type="text"
+                  required
+                  maxLength={8}
+                  className="appearance-none relative block w-full px-3 py-2 border border-border bg-card placeholder-zinc-500 text-foreground rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-center font-mono tracking-widest uppercase"
+                  placeholder="XXXXXXXX"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.toUpperCase())}
+                />
+              </div>
+            )}
+
             <div>
               <label className="block text-sm font-medium text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.password")}</label>
               <input

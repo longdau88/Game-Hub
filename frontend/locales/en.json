@@ -21,9 +21,12 @@
   "register.email": "Email Address",
   "register.password": "Password",
   "register.submit": "Create Account",
+  "register.sendCode": "Send Code",
+  "register.resendCode": "Resend in {s}s",
+  "register.code": "Verification Code",
   "register.hasAccount": "Already have an account?",
   "register.loginLink": "Sign in here",
-  "register.success": "Registration successful! Please check your email to verify your account.",
+  "register.success": "Registration successful! You can now log in.",
   
   "admin.title": "Admin Dashboard",
   "admin.pending": "Pending Games",
@@ -38,5 +41,8 @@
   "error.banned": "Your account has been banned.",
   "error.userExists": "Username or email already exists.",
   "error.missingFields": "Please fill in all required fields.",
+  "error.needOtp": "Please request a verification code first.",
+  "error.invalidOtp": "Invalid verification code.",
+  "error.expiredOtp": "Verification code has expired. Please request a new one.",
   "error.default": "An unexpected error occurred. Please try again."
 }

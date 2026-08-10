@@ -21,9 +21,12 @@
   "register.email": "Địa chỉ Email",
   "register.password": "Mật khẩu",
   "register.submit": "Tạo Tài Khoản",
+  "register.sendCode": "Gửi Mã",
+  "register.resendCode": "Gửi lại sau {s}s",
+  "register.code": "Mã xác thực",
   "register.hasAccount": "Đã có tài khoản?",
   "register.loginLink": "Đăng nhập tại đây",
-  "register.success": "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.",
+  "register.success": "Đăng ký thành công! Bạn có thể đăng nhập ngay.",
   
   "admin.title": "Bảng Điều Khiển Quản Trị",
   "admin.pending": "Game Chờ Duyệt",
@@ -38,5 +41,8 @@
   "error.banned": "Tài khoản của bạn đã bị khóa.",
   "error.userExists": "Tên đăng nhập hoặc email đã tồn tại.",
   "error.missingFields": "Vui lòng điền đầy đủ thông tin.",
+  "error.needOtp": "Vui lòng yêu cầu mã xác thực trước.",
+  "error.invalidOtp": "Mã xác thực không hợp lệ.",
+  "error.expiredOtp": "Mã xác thực đã hết hạn. Vui lòng yêu cầu mã mới.",
   "error.default": "Đã có lỗi xảy ra. Vui lòng thử lại."
 }

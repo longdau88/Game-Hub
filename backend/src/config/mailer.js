@@ -35,3 +35,29 @@ exports.sendVerificationEmail = async (to, token) => {
     console.error('Email sending failed:', error);
   }
 };
+
+exports.sendOtpEmail = async (to, code) => {
+  const mailOptions = {
+    from: '"Game Hub" <no-reply@gamehub.com>',
+    to,
+    subject: 'Your Game Hub Verification Code',
+    html: `
+      <h2>Welcome to Game Hub!</h2>
+      <p>Your email verification code is:</p>
+      <h1 style="letter-spacing: 5px; color: #3b82f6; font-size: 32px;">${code}</h1>
+      <p>This code is valid for 1 minute.</p>
+      <p>If you did not request this, please ignore this email.</p>
+    `,
+  };
+
+  try {
+    if (!process.env.EMAIL_USER) {
+      console.log("Mock OTP Sent to:", to);
+      console.log("OTP Code:", code);
+      return;
+    }
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error('Email OTP sending failed:', error);
+  }
+};
