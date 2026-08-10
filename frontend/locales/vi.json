@@ -154,5 +154,25 @@
   "admin.rejectPlaceholder": "VD: Bị lỗi màn hình đen khi tải game...",
   "admin.btnCancel": "Hủy Bỏ",
   "admin.btnReject": "Từ Chối & Xóa File",
-  "admin.reviewMode": "Chế Độ Chơi Thử"
+  "admin.reviewMode": "Chế Độ Chơi Thử",
+
+  "game.backToStore": "Về Cửa Hàng",
+  "game.publishedOn": "Đăng ngày",
+  "game.plays": "Lượt chơi",
+  "game.share": "Chia sẻ",
+  "game.rateThisGame": "Đánh giá của bạn",
+  "game.aboutThisGame": "Giới thiệu game",
+  "game.noDescription": "Chưa có mô tả cho game này.",
+  "game.controls": "Điều khiển",
+  "game.movement": "Di chuyển",
+  "game.action": "Hành động",
+  "game.controlsVary": "Nút điều khiển có thể thay đổi tùy game. Hãy xem hướng dẫn trong game.",
+  "game.copied": "Đã sao chép liên kết!",
+  "game.averageRating": "Đánh giá",
+  "game.totalRatings": "lượt đánh giá",
+  "game.comments": "Bình luận",
+  "game.addComment": "Thêm bình luận...",
+  "game.btnPost": "Đăng",
+  "game.loginToComment": "Vui lòng đăng nhập để bình luận.",
+  "game.noComments": "Chưa có bình luận nào. Hãy là người đầu tiên!"
 }

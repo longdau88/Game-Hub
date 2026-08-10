@@ -154,5 +154,25 @@
   "admin.rejectPlaceholder": "e.g. Black screen on launch...",
   "admin.btnCancel": "Cancel",
   "admin.btnReject": "Reject & Delete Files",
-  "admin.reviewMode": "Review Mode"
+  "admin.reviewMode": "Review Mode",
+
+  "game.backToStore": "Back to Store",
+  "game.publishedOn": "Published on",
+  "game.plays": "Plays",
+  "game.share": "Share",
+  "game.rateThisGame": "Your rating",
+  "game.aboutThisGame": "About this game",
+  "game.noDescription": "No description provided for this game.",
+  "game.controls": "Controls",
+  "game.movement": "Movement",
+  "game.action": "Action",
+  "game.controlsVary": "Controls may vary by game. Check in-game tutorial.",
+  "game.copied": "Link copied to clipboard!",
+  "game.averageRating": "Average Rating",
+  "game.totalRatings": "ratings",
+  "game.comments": "Comments",
+  "game.addComment": "Add a comment...",
+  "game.btnPost": "Post",
+  "game.loginToComment": "Please log in to add a comment.",
+  "game.noComments": "No comments yet. Be the first!"
 }

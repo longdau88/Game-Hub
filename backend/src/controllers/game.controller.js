@@ -148,7 +148,18 @@ exports.getGameDetails = async (req, res) => {
       }
     });
     if (!game) return res.status(404).json({ error: 'Game not found' });
-    res.json(game);
+
+    const aggregations = await prisma.rating.aggregate({
+      where: { gameId: id },
+      _avg: { score: true },
+      _count: { score: true }
+    });
+
+    res.json({
+      ...game,
+      averageRating: aggregations._avg.score ? Number(aggregations._avg.score.toFixed(1)) : 0,
+      totalRatings: aggregations._count.score
+    });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch game details' });
   }

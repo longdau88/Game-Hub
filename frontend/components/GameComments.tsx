@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { MessageSquare, Trash2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function GameComments({ gameId }: { gameId: string }) {
+  const { t } = useTranslation();
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
@@ -72,7 +74,7 @@ export default function GameComments({ gameId }: { gameId: string }) {
     <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 mt-6">
       <h3 className="font-medium text-lg mb-4 text-white flex items-center gap-2">
         <MessageSquare className="w-5 h-5" />
-        Comments ({comments.length})
+        {t("game.comments")} ({comments.length})
       </h3>
 
       {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
@@ -83,7 +85,7 @@ export default function GameComments({ gameId }: { gameId: string }) {
             type="text"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Add a comment..."
+            placeholder={t("game.addComment")}
             className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2 text-sm text-white outline-none focus:border-blue-500"
           />
           <button
@@ -91,18 +93,18 @@ export default function GameComments({ gameId }: { gameId: string }) {
             disabled={loading || !newComment.trim()}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg disabled:opacity-50"
           >
-            Post
+            {t("game.btnPost")}
           </button>
         </form>
       ) : (
         <div className="mb-6 p-4 bg-zinc-800/50 rounded-lg text-sm text-zinc-400 text-center">
-          Please log in to add a comment.
+          {t("game.loginToComment")}
         </div>
       )}
 
       <div className="space-y-4">
         {comments.length === 0 ? (
-          <p className="text-zinc-500 text-sm text-center">No comments yet. Be the first!</p>
+          <p className="text-zinc-500 text-sm text-center">{t("game.noComments")}</p>
         ) : (
           comments.map(comment => (
             <div key={comment.id} className="flex gap-3">
