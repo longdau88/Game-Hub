@@ -21,6 +21,10 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date() });
 });
 
+app.get('/', (req, res) => {
+  res.json({ message: 'Game Hub API is running normally.' });
+});
+
 // Routes
 app.use('/api/games', gameRoutes);
 app.use('/api/auth', authRoutes);
