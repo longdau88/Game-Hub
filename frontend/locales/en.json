@@ -31,5 +31,12 @@
   "admin.approving": "Approving...",
   
   "game.fullscreen": "Fullscreen",
-  "game.loading": "Loading..."
+  "game.loading": "Loading...",
+
+  "error.verifyEmail": "Please verify your email before logging in.",
+  "error.invalidCredentials": "Invalid email or password",
+  "error.banned": "Your account has been banned.",
+  "error.userExists": "Username or email already exists.",
+  "error.missingFields": "Please fill in all required fields.",
+  "error.default": "An unexpected error occurred. Please try again."
 }

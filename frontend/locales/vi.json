@@ -31,5 +31,12 @@
   "admin.approving": "Đang duyệt...",
   
   "game.fullscreen": "Toàn màn hình",
-  "game.loading": "Đang tải..."
+  "game.loading": "Đang tải...",
+
+  "error.verifyEmail": "Vui lòng xác thực email của bạn trước khi đăng nhập.",
+  "error.invalidCredentials": "Email hoặc mật khẩu không chính xác",
+  "error.banned": "Tài khoản của bạn đã bị khóa.",
+  "error.userExists": "Tên đăng nhập hoặc email đã tồn tại.",
+  "error.missingFields": "Vui lòng điền đầy đủ thông tin.",
+  "error.default": "Đã có lỗi xảy ra. Vui lòng thử lại."
 }

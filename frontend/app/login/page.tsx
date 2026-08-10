@@ -43,10 +43,17 @@ export default function LoginPage() {
         }
         router.refresh();
       } else {
-        setError(data.error || "Login failed");
+        const errorMsg = data.error || "Login failed";
+        let mappedError = "error.default";
+        
+        if (errorMsg.includes("verify your email")) mappedError = "error.verifyEmail";
+        else if (errorMsg.includes("Invalid email")) mappedError = "error.invalidCredentials";
+        else if (errorMsg.includes("banned")) mappedError = "error.banned";
+        
+        setError(t(mappedError));
       }
     } catch (err) {
-      setError("An unexpected error occurred.");
+      setError(t("error.default"));
     } finally {
       setLoading(false);
     }

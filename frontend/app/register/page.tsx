@@ -32,10 +32,16 @@ export default function RegisterPage() {
       if (res.ok) {
         setSuccess(true);
       } else {
-        setError(data.error || "Registration failed");
+        const errorMsg = data.error || "Registration failed";
+        let mappedError = "error.default";
+        
+        if (errorMsg.includes("already exists")) mappedError = "error.userExists";
+        else if (errorMsg.includes("Missing required fields")) mappedError = "error.missingFields";
+        
+        setError(t(mappedError));
       }
     } catch (err) {
-      setError("An unexpected error occurred.");
+      setError(t("error.default"));
     } finally {
       setLoading(false);
     }
