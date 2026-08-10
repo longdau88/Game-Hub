@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { LogOut, Settings, User } from "lucide-react";
 import Cookies from "js-cookie";
 import ThemeSwitcher from "./ThemeSwitcher";
@@ -10,6 +11,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 
 export default function ClientNavbar() {
   const { t } = useLanguage();
+  const pathname = usePathname();
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -18,7 +20,7 @@ export default function ClientNavbar() {
     setToken(Cookies.get("token") || null);
     setRole(Cookies.get("role") || null);
     setMounted(true);
-  }, []);
+  }, [pathname]);
 
   if (!mounted) return null;
 
