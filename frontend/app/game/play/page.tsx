@@ -110,7 +110,7 @@ function GamePlayerContent() {
             
             <div className="mb-8">
               <h3 className="text-sm font-medium text-zinc-400 mb-2">Rate this game</h3>
-              <GameRating gameId={gameId} />
+              <GameRating gameId={gameId!} />
             </div>
             
             <div>
@@ -124,7 +124,7 @@ function GamePlayerContent() {
               </div>
             </div>
             
-            <GameComments gameId={gameId} />
+            <GameComments gameId={gameId!} />
           </div>
         </div>
 
