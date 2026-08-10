@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Check, X, Play, Settings } from "lucide-react";
 import Link from "next/link";
+import Cookies from "js-cookie";
 
 export default function AdminPage() {
   const [pendingGames, setPendingGames] = useState<any[]>([]);
@@ -15,7 +16,12 @@ export default function AdminPage() {
   const fetchPendingGames = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:4000/api/games/admin/pending');
+      const token = Cookies.get("token");
+      const res = await fetch('http://localhost:4000/api/games/admin/pending', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       if (res.ok) {
         const data = await res.json();
         setPendingGames(data);
@@ -29,8 +35,12 @@ export default function AdminPage() {
 
   const approveGame = async (id: string) => {
     try {
+      const token = Cookies.get("token");
       const res = await fetch(`http://localhost:4000/api/games/admin/${id}/approve`, {
-        method: 'PUT'
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
       if (res.ok) {
         // Remove from list
@@ -92,7 +102,7 @@ export default function AdminPage() {
                   </div>
                   
                   <div className="flex items-center gap-3 md:border-l md:border-zinc-800 md:pl-6">
-                    <Link href={`/game/${game.id}`} className="p-2 bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white border border-blue-500/20 rounded-lg transition-colors" title="Preview Game">
+                    <Link href={`/game/play?id=${game.id}`} className="p-2 bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white border border-blue-500/20 rounded-lg transition-colors" title="Preview Game">
                       <Play className="w-5 h-5" />
                     </Link>
                     <button 

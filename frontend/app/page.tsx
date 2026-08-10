@@ -1,20 +1,20 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Play, Gamepad2 } from "lucide-react";
 
-// In production, configure next.config.js to handle images from external domains if needed
-// Or use relative paths for local images
+export default function Home() {
+  const [games, setGames] = useState<any[]>([]);
 
-export default async function Home() {
-  // Fetch games from Backend API
-  let games = [];
-  try {
-    const res = await fetch('http://localhost:4000/api/games', { cache: 'no-store' });
-    if (res.ok) {
-      games = await res.json();
-    }
-  } catch (error) {
-    console.error("Failed to fetch games", error);
-  }
+  useEffect(() => {
+    fetch('http://localhost:4000/api/games')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setGames(data);
+      })
+      .catch(error => console.error("Failed to fetch games", error));
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -45,13 +45,12 @@ export default async function Home() {
         
         {games.length === 0 ? (
           <div className="text-center py-20 border border-zinc-800/50 border-dashed rounded-xl bg-zinc-900/20">
-            <h3 className="text-xl font-medium text-zinc-400 mb-2">No games available yet</h3>
-            <p className="text-zinc-500">Go to Admin panel to upload and approve some games.</p>
+            <h3 className="text-xl font-medium text-zinc-400 mb-2">Loading games...</h3>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {games.map((game: any) => (
-              <Link href={`/game/${game.id}`} key={game.id} className="group flex flex-col bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden hover:border-zinc-700 hover:bg-zinc-800/50 transition-all duration-300 transform hover:-translate-y-1">
+              <div key={game.id} className="group flex flex-col bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden hover:border-zinc-700 hover:bg-zinc-800/50 transition-all duration-300 transform hover:-translate-y-1">
                 {/* Game Cover Placeholder / Image */}
                 <div className="aspect-video bg-zinc-800 relative overflow-hidden flex items-center justify-center">
                   {game.coverImageUrl ? (
@@ -61,16 +60,21 @@ export default async function Home() {
                       <Gamepad2 className="w-12 h-12 text-zinc-600" />
                     </div>
                   )}
-                  {/* Play Overlay */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.5)]">
-                      <Play className="w-5 h-5 text-white ml-1" />
+                  <Link href={`/game/play?id=${game.id}`}>
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform">
+                        <Play className="w-6 h-6 text-white ml-1" />
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                 </div>
                 
                 <div className="p-4 flex-1 flex flex-col">
-                  <h3 className="font-semibold text-lg line-clamp-1 mb-1 group-hover:text-blue-400 transition-colors">{game.title}</h3>
+                  <Link href={`/game/play?id=${game.id}`}>
+                    <h3 className="font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors line-clamp-1">
+                      {game.title}
+                    </h3>
+                  </Link>
                   <p className="text-sm text-zinc-400 line-clamp-2 mb-4 flex-1">
                     {game.description || "No description provided."}
                   </p>
@@ -78,7 +82,7 @@ export default async function Home() {
                     <span>{new Date(game.createdAt).toLocaleDateString()}</span>
                   </div>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         )}

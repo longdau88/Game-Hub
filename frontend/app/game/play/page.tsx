@@ -1,18 +1,41 @@
-import Link from "next/link";
-import { ArrowLeft, Maximize2, Share2, ThumbsUp } from "lucide-react";
+"use client";
 
-export default async function GamePlayer({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = await params;
-  const gameId = resolvedParams.id;
+import { useEffect, useState, Suspense } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { ArrowLeft, Maximize2, Share2, ThumbsUp, Loader2 } from "lucide-react";
+
+function GamePlayerContent() {
+  const searchParams = useSearchParams();
+  const gameId = searchParams.get("id");
   
-  let game = null;
-  try {
-    const res = await fetch(`http://localhost:4000/api/games/${gameId}`, { cache: 'no-store' });
-    if (res.ok) {
-      game = await res.json();
+  const [game, setGame] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!gameId) {
+      setLoading(false);
+      return;
     }
-  } catch (error) {
-    console.error("Failed to fetch game details", error);
+    
+    fetch(`http://localhost:4000/api/games/${gameId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) setGame(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [gameId]);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-24 flex justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+      </div>
+    );
   }
 
   if (!game) {
@@ -27,8 +50,6 @@ export default async function GamePlayer({ params }: { params: Promise<{ id: str
     );
   }
 
-  // The Cloudflare R2 public URL
-  // Replace pub-xxxx.r2.dev with the actual custom domain or dev url if configured
   const r2PublicUrl = `https://pub-xxxx.r2.dev/games/${gameId}/index.html`;
 
   return (
@@ -42,7 +63,6 @@ export default async function GamePlayer({ params }: { params: Promise<{ id: str
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          {/* Game Player Area */}
           <div className="bg-black rounded-xl overflow-hidden border border-zinc-800 shadow-2xl relative group aspect-video">
             <iframe
               src={r2PublicUrl}
@@ -51,7 +71,6 @@ export default async function GamePlayer({ params }: { params: Promise<{ id: str
               allow="fullscreen"
               title={game.title}
             />
-            {/* Overlay controls */}
             <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
               <button className="p-2 bg-black/60 hover:bg-black/80 rounded-md backdrop-blur-sm border border-white/10 text-white transition-colors" title="Fullscreen">
                 <Maximize2 className="w-4 h-4" />
@@ -88,7 +107,6 @@ export default async function GamePlayer({ params }: { params: Promise<{ id: str
           </div>
         </div>
 
-        {/* Sidebar */}
         <div className="space-y-6">
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6">
             <h3 className="font-medium text-lg mb-4 text-white">Controls</h3>
@@ -107,5 +125,13 @@ export default async function GamePlayer({ params }: { params: Promise<{ id: str
         </div>
       </div>
     </div>
+  );
+}
+
+export default function GamePlayer() {
+  return (
+    <Suspense fallback={<div className="min-h-[calc(100vh-8rem)] flex items-center justify-center">Loading...</div>}>
+      <GamePlayerContent />
+    </Suspense>
   );
 }

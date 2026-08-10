@@ -5,6 +5,7 @@ const gameRoutes = require('./routes/game.routes');
 const authRoutes = require('./routes/auth.routes');
 const prisma = require('./config/db');
 const bcrypt = require('bcryptjs');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -19,6 +20,27 @@ app.get('/health', (req, res) => {
 
 app.use('/api/games', gameRoutes);
 app.use('/api/auth', authRoutes);
+
+// Serve static frontend files
+const frontendPath = path.join(__dirname, '../../frontend/out');
+app.use(express.static(frontendPath));
+
+// Catch-all route to serve index.html for Next.js client-side routing
+app.use((req, res, next) => {
+  if (req.method !== 'GET') return next();
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ error: 'API route not found' });
+  }
+  
+  // Try to serve [route].html if it exists (Next.js static export generates .html files)
+  const routeHtml = path.join(frontendPath, `${req.path}.html`);
+  res.sendFile(routeHtml, (err) => {
+    if (err) {
+      // If specific html doesn't exist, fallback to root index.html
+      res.sendFile(path.join(frontendPath, 'index.html'));
+    }
+  });
+});
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
