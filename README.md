@@ -63,3 +63,53 @@ Mở trình duyệt và truy cập: **http://localhost:4000**
 2. Chuẩn bị game của bạn dưới dạng một file `.zip` (bắt buộc phải có file `index.html` nằm ngay ở thư mục gốc của file zip).
 3. Sau khi upload, game sẽ ở trạng thái `Pending` (Chờ duyệt).
 4. Đăng nhập vào tài khoản Admin, chuyển đến Admin Dashboard để kiểm duyệt. Sau khi nhấn "Approve", game mới chính thức xuất hiện trên Storefront.
+
+## Danh Sách API (API Endpoints)
+
+Hệ thống cung cấp các API RESTful để tương tác với dữ liệu. Prefix chung của backend là `/api`.
+
+### 1. Xác thực (Auth) - `/api/auth`
+- `POST /send-otp`: Gửi mã OTP để xác thực email.
+- `POST /register`: Đăng ký tài khoản mới.
+- `GET /verify`: Xác thực email thông qua JWT token (click từ email).
+- `POST /login`: Đăng nhập, trả về JWT.
+- `GET /me`: (Protected) Xác thực token và lấy thông tin user.
+
+### 2. Người Dùng (Users) - `/api/users`
+Tất cả các route này yêu cầu đăng nhập (Protected).
+- `GET /me`: Lấy chi tiết thông tin hồ sơ và các thống kê (số game, lượt chơi) của user.
+- `PUT /me`: Cập nhật hồ sơ (Tên hiển thị, Ảnh đại diện Imgbb).
+- `PUT /me/password`: Thay đổi mật khẩu.
+
+### 3. Game - `/api/games`
+- `GET /`: (Cache 60s) Lấy danh sách game đã duyệt (Published). Hỗ trợ param `search`, `category`.
+- `GET /:id`: (Cache 30s) Lấy chi tiết thông tin của 1 game.
+- `POST /:id/play`: Tăng số lượt chơi (Play count) khi user chơi game.
+- `POST /upload`: (Protected) Upload game mới dạng `.zip` (Multipart Form).
+- `GET /creator/games`: (Protected) Lấy danh sách các game do user hiện tại tải lên.
+- `GET /user/bookmarked`: (Protected) Lấy danh sách game đã bookmark.
+- `POST /:id/bookmark`: (Protected) Đánh dấu (Thêm/Xoá) game vào danh sách yêu thích.
+
+### 4. Thể Loại (Categories) - `/api/categories`
+- `GET /`: (Cache 1 giờ) Lấy danh sách tất cả thể loại.
+- `POST /`: (Admin) Tạo thể loại mới.
+- `PUT /:id`: (Admin) Cập nhật tên thể loại.
+- `DELETE /:id`: (Admin) Xóa thể loại.
+
+### 5. Tương Tác Xã Hội (Social) - `/api/social`
+- `GET /comments/:gameId`: Lấy danh sách bình luận của 1 game.
+- `POST /rate/:gameId`: (Protected) Đánh giá game (1-5 sao).
+- `GET /rate/:gameId`: (Protected) Lấy đánh giá hiện tại của user cho game.
+- `POST /comment/:gameId`: (Protected) Viết bình luận.
+
+### 6. Quản Trị Hệ Thống (Admin) - `/api/admin`
+Tất cả các route này yêu cầu đăng nhập với quyền `admin`.
+- `GET /stats`: Lấy thống kê tổng quan (User, Game, Số lượt chơi) cho Admin Dashboard.
+- `GET /users`: Quản lý danh sách người dùng.
+- `PUT /users/:id/ban`: Khóa hoặc mở khóa tài khoản user.
+- `PUT /users/:id/role`: Cấp hoặc thu hồi quyền Admin.
+- `GET /games/pending`: Xem danh sách game đang chờ duyệt.
+- `GET /games/published`: Xem danh sách game đang hoạt động.
+- `PUT /games/:id/approve`: Duyệt game để hiển thị ra trang chủ.
+- `PUT /games/:id/reject`: Từ chối game.
+- `DELETE /games/:id`: Xóa game khỏi CSDL và R2.
