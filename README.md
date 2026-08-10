@@ -39,9 +39,7 @@ npm install
 npx prisma db push
 npm start
 ```
-*Note: Starting the backend for the first time will automatically seed an admin account:*
-- **Admin Email**: `admin@gamehub.com`
-- **Admin Password**: `admin123`
+*Note: Starting the backend for the first time will automatically seed an admin account. Please check the backend console logs or `.env` configuration for the default credentials and change them immediately in a production environment.*
 
 ### 3. Frontend Initialization
 ```bash

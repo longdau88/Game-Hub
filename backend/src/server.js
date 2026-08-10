@@ -27,19 +27,22 @@ app.use((err, req, res, next) => {
 
 const seedAdmin = async () => {
   try {
-    const adminExists = await prisma.user.findUnique({ where: { email: 'admin@gamehub.com' } });
+    const adminEmail = process.env.ADMIN_EMAIL || 'admin@gamehub.com';
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
+    const adminExists = await prisma.user.findUnique({ where: { email: adminEmail } });
     if (!adminExists) {
-      const passwordHash = await bcrypt.hash('admin123', 10);
+      const passwordHash = await bcrypt.hash(adminPassword, 10);
       await prisma.user.create({
         data: {
           username: 'admin',
-          email: 'admin@gamehub.com',
+          email: adminEmail,
           passwordHash,
           role: 'admin',
           isVerified: true
         }
       });
-      console.log('Default Admin created: admin@gamehub.com / admin123');
+      console.log(`Default Admin created: ${adminEmail} (password hidden)`);
     }
   } catch (error) {
     console.error('Failed to seed admin', error);
