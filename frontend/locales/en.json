@@ -70,5 +70,28 @@
   "profile.newPassword": "New Password",
   "profile.confirmPassword": "Confirm New Password",
   "profile.changePassword": "Change Password",
-  "profile.passwordsNotMatch": "New passwords do not match!"
+  "profile.passwordsNotMatch": "New passwords do not match!",
+
+  "home.heroTitle": "Discover Your Next Favorite Game",
+  "home.heroDesc": "Play high-quality HTML5 web games instantly in your browser. No downloads required.",
+  "home.browseStore": "Browse Store",
+  "home.search": "Search games...",
+  "home.allGames": "All Games",
+  "home.loading": "Loading games...",
+  "home.noGames": "No games found.",
+  
+  "creator.title": "Creator Hub",
+  "creator.subtitle": "Manage games you have uploaded",
+  "creator.uploadNew": "Upload New Game",
+  "creator.noGames": "No Games Yet",
+  "creator.noGamesDesc": "Upload your first HTML5 game to share it with the world.",
+  "creator.uploadBtn": "Upload Game",
+  "creator.tableTitle": "Game Title",
+  "creator.tableStatus": "Status",
+  "creator.tablePlays": "Plays",
+  "creator.tableDate": "Date Uploaded",
+  "creator.statusPublished": "Published",
+  "creator.statusRejected": "Rejected",
+  "creator.statusPending": "Pending Review",
+  "creator.noDesc": "No description"
 }

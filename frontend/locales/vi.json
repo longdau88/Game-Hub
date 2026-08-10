@@ -70,5 +70,28 @@
   "profile.newPassword": "Mật khẩu mới",
   "profile.confirmPassword": "Xác nhận mật khẩu mới",
   "profile.changePassword": "Đổi Mật Khẩu",
-  "profile.passwordsNotMatch": "Mật khẩu mới không khớp!"
+  "profile.passwordsNotMatch": "Mật khẩu mới không khớp!",
+
+  "home.heroTitle": "Khám Phá Trò Chơi Yêu Thích Tiếp Theo Của Bạn",
+  "home.heroDesc": "Chơi game web HTML5 chất lượng cao ngay trên trình duyệt của bạn. Không cần tải xuống.",
+  "home.browseStore": "Duyệt Cửa Hàng",
+  "home.search": "Tìm kiếm game...",
+  "home.allGames": "Tất Cả Game",
+  "home.loading": "Đang tải game...",
+  "home.noGames": "Không tìm thấy game nào.",
+  
+  "creator.title": "Creator Hub",
+  "creator.subtitle": "Quản lý các game bạn đã tải lên",
+  "creator.uploadNew": "Tải Game Lên Mới",
+  "creator.noGames": "Chưa Có Game",
+  "creator.noGamesDesc": "Tải lên game HTML5 đầu tiên của bạn để chia sẻ với thế giới.",
+  "creator.uploadBtn": "Tải Game Lên",
+  "creator.tableTitle": "Tên Game",
+  "creator.tableStatus": "Trạng thái",
+  "creator.tablePlays": "Lượt chơi",
+  "creator.tableDate": "Ngày tải lên",
+  "creator.statusPublished": "Đã xuất bản",
+  "creator.statusRejected": "Bị từ chối",
+  "creator.statusPending": "Chờ duyệt",
+  "creator.noDesc": "Không có mô tả"
 }

@@ -116,14 +116,14 @@ export default function Home() {
       <section className="mb-16 rounded-2xl bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-zinc-800/60 p-8 md:p-12 relative overflow-hidden">
         <div className="relative z-10 max-w-2xl">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400">
-            Discover Your Next Favorite Game
+            {t("home.heroTitle")}
           </h1>
           <p className="text-lg text-zinc-300 mb-8">
-            Play high-quality HTML5 web games instantly in your browser. No downloads required.
+            {t("home.heroDesc")}
           </p>
           <div className="flex gap-4">
             <button className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors shadow-[0_0_20px_rgba(37,99,235,0.3)]">
-              Browse Store
+              {t("home.browseStore")}
             </button>
           </div>
         </div>
@@ -144,7 +144,7 @@ export default function Home() {
           <form onSubmit={handleSearch} className="flex-1 max-w-md relative">
             <input
               type="text"
-              placeholder="Search games..."
+              placeholder={t("home.search")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-blue-500 rounded-xl pl-12 pr-4 py-3 text-white outline-none"
@@ -160,7 +160,7 @@ export default function Home() {
             onClick={() => handleCategorySelect("")}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${selectedCategory === "" ? 'bg-blue-600 text-white border-blue-500' : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'}`}
           >
-            All Games
+            {t("home.allGames")}
           </button>
           {categories.map(cat => (
             <button
@@ -175,7 +175,7 @@ export default function Home() {
         
         {games.length === 0 ? (
           <div className="text-center py-20 border border-zinc-800/50 border-dashed rounded-xl bg-zinc-900/20">
-            <h3 className="text-xl font-medium text-zinc-400 mb-2">Loading games...</h3>
+            <h3 className="text-xl font-medium text-zinc-400 mb-2">{t("home.loading")}</h3>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

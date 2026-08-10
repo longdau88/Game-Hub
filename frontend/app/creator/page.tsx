@@ -53,9 +53,9 @@ export default function CreatorHub() {
 
   const getStatusText = (status: string) => {
     switch(status) {
-      case 'published': return <span className="text-green-500 font-medium">Published</span>;
-      case 'rejected': return <span className="text-red-500 font-medium">Rejected</span>;
-      default: return <span className="text-yellow-500 font-medium">Pending Review</span>;
+      case 'published': return <span className="text-green-500 font-medium">{t("creator.statusPublished")}</span>;
+      case 'rejected': return <span className="text-red-500 font-medium">{t("creator.statusRejected")}</span>;
+      default: return <span className="text-yellow-500 font-medium">{t("creator.statusPending")}</span>;
     }
   };
 
@@ -71,8 +71,8 @@ export default function CreatorHub() {
             <LayoutDashboard className="w-8 h-8 text-purple-500" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold">Creator Hub</h1>
-            <p className="text-zinc-400">Manage games you have uploaded</p>
+            <h1 className="text-3xl font-bold">{t("creator.title")}</h1>
+            <p className="text-zinc-400">{t("creator.subtitle")}</p>
           </div>
         </div>
         
@@ -81,7 +81,7 @@ export default function CreatorHub() {
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-lg"
         >
           <Plus className="w-5 h-5" />
-          Upload New Game
+          {t("creator.uploadNew")}
         </Link>
       </div>
 
@@ -89,13 +89,13 @@ export default function CreatorHub() {
         {games.length === 0 ? (
           <div className="text-center py-20">
             <Gamepad2 className="w-16 h-16 text-zinc-600 mx-auto mb-4" />
-            <h3 className="text-xl font-medium text-zinc-300 mb-2">No Games Yet</h3>
-            <p className="text-zinc-500 mb-6">Upload your first HTML5 game to share it with the world.</p>
+            <h3 className="text-xl font-medium text-zinc-300 mb-2">{t("creator.noGames")}</h3>
+            <p className="text-zinc-500 mb-6">{t("creator.noGamesDesc")}</p>
             <Link 
               href="/creator/upload"
               className="inline-flex items-center gap-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 px-6 py-3 rounded-lg font-medium transition-colors"
             >
-              Upload Game
+              {t("creator.uploadBtn")}
             </Link>
           </div>
         ) : (
@@ -103,10 +103,10 @@ export default function CreatorHub() {
             <table className="w-full text-left">
               <thead className="bg-zinc-800/50 text-zinc-400 border-b border-zinc-700">
                 <tr>
-                  <th className="px-6 py-4 font-medium">Game Title</th>
-                  <th className="px-6 py-4 font-medium">Status</th>
-                  <th className="px-6 py-4 font-medium">Plays</th>
-                  <th className="px-6 py-4 font-medium">Date Uploaded</th>
+                  <th className="px-6 py-4 font-medium">{t("creator.tableTitle")}</th>
+                  <th className="px-6 py-4 font-medium">{t("creator.tableStatus")}</th>
+                  <th className="px-6 py-4 font-medium">{t("creator.tablePlays")}</th>
+                  <th className="px-6 py-4 font-medium">{t("creator.tableDate")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800">
@@ -123,7 +123,7 @@ export default function CreatorHub() {
                         </div>
                         <div>
                           <div className="font-semibold text-zinc-200">{game.title}</div>
-                          <div className="text-xs text-zinc-500 mt-1 line-clamp-1">{game.description || 'No description'}</div>
+                          <div className="text-xs text-zinc-500 mt-1 line-clamp-1">{game.description || t("creator.noDesc")}</div>
                         </div>
                       </div>
                     </td>
