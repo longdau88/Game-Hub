@@ -38,6 +38,10 @@ ADMIN_PASSWORD="admin123"
 ```
 
 ### 2. Build Giao Diện (Frontend)
+Tạo một file `.env.local` bên trong thư mục `/frontend` với thông số đường dẫn công khai (Public URL) của R2:
+```env
+NEXT_PUBLIC_R2_URL="https://pub-your-bucket.r2.dev"
+```
 Mỗi khi có thay đổi code ở giao diện, bạn cần build lại để xuất ra file tĩnh cho backend sử dụng:
 ```bash
 cd frontend

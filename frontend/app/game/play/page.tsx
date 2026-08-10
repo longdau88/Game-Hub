@@ -58,7 +58,7 @@ function GamePlayerContent() {
     );
   }
 
-  const r2PublicUrl = `https://pub-xxxx.r2.dev/games/${gameId}/index.html`;
+  const r2PublicUrl = `${process.env.NEXT_PUBLIC_R2_URL}/games/${gameId}/index.html`;
 
   return (
     <div className="container mx-auto px-4 py-8">

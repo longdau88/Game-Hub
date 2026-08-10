@@ -427,7 +427,7 @@ export default function AdminPage() {
             </div>
             <div className="flex-1 w-full bg-black">
                <iframe 
-                 src={`https://pub-xxxx.r2.dev/games/${previewGameId}/index.html`} 
+                 src={`${process.env.NEXT_PUBLIC_R2_URL}/games/${previewGameId}/index.html`} 
                  className="w-full h-full border-none"
                  sandbox="allow-scripts allow-same-origin"
                />
