@@ -3,7 +3,9 @@
 import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Maximize2, Share2, ThumbsUp, Loader2 } from "lucide-react";
+import { ArrowLeft, Maximize2, Share2, Eye, Loader2 } from "lucide-react";
+import GameComments from "../../../components/GameComments";
+import GameRating from "../../../components/GameRating";
 
 function GamePlayerContent() {
   const searchParams = useSearchParams();
@@ -19,6 +21,8 @@ function GamePlayerContent() {
     }
     
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    
+    // Fetch game details
     fetch(`${apiUrl}/api/games/${gameId}`)
       .then(res => res.json())
       .then(data => {
@@ -29,6 +33,9 @@ function GamePlayerContent() {
         console.error(err);
         setLoading(false);
       });
+      
+    // Increment play count
+    fetch(`${apiUrl}/api/games/${gameId}/play`, { method: "POST" }).catch(console.error);
   }, [gameId]);
 
   if (loading) {
@@ -84,15 +91,26 @@ function GamePlayerContent() {
             <div className="flex items-center gap-4 text-sm text-zinc-400 mb-6 border-b border-zinc-800/50 pb-6">
               <span>Published on {new Date(game.createdAt).toLocaleDateString()}</span>
               <span>•</span>
-              <button className="flex items-center hover:text-blue-400 transition-colors">
-                <ThumbsUp className="w-4 h-4 mr-1" />
-                Like
-              </button>
+              <span className="flex items-center">
+                <Eye className="w-4 h-4 mr-1" />
+                {game.playCount || 0} Plays
+              </span>
               <span>•</span>
-              <button className="flex items-center hover:text-blue-400 transition-colors">
+              <button 
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  alert("Link copied to clipboard!");
+                }}
+                className="flex items-center hover:text-blue-400 transition-colors"
+              >
                 <Share2 className="w-4 h-4 mr-1" />
                 Share
               </button>
+            </div>
+            
+            <div className="mb-8">
+              <h3 className="text-sm font-medium text-zinc-400 mb-2">Rate this game</h3>
+              <GameRating gameId={gameId} />
             </div>
             
             <div>
@@ -105,6 +123,8 @@ function GamePlayerContent() {
                 )}
               </div>
             </div>
+            
+            <GameComments gameId={gameId} />
           </div>
         </div>
 

@@ -167,6 +167,21 @@ exports.incrementPlayCount = async (req, res) => {
   }
 };
 
+exports.getMyGames = async (req, res) => {
+  try {
+    const games = await prisma.game.findMany({
+      where: { uploaderId: req.user.id },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        categories: true
+      }
+    });
+    res.json(games);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch my games' });
+  }
+};
+
 exports.toggleBookmark = async (req, res) => {
   try {
     const { id } = req.params;

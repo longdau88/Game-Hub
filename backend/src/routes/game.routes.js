@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const gameController = require('../controllers/game.controller');
-const { uploadGame, getPublishedGames, getGameDetails } = gameController;
+const { uploadGame, getPublishedGames, getGameDetails, getMyGames } = gameController;
 const { requireAuth } = require('../middleware/auth.middleware');
 
 const router = express.Router();
@@ -16,6 +16,7 @@ router.post('/:id/play', gameController.incrementPlayCount); // Called when ifra
 
 // Protected routes
 router.post('/upload', requireAuth, upload.single('gameFile'), uploadGame);
+router.get('/creator/games', requireAuth, getMyGames);
 router.get('/user/bookmarked', requireAuth, gameController.getBookmarkedGames);
 router.post('/:id/bookmark', requireAuth, gameController.toggleBookmark);
 

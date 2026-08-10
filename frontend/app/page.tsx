@@ -2,22 +2,113 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Play, Gamepad2 } from "lucide-react";
+import { Play, Gamepad2, Search, Heart, Filter } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
+import Cookies from "js-cookie";
 
 export default function Home() {
   const { t } = useLanguage();
   const [games, setGames] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [bookmarkedGames, setBookmarkedGames] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    fetch(`${apiUrl}/api/games`)
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) setGames(data);
-      })
-      .catch(error => console.error("Failed to fetch games", error));
+    fetchGames();
+    fetchCategories();
+    fetchBookmarks();
   }, []);
+
+  const fetchGames = async (searchQuery = search, catSlug = selectedCategory) => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const params = new URLSearchParams();
+      if (searchQuery) params.append("search", searchQuery);
+      if (catSlug) params.append("category", catSlug);
+      
+      const res = await fetch(`${apiUrl}/api/games?${params.toString()}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) setGames(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch games", error);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/categories`);
+      if (res.ok) {
+        const data = await res.json();
+        setCategories(data);
+      }
+    } catch (error) {
+      console.error("Failed to load categories", error);
+    }
+  };
+
+  const fetchBookmarks = async () => {
+    const token = Cookies.get("token");
+    if (!token) return;
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/games/user/bookmarked`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const bSet = new Set<string>();
+        data.forEach((g: any) => bSet.add(g.id));
+        setBookmarkedGames(bSet);
+      }
+    } catch (error) {
+      console.error("Failed to fetch bookmarks", error);
+    }
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchGames(search, selectedCategory);
+  };
+
+  const handleCategorySelect = (slug: string) => {
+    const newCat = slug === selectedCategory ? "" : slug;
+    setSelectedCategory(newCat);
+    fetchGames(search, newCat);
+  };
+
+  const toggleBookmark = async (e: React.MouseEvent, gameId: string) => {
+    e.preventDefault(); // Prevent navigating to game
+    const token = Cookies.get("token");
+    if (!token) {
+      alert("Please login to bookmark games");
+      return;
+    }
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/games/${gameId}/bookmark`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        const newBookmarks = new Set(bookmarkedGames);
+        if (data.bookmarked) {
+          newBookmarks.add(gameId);
+        } else {
+          newBookmarks.delete(gameId);
+        }
+        setBookmarkedGames(newBookmarks);
+      }
+    } catch (error) {
+      console.error("Failed to toggle bookmark", error);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -42,11 +133,44 @@ export default function Home() {
 
       {/* Featured Games Grid */}
       <section>
-        <div className="flex items-center gap-3 mb-8">
-          <div className="p-3 bg-blue-600/20 rounded-xl">
-            <Gamepad2 className="w-8 h-8 text-blue-500" />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-blue-600/20 rounded-xl">
+              <Gamepad2 className="w-8 h-8 text-blue-500" />
+            </div>
+            <h1 className="text-3xl font-bold">{t("home.title")}</h1>
           </div>
-          <h1 className="text-3xl font-bold">{t("home.title")}</h1>
+
+          <form onSubmit={handleSearch} className="flex-1 max-w-md relative">
+            <input
+              type="text"
+              placeholder="Search games..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-zinc-900/50 border border-zinc-800 focus:border-blue-500 rounded-xl pl-12 pr-4 py-3 text-white outline-none"
+            />
+            <Search className="w-5 h-5 text-zinc-500 absolute left-4 top-1/2 -translate-y-1/2" />
+            <button type="submit" className="hidden">Search</button>
+          </form>
+        </div>
+
+        {/* Categories Filter */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          <button 
+            onClick={() => handleCategorySelect("")}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${selectedCategory === "" ? 'bg-blue-600 text-white border-blue-500' : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'}`}
+          >
+            All Games
+          </button>
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => handleCategorySelect(cat.slug)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${selectedCategory === cat.slug ? 'bg-blue-600 text-white border-blue-500' : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'}`}
+            >
+              {cat.name}
+            </button>
+          ))}
         </div>
         
         {games.length === 0 ? (
@@ -58,7 +182,7 @@ export default function Home() {
             {games.map((game: any) => (
               <div key={game.id} className="group flex flex-col bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden hover:border-zinc-700 hover:bg-zinc-800/50 transition-all duration-300 transform hover:-translate-y-1">
                 {/* Game Cover Placeholder / Image */}
-                <div className="aspect-video bg-zinc-800 relative overflow-hidden flex items-center justify-center">
+                <Link href={`/game/play?id=${game.id}`} className="aspect-video bg-zinc-800 relative overflow-hidden flex items-center justify-center block cursor-pointer group-hover:opacity-90">
                   {game.coverImageUrl ? (
                     <img src={game.coverImageUrl} alt={game.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
@@ -66,10 +190,22 @@ export default function Home() {
                       <Gamepad2 className="w-12 h-12 text-zinc-600" />
                     </div>
                   )}
-                </div>
+                  {/* Bookmark Button */}
+                  <button 
+                    onClick={(e) => toggleBookmark(e, game.id)}
+                    className="absolute top-3 right-3 p-2 rounded-full bg-black/50 backdrop-blur-md hover:bg-black/70 transition-colors group/btn z-10"
+                  >
+                    <Heart className={`w-5 h-5 transition-colors ${bookmarkedGames.has(game.id) ? 'fill-red-500 text-red-500' : 'text-white group-hover/btn:text-red-400'}`} />
+                  </button>
+                </Link>
                 
-                <div className="p-5">
-                  <h2 className="text-xl font-bold mb-2 group-hover:text-blue-400 transition-colors">{game.title}</h2>
+                <div className="p-5 flex-1 flex flex-col">
+                  <Link href={`/game/play?id=${game.id}`}>
+                    <h2 className="text-xl font-bold mb-1 group-hover:text-blue-400 transition-colors">{game.title}</h2>
+                  </Link>
+                  <p className="text-xs text-zinc-400 mb-3 flex items-center gap-1">
+                    By <span className="font-semibold">{game.uploader?.username || "Admin"}</span>
+                  </p>
                   <p className="text-zinc-500 text-sm mb-6 line-clamp-2 dark:text-zinc-400">{game.description}</p>
                   
                   <Link 
