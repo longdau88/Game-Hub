@@ -115,7 +115,7 @@ export default function ProfilePage() {
       const data = await res.json();
       if (res.ok) {
         setMessage({ text: t("profile.success"), isError: false });
-        alert(t("profile.success")); // Add explicit alert to ensure user knows
+        alert(t("profile.success")); 
         setProfile({ ...profile, username, avatarUrl: finalAvatarUrl });
       } else {
         setMessage({ text: data.error || "Failed to update profile", isError: true });
@@ -166,12 +166,8 @@ export default function ProfilePage() {
     }
   };
 
-  if (loading) {
-    return <div className="flex justify-center py-20 text-zinc-400">Loading profile...</div>;
-  }
-
   return (
-    <div className="container mx-auto px-4 py-12 max-w-5xl">
+    <div className="container mx-auto px-4 py-12 max-w-5xl transition-opacity duration-300">
       <div className="flex items-center gap-4 mb-8">
         <div className="p-4 bg-blue-600/20 rounded-2xl">
           <User className="w-8 h-8 text-blue-500" />
@@ -199,22 +195,29 @@ export default function ProfilePage() {
             <form onSubmit={handleSave} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-zinc-400 mb-2">{t("profile.email")}</label>
-                <input 
-                  type="email" 
-                  value={profile?.email} 
-                  disabled
-                  className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-zinc-500 cursor-not-allowed" 
-                />
+                <div className="relative">
+                  <input 
+                    type="email" 
+                    value={profile?.email || ""} 
+                    disabled
+                    className="w-full bg-zinc-800/50 border border-zinc-700 rounded-lg px-4 py-3 text-zinc-500 cursor-not-allowed" 
+                  />
+                  {loading && <div className="absolute inset-0 bg-zinc-800/80 animate-pulse rounded-lg"></div>}
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-zinc-300 mb-2">{t("profile.displayName")}</label>
-                <input 
-                  type="text" 
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors" 
-                />
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    disabled={loading}
+                    className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors" 
+                  />
+                  {loading && <div className="absolute inset-0 bg-zinc-800/80 animate-pulse rounded-lg"></div>}
+                </div>
               </div>
 
               <div>
@@ -347,7 +350,11 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <p className="text-zinc-400 text-sm">{t("profile.uploadedGames")}</p>
-                  <p className="text-2xl font-bold">{profile?.stats?.uploadedGames || 0}</p>
+                  {loading ? (
+                    <div className="h-8 w-16 bg-zinc-800/80 animate-pulse rounded mt-1"></div>
+                  ) : (
+                    <p className="text-2xl font-bold">{profile?.stats?.uploadedGames || 0}</p>
+                  )}
                 </div>
               </div>
 
@@ -357,7 +364,11 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <p className="text-zinc-400 text-sm">{t("profile.totalPlays")}</p>
-                  <p className="text-2xl font-bold">{profile?.stats?.totalPlays || 0}</p>
+                  {loading ? (
+                    <div className="h-8 w-16 bg-zinc-800/80 animate-pulse rounded mt-1"></div>
+                  ) : (
+                    <p className="text-2xl font-bold">{profile?.stats?.totalPlays || 0}</p>
+                  )}
                 </div>
               </div>
             </div>
