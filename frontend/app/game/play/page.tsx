@@ -6,10 +6,10 @@ import { useSearchParams } from "next/navigation";
 import { ArrowLeft, Maximize2, Share2, Eye, Loader2 } from "lucide-react";
 import GameComments from "../../../components/GameComments";
 import GameRating from "../../../components/GameRating";
-import { useTranslation } from "react-i18next";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 function GamePlayerContent() {
-  const { t } = useTranslation();
+  const { t } = useLanguage();
   const searchParams = useSearchParams();
   const gameId = searchParams.get("id");
   

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { Star } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function GameRating({ gameId, averageRating = 0, totalRatings = 0 }: { gameId: string, averageRating?: number, totalRatings?: number }) {
-  const { t } = useTranslation();
+  const { t } = useLanguage();
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number>(0);
   const [loading, setLoading] = useState(false);

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { MessageSquare, Trash2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function GameComments({ gameId }: { gameId: string }) {
-  const { t } = useTranslation();
+  const { t } = useLanguage();
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
