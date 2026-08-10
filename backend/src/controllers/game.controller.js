@@ -27,7 +27,7 @@ const getAllFiles = (dirPath, arrayOfFiles) => {
 
 exports.uploadGame = async (req, res) => {
   try {
-    const { title, description, categoryIds } = req.body;
+    const { title, description, categoryIds, controls } = req.body;
     const file = req.file;
 
     if (!file) {
@@ -81,6 +81,16 @@ exports.uploadGame = async (req, res) => {
       categoryConnect = ids.map(id => ({ id: parseInt(id) }));
     }
     
+    // Process controls
+    let parsedControls = null;
+    if (controls) {
+      try {
+        parsedControls = JSON.parse(controls);
+      } catch (e) {
+        console.error('Failed to parse controls JSON:', e);
+      }
+    }
+    
     const newGame = await prisma.game.create({
       data: {
         id: gameId,
@@ -90,6 +100,7 @@ exports.uploadGame = async (req, res) => {
         status: 'pending', // pending approval
         sizeBytes: file.size,
         uploaderId: req.user.userId,
+        controls: parsedControls,
         ...(categoryConnect.length > 0 && {
           categories: {
             connect: categoryConnect

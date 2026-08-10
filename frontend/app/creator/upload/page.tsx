@@ -15,6 +15,11 @@ export default function UploadGamePage() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [file, setFile] = useState<File | null>(null);
   
+  const [controls, setControls] = useState<{ action: string; key: string }[]>([
+    { action: "Movement", key: "W A S D" },
+    { action: "Action", key: "Space" }
+  ]);
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -49,6 +54,7 @@ export default function UploadGamePage() {
     formData.append("title", title);
     formData.append("description", description);
     formData.append("categoryIds", selectedCategory);
+    formData.append("controls", JSON.stringify(controls));
     formData.append("gameFile", file);
 
     const token = Cookies.get("token");
@@ -128,6 +134,62 @@ export default function UploadGamePage() {
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-zinc-300">{t("upload.controls")}</label>
+              <button 
+                type="button" 
+                onClick={() => setControls([...controls, { action: "", key: "" }])}
+                className="text-xs text-blue-400 hover:text-blue-300 bg-blue-500/10 px-2 py-1 rounded"
+              >
+                + {t("upload.addControl")}
+              </button>
+            </div>
+            <div className="space-y-3">
+              {controls.map((control, index) => (
+                <div key={index} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={control.action}
+                    onChange={(e) => {
+                      const newControls = [...controls];
+                      newControls[index].action = e.target.value;
+                      setControls(newControls);
+                    }}
+                    placeholder={t("upload.controlAction")}
+                    className="flex-1 bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-sm text-white"
+                  />
+                  <input
+                    type="text"
+                    value={control.key}
+                    onChange={(e) => {
+                      const newControls = [...controls];
+                      newControls[index].key = e.target.value;
+                      setControls(newControls);
+                    }}
+                    placeholder={t("upload.controlKey")}
+                    className="flex-1 bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-sm text-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newControls = controls.filter((_, i) => i !== index);
+                      setControls(newControls);
+                    }}
+                    className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+              {controls.length === 0 && (
+                <p className="text-sm text-zinc-500 italic">{t("upload.noControls")}</p>
+              )}
+            </div>
           </div>
 
           <div>

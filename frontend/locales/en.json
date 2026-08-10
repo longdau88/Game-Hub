@@ -111,6 +111,11 @@
   "upload.errorNoFile": "Please select a .zip file containing your game.",
   "upload.errorUploadFailed": "Upload failed",
   "upload.errorNetwork": "Network error occurred during upload.",
+  "upload.controls": "Controls (Optional)",
+  "upload.addControl": "Add Control",
+  "upload.controlAction": "Action (e.g. Movement)",
+  "upload.controlKey": "Key (e.g. W A S D)",
+  "upload.noControls": "No controls provided.",
 
   "admin.title": "Admin Panel",
   "admin.tabDashboard": "Dashboard",

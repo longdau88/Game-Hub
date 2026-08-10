@@ -111,6 +111,11 @@
   "upload.errorNoFile": "Vui lòng chọn một tệp .zip chứa game của bạn.",
   "upload.errorUploadFailed": "Tải lên thất bại",
   "upload.errorNetwork": "Đã xảy ra lỗi mạng trong quá trình tải lên.",
+  "upload.controls": "Nút điều khiển (Tuỳ chọn)",
+  "upload.addControl": "Thêm nút",
+  "upload.controlAction": "Hành động (VD: Di chuyển)",
+  "upload.controlKey": "Phím (VD: W A S D)",
+  "upload.noControls": "Không có hướng dẫn điều khiển.",
 
   "admin.title": "Bảng Điều Khiển Admin",
   "admin.tabDashboard": "Tổng Quan",

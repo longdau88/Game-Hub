@@ -163,14 +163,25 @@ function GamePlayerContent() {
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6">
             <h3 className="font-medium text-lg mb-4 text-white">{t("game.controls")}</h3>
             <div className="space-y-3 text-sm text-zinc-400">
-              <div className="flex justify-between items-center pb-2 border-b border-zinc-800/50">
-                <span>{t("game.movement")}</span>
-                <span className="font-mono bg-zinc-800 px-2 py-1 rounded text-zinc-300">W A S D</span>
-              </div>
-              <div className="flex justify-between items-center pb-2 border-b border-zinc-800/50">
-                <span>{t("game.action")}</span>
-                <span className="font-mono bg-zinc-800 px-2 py-1 rounded text-zinc-300">Space</span>
-              </div>
+              {game.controls && game.controls.length > 0 ? (
+                game.controls.map((control: any, index: number) => (
+                  <div key={index} className="flex justify-between items-center pb-2 border-b border-zinc-800/50">
+                    <span>{control.action}</span>
+                    <span className="font-mono bg-zinc-800 px-2 py-1 rounded text-zinc-300">{control.key}</span>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="flex justify-between items-center pb-2 border-b border-zinc-800/50">
+                    <span>{t("game.movement")}</span>
+                    <span className="font-mono bg-zinc-800 px-2 py-1 rounded text-zinc-300">W A S D</span>
+                  </div>
+                  <div className="flex justify-between items-center pb-2 border-b border-zinc-800/50">
+                    <span>{t("game.action")}</span>
+                    <span className="font-mono bg-zinc-800 px-2 py-1 rounded text-zinc-300">Space</span>
+                  </div>
+                </>
+              )}
             </div>
             <p className="text-xs text-zinc-500 mt-4 italic">{t("game.controlsVary")}</p>
           </div>
