@@ -465,6 +465,12 @@ export default function ProfilePage() {
                   <h3 className="font-semibold text-lg mb-1 truncate">{game.title}</h3>
                   <p className="text-sm text-zinc-400 mb-4 truncate">{game.description || "Không có mô tả"}</p>
                   
+                  {game.status === 'rejected' && game.rejectReason && (
+                    <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                      <span className="font-semibold">Lý do từ chối:</span> {game.rejectReason}
+                    </div>
+                  )}
+                  
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => router.push(`/profile/edit-game/${game.id}`)}
