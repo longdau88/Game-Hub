@@ -18,7 +18,8 @@ function GamePlayerContent() {
       return;
     }
     
-    fetch(`http://localhost:4000/api/games/${gameId}`)
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    fetch(`${apiUrl}/api/games/${gameId}`)
       .then(res => res.json())
       .then(data => {
         if (!data.error) setGame(data);

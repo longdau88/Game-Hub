@@ -8,7 +8,8 @@ export default function Home() {
   const [games, setGames] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:4000/api/games')
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    fetch(`${apiUrl}/api/games`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setGames(data);

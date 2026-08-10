@@ -17,7 +17,8 @@ export default function AdminPage() {
     setLoading(true);
     try {
       const token = Cookies.get("token");
-      const res = await fetch('http://localhost:4000/api/games/admin/pending', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/games/admin/pending`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -36,7 +37,8 @@ export default function AdminPage() {
   const approveGame = async (id: string) => {
     try {
       const token = Cookies.get("token");
-      const res = await fetch(`http://localhost:4000/api/games/admin/${id}/approve`, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/games/admin/${id}/approve`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`

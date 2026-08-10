@@ -21,7 +21,8 @@ function VerifyEmailContent() {
 
     const verifyToken = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/api/auth/verify?token=${token}`);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+        const res = await fetch(`${apiUrl}/api/auth/verify?token=${token}`);
         const data = await res.json();
         if (res.ok) {
           setStatus("success");
