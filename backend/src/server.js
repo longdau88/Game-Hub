@@ -15,6 +15,11 @@ const rateLimit = require('express-rate-limit');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// Fix Prisma BigInt serialization
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
+
 // Enable CORS for all routes (important for Next.js communicating with Express)
 app.use(cors());
 

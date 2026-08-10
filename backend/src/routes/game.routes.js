@@ -7,8 +7,11 @@ const cacheMiddleware = require('../middleware/cache.middleware');
 
 const router = express.Router();
 
+const os = require('os');
+const path = require('path');
+
 // Multer config for temporary storage
-const upload = multer({ dest: '/tmp/uploads/' }); // In production, consider memory storage or OS temp dir
+const upload = multer({ dest: os.tmpdir() });
 
 // Public game routes
 router.get('/', cacheMiddleware(60), getPublishedGames);
