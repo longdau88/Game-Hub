@@ -146,7 +146,7 @@ exports.rejectGame = async (req, res) => {
       // Remove folder path so we don't try to delete again
       await prisma.game.update({
         where: { id },
-        data: { r2FolderPath: null, sizeBytes: null }
+        data: { r2FolderPath: "", sizeBytes: null }
       });
     }
     
@@ -163,7 +163,7 @@ exports.deleteGame = async (req, res) => {
     const game = await prisma.game.findUnique({ where: { id } });
     if (!game) return res.status(404).json({ error: 'Game not found' });
     
-    if (game.r2FolderPath) {
+    if (game.r2FolderPath && game.r2FolderPath !== "") {
       await deleteR2Folder(game.r2FolderPath);
     }
     
