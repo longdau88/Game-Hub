@@ -4,7 +4,7 @@ const prisma = require('../config/db');
 exports.getMe = async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
-      where: { id: req.user.id },
+      where: { id: req.user.userId },
       select: {
         id: true,
         username: true,
@@ -56,7 +56,7 @@ exports.updateMe = async (req, res) => {
       const existingUser = await prisma.user.findFirst({
         where: { 
           username,
-          id: { not: req.user.id }
+          id: { not: req.user.userId }
         }
       });
       if (existingUser) {
@@ -70,7 +70,7 @@ exports.updateMe = async (req, res) => {
     }
 
     const updatedUser = await prisma.user.update({
-      where: { id: req.user.id },
+      where: { id: req.user.userId },
       data: updateData,
       select: {
         id: true,

@@ -89,7 +89,7 @@ exports.uploadGame = async (req, res) => {
         r2FolderPath: `games/${gameId}/`,
         status: 'pending', // pending approval
         sizeBytes: file.size,
-        uploaderId: req.user.id, // Fixed from req.user.userId
+        uploaderId: req.user.userId,
         ...(categoryConnect.length > 0 && {
           categories: {
             connect: categoryConnect
@@ -170,7 +170,7 @@ exports.incrementPlayCount = async (req, res) => {
 exports.getMyGames = async (req, res) => {
   try {
     const games = await prisma.game.findMany({
-      where: { uploaderId: req.user.id },
+      where: { uploaderId: req.user.userId },
       orderBy: { createdAt: 'desc' },
       include: {
         categories: true
@@ -185,7 +185,7 @@ exports.getMyGames = async (req, res) => {
 exports.toggleBookmark = async (req, res) => {
   try {
     const { id } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const existingBookmark = await prisma.userLibrary.findUnique({
       where: {
@@ -220,7 +220,7 @@ exports.toggleBookmark = async (req, res) => {
 exports.getBookmarkedGames = async (req, res) => {
   try {
     const library = await prisma.userLibrary.findMany({
-      where: { userId: req.user.id },
+      where: { userId: req.user.userId },
       include: {
         game: {
           include: {

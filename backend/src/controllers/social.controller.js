@@ -18,13 +18,13 @@ exports.rateGame = async (req, res) => {
     const rating = await prisma.rating.upsert({
       where: {
         userId_gameId: {
-          userId: req.user.id,
+          userId: req.user.userId,
           gameId
         }
       },
       update: { score, addedAt: new Date() },
       create: {
-        userId: req.user.id,
+        userId: req.user.userId,
         gameId,
         score
       }
@@ -54,7 +54,7 @@ exports.addComment = async (req, res) => {
 
     const comment = await prisma.comment.create({
       data: {
-        userId: req.user.id,
+        userId: req.user.userId,
         gameId,
         content: content.trim()
       },
@@ -102,7 +102,7 @@ exports.getUserRating = async (req, res) => {
     const rating = await prisma.rating.findUnique({
       where: {
         userId_gameId: {
-          userId: req.user.id,
+          userId: req.user.userId,
           gameId
         }
       }
