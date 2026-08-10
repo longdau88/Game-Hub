@@ -122,7 +122,10 @@ export default function Home() {
             {t("home.heroDesc")}
           </p>
           <div className="flex gap-4">
-            <button className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors shadow-[0_0_20px_rgba(37,99,235,0.3)]">
+            <button 
+              onClick={() => document.getElementById('store-section')?.scrollIntoView({ behavior: 'smooth' })}
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors shadow-[0_0_20px_rgba(37,99,235,0.3)]"
+            >
               {t("home.browseStore")}
             </button>
           </div>
@@ -132,7 +135,7 @@ export default function Home() {
       </section>
 
       {/* Featured Games Grid */}
-      <section>
+      <section id="store-section">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div className="flex items-center gap-3">
             <div className="p-3 bg-blue-600/20 rounded-xl">
