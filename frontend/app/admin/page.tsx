@@ -33,7 +33,15 @@ export default function AdminPage() {
   }, [activeTab]);
 
   const fetchData = async () => {
-    setLoading(true);
+    if (
+      (activeTab === "dashboard" && !stats) ||
+      (activeTab === "games" && pendingGames.length === 0 && publishedGames.length === 0) ||
+      (activeTab === "users" && users.length === 0) ||
+      (activeTab === "categories" && categories.length === 0)
+    ) {
+      setLoading(true);
+    }
+    
     try {
       const headers = { 'Authorization': `Bearer ${token}` };
       
@@ -186,7 +194,12 @@ export default function AdminPage() {
   };
 
   const renderTabContent = () => {
-    if (loading) return <div className="text-center py-12 text-zinc-500">Loading...</div>;
+    if (loading && (
+      (activeTab === "dashboard" && !stats) ||
+      (activeTab === "games" && pendingGames.length === 0 && publishedGames.length === 0) ||
+      (activeTab === "users" && users.length === 0) ||
+      (activeTab === "categories" && categories.length === 0)
+    )) return <div className="text-center py-12 text-zinc-500">Loading...</div>;
 
     switch (activeTab) {
       case "dashboard":
