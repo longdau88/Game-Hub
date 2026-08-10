@@ -46,6 +46,10 @@ model Game {
   ratings        Rating[]
   comments       Comment[]
 
+  @@index([status])
+  @@index([playCount])
+  @@index([uploaderId])
+  @@index([createdAt])
   @@map("games")
 }
 

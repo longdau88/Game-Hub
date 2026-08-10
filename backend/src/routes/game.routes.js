@@ -3,6 +3,7 @@ const multer = require('multer');
 const gameController = require('../controllers/game.controller');
 const { uploadGame, getPublishedGames, getGameDetails, getMyGames } = gameController;
 const { requireAuth } = require('../middleware/auth.middleware');
+const cacheMiddleware = require('../middleware/cache.middleware');
 
 const router = express.Router();
 
@@ -10,8 +11,8 @@ const router = express.Router();
 const upload = multer({ dest: '/tmp/uploads/' }); // In production, consider memory storage or OS temp dir
 
 // Public game routes
-router.get('/', getPublishedGames);
-router.get('/:id', getGameDetails);
+router.get('/', cacheMiddleware(60), getPublishedGames);
+router.get('/:id', cacheMiddleware(30), getGameDetails);
 router.post('/:id/play', gameController.incrementPlayCount); // Called when iframe loads
 
 // Protected routes
