@@ -12,6 +12,13 @@ export default function GameComments({ gameId }: { gameId: string }) {
 
   useEffect(() => {
     fetchComments();
+    
+    // Poll for new comments every 5 seconds
+    const intervalId = setInterval(() => {
+      fetchComments();
+    }, 5000);
+    
+    return () => clearInterval(intervalId);
   }, [gameId]);
 
   const fetchComments = async () => {

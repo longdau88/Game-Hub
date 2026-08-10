@@ -104,5 +104,6 @@ model Comment {
   user      User     @relation(fields: [userId], references: [id])
   game      Game     @relation(fields: [gameId], references: [id])
 
+  @@index([gameId, createdAt])
   @@map("comments")
 }
