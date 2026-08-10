@@ -44,5 +44,25 @@
   "error.needOtp": "Vui lòng yêu cầu mã xác thực trước.",
   "error.invalidOtp": "Mã xác thực không hợp lệ.",
   "error.expiredOtp": "Mã xác thực đã hết hạn. Vui lòng yêu cầu mã mới.",
-  "error.default": "Đã có lỗi xảy ra. Vui lòng thử lại."
+  "error.default": "Đã có lỗi xảy ra. Vui lòng thử lại.",
+
+  "nav.profile": "Hồ Sơ",
+
+  "profile.title": "Hồ Sơ Của Tôi",
+  "profile.subtitle": "Quản lý tài khoản và xem thống kê",
+  "profile.generalSettings": "Cài Đặt Chung",
+  "profile.email": "Địa chỉ Email",
+  "profile.displayName": "Tên hiển thị",
+  "profile.avatarUrl": "URL Avatar hoặc Tải Lên",
+  "profile.chooseFile": "Chọn Tệp",
+  "profile.maxSize": "Dung lượng tối đa: 32MB",
+  "profile.pasteLink": "Dán liên kết hình ảnh để dùng làm avatar.",
+  "profile.saveChanges": "Lưu Thay Đổi",
+  "profile.saving": "Đang lưu...",
+  "profile.uploading": "Đang tải ảnh...",
+  "profile.success": "Cập nhật hồ sơ thành công!",
+  "profile.stats": "Thống Kê",
+  "profile.uploadedGames": "Game Đã Tải Lên",
+  "profile.totalPlays": "Tổng Lượt Chơi",
+  "profile.goCreatorHub": "Vào Creator Hub"
 }

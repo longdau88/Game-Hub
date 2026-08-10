@@ -44,5 +44,25 @@
   "error.needOtp": "Please request a verification code first.",
   "error.invalidOtp": "Invalid verification code.",
   "error.expiredOtp": "Verification code has expired. Please request a new one.",
-  "error.default": "An unexpected error occurred. Please try again."
+  "error.default": "An unexpected error occurred. Please try again.",
+
+  "nav.profile": "Profile",
+
+  "profile.title": "My Profile",
+  "profile.subtitle": "Manage your account and view stats",
+  "profile.generalSettings": "General Settings",
+  "profile.email": "Email Address",
+  "profile.displayName": "Display Name",
+  "profile.avatarUrl": "Avatar URL or Upload",
+  "profile.chooseFile": "Choose File",
+  "profile.maxSize": "Max size: 32MB",
+  "profile.pasteLink": "Paste a link to an image to use as your avatar.",
+  "profile.saveChanges": "Save Changes",
+  "profile.saving": "Saving...",
+  "profile.uploading": "Uploading Avatar...",
+  "profile.success": "Profile updated successfully!",
+  "profile.stats": "Your Stats",
+  "profile.uploadedGames": "Uploaded Games",
+  "profile.totalPlays": "Total Plays",
+  "profile.goCreatorHub": "Go to Creator Hub"
 }

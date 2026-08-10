@@ -57,7 +57,7 @@ export default function ClientNavbar() {
             className="flex items-center gap-2 px-4 py-2 rounded-md bg-zinc-800 dark:bg-zinc-800 hover:bg-zinc-700 text-white text-sm font-medium transition-colors"
           >
             <User className="w-4 h-4" />
-            Profile
+            {t("nav.profile")}
           </Link>
           <a
             href="#"

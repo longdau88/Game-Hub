@@ -108,7 +108,8 @@ export default function ProfilePage() {
       
       const data = await res.json();
       if (res.ok) {
-        setMessage({ text: "Profile updated successfully!", isError: false });
+        setMessage({ text: t("profile.success"), isError: false });
+        alert(t("profile.success")); // Add explicit alert to ensure user knows
         setProfile({ ...profile, username, avatarUrl: finalAvatarUrl });
       } else {
         setMessage({ text: data.error || "Failed to update profile", isError: true });
@@ -131,8 +132,8 @@ export default function ProfilePage() {
           <User className="w-8 h-8 text-blue-500" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold">My Profile</h1>
-          <p className="text-zinc-400">Manage your account and view stats</p>
+          <h1 className="text-3xl font-bold">{t("profile.title")}</h1>
+          <p className="text-zinc-400">{t("profile.subtitle")}</p>
         </div>
       </div>
 
@@ -141,7 +142,7 @@ export default function ProfilePage() {
           {/* Profile Settings */}
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 md:p-8">
             <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-              <Settings className="w-5 h-5 text-blue-400" /> General Settings
+              <Settings className="w-5 h-5 text-blue-400" /> {t("profile.generalSettings")}
             </h2>
             
             {message.text && (
@@ -152,7 +153,7 @@ export default function ProfilePage() {
 
             <form onSubmit={handleSave} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-zinc-400 mb-2">Email Address</label>
+                <label className="block text-sm font-medium text-zinc-400 mb-2">{t("profile.email")}</label>
                 <input 
                   type="email" 
                   value={profile?.email} 
@@ -162,7 +163,7 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">Display Name</label>
+                <label className="block text-sm font-medium text-zinc-300 mb-2">{t("profile.displayName")}</label>
                 <input 
                   type="text" 
                   value={username}
@@ -172,7 +173,7 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-2">Avatar URL or Upload</label>
+                <label className="block text-sm font-medium text-zinc-300 mb-2">{t("profile.avatarUrl")}</label>
                 <div className="flex gap-4 items-start">
                   <div className="w-16 h-16 rounded-full bg-zinc-800 flex-shrink-0 border border-zinc-700 overflow-hidden">
                     {selectedImage ? (
@@ -196,7 +197,7 @@ export default function ProfilePage() {
                     />
                     <div className="mt-3">
                       <label className="cursor-pointer bg-zinc-800 hover:bg-zinc-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-block">
-                        Choose File
+                        {t("profile.chooseFile")}
                         <input 
                           type="file" 
                           accept="image/*"
@@ -209,10 +210,11 @@ export default function ProfilePage() {
                           }}
                         />
                       </label>
-                      <span className="text-xs text-zinc-500 ml-3">Max size: 32MB</span>
+                      <span className="text-xs text-zinc-500 ml-3">{t("profile.maxSize")}</span>
                     </div>
                   </div>
                 </div>
+                <p className="text-xs text-zinc-500 mt-2">{t("profile.pasteLink")}</p>
               </div>
 
               <div className="pt-4">
@@ -222,7 +224,7 @@ export default function ProfilePage() {
                   className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
                 >
                   <Save className="w-4 h-4" />
-                  {uploadingAvatar ? "Uploading Avatar..." : saving ? "Saving..." : "Save Changes"}
+                  {uploadingAvatar ? t("profile.uploading") : saving ? t("profile.saving") : t("profile.saveChanges")}
                 </button>
               </div>
             </form>
@@ -232,7 +234,7 @@ export default function ProfilePage() {
         <div>
           {/* Stats Widget */}
           <div className="bg-gradient-to-b from-blue-900/20 to-zinc-900/50 border border-blue-900/30 rounded-2xl p-6 relative overflow-hidden">
-            <h2 className="text-lg font-semibold mb-6">Your Stats</h2>
+            <h2 className="text-lg font-semibold mb-6">{t("profile.stats")}</h2>
             
             <div className="space-y-6">
               <div className="flex items-center gap-4">
@@ -240,7 +242,7 @@ export default function ProfilePage() {
                   <Gamepad2 className="w-6 h-6 text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-zinc-400 text-sm">Uploaded Games</p>
+                  <p className="text-zinc-400 text-sm">{t("profile.uploadedGames")}</p>
                   <p className="text-2xl font-bold">{profile?.stats?.uploadedGames || 0}</p>
                 </div>
               </div>
@@ -250,7 +252,7 @@ export default function ProfilePage() {
                   <Play className="w-6 h-6 text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-zinc-400 text-sm">Total Plays</p>
+                  <p className="text-zinc-400 text-sm">{t("profile.totalPlays")}</p>
                   <p className="text-2xl font-bold">{profile?.stats?.totalPlays || 0}</p>
                 </div>
               </div>
@@ -261,7 +263,7 @@ export default function ProfilePage() {
                 onClick={() => router.push('/creator')}
                 className="w-full text-center py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg font-medium transition-colors"
               >
-                Go to Creator Hub
+                {t("profile.goCreatorHub")}
               </button>
             </div>
           </div>
