@@ -116,6 +116,8 @@
   "upload.controlAction": "Hành động (VD: Di chuyển)",
   "upload.controlKey": "Phím (VD: W A S D)",
   "upload.noControls": "Không có hướng dẫn điều khiển.",
+  "upload.coverImage": "Ảnh bìa (Tuỳ chọn)",
+  "upload.coverImageHint": "Nhấp hoặc kéo thả ảnh vào đây",
 
   "admin.title": "Bảng Điều Khiển Admin",
   "admin.tabDashboard": "Tổng Quan",

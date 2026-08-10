@@ -116,6 +116,8 @@
   "upload.controlAction": "Action (e.g. Movement)",
   "upload.controlKey": "Key (e.g. W A S D)",
   "upload.noControls": "No controls provided.",
+  "upload.coverImage": "Cover Image (Optional)",
+  "upload.coverImageHint": "Click or drag and drop an image here",
 
   "admin.title": "Admin Panel",
   "admin.tabDashboard": "Dashboard",

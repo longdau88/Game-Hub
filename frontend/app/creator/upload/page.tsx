@@ -14,6 +14,7 @@ export default function UploadGamePage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [coverImage, setCoverImage] = useState<File | null>(null);
   
   const [controls, setControls] = useState<{ action: string; key: string }[]>([
     { action: "Movement", key: "W A S D" },
@@ -56,6 +57,9 @@ export default function UploadGamePage() {
     formData.append("categoryIds", selectedCategory);
     formData.append("controls", JSON.stringify(controls));
     formData.append("gameFile", file);
+    if (coverImage) {
+      formData.append("coverImage", coverImage);
+    }
 
     const token = Cookies.get("token");
     if (!token) {
@@ -188,6 +192,27 @@ export default function UploadGamePage() {
               ))}
               {controls.length === 0 && (
                 <p className="text-sm text-zinc-500 italic">{t("upload.noControls")}</p>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.coverImage")}</label>
+            <div className="border-2 border-dashed border-zinc-700 rounded-xl p-8 text-center hover:bg-zinc-800/30 transition-colors relative">
+              <input 
+                type="file" 
+                accept="image/*"
+                onChange={(e) => setCoverImage(e.target.files?.[0] || null)}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
+              <FileType2 className="w-12 h-12 text-zinc-500 mx-auto mb-4" />
+              <p className="text-zinc-300 font-medium mb-1">
+                {coverImage ? coverImage.name : t("upload.coverImageHint")}
+              </p>
+              {coverImage && (
+                <div className="mt-4 flex justify-center">
+                  <img src={URL.createObjectURL(coverImage)} alt="Cover preview" className="h-32 object-contain rounded-lg border border-zinc-700" />
+                </div>
               )}
             </div>
           </div>

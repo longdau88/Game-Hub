@@ -187,7 +187,12 @@ export default function Home() {
                 {/* Game Cover Placeholder / Image */}
                 <Link href={`/game/play?id=${game.id}`} className="aspect-video bg-zinc-800 relative overflow-hidden flex items-center justify-center block cursor-pointer group-hover:opacity-90">
                   {game.coverImageUrl ? (
-                    <img src={game.coverImageUrl} alt={game.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="w-full h-full relative group-hover:scale-105 transition-transform duration-500">
+                      <img src={game.coverImageUrl} alt={game.title} className="absolute inset-0 w-full h-full object-cover opacity-60" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                        <Gamepad2 className="w-12 h-12 text-zinc-400 opacity-50 drop-shadow-md" />
+                      </div>
+                    </div>
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-zinc-800 to-zinc-700 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                       <Gamepad2 className="w-12 h-12 text-zinc-600" />

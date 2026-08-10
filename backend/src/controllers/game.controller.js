@@ -28,7 +28,8 @@ const getAllFiles = (dirPath, arrayOfFiles) => {
 exports.uploadGame = async (req, res) => {
   try {
     const { title, description, categoryIds, controls } = req.body;
-    const file = req.file;
+    const file = req.files && req.files['gameFile'] ? req.files['gameFile'][0] : null;
+    const coverFile = req.files && req.files['coverImage'] ? req.files['coverImage'][0] : null;
 
     if (!file) {
       return res.status(400).json({ error: 'No game file uploaded' });
@@ -70,6 +71,30 @@ exports.uploadGame = async (req, res) => {
 
       await r2Client.send(new PutObjectCommand(uploadParams));
     }
+    
+    // Process cover image if exists
+    let coverImageUrl = null;
+    if (coverFile) {
+      const coverExt = path.extname(coverFile.originalname);
+      const coverKey = `games/${gameId}/cover${coverExt}`;
+      const coverStream = fs.createReadStream(coverFile.path);
+      const coverMimeType = mime.lookup(coverFile.path) || 'image/png';
+      
+      const uploadParams = {
+        Bucket: bucketName,
+        Key: coverKey,
+        Body: coverStream,
+        ContentType: coverMimeType,
+      };
+      
+      await r2Client.send(new PutObjectCommand(uploadParams));
+      coverImageUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/games/${gameId}/cover${coverExt}`; // Note: Actually R2 bucket is public at https://pub-b1e657359c3c4d48abdb8cb037d3ec97.r2.dev, but we don't have it in backend env. 
+      // Wait, frontend uses NEXT_PUBLIC_R2_URL. Let's construct it using R2_BUCKET_NAME but without full domain?
+      // No, we can just save the relative path or hardcode the R2 pub URL for now, or use a env var. 
+      // Let's hardcode the R2 pub URL or reconstruct it since it's known: https://pub-b1e657359c3c4d48abdb8cb037d3ec97.r2.dev
+      coverImageUrl = `https://pub-b1e657359c3c4d48abdb8cb037d3ec97.r2.dev/${coverKey}`;
+      fs.unlinkSync(coverFile.path);
+    }
 
     // Save to Database
     
@@ -101,6 +126,7 @@ exports.uploadGame = async (req, res) => {
         sizeBytes: file.size,
         uploaderId: req.user.userId,
         controls: parsedControls,
+        coverImageUrl: coverImageUrl,
         ...(categoryConnect.length > 0 && {
           categories: {
             connect: categoryConnect

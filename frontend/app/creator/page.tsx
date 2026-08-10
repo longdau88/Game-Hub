@@ -114,9 +114,14 @@ export default function CreatorHub() {
                   <tr key={game.id} className="hover:bg-zinc-800/20 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-zinc-800 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 border border-zinc-700">
+                        <div className="w-12 h-12 bg-zinc-800 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0 border border-zinc-700 relative">
                           {game.coverImageUrl ? (
-                            <img src={game.coverImageUrl} alt={game.title} className="w-full h-full object-cover" />
+                            <>
+                              <img src={game.coverImageUrl} alt={game.title} className="absolute inset-0 w-full h-full object-cover opacity-60" />
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                                <Gamepad2 className="w-6 h-6 text-zinc-400 opacity-50 drop-shadow-md" />
+                              </div>
+                            </>
                           ) : (
                             <Gamepad2 className="w-6 h-6 text-zinc-500" />
                           )}

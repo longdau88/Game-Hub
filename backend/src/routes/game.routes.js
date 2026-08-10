@@ -19,7 +19,7 @@ router.get('/:id', cacheMiddleware(30), getGameDetails);
 router.post('/:id/play', gameController.incrementPlayCount); // Called when iframe loads
 
 // Protected routes
-router.post('/upload', requireAuth, upload.single('gameFile'), uploadGame);
+router.post('/upload', requireAuth, upload.fields([{ name: 'gameFile', maxCount: 1 }, { name: 'coverImage', maxCount: 1 }]), uploadGame);
 router.get('/creator/games', requireAuth, getMyGames);
 router.get('/user/bookmarked', requireAuth, gameController.getBookmarkedGames);
 router.post('/:id/bookmark', requireAuth, gameController.toggleBookmark);
