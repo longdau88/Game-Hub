@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft, Maximize2, Share2, Eye, Loader2 } from "lucide-react";
@@ -15,6 +15,30 @@ function GamePlayerContent() {
   
   const [game, setGame] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      iframeRef.current?.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "F11") {
+        e.preventDefault(); // Prevent browser default F11 fullscreen
+        toggleFullscreen();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     if (!gameId) {
@@ -75,6 +99,7 @@ function GamePlayerContent() {
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-black rounded-xl overflow-hidden border border-zinc-800 shadow-2xl relative group aspect-video">
             <iframe
+              ref={iframeRef}
               src={r2PublicUrl}
               className="w-full h-full border-0"
               sandbox="allow-scripts allow-same-origin allow-popups"
@@ -82,7 +107,11 @@ function GamePlayerContent() {
               title={game.title}
             />
             <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
-              <button className="p-2 bg-black/60 hover:bg-black/80 rounded-md backdrop-blur-sm border border-white/10 text-white transition-colors" title="Fullscreen">
+              <button 
+                onClick={toggleFullscreen}
+                className="p-2 bg-black/60 hover:bg-black/80 rounded-md backdrop-blur-sm border border-white/10 text-white transition-colors" 
+                title="Fullscreen (F11)"
+              >
                 <Maximize2 className="w-4 h-4" />
               </button>
             </div>
