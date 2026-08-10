@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import { Gamepad2 } from "lucide-react";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function LoginPage() {
+  const { t } = useLanguage();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,11 +57,11 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8 bg-zinc-900/50 p-8 rounded-2xl border border-zinc-800 backdrop-blur-sm shadow-2xl">
         <div className="text-center">
           <Gamepad2 className="mx-auto h-12 w-12 text-blue-500" />
-          <h2 className="mt-6 text-3xl font-extrabold text-white">Sign in to your account</h2>
+          <h2 className="mt-6 text-3xl font-extrabold">{t("login.title")}</h2>
           <p className="mt-2 text-sm text-zinc-400">
-            Or{" "}
+            {t("login.noAccount")}{" "}
             <Link href="/register" className="font-medium text-blue-500 hover:text-blue-400 transition-colors">
-              create a new account
+              {t("login.registerLink")}
             </Link>
           </p>
         </div>
@@ -71,23 +73,23 @@ export default function LoginPage() {
           )}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1">Email address</label>
+              <label className="block text-sm font-medium text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("login.email")}</label>
               <input
                 type="email"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-zinc-700 bg-zinc-800 placeholder-zinc-500 text-white rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Email address"
+                className="appearance-none relative block w-full px-3 py-2 border border-border bg-card placeholder-zinc-500 text-foreground rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder={t("login.email")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1">Password</label>
+              <label className="block text-sm font-medium text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("login.password")}</label>
               <input
                 type="password"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-zinc-700 bg-zinc-800 placeholder-zinc-500 text-white rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Password"
+                className="appearance-none relative block w-full px-3 py-2 border border-border bg-card placeholder-zinc-500 text-foreground rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder={t("login.password")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -98,9 +100,9 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 transition-colors"
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? "..." : t("login.submit")}
             </button>
           </div>
         </form>

@@ -1,0 +1,35 @@
+{
+  "nav.admin": "Admin Dashboard",
+  "nav.login": "Login",
+  "nav.register": "Register",
+  "nav.logout": "Logout",
+  
+  "home.title": "Featured Games",
+  "home.play": "Play",
+  
+  "login.title": "Welcome Back",
+  "login.subtitle": "Sign in to your account",
+  "login.email": "Email Address",
+  "login.password": "Password",
+  "login.submit": "Sign In",
+  "login.noAccount": "Don't have an account?",
+  "login.registerLink": "Sign up here",
+  
+  "register.title": "Create Account",
+  "register.subtitle": "Join the Game Hub",
+  "register.username": "Username",
+  "register.email": "Email Address",
+  "register.password": "Password",
+  "register.submit": "Create Account",
+  "register.hasAccount": "Already have an account?",
+  "register.loginLink": "Sign in here",
+  "register.success": "Registration successful! Please check your email to verify your account.",
+  
+  "admin.title": "Admin Dashboard",
+  "admin.pending": "Pending Games",
+  "admin.approve": "Approve",
+  "admin.approving": "Approving...",
+  
+  "game.fullscreen": "Fullscreen",
+  "game.loading": "Loading..."
+}

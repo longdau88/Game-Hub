@@ -1,0 +1,35 @@
+{
+  "nav.admin": "Trang Quản Trị",
+  "nav.login": "Đăng Nhập",
+  "nav.register": "Đăng Ký",
+  "nav.logout": "Đăng Xuất",
+  
+  "home.title": "Game Nổi Bật",
+  "home.play": "Chơi Ngay",
+  
+  "login.title": "Chào Mừng Trở Lại",
+  "login.subtitle": "Đăng nhập vào tài khoản của bạn",
+  "login.email": "Địa chỉ Email",
+  "login.password": "Mật khẩu",
+  "login.submit": "Đăng Nhập",
+  "login.noAccount": "Chưa có tài khoản?",
+  "login.registerLink": "Đăng ký tại đây",
+  
+  "register.title": "Tạo Tài Khoản",
+  "register.subtitle": "Tham gia Game Hub ngay",
+  "register.username": "Tên đăng nhập",
+  "register.email": "Địa chỉ Email",
+  "register.password": "Mật khẩu",
+  "register.submit": "Tạo Tài Khoản",
+  "register.hasAccount": "Đã có tài khoản?",
+  "register.loginLink": "Đăng nhập tại đây",
+  "register.success": "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.",
+  
+  "admin.title": "Bảng Điều Khiển Quản Trị",
+  "admin.pending": "Game Chờ Duyệt",
+  "admin.approve": "Phê Duyệt",
+  "admin.approving": "Đang duyệt...",
+  
+  "game.fullscreen": "Toàn màn hình",
+  "game.loading": "Đang tải..."
+}

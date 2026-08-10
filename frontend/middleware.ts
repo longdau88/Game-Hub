@@ -11,11 +11,10 @@ export function middleware(request: NextRequest) {
                      
   const isAdminPage = request.nextUrl.pathname.startsWith('/admin');
 
+  // Handle Auth redirection
   if (isAuthPage && token) {
-    if (role === 'admin') {
-      return NextResponse.redirect(new URL('/admin', request.url));
-    }
-    return NextResponse.redirect(new URL('/', request.url));
+    const url = new URL(role === 'admin' ? '/admin' : '/', request.url);
+    return NextResponse.redirect(url);
   }
 
   if (!isAuthPage && !token) {
@@ -26,7 +25,24 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
-  return NextResponse.next();
+  // Handle i18n Geo IP detection
+  let response = NextResponse.next();
+  const currentLocale = request.cookies.get('NEXT_LOCALE')?.value;
+
+  if (!currentLocale) {
+    // Attempt to get country from Vercel's geo object or header
+    // @ts-ignore
+    const country = request.geo?.country || request.headers.get('x-vercel-ip-country');
+    
+    // Default to 'vi' for Vietnam, 'en' for rest of the world
+    const newLocale = country === 'VN' ? 'vi' : 'en';
+    
+    // We must clone the response to set the cookie since NextResponse.next() is read-only in some older contexts, 
+    // but in newer Next.js we can just call cookies.set on the response object.
+    response.cookies.set('NEXT_LOCALE', newLocale, { path: '/' });
+  }
+
+  return response;
 }
 
 export const config = {

@@ -4,6 +4,8 @@ import "./globals.css";
 import Link from "next/link";
 import { Gamepad2 } from "lucide-react";
 import ClientNavbar from "../components/ClientNavbar";
+import { ThemeProvider } from "../components/ThemeProvider";
+import { LanguageProvider } from "../contexts/LanguageContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,11 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <div className="min-h-screen bg-black text-white selection:bg-blue-500/30">
-          {/* Navigation Bar */}
-          <nav className="sticky top-0 z-50 border-b border-zinc-800 bg-black/50 backdrop-blur-xl">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <LanguageProvider>
+            <div className="min-h-screen bg-background text-foreground transition-colors selection:bg-blue-500/30">
+              {/* Navigation Bar */}
+              <nav className="sticky top-0 z-50 border-b border-border bg-background/50 backdrop-blur-xl">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between h-16">
                 <div className="flex items-center gap-8">
@@ -38,11 +42,12 @@ export default function RootLayout({
             </div>
           </nav>
 
-          {/* Main Content */}
-          <main className="max-w-7xl mx-auto">
-            {children}
-          </main>
-        </div>
+              <main className="max-w-7xl mx-auto">
+                {children}
+              </main>
+            </div>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

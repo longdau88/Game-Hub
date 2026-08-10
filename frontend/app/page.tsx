@@ -3,8 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Play, Gamepad2 } from "lucide-react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function Home() {
+  const { t } = useLanguage();
   const [games, setGames] = useState<any[]>([]);
 
   useEffect(() => {
@@ -40,8 +42,11 @@ export default function Home() {
 
       {/* Featured Games Grid */}
       <section>
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold">Featured Games</h2>
+        <div className="flex items-center gap-3 mb-8">
+          <div className="p-3 bg-blue-600/20 rounded-xl">
+            <Gamepad2 className="w-8 h-8 text-blue-500" />
+          </div>
+          <h1 className="text-3xl font-bold">{t("home.title")}</h1>
         </div>
         
         {games.length === 0 ? (
@@ -61,27 +66,22 @@ export default function Home() {
                       <Gamepad2 className="w-12 h-12 text-zinc-600" />
                     </div>
                   )}
-                  <Link href={`/game/play?id=${game.id}`}>
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center transform scale-75 group-hover:scale-100 transition-transform">
-                        <Play className="w-6 h-6 text-white ml-1" />
-                      </div>
-                    </div>
-                  </Link>
                 </div>
                 
-                <div className="p-4 flex-1 flex flex-col">
-                  <Link href={`/game/play?id=${game.id}`}>
-                    <h3 className="font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors line-clamp-1">
-                      {game.title}
-                    </h3>
+                <div className="p-5">
+                  <h2 className="text-xl font-bold mb-2 group-hover:text-blue-400 transition-colors">{game.title}</h2>
+                  <p className="text-zinc-500 text-sm mb-6 line-clamp-2 dark:text-zinc-400">{game.description}</p>
+                  
+                  <Link 
+                    href={`/game/play?id=${game.id}`}
+                    className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <Play className="w-4 h-4 fill-current" />
+                    {t("home.play")}
                   </Link>
-                  <p className="text-sm text-zinc-400 line-clamp-2 mb-4 flex-1">
-                    {game.description || "No description provided."}
-                  </p>
-                  <div className="text-xs text-zinc-500 mt-auto flex items-center justify-between">
-                    <span>{new Date(game.createdAt).toLocaleDateString()}</span>
-                  </div>
+                </div>
+                <div className="p-4 pt-0 text-xs text-zinc-500 mt-auto flex items-center justify-between">
+                  <span>{new Date(game.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
             ))}

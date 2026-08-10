@@ -4,8 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { LogOut, Settings } from "lucide-react";
 import Cookies from "js-cookie";
+import ThemeSwitcher from "./ThemeSwitcher";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function ClientNavbar() {
+  const { t } = useLanguage();
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -27,31 +31,34 @@ export default function ClientNavbar() {
 
   return (
     <div className="flex items-center gap-4">
+      <LanguageSwitcher />
+      <ThemeSwitcher />
+      
       {!token ? (
         <Link
           href="/login"
-          className="flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-sm font-medium transition-colors"
+          className="flex items-center gap-2 px-4 py-2 rounded-md bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium transition-colors"
         >
-          Sign in
+          {t("nav.login")}
         </Link>
       ) : (
         <>
           {role === "admin" && (
             <Link
               href="/admin"
-              className="flex items-center gap-2 px-4 py-2 rounded-md bg-zinc-800 hover:bg-zinc-700 text-sm font-medium transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-zinc-800 dark:bg-zinc-800 hover:bg-zinc-700 text-white text-sm font-medium transition-colors"
             >
               <Settings className="w-4 h-4" />
-              Admin
+              {t("nav.admin")}
             </Link>
           )}
           <a
             href="#"
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-md border border-zinc-800 hover:bg-zinc-800 text-sm font-medium transition-colors cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2 rounded-md border border-border hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm font-medium transition-colors cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
-            Logout
+            {t("nav.logout")}
           </a>
         </>
       )}

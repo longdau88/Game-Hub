@@ -3,8 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Gamepad2, CheckCircle2 } from "lucide-react";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function RegisterPage() {
+  const { t } = useLanguage();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,14 +48,10 @@ export default function RegisterPage() {
           <div className="mx-auto w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mb-4">
             <CheckCircle2 className="w-8 h-8 text-emerald-400" />
           </div>
-          <h2 className="text-2xl font-bold text-white">Registration Successful!</h2>
-          <p className="text-zinc-400">
-            We've sent a verification link to <span className="text-white font-medium">{email}</span>. 
-            Please check your inbox (and spam folder) to verify your account before logging in.
-          </p>
+          <h2 className="text-2xl font-bold">{t("register.success")}</h2>
           <div className="pt-4">
-            <Link href="/login" className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md font-medium transition-colors inline-block">
-              Go to Login
+            <Link href="/login" className="px-6 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-md font-medium transition-colors inline-block">
+              {t("nav.login")}
             </Link>
           </div>
         </div>
@@ -66,11 +64,11 @@ export default function RegisterPage() {
       <div className="max-w-md w-full space-y-8 bg-zinc-900/50 p-8 rounded-2xl border border-zinc-800 backdrop-blur-sm shadow-2xl">
         <div className="text-center">
           <Gamepad2 className="mx-auto h-12 w-12 text-blue-500" />
-          <h2 className="mt-6 text-3xl font-extrabold text-white">Create an account</h2>
+          <h2 className="mt-6 text-3xl font-extrabold">{t("register.title")}</h2>
           <p className="mt-2 text-sm text-zinc-400">
-            Or{" "}
+            {t("register.hasAccount")}{" "}
             <Link href="/login" className="font-medium text-blue-500 hover:text-blue-400 transition-colors">
-              sign in to existing account
+              {t("register.loginLink")}
             </Link>
           </p>
         </div>
@@ -82,34 +80,34 @@ export default function RegisterPage() {
           )}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1">Username</label>
+              <label className="block text-sm font-medium text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.username")}</label>
               <input
                 type="text"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-zinc-700 bg-zinc-800 placeholder-zinc-500 text-white rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="CoolGamer99"
+                className="appearance-none relative block w-full px-3 py-2 border border-border bg-card placeholder-zinc-500 text-foreground rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder={t("register.username")}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1">Email address</label>
+              <label className="block text-sm font-medium text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.email")}</label>
               <input
                 type="email"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-zinc-700 bg-zinc-800 placeholder-zinc-500 text-white rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="you@example.com"
+                className="appearance-none relative block w-full px-3 py-2 border border-border bg-card placeholder-zinc-500 text-foreground rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder={t("register.email")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-300 mb-1">Password</label>
+              <label className="block text-sm font-medium text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.password")}</label>
               <input
                 type="password"
                 required
-                className="appearance-none relative block w-full px-3 py-2 border border-zinc-700 bg-zinc-800 placeholder-zinc-500 text-white rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder="Password"
+                className="appearance-none relative block w-full px-3 py-2 border border-border bg-card placeholder-zinc-500 text-foreground rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder={t("register.password")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -120,9 +118,9 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-primary-foreground bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 transition-colors"
             >
-              {loading ? "Creating account..." : "Sign up"}
+              {loading ? "..." : t("register.submit")}
             </button>
           </div>
         </form>
