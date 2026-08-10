@@ -2,8 +2,8 @@ const { Resend } = require('resend');
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Default from email must be verified on Resend, usually onboarding@resend.dev for testing
-const FROM_EMAIL = 'onboarding@resend.dev';
+// Use the verified domain from Resend
+const FROM_EMAIL = process.env.EMAIL_FROM || 'no-reply@game-hub.best';
 
 exports.sendVerificationEmail = async (to, token) => {
   const verificationLink = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/verify-email?token=${token}`;
