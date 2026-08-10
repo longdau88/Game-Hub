@@ -110,5 +110,49 @@
   "upload.selected": "Selected:",
   "upload.errorNoFile": "Please select a .zip file containing your game.",
   "upload.errorUploadFailed": "Upload failed",
-  "upload.errorNetwork": "Network error occurred during upload."
+  "upload.errorNetwork": "Network error occurred during upload.",
+
+  "admin.title": "Admin Panel",
+  "admin.tabDashboard": "Dashboard",
+  "admin.tabGames": "Game Manager",
+  "admin.tabUsers": "User Access",
+  "admin.tabCategories": "Categories",
+
+  "admin.statPending": "Pending Games",
+  "admin.statPublished": "Published Games",
+  "admin.statUsers": "Total Users",
+  "admin.statStorage": "R2 Storage Est.",
+
+  "admin.pendingApprovals": "Pending Approvals",
+  "admin.noPending": "No pending games.",
+  "admin.size": "Size",
+  "admin.uploaded": "Uploaded",
+  "admin.publishedGames": "Published Games",
+  "admin.btnDelete": "Delete",
+
+  "admin.colUsername": "Username",
+  "admin.colEmail": "Email",
+  "admin.colRole": "Role",
+  "admin.colGames": "Games",
+  "admin.colStatus": "Status",
+  "admin.colActions": "Actions",
+  "admin.banned": "Banned",
+  "admin.active": "Active",
+  "admin.makeUser": "Make User",
+  "admin.makeAdmin": "Make Admin",
+  "admin.unban": "Unban",
+  "admin.ban": "Ban",
+
+  "admin.addNewCat": "Add New Category",
+  "admin.catName": "Name",
+  "admin.catSlug": "Slug",
+  "admin.btnCreateCat": "Create Category",
+  "admin.categories": "Categories",
+
+  "admin.rejectTitle": "Reject Game",
+  "admin.rejectDesc": "Provide a reason for rejection. This game and its files will be permanently deleted from Cloudflare R2 to save space.",
+  "admin.rejectPlaceholder": "e.g. Black screen on launch...",
+  "admin.btnCancel": "Cancel",
+  "admin.btnReject": "Reject & Delete Files",
+  "admin.reviewMode": "Review Mode"
 }

@@ -192,20 +192,29 @@ export default function AdminPage() {
       case "dashboard":
         return (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-zinc-500 text-sm font-medium mb-2">Pending Games</h3>
+            <div 
+              onClick={() => setActiveTab('games')}
+              className="bg-card border border-border rounded-xl p-6 shadow-sm cursor-pointer hover:border-primary transition-colors"
+            >
+              <h3 className="text-zinc-500 text-sm font-medium mb-2">{t("admin.statPending")}</h3>
               <p className="text-3xl font-bold text-yellow-500">{stats?.pendingGamesCount || 0}</p>
             </div>
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-zinc-500 text-sm font-medium mb-2">Published Games</h3>
+            <div 
+              onClick={() => setActiveTab('games')}
+              className="bg-card border border-border rounded-xl p-6 shadow-sm cursor-pointer hover:border-emerald-500 transition-colors"
+            >
+              <h3 className="text-zinc-500 text-sm font-medium mb-2">{t("admin.statPublished")}</h3>
               <p className="text-3xl font-bold text-emerald-500">{stats?.publishedGamesCount || 0}</p>
             </div>
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-zinc-500 text-sm font-medium mb-2">Total Users</h3>
+            <div 
+              onClick={() => setActiveTab('users')}
+              className="bg-card border border-border rounded-xl p-6 shadow-sm cursor-pointer hover:border-blue-500 transition-colors"
+            >
+              <h3 className="text-zinc-500 text-sm font-medium mb-2">{t("admin.statUsers")}</h3>
               <p className="text-3xl font-bold text-blue-500">{stats?.totalUsersCount || 0}</p>
             </div>
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-zinc-500 text-sm font-medium mb-2">R2 Storage Est.</h3>
+              <h3 className="text-zinc-500 text-sm font-medium mb-2">{t("admin.statStorage")}</h3>
               <p className="text-3xl font-bold text-purple-500">{formatBytes(stats?.totalStorageBytes)}</p>
             </div>
           </div>
@@ -217,18 +226,18 @@ export default function AdminPage() {
             {/* Pending Section */}
             <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
               <div className="p-4 border-b border-border bg-muted/30">
-                <h3 className="font-semibold">Pending Approvals</h3>
+                <h3 className="font-semibold">{t("admin.pendingApprovals")}</h3>
               </div>
               <div className="p-0">
                 {pendingGames.length === 0 ? (
-                  <p className="p-6 text-center text-zinc-500">No pending games.</p>
+                  <p className="p-6 text-center text-zinc-500">{t("admin.noPending")}</p>
                 ) : (
                   <ul className="divide-y divide-border">
                     {pendingGames.map(game => (
                       <li key={game.id} className="p-4 flex items-center justify-between gap-4">
                         <div className="flex-1">
                           <h4 className="font-semibold">{game.title}</h4>
-                          <p className="text-sm text-zinc-500">Size: {formatBytes(Number(game.sizeBytes))} | Uploaded: {new Date(game.createdAt).toLocaleDateString()}</p>
+                          <p className="text-sm text-zinc-500">{t("admin.size")}: {formatBytes(Number(game.sizeBytes))} | {t("admin.uploaded")}: {new Date(game.createdAt).toLocaleDateString()}</p>
                         </div>
                         <div className="flex gap-2">
                           <button onClick={() => setPreviewGameId(game.id)} className="p-2 border border-blue-500/30 text-blue-500 rounded-md hover:bg-blue-500/10" title="Review via R2 iFrame">
@@ -251,7 +260,7 @@ export default function AdminPage() {
             {/* Published Section */}
             <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
               <div className="p-4 border-b border-border bg-muted/30">
-                <h3 className="font-semibold">Published Games</h3>
+                <h3 className="font-semibold">{t("admin.publishedGames")}</h3>
               </div>
               <div className="p-0">
                 <ul className="divide-y divide-border">
@@ -262,7 +271,7 @@ export default function AdminPage() {
                       </div>
                       <div className="flex gap-2">
                          <button onClick={() => deleteGame(game.id)} className="px-3 py-1 text-sm border border-red-500/30 text-red-500 rounded-md hover:bg-red-500/10 flex items-center gap-1">
-                           <Trash2 className="w-4 h-4" /> Delete
+                           <Trash2 className="w-4 h-4" /> {t("admin.btnDelete")}
                          </button>
                       </div>
                     </li>
@@ -279,12 +288,12 @@ export default function AdminPage() {
             <table className="w-full text-left text-sm">
               <thead className="bg-muted/50 border-b border-border">
                 <tr>
-                  <th className="p-4">Username</th>
-                  <th className="p-4">Email</th>
-                  <th className="p-4">Role</th>
-                  <th className="p-4">Games</th>
-                  <th className="p-4">Status</th>
-                  <th className="p-4 text-right">Actions</th>
+                  <th className="p-4">{t("admin.colUsername")}</th>
+                  <th className="p-4">{t("admin.colEmail")}</th>
+                  <th className="p-4">{t("admin.colRole")}</th>
+                  <th className="p-4">{t("admin.colGames")}</th>
+                  <th className="p-4">{t("admin.colStatus")}</th>
+                  <th className="p-4 text-right">{t("admin.colActions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -300,17 +309,17 @@ export default function AdminPage() {
                     <td className="p-4">{user.gamesUploaded}</td>
                     <td className="p-4">
                       {user.isBanned ? (
-                        <span className="text-red-500 font-medium flex items-center gap-1"><Ban className="w-3 h-3"/> Banned</span>
+                        <span className="text-red-500 font-medium flex items-center gap-1"><Ban className="w-3 h-3"/> {t("admin.banned")}</span>
                       ) : (
-                        <span className="text-emerald-500 font-medium">Active</span>
+                        <span className="text-emerald-500 font-medium">{t("admin.active")}</span>
                       )}
                     </td>
                     <td className="p-4 flex items-center justify-end gap-2">
                       <button onClick={() => toggleRole(user.id, user.role)} className="px-3 py-1 text-xs border border-border rounded hover:bg-muted">
-                        Make {user.role === 'admin' ? 'User' : 'Admin'}
+                        {user.role === 'admin' ? t("admin.makeUser") : t("admin.makeAdmin")}
                       </button>
                       <button onClick={() => toggleBan(user.id, user.isBanned)} className={`px-3 py-1 text-xs border rounded ${user.isBanned ? 'border-emerald-500 text-emerald-500 hover:bg-emerald-500/10' : 'border-red-500 text-red-500 hover:bg-red-500/10'}`}>
-                        {user.isBanned ? 'Unban' : 'Ban'}
+                        {user.isBanned ? t("admin.unban") : t("admin.ban")}
                       </button>
                     </td>
                   </tr>
@@ -324,22 +333,22 @@ export default function AdminPage() {
         return (
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-card border border-border rounded-xl p-6">
-              <h3 className="font-semibold mb-4">Add New Category</h3>
+              <h3 className="font-semibold mb-4">{t("admin.addNewCat")}</h3>
               <form onSubmit={addCategory} className="space-y-4">
                 <div>
-                  <label className="block text-sm mb-1 text-zinc-500">Name</label>
+                  <label className="block text-sm mb-1 text-zinc-500">{t("admin.catName")}</label>
                   <input required value={newCatName} onChange={e => setNewCatName(e.target.value)} className="w-full px-3 py-2 bg-background border border-border rounded-md" placeholder="e.g. Action RPG"/>
                 </div>
                 <div>
-                  <label className="block text-sm mb-1 text-zinc-500">Slug</label>
+                  <label className="block text-sm mb-1 text-zinc-500">{t("admin.catSlug")}</label>
                   <input required value={newCatSlug} onChange={e => setNewCatSlug(e.target.value)} className="w-full px-3 py-2 bg-background border border-border rounded-md" placeholder="e.g. action-rpg"/>
                 </div>
-                <button type="submit" className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium w-full">Create Category</button>
+                <button type="submit" className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium w-full">{t("admin.btnCreateCat")}</button>
               </form>
             </div>
             
             <div className="bg-card border border-border rounded-xl overflow-hidden">
-              <div className="p-4 border-b border-border bg-muted/30"><h3 className="font-semibold">Categories</h3></div>
+              <div className="p-4 border-b border-border bg-muted/30"><h3 className="font-semibold">{t("admin.categories")}</h3></div>
               <ul className="divide-y divide-border">
                 {categories.map(cat => (
                   <li key={cat.id} className="p-4 flex items-center justify-between">
@@ -364,21 +373,21 @@ export default function AdminPage() {
       <aside className="w-full md:w-64 shrink-0">
         <div className="flex items-center gap-3 mb-8 px-2">
           <Settings className="w-6 h-6 text-primary" />
-          <h1 className="text-xl font-bold">Admin Panel</h1>
+          <h1 className="text-xl font-bold">{t("admin.title")}</h1>
         </div>
         
         <nav className="space-y-1">
           <button onClick={() => setActiveTab('dashboard')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'dashboard' ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-zinc-500'}`}>
-            <LayoutDashboard className="w-5 h-5" /> Dashboard
+            <LayoutDashboard className="w-5 h-5" /> {t("admin.tabDashboard")}
           </button>
           <button onClick={() => setActiveTab('games')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'games' ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-zinc-500'}`}>
-            <Gamepad2 className="w-5 h-5" /> Game Manager
+            <Gamepad2 className="w-5 h-5" /> {t("admin.tabGames")}
           </button>
           <button onClick={() => setActiveTab('users')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'users' ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-zinc-500'}`}>
-            <Users className="w-5 h-5" /> User Access
+            <Users className="w-5 h-5" /> {t("admin.tabUsers")}
           </button>
           <button onClick={() => setActiveTab('categories')} className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${activeTab === 'categories' ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-zinc-500'}`}>
-            <Tags className="w-5 h-5" /> Categories
+            <Tags className="w-5 h-5" /> {t("admin.tabCategories")}
           </button>
         </nav>
       </aside>
@@ -392,17 +401,17 @@ export default function AdminPage() {
       {rejectModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-card border border-border w-full max-w-md rounded-xl shadow-2xl p-6">
-            <h3 className="text-lg font-bold mb-4">Reject Game</h3>
-            <p className="text-sm text-zinc-500 mb-4">Provide a reason for rejection. This game and its files will be permanently deleted from Cloudflare R2 to save space.</p>
+            <h3 className="text-lg font-bold mb-4">{t("admin.rejectTitle")}</h3>
+            <p className="text-sm text-zinc-500 mb-4">{t("admin.rejectDesc")}</p>
             <textarea
               className="w-full bg-background border border-border rounded-md p-3 text-sm mb-4 min-h-[100px] focus:outline-none focus:border-primary"
-              placeholder="e.g. Black screen on launch..."
+              placeholder={t("admin.rejectPlaceholder")}
               value={rejectReason}
               onChange={e => setRejectReason(e.target.value)}
             />
             <div className="flex gap-3 justify-end">
-              <button onClick={() => setRejectModalOpen(false)} className="px-4 py-2 rounded-md text-sm font-medium hover:bg-muted">Cancel</button>
-              <button onClick={rejectGame} className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-md text-sm font-medium">Reject & Delete Files</button>
+              <button onClick={() => setRejectModalOpen(false)} className="px-4 py-2 rounded-md text-sm font-medium hover:bg-muted">{t("admin.btnCancel")}</button>
+              <button onClick={rejectGame} className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-md text-sm font-medium">{t("admin.btnReject")}</button>
             </div>
           </div>
         </div>
@@ -413,7 +422,7 @@ export default function AdminPage() {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex flex-col items-center justify-center p-4">
           <div className="w-full max-w-5xl bg-black rounded-xl overflow-hidden border border-zinc-800 shadow-2xl flex flex-col h-[80vh]">
             <div className="flex items-center justify-between p-4 bg-zinc-900 border-b border-zinc-800">
-              <h3 className="font-bold">Review Mode</h3>
+              <h3 className="font-bold">{t("admin.reviewMode")}</h3>
               <button onClick={() => setPreviewGameId(null)} className="p-2 hover:bg-zinc-800 rounded-md text-zinc-400"><X className="w-5 h-5"/></button>
             </div>
             <div className="flex-1 w-full bg-black">

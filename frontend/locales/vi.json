@@ -110,5 +110,49 @@
   "upload.selected": "Đã chọn:",
   "upload.errorNoFile": "Vui lòng chọn một tệp .zip chứa game của bạn.",
   "upload.errorUploadFailed": "Tải lên thất bại",
-  "upload.errorNetwork": "Đã xảy ra lỗi mạng trong quá trình tải lên."
+  "upload.errorNetwork": "Đã xảy ra lỗi mạng trong quá trình tải lên.",
+
+  "admin.title": "Bảng Điều Khiển Admin",
+  "admin.tabDashboard": "Tổng Quan",
+  "admin.tabGames": "Quản Lý Game",
+  "admin.tabUsers": "Quản Lý Người Dùng",
+  "admin.tabCategories": "Thể Loại",
+
+  "admin.statPending": "Game Chờ Duyệt",
+  "admin.statPublished": "Game Đã Xuất Bản",
+  "admin.statUsers": "Tổng Số User",
+  "admin.statStorage": "Dung Lượng R2 Ước Tính",
+
+  "admin.pendingApprovals": "Game Đang Chờ Phê Duyệt",
+  "admin.noPending": "Không có game nào chờ duyệt.",
+  "admin.size": "Dung lượng",
+  "admin.uploaded": "Ngày tải",
+  "admin.publishedGames": "Game Đã Xuất Bản",
+  "admin.btnDelete": "Xóa",
+
+  "admin.colUsername": "Tên Tài Khoản",
+  "admin.colEmail": "Email",
+  "admin.colRole": "Quyền",
+  "admin.colGames": "Số Game",
+  "admin.colStatus": "Trạng Thái",
+  "admin.colActions": "Hành Động",
+  "admin.banned": "Bị Khóa",
+  "admin.active": "Hoạt Động",
+  "admin.makeUser": "Hạ Quyền User",
+  "admin.makeAdmin": "Cấp Quyền Admin",
+  "admin.unban": "Mở Khóa",
+  "admin.ban": "Khóa",
+
+  "admin.addNewCat": "Thêm Thể Loại Mới",
+  "admin.catName": "Tên Thể Loại",
+  "admin.catSlug": "Đường Dẫn (Slug)",
+  "admin.btnCreateCat": "Tạo Thể Loại",
+  "admin.categories": "Danh Sách Thể Loại",
+
+  "admin.rejectTitle": "Từ Chối Game",
+  "admin.rejectDesc": "Nhập lý do từ chối. Game này và tất cả file mã nguồn của nó sẽ bị xóa vĩnh viễn khỏi máy chủ Cloudflare R2 để giải phóng dung lượng.",
+  "admin.rejectPlaceholder": "VD: Bị lỗi màn hình đen khi tải game...",
+  "admin.btnCancel": "Hủy Bỏ",
+  "admin.btnReject": "Từ Chối & Xóa File",
+  "admin.reviewMode": "Chế Độ Chơi Thử"
 }
