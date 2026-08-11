@@ -6,6 +6,7 @@ import { Gamepad2 } from "lucide-react";
 import ClientNavbar from "../components/ClientNavbar";
 import { ThemeProvider } from "../components/ThemeProvider";
 import { LanguageProvider } from "../contexts/LanguageContext";
+import MaintenanceOverlay from "../components/MaintenanceOverlay";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <LanguageProvider>
+            <MaintenanceOverlay />
             <div className="min-h-screen bg-background text-foreground transition-colors selection:bg-blue-500/30">
               {/* Navigation Bar */}
               <nav className="sticky top-0 z-50 border-b border-border bg-background/50 backdrop-blur-xl">

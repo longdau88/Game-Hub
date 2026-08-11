@@ -57,6 +57,12 @@ app.get('/', (req, res) => {
   res.json({ message: 'Game Hub API is running normally.' });
 });
 
+app.get('/api/system/status', async (req, res) => {
+  const { getSystemSettings } = require('./middleware/maintenance.middleware');
+  const settings = await getSystemSettings();
+  res.json(settings);
+});
+
 // Maintenance Mode Check (Apply before routes)
 app.use(maintenanceCheck);
 

@@ -38,6 +38,8 @@ const getSystemSettings = async () => {
   return cachedSettings;
 };
 
+exports.getSystemSettings = getSystemSettings;
+
 exports.maintenanceCheck = async (req, res, next) => {
   // Allow admin and auth routes bypass (so admins can login and turn it off)
   if (req.path.startsWith('/api/admin') || req.path.startsWith('/api/auth/login') || req.path.startsWith('/api/settings')) {
