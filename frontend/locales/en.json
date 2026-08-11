@@ -209,6 +209,7 @@
   "admin.settingsSave": "Save Settings",
   "admin.storageTitle": "Storage & Bandwidth Management",
   "admin.storageUsed": "Used",
+  "admin.storageDesc": "Estimated usage of R2 free tier limit of",
   "admin.storageGC": "Garbage Collection",
   "admin.storageGCDesc": "Delete temporary zip files from failed uploads and other garbage resources.",
   "admin.storageGCBtn": "Run Cleanup Now",

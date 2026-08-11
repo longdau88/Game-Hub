@@ -209,6 +209,7 @@
   "admin.settingsSave": "Lưu Cấu Hình",
   "admin.storageTitle": "Quản lý Lưu trữ & Băng thông",
   "admin.storageUsed": "Đã sử dụng",
+  "admin.storageDesc": "Ước tính mức sử dụng trong gói R2 miễn phí giới hạn",
   "admin.storageGC": "Dọn dẹp rác (Garbage Collection)",
   "admin.storageGCDesc": "Xóa các file zip tạm trong quá trình upload bị lỗi hoặc các tài nguyên rác.",
   "admin.storageGCBtn": "Chạy Dọn Dẹp Ngay",

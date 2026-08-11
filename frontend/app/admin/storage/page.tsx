@@ -68,10 +68,12 @@ export default function AdminStoragePage() {
           <div className="w-full bg-zinc-800 rounded-full h-2">
             <div
               className="bg-primary rounded-full h-2 transition-all"
-              style={{ width: `${Math.min((storageStats.totalBytes / (50 * 1024 * 1024 * 1024)) * 100, 100)}%` }}
+              style={{ width: `${Math.min(storageStats.percentage || 0, 100)}%` }}
             />
           </div>
-          <p className="text-xs text-zinc-500 mt-2">Estimated usage of 50 GB R2 free tier</p>
+          <p className="text-xs text-zinc-500 mt-2">
+            {t("admin.storageDesc")} {formatBytes(storageStats.totalBytesLimit || 10 * 1024 * 1024 * 1024)}
+          </p>
         </div>
       )}
 
