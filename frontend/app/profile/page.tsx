@@ -269,13 +269,13 @@ export default function ProfilePage() {
               </p>
               <p className="text-zinc-700 dark:text-zinc-300 max-w-xl">{profile?.bio || t("profile.noBio")}</p>
             </div>
-            <div className="flex gap-4">
-              <div className="text-center px-4 py-2 bg-black/40 rounded-xl border border-black/5 dark:border-white/5">
+            <div className="flex flex-wrap justify-center md:justify-start gap-4">
+              <div className="text-center px-4 py-2 bg-zinc-100 dark:bg-black/40 rounded-xl border border-zinc-200 dark:border-white/5">
                 <p className="text-2xl font-bold text-zinc-900 dark:text-white">{gameHistory.length}</p>
                 <p className="text-xs text-zinc-600 dark:text-zinc-400 font-medium uppercase tracking-wider">{t("profile.gamesPlayed")}</p>
               </div>
-              <div className="text-center px-4 py-2 bg-black/40 rounded-xl border border-black/5 dark:border-white/5">
-                <p className="text-2xl font-bold text-blue-400">{uploadedGames.length}</p>
+              <div className="text-center px-4 py-2 bg-zinc-100 dark:bg-black/40 rounded-xl border border-zinc-200 dark:border-white/5">
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{uploadedGames.length}</p>
                 <p className="text-xs text-zinc-600 dark:text-zinc-400 font-medium uppercase tracking-wider">{t("profile.myUploads")}</p>
               </div>
             </div>
@@ -283,7 +283,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-8 bg-white/50 dark:bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 w-fit mx-auto">
+        <div className="flex overflow-x-auto hide-scrollbar gap-1 sm:gap-2 mb-8 bg-white/50 dark:bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 w-full sm:w-fit mx-auto">
           {[
             { id: 'settings', icon: Settings, label: t("profile.tabSettings") },
             { id: 'history', icon: History, label: t("profile.tabHistory") },
@@ -293,7 +293,7 @@ export default function ProfilePage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                 activeTab === tab.id 
                   ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-md' 
                   : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white hover:bg-zinc-100/50 dark:bg-zinc-800/50'
@@ -331,7 +331,7 @@ export default function ProfilePage() {
                       <form onSubmit={handleSave} className="space-y-6">
                         <div>
                           <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-2">{t("profile.email")}</label>
-                          <input type="email" value={profile?.email || ""} disabled className="w-full bg-black/40 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-zinc-500 cursor-not-allowed" />
+                          <input type="email" value={profile?.email || ""} disabled className="w-full bg-zinc-100 dark:bg-black/40 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-zinc-500 cursor-not-allowed" />
                         </div>
                         
                         <div>
@@ -432,9 +432,9 @@ export default function ProfilePage() {
 
               {activeTab === 'uploads' && (
                 <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
-                  <div className="flex justify-between items-center mb-6">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                     <h2 className="text-2xl font-bold">{t("profile.myUploads")}</h2>
-                    <Link href="/creator/upload" className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-zinc-900 dark:text-white rounded-xl font-medium transition-colors flex items-center gap-2">
+                    <Link href="/creator/upload" className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-colors flex items-center gap-2">
                       <UploadCloud className="w-4 h-4" /> {t("profile.uploadNew")}
                     </Link>
                   </div>

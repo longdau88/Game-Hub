@@ -299,7 +299,7 @@ export default function UploadGamePage() {
                 />
                 <p className="text-xs text-zinc-500 mt-1">{t("upload.memorySizeHint")}</p>
               </div>
-              <div className="flex gap-6 pt-2">
+              <div className="flex flex-wrap gap-6 pt-2">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input 
                     type="checkbox" 

@@ -349,7 +349,7 @@ export default function Home() {
                             </span>
                           )}
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight drop-shadow-lg">
+                        <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-white mb-4 leading-tight drop-shadow-lg">
                           {featuredGames[0].title}
                         </h1>
                         <p className="text-zinc-200 text-lg md:text-xl mb-8 line-clamp-2 md:line-clamp-3 font-medium drop-shadow-md">
@@ -420,7 +420,7 @@ export default function Home() {
                     </div>
                     
                     {/* Secondary Category Filter */}
-                    <div id="all-categories" className="hidden lg:flex items-center gap-2 bg-white/50 dark:bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+                    <div id="all-categories" className="flex flex-wrap lg:flex-nowrap items-center gap-2 bg-white/50 dark:bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800">
                       <button onClick={() => handleCategorySelect("")} className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedCategory === "" ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white'}`}>{t("home.filterAll")}</button>
                       {categories.slice(0, 5).map(cat => (
                         <button
@@ -440,7 +440,7 @@ export default function Home() {
                   
                   {games.length > 12 && (
                     <div className="mt-12 flex justify-center">
-                      <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="px-8 py-3 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:border-zinc-700 rounded-full font-medium transition-all text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:text-white">
+                      <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="px-8 py-3 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 rounded-full font-medium transition-all text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white">
                         Load More Games
                       </button>
                     </div>

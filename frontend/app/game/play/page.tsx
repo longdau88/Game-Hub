@@ -265,8 +265,8 @@ function GamePlayerContent() {
 
           <div>
             <h1 className="text-3xl font-bold mb-2">{game.title}</h1>
-            <div className="flex items-center justify-between gap-4 text-sm text-zinc-600 dark:text-zinc-400 mb-6 border-b border-zinc-200/50 dark:border-zinc-800/50 pb-6">
-              <div className="flex items-center gap-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 text-sm text-zinc-600 dark:text-zinc-400 mb-6 border-b border-zinc-200/50 dark:border-zinc-800/50 pb-6">
+              <div className="flex flex-wrap items-center gap-4">
                 <span>{t("game.publishedOn")} {new Date(game.createdAt).toLocaleDateString()}</span>
                 <span>•</span>
                 <span className="flex items-center">
@@ -279,7 +279,7 @@ function GamePlayerContent() {
                   {game.saveCount || 0} {t("game.saves") || "Lượt lưu"}
                 </span>
               </div>
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 <button 
                   onClick={handleBookmark}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
