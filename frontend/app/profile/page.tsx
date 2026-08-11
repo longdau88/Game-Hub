@@ -274,12 +274,10 @@ export default function ProfilePage() {
                 <p className="text-2xl font-bold text-white">{gameHistory.length}</p>
                 <p className="text-xs text-zinc-400 font-medium uppercase tracking-wider">{t("profile.gamesPlayed")}</p>
               </div>
-              {profile?.role !== 'user' && (
-                <div className="text-center px-4 py-2 bg-black/40 rounded-xl border border-white/5">
-                  <p className="text-2xl font-bold text-blue-400">{uploadedGames.length}</p>
-                  <p className="text-xs text-zinc-400 font-medium uppercase tracking-wider">Uploads</p>
-                </div>
-              )}
+              <div className="text-center px-4 py-2 bg-black/40 rounded-xl border border-white/5">
+                <p className="text-2xl font-bold text-blue-400">{uploadedGames.length}</p>
+                <p className="text-xs text-zinc-400 font-medium uppercase tracking-wider">{t("profile.myUploads")}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -290,7 +288,7 @@ export default function ProfilePage() {
             { id: 'settings', icon: Settings, label: t("profile.tabSettings") },
             { id: 'history', icon: History, label: t("profile.tabHistory") },
             { id: 'bookmarks', icon: Bookmark, label: t("profile.tabBookmarks") },
-            ...(profile?.role !== 'user' ? [{ id: 'uploads', icon: UploadCloud, label: 'My Uploads' }] : [])
+            { id: 'uploads', icon: UploadCloud, label: t("profile.myUploads") }
           ].map(tab => (
             <button
               key={tab.id}
@@ -432,7 +430,7 @@ export default function ProfilePage() {
                 </div>
               )}
 
-              {activeTab === 'uploads' && profile?.role !== 'user' && (
+              {activeTab === 'uploads' && (
                 <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold">{t("profile.myUploads")}</h2>
