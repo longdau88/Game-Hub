@@ -474,7 +474,7 @@ export default function ProfilePage() {
                                   {game.status === 'published' && (
                                     <Link href={`/game/play?id=${game.id}`} className="text-xs font-medium px-3 py-1.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors">{t("profile.play")}</Link>
                                   )}
-                                  <Link href={`/game/edit/${game.id}`} className="text-xs font-medium px-3 py-1.5 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 rounded-lg transition-colors">{t("profile.edit")}</Link>
+                                  <Link href={`/creator/edit/${game.id}`} className="text-xs font-medium px-3 py-1.5 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 rounded-lg transition-colors">{t("profile.edit")}</Link>
                                   <button onClick={() => handleDeleteGame(game.id)} className="text-xs font-medium px-3 py-1.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg transition-colors">{t("profile.delete")}</button>
                                 </div>
                               </td>
