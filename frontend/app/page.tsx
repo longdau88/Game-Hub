@@ -179,10 +179,10 @@ export default function Home() {
         {game.coverImageUrl ? (
           <div className="w-full h-full relative">
             <img src={game.coverImageUrl} alt={game.title} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 ease-out" />
-            <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-transparent opacity-80" />
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-200 dark:from-zinc-900 via-transparent to-transparent opacity-80" />
           </div>
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-zinc-800/50 to-zinc-900/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-700 ease-out">
+          <div className="w-full h-full bg-gradient-to-br from-zinc-200 dark:from-zinc-800/50 to-zinc-300 dark:to-zinc-900/50 flex items-center justify-center group-hover:scale-110 transition-transform duration-700 ease-out">
             <Gamepad2 className="w-12 h-12 text-zinc-600" />
           </div>
         )}
@@ -212,7 +212,7 @@ export default function Home() {
         </button>
       </Link>
       
-      <div className="p-5 flex-1 flex flex-col relative z-10 bg-gradient-to-b from-transparent to-zinc-900/90">
+      <div className="p-5 flex-1 flex flex-col relative z-10 bg-gradient-to-b from-transparent to-white/90 dark:to-zinc-900/90">
         <div className="flex justify-between items-start mb-2">
           <Link href={`/game/play?id=${game.id}`} className="flex-1">
             <h2 className="text-lg font-bold text-zinc-900 dark:text-white group-hover:text-blue-400 transition-colors line-clamp-1">{game.title}</h2>
@@ -245,7 +245,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-transparent text-zinc-900 dark:text-zinc-100 selection:bg-blue-500/30">
       {/* Search Header Bar (Sticky) */}
-      <div className="sticky top-0 z-40 bg-[#050505]/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5 py-4">
+      <div className="sticky top-0 z-40 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5 py-4">
         <div className="container mx-auto px-4 flex gap-4 md:gap-8 items-center justify-between">
           <form onSubmit={handleSearch} className="flex-1 max-w-2xl relative group">
             <input
@@ -340,19 +340,19 @@ export default function Home() {
                       
                       <div className="absolute bottom-0 left-0 p-8 md:p-12 z-20 w-full max-w-3xl">
                         <div className="flex gap-2 mb-4">
-                          <span className="px-3 py-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-white shadow-lg flex items-center gap-1.5">
+                          <span className="px-3 py-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full text-xs font-bold uppercase tracking-wider text-white shadow-lg flex items-center gap-1.5">
                             <Flame className="w-3.5 h-3.5" /> Featured
                           </span>
                           {featuredGames[0].categories?.[0] && (
-                            <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-zinc-900 dark:text-white border border-black/20 dark:border-white/20">
+                            <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold text-white border border-white/20">
                               {featuredGames[0].categories[0].nameTranslations?.[language] || featuredGames[0].categories[0].name}
                             </span>
                           )}
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-black text-zinc-900 dark:text-white mb-4 leading-tight drop-shadow-lg">
+                        <h1 className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight drop-shadow-lg">
                           {featuredGames[0].title}
                         </h1>
-                        <p className="text-zinc-700 dark:text-zinc-300 text-lg md:text-xl mb-8 line-clamp-2 md:line-clamp-3 font-medium drop-shadow-md">
+                        <p className="text-zinc-200 text-lg md:text-xl mb-8 line-clamp-2 md:line-clamp-3 font-medium drop-shadow-md">
                           {featuredGames[0].descriptionTranslations?.[language] || featuredGames[0].description}
                         </p>
                         
@@ -368,7 +368,7 @@ export default function Home() {
                   {/* Sidebar Featured Games */}
                   <div className="w-full lg:w-1/3 flex flex-col gap-4 h-full">
                     {featuredGames.slice(1, 4).map((game, idx) => (
-                      <Link href={`/game/play?id=${game.id}`} key={`side-${game.id}`} className="group flex-1 flex items-center gap-4 bg-black/40 hover:bg-zinc-100/80 dark:bg-zinc-800/80 border border-black/5 dark:border-white/5 hover:border-black/10 dark:border-white/10 p-3 rounded-2xl transition-all duration-300">
+                      <Link href={`/game/play?id=${game.id}`} key={`side-${game.id}`} className="group flex-1 flex items-center gap-4 bg-white/80 dark:bg-black/40 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 p-3 rounded-2xl transition-all duration-300">
                         <div className="w-24 h-24 md:w-32 md:h-full aspect-square md:aspect-auto rounded-xl overflow-hidden relative shrink-0">
                           <img src={game.coverImageUrl || '/placeholder.png'} alt={game.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                         </div>
@@ -451,7 +451,7 @@ export default function Home() {
               {/* Sidebar Column: Top Liked Games */}
               <div className="w-full xl:w-[320px] shrink-0 space-y-8">
                 {mostLikedGames.length > 0 && (
-                  <div className="bg-white/40 dark:bg-zinc-900/40 border border-black/5 dark:border-white/5 rounded-2xl p-6 backdrop-blur-md sticky top-32">
+                  <div className="bg-white dark:bg-zinc-900/40 shadow-xl shadow-zinc-200/50 dark:shadow-none border border-black/5 dark:border-white/5 rounded-2xl p-6 backdrop-blur-md sticky top-32">
                     <div className="flex items-center gap-3 mb-6">
                       <div className="p-2 bg-pink-500/10 rounded-lg">
                         <Heart className="w-5 h-5 text-pink-500 fill-pink-500" />
@@ -460,7 +460,7 @@ export default function Home() {
                     </div>
                     <div className="flex flex-col gap-4">
                       {mostLikedGames.map((game, idx) => (
-                        <Link href={`/game/play?id=${game.id}`} key={`liked-${game.id}`} className="flex items-center gap-4 group p-2 hover:bg-white/5 rounded-xl transition-colors -mx-2">
+                        <Link href={`/game/play?id=${game.id}`} key={`liked-${game.id}`} className="flex items-center gap-4 group p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-colors -mx-2">
                           <div className={`w-6 text-center text-lg font-black transition-colors ${idx === 0 ? 'text-yellow-400' : idx === 1 ? 'text-zinc-700 dark:text-zinc-300' : idx === 2 ? 'text-amber-600' : 'text-zinc-700 group-hover:text-pink-500'}`}>
                             {idx + 1}
                           </div>
