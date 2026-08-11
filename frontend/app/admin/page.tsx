@@ -413,7 +413,7 @@ export default function AdminPage() {
           </div>
         );
 
-      case "games":
+      case "pending-games":
         return (
           <div className="space-y-8">
             {/* Pending Section */}
