@@ -14,6 +14,7 @@ const prisma = require('./config/db');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
+const { maintenanceCheck } = require('./middleware/maintenance.middleware');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -55,6 +56,9 @@ app.get('/health', (req, res) => {
 app.get('/', (req, res) => {
   res.json({ message: 'Game Hub API is running normally.' });
 });
+
+// Maintenance Mode Check (Apply before routes)
+app.use(maintenanceCheck);
 
 // Routes
 app.use('/api/games', gameRoutes);

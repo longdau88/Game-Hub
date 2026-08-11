@@ -12,6 +12,7 @@ exports.getSettings = async (req, res) => {
     
     // Provide defaults if not exist
     if (!settingsObj['maintenanceMode']) settingsObj['maintenanceMode'] = 'false';
+    if (!settingsObj['registrationEnabled']) settingsObj['registrationEnabled'] = 'true';
     if (!settingsObj['maxUploadSizeMB']) settingsObj['maxUploadSizeMB'] = '100';
     
     res.json(settingsObj);
