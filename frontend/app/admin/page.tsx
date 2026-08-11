@@ -433,7 +433,6 @@ export default function AdminPage() {
                           <p className="text-sm text-zinc-500">{t("admin.size")}: {formatBytes(Number(game.sizeBytes))} | {t("admin.uploaded")}: {new Date(game.createdAt).toLocaleDateString()}</p>
                         </div>
                         <div className="flex gap-2">
-                          <button onClick={() => setPreviewGameId(game.id)} className="p-2 border border-blue-500/30 text-blue-500 rounded-md hover:bg-blue-500/10" title="Review via R2 iFrame">
                           <Link 
                             href={`/game/play?id=${game.id}`}
                             target="_blank"
