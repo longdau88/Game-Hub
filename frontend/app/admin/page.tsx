@@ -238,7 +238,7 @@ export default function AdminPage() {
   };
 
   const rollbackVersion = async (versionId: number) => {
-    if(!confirm("Chắc chắn rollback về phiên bản này?")) return;
+    if(!confirm(t("admin.advConfirmRollback"))) return;
     try {
       const res = await fetch(`${apiUrl}/api/admin/games/${advGame.id}/versions/${versionId}/rollback`, {
         method: 'PUT',
@@ -513,7 +513,7 @@ export default function AdminPage() {
           <div className="space-y-8">
             <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
               <div className="p-4 border-b border-border bg-muted/30">
-                <h3 className="font-semibold">Quản lý Báo cáo</h3>
+                <h3 className="font-semibold">{t("admin.tabReports")}</h3>
               </div>
               <div className="p-0">
                 {reports.length === 0 ? (
@@ -535,7 +535,7 @@ export default function AdminPage() {
                                 onClick={() => resolveReport(report.id)}
                                 className="px-3 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 rounded-lg text-sm font-medium transition-colors border border-blue-500/20 flex items-center justify-center"
                               >
-                                Đánh dấu Đã xử lý
+                                Đánh dấu {t("admin.reportsResolved")}
                               </button>
                             ) : (
                               <span className="px-3 py-1.5 bg-green-500/10 text-green-500 rounded-lg text-sm font-medium border border-green-500/20 text-center">
@@ -564,7 +564,7 @@ export default function AdminPage() {
           <div className="space-y-8 max-w-2xl">
             <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
               <div className="p-4 border-b border-border bg-muted/30">
-                <h3 className="font-semibold flex items-center gap-2"><Settings className="w-5 h-5"/> Cấu hình Hệ thống</h3>
+                <h3 className="font-semibold flex items-center gap-2"><Settings className="w-5 h-5"/> {t("admin.tabSettings")}</h3>
               </div>
               <div className="p-6 space-y-6">
                 <div>
@@ -590,7 +590,7 @@ export default function AdminPage() {
                     value={settings.maxUploadSizeMB || 100}
                     onChange={(e) => setSettings({...settings, maxUploadSizeMB: e.target.value})}
                   />
-                  <p className="text-sm text-zinc-400 mt-2">Dung lượng tối đa cho phép mỗi người dùng upload 1 file zip game.</p>
+                  <p className="text-sm text-zinc-400 mt-2">{t("admin.settingsUploadLimitDesc")}</p>
                 </div>
 
                 <div className="pt-4 border-t border-zinc-800">
@@ -598,7 +598,7 @@ export default function AdminPage() {
                     onClick={saveSettings}
                     className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-colors"
                   >
-                    Lưu Cấu Hình
+                    {t("admin.settingsSave")}
                   </button>
                 </div>
               </div>
@@ -610,10 +610,10 @@ export default function AdminPage() {
         return (
           <div className="space-y-8">
             <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm p-6">
-              <h3 className="font-semibold mb-4 text-xl">Quản lý Lưu trữ & Băng thông</h3>
+              <h3 className="font-semibold mb-4 text-xl">Quản lý {t("admin.tabStorage")}</h3>
               <div className="grid md:grid-cols-2 gap-6 mb-8">
                 <div className="p-4 bg-zinc-900 rounded-lg border border-zinc-800">
-                  <p className="text-sm text-zinc-400 mb-1">Đã sử dụng</p>
+                  <p className="text-sm text-zinc-400 mb-1">{t("admin.storageUsed")}</p>
                   <p className="text-3xl font-bold text-primary">{formatBytes(storageStats?.totalBytesUsed)}</p>
                   <div className="w-full bg-zinc-800 rounded-full h-2 mt-4">
                     <div className="bg-primary h-2 rounded-full" style={{ width: `${Math.min(storageStats?.percentUsed || 0, 100)}%` }}></div>
@@ -622,11 +622,11 @@ export default function AdminPage() {
                 </div>
               </div>
               <div className="border-t border-zinc-800 pt-6">
-                <h4 className="font-semibold mb-2">Dọn dẹp rác (Garbage Collection)</h4>
-                <p className="text-sm text-zinc-400 mb-4">Xóa các file zip tạm trong quá trình upload bị lỗi hoặc các tài nguyên rác.</p>
+                <h4 className="font-semibold mb-2">{t("admin.storageGC")}</h4>
+                <p className="text-sm text-zinc-400 mb-4">{t("admin.storageGCDesc")}</p>
                 <button 
                   onClick={async () => {
-                    if(confirm('Chạy dọn dẹp hệ thống?')) {
+                    if(confirm(t('admin.advConfirmGC'))) {
                       const res = await fetch(`${apiUrl}/api/admin/storage/gc`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }});
                       const data = await res.json();
                       alert(data.message || 'Complete');
@@ -634,7 +634,7 @@ export default function AdminPage() {
                   }}
                   className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-medium transition-colors"
                 >
-                  Chạy Dọn Dẹp Ngay
+                  {t("admin.storageGCBtn")}
                 </button>
               </div>
             </div>
@@ -688,7 +688,7 @@ export default function AdminPage() {
         return (
           <div className="space-y-8">
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="font-semibold mb-4 text-xl">Phân phối Email (Mail Campaigns)</h3>
+              <h3 className="font-semibold mb-4 text-xl">Phân phối Email ({t("admin.tabMail")})</h3>
               <p className="text-zinc-400 mb-6 text-sm">Gửi thông báo, newsletter hàng loạt đến người dùng.</p>
               
               <form onSubmit={async (e) => {
@@ -720,12 +720,12 @@ export default function AdminPage() {
                 <div>
                   <label className="block text-sm mb-1 text-zinc-400">Đối tượng</label>
                   <select name="target" className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md focus:border-primary focus:outline-none">
-                    <option value="all">Tất cả người dùng</option>
+                    <option value="all">{t("admin.mailAllUsers")}</option>
                     <option value="active">Người dùng đang hoạt động (Không bị Ban)</option>
                   </select>
                 </div>
                 <button type="submit" className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors">
-                  Gửi Chiến Dịch
+                  {t("admin.mailSend")}
                 </button>
               </form>
             </div>
@@ -879,13 +879,13 @@ export default function AdminPage() {
               onClick={() => setActiveTab('games')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors pl-8 ${activeTab === 'games' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
             >
-              <Gamepad2 className="w-4 h-4" /> Game Đã Duyệt
+              <Gamepad2 className="w-4 h-4" /> {t("admin.tabGamesPublished")}
             </button>
             <button
               onClick={() => setActiveTab('pending-games')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors pl-8 ${activeTab === 'pending-games' ? 'bg-yellow-500/10 text-yellow-500' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
             >
-              <Check className="w-4 h-4" /> Game Chờ Duyệt
+              <Check className="w-4 h-4" /> {t("admin.tabGamesPending")}
             </button>
             <button
               onClick={() => setActiveTab('users')}
@@ -915,7 +915,7 @@ export default function AdminPage() {
               onClick={() => setActiveTab('analytics')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'analytics' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Analytics & Crashes
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> {t("admin.tabAnalytics")}
             </button>
             <button
               onClick={() => setActiveTab('mail')}
@@ -978,11 +978,11 @@ export default function AdminPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden">
             <div className="p-6">
-              <h3 className="text-xl font-bold mb-4">Edit Category</h3>
+              <h3 className="text-xl font-bold mb-4">{t("admin.catEditTitle")}</h3>
               <form onSubmit={updateCategory}>
                 <div className="space-y-4 mb-6">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-zinc-400">Name</label>
+                    <label className="block text-sm font-medium mb-1 text-zinc-400">{t("admin.catEditName")}</label>
                     <input
                       required
                       type="text"
@@ -992,7 +992,7 @@ export default function AdminPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-zinc-400">Slug</label>
+                    <label className="block text-sm font-medium mb-1 text-zinc-400">{t("admin.catEditSlug")}</label>
                     <input
                       required
                       type="text"
@@ -1038,7 +1038,7 @@ export default function AdminPage() {
               <section>
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="font-semibold text-lg text-blue-400">AI & Recommendations</h4>
-                  <button onClick={syncVector} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-sm transition-colors">Đồng bộ Vector DB</button>
+                  <button onClick={syncVector} className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded text-sm transition-colors">{t("admin.advSyncBtn")} Vector DB</button>
                 </div>
                 <div className="bg-zinc-800/50 p-4 rounded-lg border border-zinc-700/50">
                   <label className="block text-sm text-zinc-400 mb-2">Hidden Tags (Phân tích ngữ nghĩa)</label>
@@ -1049,7 +1049,7 @@ export default function AdminPage() {
                       placeholder="e.g. mmo, open-world, farming..."
                       className="flex-1 px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md focus:outline-none focus:border-blue-500"
                     />
-                    <button onClick={saveAdvancedTags} className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-md transition-colors">Lưu Tags</button>
+                    <button onClick={saveAdvancedTags} className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-md transition-colors">{t("admin.advSaveTags")}</button>
                   </div>
                   <p className="text-xs text-zinc-500 mt-2">Ngăn cách bởi dấu phẩy. Các tag này giúp AI gợi ý game chính xác hơn mà không hiển thị ra UI.</p>
                 </div>
