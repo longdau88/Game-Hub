@@ -425,7 +425,8 @@ exports.getGameDetails = async (req, res) => {
       where: { id },
       include: {
         categories: true,
-        uploader: { select: { id: true, username: true, avatarUrl: true } }
+        uploader: { select: { id: true, username: true, avatarUrl: true } },
+        _count: { select: { libraryEntries: true } }
       }
     });
     if (!game) return res.status(404).json({ error: 'Game not found' });
@@ -438,6 +439,7 @@ exports.getGameDetails = async (req, res) => {
 
     res.json({
       ...game,
+      saveCount: game._count?.libraryEntries || 0,
       averageRating: aggregations._avg.score ? Number(aggregations._avg.score.toFixed(1)) : 0,
       totalRatings: aggregations._count.score
     });

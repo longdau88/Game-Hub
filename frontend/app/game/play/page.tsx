@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Maximize2, Share2, Eye, Loader2, Flag, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Maximize2, Share2, Eye, Loader2, Flag, ShieldAlert, Bookmark } from "lucide-react";
 import GameComments from "../../../components/GameComments";
 import GameRating from "../../../components/GameRating";
 import { useLanguage } from "../../../contexts/LanguageContext";
@@ -167,7 +167,48 @@ function GamePlayerContent() {
 
     // Increment play count
     fetch(`${apiUrl}/api/games/${gameId}/play`, { method: "POST" }).catch(console.error);
+    // Check if bookmarked
+    const token = Cookies.get("token");
+    if (token) {
+      fetch(`${apiUrl}/api/games/user/bookmarked`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.some(g => g.id === gameId)) {
+          setIsBookmarked(true);
+        }
+      })
+      .catch(console.error);
+    }
   }, [gameId]);
+
+  const handleBookmark = async () => {
+    const token = Cookies.get("token");
+    if (!token) {
+      alert("Vui lòng đăng nhập để lưu game.");
+      return;
+    }
+    
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/games/${gameId}/bookmark`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      
+      if (res.ok) {
+        setIsBookmarked(!isBookmarked);
+        // Optimistically update the save count
+        setGame((prev: any) => ({
+          ...prev,
+          saveCount: isBookmarked ? Math.max(0, (prev.saveCount || 0) - 1) : (prev.saveCount || 0) + 1
+        }));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (loading) {
     return (
@@ -232,8 +273,22 @@ function GamePlayerContent() {
                   <Eye className="w-4 h-4 mr-1" />
                   {game.playCount || 0} {t("game.plays")}
                 </span>
+                <span>•</span>
+                <span className="flex items-center">
+                  <Bookmark className="w-4 h-4 mr-1 text-zinc-400" />
+                  {game.saveCount || 0} {t("game.saves") || "Lượt lưu"}
+                </span>
               </div>
               <div className="flex gap-3">
+                <button 
+                  onClick={handleBookmark}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isBookmarked ? 'bg-blue-600 text-white hover:bg-blue-500' : 'bg-zinc-800 hover:bg-zinc-700 text-white'
+                  }`}
+                >
+                  <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} /> 
+                  {isBookmarked ? (t("game.saved") || "Đã lưu") : (t("game.save") || "Lưu game")}
+                </button>
                 <button onClick={() => setReportModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg text-sm font-medium transition-colors">
                   <Flag className="w-4 h-4" /> Báo cáo
                 </button>
