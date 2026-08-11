@@ -173,7 +173,7 @@ export default function Home() {
     <motion.div 
       whileHover={{ y: -8, scale: 1.02 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="group relative flex flex-col bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl overflow-hidden hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all duration-300"
+      className="group relative flex flex-col h-full bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl overflow-hidden hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all duration-300"
     >
       <Link href={`/game/play?id=${game.id}`} className="aspect-[4/3] bg-zinc-100 dark:bg-zinc-950 relative overflow-hidden flex items-center justify-center block cursor-pointer">
         {game.coverImageUrl ? (
@@ -197,7 +197,7 @@ export default function Home() {
         {/* Floating Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {game.categories && game.categories.length > 0 && (
-            <span className="bg-black/60 backdrop-blur-md text-zinc-900 dark:text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-black/10 dark:border-white/10">
+            <span className="bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-white/20">
               {game.categories[0].nameTranslations?.[language] || game.categories[0].name}
             </span>
           )}
@@ -208,7 +208,7 @@ export default function Home() {
           onClick={(e) => toggleBookmark(e, game.id)}
           className="absolute top-3 right-3 p-2 rounded-full bg-black/40 backdrop-blur-md hover:bg-black/80 transition-colors group/btn z-10 border border-black/10 dark:border-white/10"
         >
-          <Heart className={`w-4 h-4 transition-colors ${bookmarkedGames.has(game.id) ? 'fill-pink-500 text-pink-500' : 'text-zinc-900 dark:text-white group-hover/btn:text-pink-400'}`} />
+          <Heart className={`w-4 h-4 transition-colors ${bookmarkedGames.has(game.id) ? 'fill-pink-500 text-pink-500' : 'text-white group-hover/btn:text-pink-400'}`} />
         </button>
       </Link>
       
@@ -407,9 +407,9 @@ export default function Home() {
                         <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </Link>
                     </div>
-                    <div className="flex gap-5 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory">
+                    <div className="flex gap-5 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory items-stretch">
                       {mostPlayedGames.slice(0, 10).map(game => (
-                        <div key={`most-played-${game.id}`} className="shrink-0 w-[240px] sm:w-[260px] snap-start">
+                        <div key={`most-played-${game.id}`} className="shrink-0 w-[240px] sm:w-[260px] snap-start flex flex-col">
                           <GameCard game={game} />
                         </div>
                       ))}
@@ -457,9 +457,9 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className="flex gap-5 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory">
+                  <div className="flex gap-5 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory items-stretch">
                     {games.slice(0, 10).map(game => (
-                      <div key={`new-${game.id}`} className="shrink-0 w-[240px] sm:w-[260px] snap-start">
+                      <div key={`new-${game.id}`} className="shrink-0 w-[240px] sm:w-[260px] snap-start flex flex-col">
                         <GameCard game={game} />
                       </div>
                     ))}
