@@ -8,6 +8,7 @@ import Cookies from "js-cookie";
 import ThemeSwitcher from "./ThemeSwitcher";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "../contexts/LanguageContext";
+import NotificationDropdown from "./NotificationDropdown";
 
 export default function ClientNavbar() {
   const { t } = useLanguage();
@@ -45,6 +46,7 @@ export default function ClientNavbar() {
         </Link>
       ) : (
         <>
+          <NotificationDropdown />
           {role === "admin" && (
             <Link
               href="/admin"

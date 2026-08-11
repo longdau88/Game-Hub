@@ -38,9 +38,7 @@ exports.uploadGame = async (req, res) => {
     const gameId = uuidv4();
     const tempExtractDir = path.join(os.tmpdir(), `game-extract-${gameId}`);
     
-    // Extract zip
-    const zip = new AdmZip(file.path);
-    zip.extractAllTo(tempExtractDir, true);
+    // We will do extraction and upload in background. First create the game record as 'processing'.
 
     // Validate index.html
     const indexPath = path.join(tempExtractDir, 'index.html');
@@ -134,29 +132,18 @@ exports.uploadGame = async (req, res) => {
     // Process categories
     let categoryConnect = [];
     if (categoryIds) {
-      // categoryIds could be a comma-separated string or an array depending on how formData sends it
       const ids = Array.isArray(categoryIds) ? categoryIds : categoryIds.split(',').filter(Boolean);
       categoryConnect = ids.map(id => ({ id: parseInt(id) }));
     }
     
-    // Process controls
     let parsedControls = null;
     if (controls) {
-      try {
-        parsedControls = JSON.parse(controls);
-      } catch (e) {
-        console.error('Failed to parse controls JSON:', e);
-      }
+      try { parsedControls = JSON.parse(controls); } catch (e) { }
     }
     
-    // Process descriptionTranslations
     let parsedDescTranslations = null;
     if (descriptionTranslations) {
-      try {
-        parsedDescTranslations = JSON.parse(descriptionTranslations);
-      } catch (e) {
-        console.error('Failed to parse descriptionTranslations JSON:', e);
-      }
+      try { parsedDescTranslations = JSON.parse(descriptionTranslations); } catch (e) { }
     }
     
     const newGame = await prisma.game.create({
@@ -166,16 +153,14 @@ exports.uploadGame = async (req, res) => {
         description: description || '',
         descriptionTranslations: parsedDescTranslations,
         r2FolderPath: `games/${gameId}/`,
-        status: 'pending', // pending approval
+        status: 'processing', // Indicates it's being uploaded to R2
         sizeBytes: file.size,
         uploaderId: req.user.userId,
         controls: parsedControls,
         engineConfig: parsedEngineConfig,
         coverImageUrl: coverImageUrl,
         ...(categoryConnect.length > 0 && {
-          categories: {
-            connect: categoryConnect
-          }
+          categories: { connect: categoryConnect }
         }),
         versions: {
           create: [{
@@ -186,16 +171,101 @@ exports.uploadGame = async (req, res) => {
           }]
         }
       },
-      include: {
-        versions: true
-      }
+      include: { versions: true }
     });
 
-    // Cleanup temp files
-    fs.rmSync(tempExtractDir, { recursive: true, force: true });
-    fs.unlinkSync(file.path);
+    // Send immediate response
+    res.status(202).json({ message: 'Game is uploading and processing in the background.', game: newGame });
 
-    res.status(201).json({ message: 'Game uploaded successfully and pending approval', game: newGame });
+    // BACKGROUND JOB: Extract and Upload to R2
+    (async () => {
+      try {
+        const zip = new AdmZip(file.path);
+        zip.extractAllTo(tempExtractDir, true);
+
+        const indexPath = path.join(tempExtractDir, 'index.html');
+        if (!fs.existsSync(indexPath)) {
+          throw new Error('Zip file does not contain an index.html at the root');
+        }
+
+        if (parsedEngineConfig && parsedEngineConfig.firebaseTrackingId) {
+          try {
+            const gtagId = parsedEngineConfig.firebaseTrackingId;
+            const gtagScript = `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${gtagId}"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n  gtag('config', '${gtagId}');\n</script>\n`;
+            let htmlContent = fs.readFileSync(indexPath, 'utf8');
+            if (htmlContent.includes('</head>')) {
+              htmlContent = htmlContent.replace('</head>', `${gtagScript}\n</head>`);
+            } else if (htmlContent.includes('</body>')) {
+              htmlContent = htmlContent.replace('</body>', `${gtagScript}\n</body>`);
+            } else {
+              htmlContent += gtagScript;
+            }
+            fs.writeFileSync(indexPath, htmlContent, 'utf8');
+          } catch (e) {
+            console.error('Failed to inject Firebase Tracking:', e);
+          }
+        }
+
+        const allFiles = getAllFiles(tempExtractDir);
+        const bucketName = process.env.R2_BUCKET_NAME;
+
+        for (const filePath of allFiles) {
+          const relativePath = path.relative(tempExtractDir, filePath).replace(/\\/g, '/');
+          const r2Key = `games/${gameId}/${relativePath}`;
+          const fileStream = fs.createReadStream(filePath);
+          const mimeType = mime.lookup(filePath) || 'application/octet-stream';
+          const uploadParams = {
+            Bucket: bucketName,
+            Key: r2Key,
+            Body: fileStream,
+            ContentType: mimeType,
+          };
+          await r2Client.send(new PutObjectCommand(uploadParams));
+        }
+
+        // Generate vector embedding for semantic search
+        let vectorSynced = false;
+        try {
+          const EmbeddingService = require('../utils/embedding');
+          const searchContent = `${title || ''} ${description || ''}`;
+          const vector = await EmbeddingService.generateEmbedding(searchContent);
+          if (vector) {
+            const vectorString = `[${vector.join(',')}]`;
+            await prisma.$executeRaw`
+              UPDATE games 
+              SET search_vector = ${vectorString}::vector, vector_synced = true 
+              WHERE id = ${gameId}::uuid
+            `;
+            vectorSynced = true;
+          }
+        } catch (vErr) {
+          console.error('Vector sync failed during upload:', vErr);
+        }
+
+        // Job completed successfully, mark as pending (waiting admin review)
+        await prisma.game.update({
+          where: { id: gameId },
+          data: { status: 'pending' }
+        });
+
+      } catch (err) {
+        console.error('Background Upload Job Failed:', err);
+        // Mark as rejected due to upload failure
+        await prisma.game.update({
+          where: { id: gameId },
+          data: { status: 'rejected', rejectReason: err.message || 'Upload process failed.' }
+        });
+      } finally {
+        // Cleanup temp files
+        if (fs.existsSync(tempExtractDir)) {
+          fs.rmSync(tempExtractDir, { recursive: true, force: true });
+        }
+        if (fs.existsSync(file.path)) {
+          fs.unlinkSync(file.path);
+        }
+      }
+    })(); // Execute async background closure
+
   } catch (error) {
     console.error('Upload Error:', error);
     res.status(500).json({ error: 'Internal Server Error during upload', details: error.message });
@@ -204,7 +274,7 @@ exports.uploadGame = async (req, res) => {
 
 exports.getPublishedGames = async (req, res) => {
   try {
-    const { search, category } = req.query;
+    const { search, category, sort } = req.query;
     
     const whereClause = { status: 'published' };
     
@@ -216,9 +286,14 @@ exports.getPublishedGames = async (req, res) => {
       whereClause.categories = { some: { slug: category } };
     }
 
+    let orderByClause = { createdAt: 'desc' };
+    if (sort === 'mostPlayed') {
+      orderByClause = { playCount: 'desc' };
+    }
+
     const games = await prisma.game.findMany({
       where: whereClause,
-      orderBy: { createdAt: 'desc' },
+      orderBy: orderByClause,
       include: {
         categories: true,
         uploader: { select: { id: true, username: true, avatarUrl: true } },
@@ -240,6 +315,77 @@ exports.getPublishedGames = async (req, res) => {
     res.json(formattedGames);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch games' });
+  }
+};
+
+const EmbeddingService = require('../utils/embedding');
+
+exports.semanticSearch = async (req, res) => {
+  try {
+    const { q, limit = 10 } = req.query;
+    if (!q) {
+      return res.status(400).json({ error: 'Query is required' });
+    }
+
+    const vector = await EmbeddingService.generateEmbedding(q);
+    if (!vector) {
+      return res.status(500).json({ error: 'Failed to generate embedding' });
+    }
+
+    // Convert array to pgvector format '[v1,v2,...]'
+    const vectorString = `[${vector.join(',')}]`;
+
+    // Query pgvector for semantic similarity using inner product (<#>) or cosine distance (<=>)
+    const games = await prisma.$queryRaw`
+      SELECT 
+        id, 
+        title, 
+        description, 
+        "cover_image_url" as "coverImageUrl", 
+        status, 
+        "play_count" as "playCount",
+        created_at as "createdAt",
+        1 - ("search_vector" <=> ${vectorString}::vector) as similarity
+      FROM games
+      WHERE status = 'published' AND "search_vector" IS NOT NULL
+      ORDER BY "search_vector" <=> ${vectorString}::vector
+      LIMIT ${Number(limit)};
+    `;
+
+    // Format like getPublishedGames (omitting related models for brevity, or manually fetching them)
+    if (games.length > 0) {
+      const gameIds = games.map(g => g.id);
+      const relations = await prisma.game.findMany({
+        where: { id: { in: gameIds } },
+        include: {
+          categories: true,
+          uploader: { select: { id: true, username: true, avatarUrl: true } },
+          ratings: { select: { score: true } }
+        }
+      });
+
+      // Merge results
+      const finalGames = games.map(g => {
+        const related = relations.find(r => r.id === g.id);
+        const avgRating = related && related.ratings.length > 0 
+          ? related.ratings.reduce((acc, curr) => acc + curr.score, 0) / related.ratings.length
+          : 0;
+        
+        return {
+          ...g,
+          categories: related?.categories || [],
+          uploader: related?.uploader || null,
+          averageRating: parseFloat(avgRating.toFixed(1)),
+          totalRatings: related?.ratings?.length || 0
+        };
+      });
+      return res.json(finalGames);
+    }
+
+    res.json([]);
+  } catch (error) {
+    console.error('Semantic search error:', error);
+    res.status(500).json({ error: 'Search failed' });
   }
 };
 
@@ -505,6 +651,52 @@ exports.deleteGame = async (req, res) => {
   }
 };
 
+exports.getGameHistory = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    // Get unique games played by user, ordered by most recent session
+    const sessions = await prisma.gameSession.findMany({
+      where: { userId },
+      orderBy: { startedAt: 'desc' },
+      include: {
+        game: {
+          include: {
+            categories: true,
+            uploader: { select: { id: true, username: true, avatarUrl: true } },
+            ratings: { select: { score: true } }
+          }
+        }
+      }
+    });
+
+    // Deduplicate games and format
+    const uniqueGames = [];
+    const seenIds = new Set();
+    
+    for (const session of sessions) {
+      if (!session.game || seenIds.has(session.game.id)) continue;
+      seenIds.add(session.game.id);
+      
+      const game = session.game;
+      const avgRating = game.ratings.length > 0 
+        ? game.ratings.reduce((acc, curr) => acc + curr.score, 0) / game.ratings.length
+        : 0;
+        
+      uniqueGames.push({
+        ...game,
+        averageRating: parseFloat(avgRating.toFixed(1)),
+        totalRatings: game.ratings.length,
+        lastPlayedAt: session.startedAt
+      });
+    }
+
+    res.json(uniqueGames);
+  } catch (error) {
+    console.error('Get history error:', error);
+    res.status(500).json({ error: 'Failed to fetch history' });
+  }
+};
+
 // Admin Endpoints
 exports.getPendingGames = async (req, res) => {
   try {
@@ -529,8 +721,20 @@ exports.approveGame = async (req, res) => {
     const updatedGame = await prisma.game.update({
       where: { id },
       data: { status: 'published' },
-      include: { uploader: { select: { username: true, email: true } } }
+      include: { uploader: { select: { id: true, username: true, email: true } } }
     });
+
+    if (updatedGame.uploader) {
+      await prisma.notification.create({
+        data: {
+          userId: updatedGame.uploader.id,
+          type: 'GAME_APPROVED',
+          title: 'Game Approved',
+          message: `Your game "${updatedGame.title}" has been approved and is now live!`,
+          link: `/game/play?id=${updatedGame.id}`
+        }
+      });
+    }
 
     // Audit log
     try {

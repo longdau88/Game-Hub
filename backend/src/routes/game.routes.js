@@ -15,6 +15,7 @@ const upload = multer({ dest: os.tmpdir() });
 
 // Public game routes
 router.get('/', cacheMiddleware(60), getPublishedGames);
+router.get('/search', gameController.semanticSearch);
 router.get('/featured', cacheMiddleware(60), gameController.getFeaturedGames);
 router.get('/:id', cacheMiddleware(30), getGameDetails);
 router.post('/:id/play', gameController.incrementPlayCount); // Called when iframe loads
@@ -27,6 +28,7 @@ router.get('/creator/games', requireAuth, getMyGames);
 router.put('/:id', requireAuth, upload.fields([{ name: 'coverImage', maxCount: 1 }]), gameController.updateGame);
 router.delete('/:id', requireAuth, gameController.deleteGame);
 router.get('/user/bookmarked', requireAuth, gameController.getBookmarkedGames);
+router.get('/user/history', requireAuth, gameController.getGameHistory);
 router.post('/:id/bookmark', requireAuth, gameController.toggleBookmark);
 
 module.exports = router;

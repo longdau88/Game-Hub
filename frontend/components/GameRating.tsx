@@ -50,9 +50,13 @@ export default function GameRating({ gameId, averageRating = 0, totalRatings = 0
       });
       if (res.ok) {
         setRating(score);
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to submit rating");
       }
     } catch (error) {
       console.error("Failed to submit rating", error);
+      alert("An error occurred");
     } finally {
       setLoading(false);
     }

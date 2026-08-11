@@ -67,6 +67,8 @@ app.get('/api/system/status', async (req, res) => {
 app.use(maintenanceCheck);
 
 // Routes
+const notificationRoutes = require('./routes/notification.routes');
+
 app.use('/api/games', gameRoutes);
 app.use('/api/auth', authLimiter, authRoutes); // Apply stricter rate limiter here
 app.use('/api/admin', adminRoutes);
@@ -76,6 +78,7 @@ app.use('/api/settings', settingRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/social', socialRoutes);
 app.use('/api/gamification', gamificationRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

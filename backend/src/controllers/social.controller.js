@@ -15,6 +15,15 @@ exports.rateGame = async (req, res) => {
       return res.status(404).json({ error: 'Game not found' });
     }
 
+    // Anti-spam: Ensure user has played the game for at least 120 seconds
+    const session = await prisma.gameSession.aggregate({
+      where: { userId: req.user.userId, gameId },
+      _sum: { sessionLength: true }
+    });
+    if (!session._sum.sessionLength || session._sum.sessionLength < 120) {
+      return res.status(403).json({ error: 'You must play the game for at least 2 minutes before rating.' });
+    }
+
     const rating = await prisma.rating.upsert({
       where: {
         userId_gameId: {
@@ -52,6 +61,15 @@ exports.addComment = async (req, res) => {
       return res.status(404).json({ error: 'Game not found' });
     }
 
+    // Anti-spam: Ensure user has played the game for at least 120 seconds
+    const session = await prisma.gameSession.aggregate({
+      where: { userId: req.user.userId, gameId },
+      _sum: { sessionLength: true }
+    });
+    if (!session._sum.sessionLength || session._sum.sessionLength < 120) {
+      return res.status(403).json({ error: 'You must play the game for at least 2 minutes before commenting.' });
+    }
+
     const comment = await prisma.comment.create({
       data: {
         userId: req.user.userId,
@@ -64,6 +82,19 @@ exports.addComment = async (req, res) => {
         }
       }
     });
+
+    // Notify game uploader if it's not their own comment
+    if (game.uploaderId && game.uploaderId !== req.user.userId) {
+      await prisma.notification.create({
+        data: {
+          userId: game.uploaderId,
+          type: 'NEW_COMMENT',
+          title: 'New Comment',
+          message: `${comment.user.username} commented on your game "${game.title}".`,
+          link: `/game/play?id=${game.id}`
+        }
+      });
+    }
 
     res.status(201).json(comment);
   } catch (error) {

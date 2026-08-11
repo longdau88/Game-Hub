@@ -158,6 +158,18 @@ exports.rejectGame = async (req, res) => {
       include: { uploader: true }
     });
     
+    if (game.uploader) {
+      await prisma.notification.create({
+        data: {
+          userId: game.uploader.id,
+          type: 'GAME_REJECTED',
+          title: 'Game Rejected',
+          message: `Your game "${game.title}" was rejected. Reason: ${rejectReason || 'None specified.'}`,
+          link: '/creator'
+        }
+      });
+    }
+
     await logAudit(adminId, 'REJECT_GAME', 'Game', {
       gameId: id,
       gameTitle: game.title,

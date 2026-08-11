@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Cookies from "js-cookie";
-import { Plus, LayoutDashboard, Clock, CheckCircle2, XCircle, Gamepad2 } from "lucide-react";
+import { Plus, LayoutDashboard, Clock, CheckCircle2, XCircle, Gamepad2, Loader2 } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
 
 export default function CreatorHub() {
@@ -47,6 +47,7 @@ export default function CreatorHub() {
     switch(status) {
       case 'published': return <CheckCircle2 className="w-4 h-4 text-green-500" />;
       case 'rejected': return <XCircle className="w-4 h-4 text-red-500" />;
+      case 'processing': return <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />;
       default: return <Clock className="w-4 h-4 text-yellow-500" />;
     }
   };
@@ -55,6 +56,7 @@ export default function CreatorHub() {
     switch(status) {
       case 'published': return <span className="text-green-500 font-medium">{t("creator.statusPublished")}</span>;
       case 'rejected': return <span className="text-red-500 font-medium">{t("creator.statusRejected")}</span>;
+      case 'processing': return <span className="text-blue-500 font-medium">Processing & Uploading...</span>;
       default: return <span className="text-yellow-500 font-medium">{t("creator.statusPending")}</span>;
     }
   };

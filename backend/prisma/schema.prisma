@@ -2,11 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
+  provider   = "postgresql"
+  extensions = [vector]
 }
 
 model User {
@@ -19,6 +21,7 @@ model User {
   isBanned          Boolean       @default(false) @map("is_banned")
   verificationToken String?       @map("verification_token") @db.VarChar(255)
   avatarUrl         String?       @map("avatar_url") @db.Text
+  bio               String?       @db.Text
   createdAt         DateTime      @default(now()) @map("created_at")
   games        Game[]
   library      UserLibrary[]
@@ -30,8 +33,25 @@ model User {
   auditLogs    AuditLog[]
   badges       UserBadge[]
   leaderboardEntries Leaderboard[]
+  notifications Notification[]
 
   @@map("users")
+}
+
+model Notification {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    Int      @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   @db.VarChar(50) // e.g., 'GAME_APPROVED', 'GAME_REJECTED', 'NEW_COMMENT'
+  title     String   @db.VarChar(150)
+  message   String   @db.Text
+  link      String?  @db.VarChar(255)
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId, isRead])
+  @@index([createdAt])
+  @@map("notifications")
 }
 
 model Game {
@@ -53,6 +73,7 @@ model Game {
   isFeatured     Boolean       @default(false) @map("is_featured")
   hiddenTags     String?       @map("hidden_tags") @db.Text // Store as comma separated or JSON string
   vectorSynced   Boolean       @default(false) @map("vector_synced")
+  searchVector   Unsupported("vector(1536)")? @map("search_vector")
   createdAt      DateTime      @default(now()) @map("created_at")
   libraryEntries UserLibrary[]
   categories     Category[]    @relation("GameCategories")
