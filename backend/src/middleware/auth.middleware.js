@@ -26,6 +26,25 @@ exports.requireAuth = async (req, res, next) => {
   }
 };
 
+exports.optionalAuth = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return next();
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+    if (user && !user.isBanned) {
+      req.user = { userId: user.id, role: user.role };
+    }
+  } catch (error) {
+    // Ignore invalid tokens for optional auth
+  }
+  next();
+};
+
 exports.requireAdmin = (req, res, next) => {
   if (!req.user || req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Forbidden: Admin access required' });

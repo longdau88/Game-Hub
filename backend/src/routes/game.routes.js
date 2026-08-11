@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const gameController = require('../controllers/game.controller');
 const { uploadGame, getPublishedGames, getGameDetails, getMyGames, logSession, logCrash } = gameController;
-const { requireAuth } = require('../middleware/auth.middleware');
+const { requireAuth, optionalAuth } = require('../middleware/auth.middleware');
 const { cacheMiddleware } = require('../middleware/cache.middleware');
 
 const router = express.Router();
@@ -19,7 +19,7 @@ router.get('/search', gameController.semanticSearch);
 router.get('/featured', cacheMiddleware(60), gameController.getFeaturedGames);
 router.get('/:id', cacheMiddleware(30), getGameDetails);
 router.post('/:id/play', gameController.incrementPlayCount); // Called when iframe loads
-router.post('/:id/session', logSession);
+router.post('/:id/session', optionalAuth, logSession);
 router.post('/:id/crash', logCrash);
 
 // Protected routes

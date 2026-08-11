@@ -71,20 +71,21 @@ function GamePlayerContent() {
       const lengthSeconds = Math.round((Date.now() - sessionStartTime.current) / 1000);
       if (lengthSeconds > 5) { // Only log if they played for at least 5 seconds
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-        // Use sendBeacon for reliable unload tracking if possible
         const url = `${apiUrl}/api/games/${gameId}/session`;
         const data = JSON.stringify({ sessionLength: lengthSeconds });
         
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon(url, new Blob([data], { type: 'application/json' }));
-        } else {
-          fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: data,
-            keepalive: true
-          }).catch(console.error);
+        const token = Cookies.get("token");
+        const headers: HeadersInit = { 'Content-Type': 'application/json' };
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
         }
+        
+        fetch(url, {
+          method: 'POST',
+          headers,
+          body: data,
+          keepalive: true
+        }).catch(console.error);
       }
     };
 
