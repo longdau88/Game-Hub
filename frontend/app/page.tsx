@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Play, Gamepad2, Search, Heart, Star, Zap, Flame, TrendingUp } from "lucide-react";
+import { Play, Gamepad2, Search, Heart, Star, Zap, Flame, TrendingUp, ChevronRight } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 import Cookies from "js-cookie";
 import { motion, AnimatePresence } from "framer-motion";
@@ -394,57 +394,86 @@ export default function Home() {
               <div className="flex-1 min-w-0">
                 {/* Trending & Most Played Section */}
                 {mostPlayedGames.length > 0 && (
-                  <section className="mb-20">
-                    <div className="flex items-center justify-between mb-8">
+                  <section className="mb-16">
+                    <div className="flex items-center justify-between mb-6">
                       <div className="flex items-center gap-3">
                         <div className="p-2.5 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl shadow-lg shadow-orange-500/20">
-                          <TrendingUp className="w-6 h-6 text-zinc-900 dark:text-white" />
+                          <TrendingUp className="w-6 h-6 text-white" />
                         </div>
                         <h2 className="text-2xl md:text-3xl font-bold">{t("home.trendingNow")}</h2>
                       </div>
+                      <Link href="/games/trending" className="flex items-center gap-1.5 text-sm font-medium text-blue-500 hover:text-blue-400 transition-colors group">
+                        {t("home.seeMore") || "Xem thêm"}
+                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </Link>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-                      {mostPlayedGames.map(game => <GameCard key={`most-played-${game.id}`} game={game} />)}
+                    <div className="flex gap-5 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory">
+                      {mostPlayedGames.slice(0, 10).map(game => (
+                        <div key={`most-played-${game.id}`} className="shrink-0 w-[240px] sm:w-[260px] snap-start">
+                          <GameCard game={game} />
+                        </div>
+                      ))}
+                      {mostPlayedGames.length >= 10 && (
+                        <div className="shrink-0 w-[200px] flex items-center justify-center snap-start">
+                          <Link href="/games/trending" className="flex flex-col items-center gap-3 p-6 rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 hover:border-orange-400 dark:hover:border-orange-500 text-zinc-500 hover:text-orange-500 transition-all group w-full h-full min-h-[200px]">
+                            <div className="w-12 h-12 rounded-full bg-orange-500/10 flex items-center justify-center group-hover:bg-orange-500/20 transition-colors">
+                              <ChevronRight className="w-6 h-6" />
+                            </div>
+                            <span className="text-sm font-medium text-center">{t("home.seeMore") || "Xem tất cả"}</span>
+                          </Link>
+                        </div>
+                      )}
                     </div>
                   </section>
                 )}
 
-                {/* New Releases Section */}
-                <section className="mb-20">
-                  <div className="flex items-center justify-between mb-8">
+                <section className="mb-16">
+                  <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center gap-3">
                       <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/20">
-                        <Zap className="w-6 h-6 text-zinc-900 dark:text-white" />
+                        <Zap className="w-6 h-6 text-white" />
                       </div>
                       <h2 className="text-2xl md:text-3xl font-bold">{t("home.newReleases")}</h2>
                     </div>
-                    
-                    {/* Secondary Category Filter */}
-                    <div id="all-categories" className="flex flex-wrap lg:flex-nowrap items-center gap-2 bg-white/50 dark:bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800">
-                      <button onClick={() => handleCategorySelect("")} className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedCategory === "" ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white'}`}>{t("home.filterAll")}</button>
-                      {categories.slice(0, 5).map(cat => (
-                        <button
-                          key={`sec-${cat.id}`}
-                          onClick={() => handleCategorySelect(cat.slug)}
-                          className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedCategory === cat.slug ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white'}`}
-                        >
-                          {cat.nameTranslations?.[language] || cat.name}
-                        </button>
-                      ))}
+
+                    <div className="flex items-center gap-3">
+                      {/* Secondary Category Filter */}
+                      <div id="all-categories" className="hidden lg:flex flex-wrap lg:flex-nowrap items-center gap-2 bg-white/50 dark:bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+                        <button onClick={() => handleCategorySelect("")} className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedCategory === "" ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'}`}>{t("home.filterAll")}</button>
+                        {categories.slice(0, 5).map(cat => (
+                          <button
+                            key={`sec-${cat.id}`}
+                            onClick={() => handleCategorySelect(cat.slug)}
+                            className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedCategory === cat.slug ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'}`}
+                          >
+                            {cat.nameTranslations?.[language] || cat.name}
+                          </button>
+                        ))}
+                      </div>
+                      <Link href="/games/new" className="flex items-center gap-1.5 text-sm font-medium text-blue-500 hover:text-blue-400 transition-colors group">
+                        {t("home.seeMore") || "Xem thêm"}
+                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      </Link>
                     </div>
                   </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-                    {games.slice(0, 12).map(game => <GameCard key={`new-${game.id}`} game={game} />)}
+
+                  <div className="flex gap-5 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory">
+                    {games.slice(0, 10).map(game => (
+                      <div key={`new-${game.id}`} className="shrink-0 w-[240px] sm:w-[260px] snap-start">
+                        <GameCard game={game} />
+                      </div>
+                    ))}
+                    {games.length >= 10 && (
+                      <div className="shrink-0 w-[200px] flex items-center justify-center snap-start">
+                        <Link href="/games/new" className="flex flex-col items-center gap-3 p-6 rounded-2xl border-2 border-dashed border-zinc-300 dark:border-zinc-700 hover:border-purple-400 dark:hover:border-purple-500 text-zinc-500 hover:text-purple-500 transition-all group w-full h-full min-h-[200px]">
+                          <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
+                            <ChevronRight className="w-6 h-6" />
+                          </div>
+                          <span className="text-sm font-medium text-center">{t("home.seeMore") || "Xem tất cả"}</span>
+                        </Link>
+                      </div>
+                    )}
                   </div>
-                  
-                  {games.length > 12 && (
-                    <div className="mt-12 flex justify-center">
-                      <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="px-8 py-3 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 rounded-full font-medium transition-all text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white">
-                        Load More Games
-                      </button>
-                    </div>
-                  )}
                 </section>
               </div>
 
