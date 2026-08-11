@@ -244,6 +244,41 @@ exports.getEmailCampaigns = async (req, res) => {
   }
 };
 
+exports.deleteEmailCampaigns = async (req, res) => {
+  try {
+    const { all, ids } = req.body;
+    const adminId = req.user.id;
+
+    let deletedCount = 0;
+    if (all === true || all === 'true') {
+      const result = await prisma.emailCampaign.deleteMany({});
+      deletedCount = result.count;
+    } else if (Array.isArray(ids) && ids.length > 0) {
+      const result = await prisma.emailCampaign.deleteMany({
+        where: { id: { in: ids.map(id => parseInt(id)) } }
+      });
+      deletedCount = result.count;
+    } else {
+      return res.status(400).json({ success: false, error: 'Must provide all=true or an array of ids' });
+    }
+
+    // Create Audit Log
+    await prisma.auditLog.create({
+      data: {
+        adminId,
+        action: 'DELETE_CAMPAIGNS',
+        entity: 'EmailCampaign',
+        details: { deletedCount, ids: all ? 'ALL' : ids }
+      }
+    });
+
+    res.json({ success: true, message: `Deleted ${deletedCount} campaigns` });
+  } catch (error) {
+    console.error('Delete campaigns error:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+};
+
 // 5. Version Control (Admin side)
 exports.getGameVersions = async (req, res) => {
   try {

@@ -24,7 +24,8 @@ export default function AdminPage() {
   const [crashLogs, setCrashLogs] = useState<any[]>([]);
   const [mailTemplates, setMailTemplates] = useState<any[]>([]);
   const [mailCampaigns, setMailCampaigns] = useState<any[]>([]);
-  
+  const [selectedCampaigns, setSelectedCampaigns] = useState<number[]>([]);
+  const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [advancedModalOpen, setAdvancedModalOpen] = useState(false);
   const [advGame, setAdvGame] = useState<any>(null);
   const [advTags, setAdvTags] = useState("");
@@ -109,15 +110,21 @@ export default function AdminPage() {
           if(d2.success) setCrashLogs(d2.data);
         }
       } else if (activeTab === "mail") {
-        const res1 = await fetch(`${apiUrl}/api/admin/mail/templates`, { headers });
-        if (res1.ok) {
-          const d1 = await res1.json();
-          if(d1.success) setMailTemplates(d1.data);
+        const tplRes = await fetch(`${apiUrl}/api/admin/mail/templates`, { headers });
+        if(tplRes.ok) {
+          const tdata = await tplRes.json();
+          if(tdata.success) setMailTemplates(tdata.data);
         }
-        const res2 = await fetch(`${apiUrl}/api/admin/mail/campaigns`, { headers });
-        if (res2.ok) {
-          const d2 = await res2.json();
-          if(d2.success) setMailCampaigns(d2.data);
+        const campRes = await fetch(`${apiUrl}/api/admin/mail/campaigns`, { headers });
+        if(campRes.ok) {
+          const cdata = await campRes.json();
+          if(cdata.success) setMailCampaigns(cdata.data);
+        }
+      } else if (activeTab === "audit-logs") {
+        const res = await fetch(`${apiUrl}/api/admin/audit-logs`, { headers });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) setAuditLogs(data.data);
         }
       }
     } catch (error) {
@@ -235,6 +242,28 @@ export default function AdminPage() {
         alert(data.message);
       }
     } catch (e) {}
+  };
+
+  const deleteCampaigns = async (all: boolean, ids: number[] = []) => {
+    if (!confirm("Are you sure you want to delete the selected campaigns?")) return;
+    try {
+      const res = await fetch(`${apiUrl}/api/admin/mail/campaigns`, {
+        method: 'DELETE',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ all, ids })
+      });
+      if (res.ok) {
+        setSelectedCampaigns([]);
+        fetchData();
+      } else {
+        alert("Failed to delete campaigns.");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const rollbackVersion = async (versionId: number) => {
@@ -750,23 +779,98 @@ export default function AdminPage() {
             </div>
             
             <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
-              <div className="p-4 border-b border-border bg-muted/30">
-                <h3 className="font-semibold">{t("admin.mailHistory")}</h3>
+              <div className="p-4 border-b border-border bg-muted/30 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  <input 
+                    type="checkbox" 
+                    className="w-4 h-4 rounded border-zinc-700 bg-zinc-800"
+                    checked={mailCampaigns.length > 0 && selectedCampaigns.length === mailCampaigns.length}
+                    onChange={(e) => {
+                      if (e.target.checked) setSelectedCampaigns(mailCampaigns.map(c => c.id));
+                      else setSelectedCampaigns([]);
+                    }}
+                  />
+                  <h3 className="font-semibold">{t("admin.mailHistory")}</h3>
+                </div>
+                <div className="flex gap-2">
+                  {selectedCampaigns.length > 0 && (
+                    <button onClick={() => deleteCampaigns(false, selectedCampaigns)} className="px-3 py-1 text-sm bg-red-600 hover:bg-red-500 text-white rounded-md transition-colors">
+                      {t("admin.btnDeleteSelected")} ({selectedCampaigns.length})
+                    </button>
+                  )}
+                  {mailCampaigns.length > 0 && (
+                    <button onClick={() => deleteCampaigns(true)} className="px-3 py-1 text-sm border border-red-500/50 text-red-500 hover:bg-red-500/10 rounded-md transition-colors">
+                      {t("admin.btnDeleteAll")}
+                    </button>
+                  )}
+                </div>
               </div>
               <ul className="divide-y divide-border">
                 {mailCampaigns.map(camp => (
-                  <li key={camp.id} className="p-4 flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-white">{camp.subject}</p>
-                      <p className="text-xs text-zinc-400 mt-1">{t("admin.mailSentHeader")}: {camp.sentCount} | {t("admin.mailTargetHeader")}: {camp.targetGroup}</p>
-                    </div>
-                    <div className="text-right text-xs text-zinc-500">
-                      {new Date(camp.createdAt).toLocaleString()}
+                  <li key={camp.id} className="p-4 flex items-center gap-4">
+                    <input 
+                      type="checkbox" 
+                      className="w-4 h-4 rounded border-zinc-700 bg-zinc-800"
+                      checked={selectedCampaigns.includes(camp.id)}
+                      onChange={(e) => {
+                        if (e.target.checked) setSelectedCampaigns([...selectedCampaigns, camp.id]);
+                        else setSelectedCampaigns(selectedCampaigns.filter(id => id !== camp.id));
+                      }}
+                    />
+                    <div className="flex-1 flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-white">{camp.subject}</p>
+                        <p className="text-xs text-zinc-400 mt-1">{t("admin.mailSentHeader")}: {camp.sentCount} | {t("admin.mailTargetHeader")}: {camp.targetGroup}</p>
+                      </div>
+                      <div className="text-right text-xs text-zinc-500">
+                        {new Date(camp.createdAt).toLocaleString()}
+                      </div>
                     </div>
                   </li>
                 ))}
+                {mailCampaigns.length === 0 && (
+                  <li className="p-8 text-center text-zinc-500">Chưa có chiến dịch nào.</li>
+                )}
               </ul>
             </div>
+          </div>
+        );
+
+      case "audit-logs":
+        return (
+          <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
+            <div className="p-4 border-b border-border bg-muted/30">
+              <h3 className="font-semibold">{t("admin.auditLogTitle")}</h3>
+            </div>
+            <table className="w-full text-left text-sm">
+              <thead className="bg-muted/50 border-b border-border">
+                <tr>
+                  <th className="p-4">{t("admin.auditLogTime")}</th>
+                  <th className="p-4">{t("admin.auditLogAdmin")}</th>
+                  <th className="p-4">{t("admin.auditLogAction")}</th>
+                  <th className="p-4">{t("admin.auditLogEntity")}</th>
+                  <th className="p-4">{t("admin.auditLogDetails")}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {auditLogs.map(log => (
+                  <tr key={log.id} className="hover:bg-muted/20">
+                    <td className="p-4 whitespace-nowrap text-zinc-400">{new Date(log.createdAt).toLocaleString()}</td>
+                    <td className="p-4 font-medium text-white">{log.admin?.username || log.admin?.email || `Admin ID: ${log.adminId}`}</td>
+                    <td className="p-4"><span className="px-2 py-1 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-md text-xs">{log.action}</span></td>
+                    <td className="p-4 text-zinc-300">{log.entity}</td>
+                    <td className="p-4">
+                      <pre className="text-xs text-zinc-500 whitespace-pre-wrap max-w-xs overflow-hidden">
+                        {log.details ? JSON.stringify(log.details, null, 2) : '-'}
+                      </pre>
+                    </td>
+                  </tr>
+                ))}
+                {auditLogs.length === 0 && (
+                  <tr><td colSpan={5} className="p-8 text-center text-zinc-500">No logs found.</td></tr>
+                )}
+              </tbody>
+            </table>
           </div>
         );
 
@@ -916,19 +1020,19 @@ export default function AdminPage() {
               onClick={() => setActiveTab('reports')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'reports' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
             >
-              <Flag className="w-4 h-4" /> Quản lý Báo cáo
+              <Flag className="w-4 h-4" /> {t("admin.tabReports")}
             </button>
             <button
               onClick={() => setActiveTab('settings')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'settings' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
             >
-              <Settings className="w-4 h-4" /> Cấu hình Hệ thống
+              <Settings className="w-4 h-4" /> {t("admin.tabSettings")}
             </button>
             <button
               onClick={() => setActiveTab('storage')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'storage' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> Lưu trữ & Băng thông
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg> {t("admin.tabStorage")}
             </button>
             <button
               onClick={() => setActiveTab('analytics')}
@@ -940,10 +1044,13 @@ export default function AdminPage() {
               onClick={() => setActiveTab('mail')}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'mail' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Mail Campaigns
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> {t("admin.tabMail")}
             </button>
             <button onClick={() => setActiveTab('categories')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'categories' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}>
               <Tags className="w-4 h-4" /> {t("admin.tabCategories")}
+            </button>
+            <button onClick={() => setActiveTab('audit-logs')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'audit-logs' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> {t("admin.tabAudit")}
             </button>
           </div>
         </nav>

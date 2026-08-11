@@ -267,3 +267,21 @@ exports.garbageCollect = async (req, res) => {
     res.status(500).json({ error: 'Failed to run garbage collection' });
   }
 };
+
+exports.getAuditLogs = async (req, res) => {
+  try {
+    const logs = await prisma.auditLog.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 100, // Limit to recent 100 for now
+      include: {
+        admin: {
+          select: { username: true, email: true }
+        }
+      }
+    });
+    res.json({ success: true, data: logs });
+  } catch (error) {
+    console.error("Get audit logs error:", error);
+    res.status(500).json({ error: 'Failed to fetch audit logs' });
+  }
+};

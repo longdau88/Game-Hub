@@ -27,6 +27,7 @@ model User {
   reports      Report[]
   gameSessions GameSession[]
   crashReports CrashReport[]
+  auditLogs    AuditLog[]
 
   @@map("users")
 }
@@ -207,4 +208,19 @@ model EmailCampaign {
   completedAt  DateTime? @map("completed_at")
 
   @@map("email_campaigns")
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  adminId   Int      @map("admin_id")
+  action    String   @db.VarChar(50)
+  entity    String   @db.VarChar(50)
+  entityId  String?  @map("entity_id") @db.VarChar(100)
+  details   Json?
+  createdAt DateTime @default(now()) @map("created_at")
+  admin     User     @relation(fields: [adminId], references: [id])
+
+  @@index([adminId])
+  @@index([createdAt])
+  @@map("audit_logs")
 }

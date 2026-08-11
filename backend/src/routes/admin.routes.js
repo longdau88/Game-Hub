@@ -52,5 +52,14 @@ router.get('/mail/templates', getEmailTemplates);
 router.post('/mail/templates', createEmailTemplate);
 router.get('/mail/campaigns', getEmailCampaigns);
 router.post('/mail/campaigns', sendEmailCampaign);
+router.delete('/mail/campaigns', requireAdmin, requireAuth, (req, res, next) => {
+  // We need to import the function here or above
+  require('../controllers/admin-advanced.controller').deleteEmailCampaigns(req, res).catch(next);
+});
+
+// Audit Logs
+router.get('/audit-logs', requireAdmin, requireAuth, (req, res, next) => {
+  require('../controllers/admin.controller').getAuditLogs(req, res).catch(next);
+});
 
 module.exports = router;
