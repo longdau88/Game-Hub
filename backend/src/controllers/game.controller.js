@@ -524,11 +524,32 @@ exports.getPendingGames = async (req, res) => {
 
 exports.approveGame = async (req, res) => {
   try {
+    const adminId = req.user?.id;
     const { id } = req.params;
     const updatedGame = await prisma.game.update({
       where: { id },
-      data: { status: 'published' }
+      data: { status: 'published' },
+      include: { uploader: { select: { username: true, email: true } } }
     });
+
+    // Audit log
+    try {
+      await prisma.auditLog.create({
+        data: {
+          adminId,
+          action: 'APPROVE_GAME',
+          entity: 'Game',
+          details: {
+            gameId: id,
+            gameTitle: updatedGame.title,
+            uploaderEmail: updatedGame.uploader?.email
+          }
+        }
+      });
+    } catch (auditErr) {
+      console.error('[AuditLog] Failed to write log:', auditErr.message);
+    }
+
     res.json({ message: 'Game approved successfully', game: updatedGame });
   } catch (error) {
     res.status(500).json({ error: 'Failed to approve game' });

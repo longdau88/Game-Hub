@@ -77,7 +77,7 @@ export default function AdminUsersPage() {
                     {user.role}
                   </span>
                 </td>
-                <td className="p-4 text-zinc-400">{user._count?.games ?? 0}</td>
+                <td className="p-4 text-zinc-400">{user.gamesUploaded ?? 0}</td>
                 <td className="p-4">
                   <span className={`px-2 py-1 rounded text-xs font-semibold ${user.isBanned ? "bg-red-500/10 text-red-400 border border-red-500/20" : "bg-green-500/10 text-green-400 border border-green-500/20"}`}>
                     {user.isBanned ? t("admin.banned") : t("admin.active")}

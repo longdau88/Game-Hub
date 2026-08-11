@@ -36,7 +36,7 @@ export default function AdminMailPage() {
     if (!confirm("Send this email campaign to all selected recipients?")) return;
     setSending(true);
     try {
-      const res = await fetch(`${apiUrl}/api/admin/mail/send`, {
+      const res = await fetch(`${apiUrl}/api/admin/mail/campaigns`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(mailForm),
@@ -157,7 +157,7 @@ export default function AdminMailPage() {
               />
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{campaign.subject}</p>
-                <p className="text-xs text-zinc-500">{campaign.target} • {new Date(campaign.createdAt).toLocaleString()}</p>
+                <p className="text-xs text-zinc-500">{campaign.targetGroup || campaign.target} • {new Date(campaign.createdAt).toLocaleString()}</p>
               </div>
               <div className="shrink-0 text-right">
                 <p className="text-sm font-medium">{campaign.sentCount ?? 0}</p>

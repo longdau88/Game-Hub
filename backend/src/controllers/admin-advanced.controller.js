@@ -63,8 +63,9 @@ exports.runGarbageCollection = async (req, res) => {
 // 2. AI & Recommendations
 exports.updateHiddenTags = async (req, res) => {
   try {
+    const adminId = req.user?.id;
     const { id } = req.params;
-    const { tags } = req.body; // Expects comma separated string or array
+    const { tags } = req.body;
 
     const tagsString = Array.isArray(tags) ? tags.join(',') : tags;
 
@@ -72,6 +73,12 @@ exports.updateHiddenTags = async (req, res) => {
       where: { id },
       data: { hiddenTags: tagsString, vectorSynced: false }
     });
+
+    try {
+      await prisma.auditLog.create({
+        data: { adminId, action: 'UPDATE_HIDDEN_TAGS', entity: 'Game', details: { gameId: id, gameTitle: game.title, tags: tagsString } }
+      });
+    } catch (e) { console.error('[AuditLog]', e.message); }
 
     res.json({ success: true, data: game });
   } catch (error) {
@@ -197,38 +204,48 @@ const { sendEmail } = require('../utils/email');
 
 exports.sendEmailCampaign = async (req, res) => {
   try {
-    const { subject, body, targetGroup } = req.body;
+    const adminId = req.user?.id;
+    const { subject, content, target } = req.body;
+    const targetGroup = target || 'all';
     
     const users = await prisma.user.findMany({
-      where: targetGroup === 'active' ? { isBanned: false } : {}
+      where: targetGroup === 'active'
+        ? { isBanned: false, lastLoginAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } }
+        : {}
     });
 
-    // Send email to all selected users
     let sentCount = 0;
     for (const user of users) {
       if (user.email) {
         const result = await sendEmail({
           to: user.email,
           subject: subject,
-          html: body
+          html: content
         });
-        if (result.success) sentCount++;
+        if (result && result.success) sentCount++;
       }
     }
 
     const campaign = await prisma.emailCampaign.create({
       data: {
         subject,
-        body,
-        targetGroup: targetGroup || 'all',
+        body: content,
+        targetGroup: targetGroup,
         status: 'completed',
-        sentCount: sentCount,
+        sentCount,
         completedAt: new Date()
       }
     });
 
-    res.json({ success: true, data: campaign });
+    try {
+      await prisma.auditLog.create({
+        data: { adminId, action: 'SEND_EMAIL_CAMPAIGN', entity: 'EmailCampaign', details: { subject, target: targetGroup, sentCount } }
+      });
+    } catch (e) { console.error('[AuditLog]', e.message); }
+
+    res.json({ success: true, sentCount, data: campaign });
   } catch (error) {
+    console.error('sendEmailCampaign error:', error);
     res.status(500).json({ success: false, error: 'Internal server error' });
   }
 };
@@ -295,25 +312,29 @@ exports.getGameVersions = async (req, res) => {
 
 exports.rollbackGame = async (req, res) => {
   try {
+    const adminId = req.user?.id;
     const { id, versionId } = req.params;
 
-    // Set all versions to inactive
     await prisma.gameVersion.updateMany({
       where: { gameId: id },
       data: { isActive: false }
     });
 
-    // Set target version to active
     const activeVersion = await prisma.gameVersion.update({
       where: { id: parseInt(versionId) },
       data: { isActive: true }
     });
 
-    // Update game r2FolderPath
     await prisma.game.update({
       where: { id },
       data: { r2FolderPath: activeVersion.r2FolderPath }
     });
+
+    try {
+      await prisma.auditLog.create({
+        data: { adminId, action: 'ROLLBACK_GAME_VERSION', entity: 'Game', details: { gameId: id, versionId, r2FolderPath: activeVersion.r2FolderPath } }
+      });
+    } catch (e) { console.error('[AuditLog]', e.message); }
 
     res.json({ success: true, message: 'Game rolled back successfully', data: activeVersion });
   } catch (error) {
