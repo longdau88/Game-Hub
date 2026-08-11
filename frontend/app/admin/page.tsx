@@ -578,13 +578,13 @@ export default function AdminPage() {
                       checked={settings.maintenanceMode === 'true'}
                       onChange={(e) => setSettings({...settings, maintenanceMode: e.target.checked ? 'true' : 'false'})}
                     />
-                    <span className="font-medium">Chế độ Bảo trì (Maintenance Mode)</span>
+                    <span className="font-medium">{t("admin.settingsMaintenance")}</span>
                   </label>
-                  <p className="text-sm text-zinc-400 mt-1 ml-8">Hiển thị thông báo bảo trì cho người dùng và chặn các thao tác upload/chơi game mới.</p>
+                  <p className="text-sm text-zinc-400 mt-1 ml-8">{t("admin.settingsMaintenanceDesc")}</p>
                 </div>
                 
                 <div>
-                  <label className="block font-medium mb-2">Dung lượng tối đa Upload Game (MB)</label>
+                  <label className="block font-medium mb-2">{t("admin.settingsUploadLimit")}</label>
                   <input 
                     type="number"
                     min="10"
@@ -613,7 +613,7 @@ export default function AdminPage() {
         return (
           <div className="space-y-8">
             <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm p-6">
-              <h3 className="font-semibold mb-4 text-xl">Quản lý {t("admin.tabStorage")}</h3>
+              <h3 className="font-semibold mb-4 text-xl">{t("admin.storageTitle")}</h3>
               <div className="grid md:grid-cols-2 gap-6 mb-8">
                 <div className="p-4 bg-zinc-900 rounded-lg border border-zinc-800">
                   <p className="text-sm text-zinc-400 mb-1">{t("admin.storageUsed")}</p>
