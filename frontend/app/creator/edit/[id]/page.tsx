@@ -15,7 +15,7 @@ export default function EditGamePage() {
   const [description, setDescription] = useState("");
   const [descriptionEn, setDescriptionEn] = useState("");
   const [categories, setCategories] = useState<any[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [existingCover, setExistingCover] = useState("");
   
@@ -51,7 +51,7 @@ export default function EditGamePage() {
           setDescriptionEn(gameData.descriptionTranslations?.en || "");
           setExistingCover(gameData.coverImageUrl || "");
           if (gameData.categories && gameData.categories.length > 0) {
-            setSelectedCategory(gameData.categories[0].id.toString());
+            setSelectedCategories(gameData.categories.map((c: any) => c.id.toString()));
           }
           if (gameData.controls) {
             setControls(gameData.controls);
@@ -75,6 +75,11 @@ export default function EditGamePage() {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (selectedCategories.length === 0) {
+      setError("Vui lòng chọn ít nhất một thể loại.");
+      return;
+    }
+    
     setSaving(true);
     setError("");
 
@@ -82,7 +87,7 @@ export default function EditGamePage() {
     formData.append("title", title);
     formData.append("description", description);
     formData.append("descriptionTranslations", JSON.stringify({ vi: description, en: descriptionEn }));
-    formData.append("categoryIds", selectedCategory);
+    formData.append("categoryIds", selectedCategories.join(','));
     formData.append("controls", JSON.stringify(controls));
     formData.append("engineConfig", JSON.stringify({ memorySize, enableBrotli, enableGzip, firebaseTrackingId }));
     if (coverImage) {
@@ -171,15 +176,32 @@ export default function EditGamePage() {
 
           <div>
             <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.category")}</label>
-            <select 
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors"
-            >
+            <div className="flex flex-wrap gap-2">
               {categories.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => {
+                    const idStr = cat.id.toString();
+                    if (selectedCategories.includes(idStr)) {
+                      setSelectedCategories(selectedCategories.filter(id => id !== idStr));
+                    } else {
+                      setSelectedCategories([...selectedCategories, idStr]);
+                    }
+                  }}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
+                    selectedCategories.includes(cat.id.toString())
+                      ? 'bg-blue-600 border-blue-500 text-white'
+                      : 'bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white'
+                  }`}
+                >
+                  {cat.name}
+                </button>
               ))}
-            </select>
+            </div>
+            {selectedCategories.length === 0 && (
+              <p className="text-red-400 text-xs mt-2">Vui lòng chọn ít nhất một thể loại.</p>
+            )}
           </div>
 
           <div>
