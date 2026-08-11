@@ -428,32 +428,32 @@ export default function Home() {
                 )}
 
                 <section className="mb-16">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/20">
-                        <Zap className="w-6 h-6 text-white" />
+                  <div className="mb-6">
+                    {/* Row 1: Title + See More */}
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/20">
+                          <Zap className="w-6 h-6 text-white" />
+                        </div>
+                        <h2 className="text-2xl md:text-3xl font-bold whitespace-nowrap">{t("home.newReleases")}</h2>
                       </div>
-                      <h2 className="text-2xl md:text-3xl font-bold">{t("home.newReleases")}</h2>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      {/* Secondary Category Filter */}
-                      <div id="all-categories" className="hidden lg:flex flex-wrap lg:flex-nowrap items-center gap-2 bg-white/50 dark:bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800">
-                        <button onClick={() => handleCategorySelect("")} className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedCategory === "" ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'}`}>{t("home.filterAll")}</button>
-                        {categories.slice(0, 5).map(cat => (
-                          <button
-                            key={`sec-${cat.id}`}
-                            onClick={() => handleCategorySelect(cat.slug)}
-                            className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedCategory === cat.slug ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'}`}
-                          >
-                            {cat.nameTranslations?.[language] || cat.name}
-                          </button>
-                        ))}
-                      </div>
-                      <Link href="/games/new" className="flex items-center gap-1.5 text-sm font-medium text-blue-500 hover:text-blue-400 transition-colors group">
+                      <Link href="/games/new" className="flex items-center gap-1.5 text-sm font-medium text-blue-500 hover:text-blue-400 transition-colors group shrink-0 ml-4">
                         {t("home.seeMore") || "Xem thêm"}
                         <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </Link>
+                    </div>
+                    {/* Row 2: Category Filter */}
+                    <div id="all-categories" className="flex overflow-x-auto hide-scrollbar items-center gap-2 bg-white/50 dark:bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800">
+                      <button onClick={() => handleCategorySelect("")} className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap shrink-0 ${selectedCategory === "" ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'}`}>{t("home.filterAll")}</button>
+                      {categories.slice(0, 8).map(cat => (
+                        <button
+                          key={`sec-${cat.id}`}
+                          onClick={() => handleCategorySelect(cat.slug)}
+                          className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap shrink-0 ${selectedCategory === cat.slug ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'}`}
+                        >
+                          {cat.nameTranslations?.[language] || cat.name}
+                        </button>
+                      ))}
                     </div>
                   </div>
 
