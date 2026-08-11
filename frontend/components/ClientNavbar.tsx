@@ -50,7 +50,7 @@ export default function ClientNavbar() {
           {role === "admin" && (
             <Link
               href="/admin"
-              className="flex items-center gap-2 px-4 py-2 rounded-md bg-zinc-800 dark:bg-zinc-800 hover:bg-zinc-700 text-white text-sm font-medium transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-zinc-100 dark:bg-zinc-800 dark:bg-zinc-800 hover:bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-white text-sm font-medium transition-colors"
             >
               <Settings className="w-4 h-4" />
               {t("nav.admin")}
@@ -58,14 +58,14 @@ export default function ClientNavbar() {
           )}
           <Link
             href="/creator/upload"
-            className="flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-zinc-900 dark:text-white text-sm font-medium transition-colors"
           >
             <UploadCloud className="w-4 h-4" />
             {t("nav.uploadGame")}
           </Link>
           <Link
             href="/profile"
-            className="flex items-center gap-2 px-4 py-2 rounded-md bg-zinc-800 dark:bg-zinc-800 hover:bg-zinc-700 text-white text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-md bg-zinc-100 dark:bg-zinc-800 dark:bg-zinc-800 hover:bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-white text-sm font-medium transition-colors"
           >
             <User className="w-4 h-4" />
             {t("nav.profile")}
@@ -73,7 +73,7 @@ export default function ClientNavbar() {
           <a
             href="#"
             onClick={handleLogout}
-            className="flex items-center gap-2 px-4 py-2 rounded-md border border-border hover:bg-zinc-100 dark:hover:bg-zinc-800 text-sm font-medium transition-colors cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2 rounded-md border border-border hover:bg-zinc-100 dark:hover:bg-zinc-100 dark:bg-zinc-800 text-sm font-medium transition-colors cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
             {t("nav.logout")}

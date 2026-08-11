@@ -116,7 +116,7 @@ export default function AdminMailPage() {
           <button
             type="submit"
             disabled={sending}
-            className="px-6 py-2.5 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
+            className="px-6 py-2.5 bg-primary hover:bg-primary/90 disabled:opacity-50 text-zinc-900 dark:text-white rounded-lg font-medium transition-colors"
           >
             {sending ? "Sending..." : t("admin.mailSend")}
           </button>

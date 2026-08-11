@@ -131,7 +131,7 @@ export default function AdminPendingGamesPage() {
               <button onClick={() => setRejectModalOpen(false)} className="px-4 py-2 rounded-md text-sm font-medium hover:bg-muted">
                 {t("admin.btnCancel")}
               </button>
-              <button onClick={rejectGame} className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-md text-sm font-medium">
+              <button onClick={rejectGame} className="px-4 py-2 bg-red-600 hover:bg-red-500 text-zinc-900 dark:text-white rounded-md text-sm font-medium">
                 {t("admin.btnReject")}
               </button>
             </div>

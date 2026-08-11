@@ -224,21 +224,21 @@ export default function ProfilePage() {
   };
 
   const GameListCard = ({ game, type }: { game: any, type?: 'history' | 'bookmark' }) => (
-    <div className="group relative flex items-center gap-4 bg-zinc-900/50 hover:bg-zinc-800/80 border border-zinc-800 p-3 rounded-2xl transition-all duration-300">
-      <Link href={`/game/play?id=${game.id}`} className="w-24 h-24 aspect-square rounded-xl overflow-hidden relative shrink-0 border border-white/5">
+    <div className="group relative flex items-center gap-4 bg-white/50 dark:bg-zinc-900/50 hover:bg-zinc-100/80 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-800 p-3 rounded-2xl transition-all duration-300">
+      <Link href={`/game/play?id=${game.id}`} className="w-24 h-24 aspect-square rounded-xl overflow-hidden relative shrink-0 border border-black/5 dark:border-white/5">
         <img src={game.coverImageUrl || '/placeholder.png'} alt={game.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
         <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="w-8 h-8 rounded-full bg-blue-600/90 flex items-center justify-center text-white shadow-lg backdrop-blur-sm">
+          <div className="w-8 h-8 rounded-full bg-blue-600/90 flex items-center justify-center text-zinc-900 dark:text-white shadow-lg backdrop-blur-sm">
             <Play className="w-4 h-4 fill-current ml-0.5" />
           </div>
         </div>
       </Link>
       <div className="flex-1 py-1">
         <Link href={`/game/play?id=${game.id}`}>
-          <h3 className="font-bold text-white text-lg group-hover:text-blue-400 transition-colors line-clamp-1">{game.title}</h3>
+          <h3 className="font-bold text-zinc-900 dark:text-white text-lg group-hover:text-blue-400 transition-colors line-clamp-1">{game.title}</h3>
         </Link>
-        <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1.5 mt-1">
+        <div className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400 mb-1.5 mt-1">
           <span className="text-yellow-500 flex items-center gap-1 bg-yellow-500/10 px-1.5 py-0.5 rounded"><Star className="w-3 h-3 fill-current" /> {game.averageRating || 'New'}</span>
           <span>•</span>
           <span>{game.categories?.[0]?.nameTranslations?.[language] || game.categories?.[0]?.name || 'Uncategorized'}</span>
@@ -256,34 +256,34 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-transparent py-12">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Profile Header */}
-        <div className="relative mb-12 rounded-[2rem] overflow-hidden bg-zinc-900 border border-zinc-800 shadow-2xl">
+        <div className="relative mb-12 rounded-[2rem] overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl">
           <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-blue-900/40 via-purple-900/40 to-blue-900/40" />
           <div className="relative z-10 px-8 pb-8 pt-20 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-zinc-900 bg-zinc-800 shadow-xl shrink-0">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-zinc-900 bg-zinc-100 dark:bg-zinc-800 shadow-xl shrink-0">
               <img src={profile?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.username}`} alt="Avatar" className="w-full h-full object-cover" />
             </div>
             <div className="flex-1">
-              <h1 className="text-3xl font-black text-white tracking-tight mb-1">{profile?.username || "Player"}</h1>
-              <p className="text-zinc-400 text-sm mb-3 flex items-center justify-center md:justify-start gap-2">
-                <ShieldAlert className="w-4 h-4" /> {t("profile.role")}: <span className="text-white capitalize">{profile?.role}</span>
+              <h1 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight mb-1">{profile?.username || "Player"}</h1>
+              <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-3 flex items-center justify-center md:justify-start gap-2">
+                <ShieldAlert className="w-4 h-4" /> {t("profile.role")}: <span className="text-zinc-900 dark:text-white capitalize">{profile?.role}</span>
               </p>
-              <p className="text-zinc-300 max-w-xl">{profile?.bio || t("profile.noBio")}</p>
+              <p className="text-zinc-700 dark:text-zinc-300 max-w-xl">{profile?.bio || t("profile.noBio")}</p>
             </div>
             <div className="flex gap-4">
-              <div className="text-center px-4 py-2 bg-black/40 rounded-xl border border-white/5">
-                <p className="text-2xl font-bold text-white">{gameHistory.length}</p>
-                <p className="text-xs text-zinc-400 font-medium uppercase tracking-wider">{t("profile.gamesPlayed")}</p>
+              <div className="text-center px-4 py-2 bg-black/40 rounded-xl border border-black/5 dark:border-white/5">
+                <p className="text-2xl font-bold text-zinc-900 dark:text-white">{gameHistory.length}</p>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 font-medium uppercase tracking-wider">{t("profile.gamesPlayed")}</p>
               </div>
-              <div className="text-center px-4 py-2 bg-black/40 rounded-xl border border-white/5">
+              <div className="text-center px-4 py-2 bg-black/40 rounded-xl border border-black/5 dark:border-white/5">
                 <p className="text-2xl font-bold text-blue-400">{uploadedGames.length}</p>
-                <p className="text-xs text-zinc-400 font-medium uppercase tracking-wider">{t("profile.myUploads")}</p>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400 font-medium uppercase tracking-wider">{t("profile.myUploads")}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-8 bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-800 w-fit mx-auto">
+        <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-8 bg-white/50 dark:bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 w-fit mx-auto">
           {[
             { id: 'settings', icon: Settings, label: t("profile.tabSettings") },
             { id: 'history', icon: History, label: t("profile.tabHistory") },
@@ -295,8 +295,8 @@ export default function ProfilePage() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                 activeTab === tab.id 
-                  ? 'bg-zinc-800 text-white shadow-md' 
-                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'
+                  ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-md' 
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white hover:bg-zinc-100/50 dark:bg-zinc-800/50'
               }`}
             >
               <tab.icon className="w-4 h-4" /> {tab.label}
@@ -317,7 +317,7 @@ export default function ProfilePage() {
               {activeTab === 'settings' && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="md:col-span-2 space-y-6">
-                    <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl">
+                    <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl">
                       <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                         <User className="w-5 h-5 text-blue-400" /> {t("profile.publicProfile")}
                       </h2>
@@ -330,36 +330,36 @@ export default function ProfilePage() {
 
                       <form onSubmit={handleSave} className="space-y-6">
                         <div>
-                          <label className="block text-sm font-medium text-zinc-400 mb-2">{t("profile.email")}</label>
-                          <input type="email" value={profile?.email || ""} disabled className="w-full bg-black/40 border border-zinc-800 rounded-xl px-4 py-3 text-zinc-500 cursor-not-allowed" />
+                          <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-2">{t("profile.email")}</label>
+                          <input type="email" value={profile?.email || ""} disabled className="w-full bg-black/40 border border-zinc-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-zinc-500 cursor-not-allowed" />
                         </div>
                         
                         <div>
-                          <label className="block text-sm font-medium text-zinc-400 mb-2">{t("profile.username")}</label>
-                          <input type="text" value={username} onChange={e => setUsername(e.target.value)} required className="w-full bg-zinc-900 border border-zinc-800 focus:border-blue-500 rounded-xl px-4 py-3 text-white outline-none transition-colors shadow-inner" />
+                          <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-2">{t("profile.username")}</label>
+                          <input type="text" value={username} onChange={e => setUsername(e.target.value)} required className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:border-blue-500 rounded-xl px-4 py-3 text-zinc-900 dark:text-white outline-none transition-colors shadow-inner" />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-zinc-400 mb-2">{t("profile.bio")}</label>
-                          <textarea value={bio} onChange={e => setBio(e.target.value)} rows={3} placeholder={t("profile.bioPlaceholder")} className="w-full bg-zinc-900 border border-zinc-800 focus:border-blue-500 rounded-xl px-4 py-3 text-white outline-none transition-colors shadow-inner resize-none" />
+                          <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-2">{t("profile.bio")}</label>
+                          <textarea value={bio} onChange={e => setBio(e.target.value)} rows={3} placeholder={t("profile.bioPlaceholder")} className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:border-blue-500 rounded-xl px-4 py-3 text-zinc-900 dark:text-white outline-none transition-colors shadow-inner resize-none" />
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-zinc-400 mb-2">{t("profile.avatar")}</label>
+                          <label className="block text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-2">{t("profile.avatar")}</label>
                           <div className="flex items-center gap-4">
-                            <div className="w-16 h-16 rounded-xl bg-zinc-800 border border-zinc-700 overflow-hidden shrink-0">
+                            <div className="w-16 h-16 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 overflow-hidden shrink-0">
                               {selectedImage ? (
                                 <img src={URL.createObjectURL(selectedImage)} alt="Preview" className="w-full h-full object-cover" />
                               ) : (
                                 <img src={avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`} alt="Avatar" className="w-full h-full object-cover" />
                               )}
                             </div>
-                            <input type="file" accept="image/*" onChange={e => e.target.files && setSelectedImage(e.target.files[0])} className="block w-full text-sm text-zinc-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-600/10 file:text-blue-400 hover:file:bg-blue-600/20 cursor-pointer transition-colors" />
+                            <input type="file" accept="image/*" onChange={e => e.target.files && setSelectedImage(e.target.files[0])} className="block w-full text-sm text-zinc-600 dark:text-zinc-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-600/10 file:text-blue-400 hover:file:bg-blue-600/20 cursor-pointer transition-colors" />
                           </div>
                         </div>
 
-                        <button type="submit" disabled={saving} className="w-full flex items-center justify-center gap-2 py-3.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-xl font-bold transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.3)]">
-                          {saving ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Save className="w-5 h-5" />}
+                        <button type="submit" disabled={saving} className="w-full flex items-center justify-center gap-2 py-3.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-zinc-900 dark:text-white rounded-xl font-bold transition-all hover:shadow-[0_0_20px_rgba(37,99,235,0.3)]">
+                          {saving ? <div className="w-5 h-5 border-2 border-black/30 dark:border-white/30 border-t-white rounded-full animate-spin" /> : <Save className="w-5 h-5" />}
                           {saving ? t("profile.saving") : t("profile.saveChanges")}
                         </button>
                       </form>
@@ -367,7 +367,7 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="space-y-6">
-                    <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl">
+                    <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl">
                       <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                         <ShieldAlert className="w-5 h-5 text-purple-400" /> Security
                       </h2>
@@ -380,15 +380,15 @@ export default function ProfilePage() {
 
                       <form onSubmit={handleChangePassword} className="space-y-4">
                         <div>
-                          <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required placeholder={t("profile.currentPassword")} className="w-full bg-zinc-900 border border-zinc-800 focus:border-purple-500 rounded-xl px-4 py-3 text-white outline-none transition-colors shadow-inner" />
+                          <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} required placeholder={t("profile.currentPassword")} className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:border-purple-500 rounded-xl px-4 py-3 text-zinc-900 dark:text-white outline-none transition-colors shadow-inner" />
                         </div>
                         <div>
-                          <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required placeholder={t("profile.newPassword")} className="w-full bg-zinc-900 border border-zinc-800 focus:border-purple-500 rounded-xl px-4 py-3 text-white outline-none transition-colors shadow-inner" />
+                          <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required placeholder={t("profile.newPassword")} className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:border-purple-500 rounded-xl px-4 py-3 text-zinc-900 dark:text-white outline-none transition-colors shadow-inner" />
                         </div>
                         <div>
-                          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required placeholder={t("profile.confirmPassword")} className="w-full bg-zinc-900 border border-zinc-800 focus:border-purple-500 rounded-xl px-4 py-3 text-white outline-none transition-colors shadow-inner" />
+                          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required placeholder={t("profile.confirmPassword")} className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:border-purple-500 rounded-xl px-4 py-3 text-zinc-900 dark:text-white outline-none transition-colors shadow-inner" />
                         </div>
-                        <button type="submit" disabled={changingPassword} className="w-full py-3.5 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-white rounded-xl font-bold transition-all border border-zinc-700">
+                        <button type="submit" disabled={changingPassword} className="w-full py-3.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:bg-zinc-700 disabled:opacity-50 text-zinc-900 dark:text-white rounded-xl font-bold transition-all border border-zinc-300 dark:border-zinc-700">
                           {changingPassword ? "Updating..." : t("profile.changePassword")}
                         </button>
                       </form>
@@ -398,13 +398,13 @@ export default function ProfilePage() {
               )}
 
               {activeTab === 'history' && (
-                <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
+                <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
                   <h2 className="text-2xl font-bold mb-6">{t("profile.recentlyPlayed")}</h2>
                   {gameHistory.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
                       <History className="w-16 h-16 mb-4 opacity-20" />
                       <p>{t("profile.noHistory")}</p>
-                      <Link href="/" className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium transition-colors">{t("profile.playGames")}</Link>
+                      <Link href="/" className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-500 text-zinc-900 dark:text-white rounded-full font-medium transition-colors">{t("profile.playGames")}</Link>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -415,7 +415,7 @@ export default function ProfilePage() {
               )}
 
               {activeTab === 'bookmarks' && (
-                <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
+                <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
                   <h2 className="text-2xl font-bold mb-6">{t("profile.savedGames")}</h2>
                   {bookmarkedGames.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
@@ -431,22 +431,22 @@ export default function ProfilePage() {
               )}
 
               {activeTab === 'uploads' && (
-                <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
+                <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold">{t("profile.myUploads")}</h2>
-                    <Link href="/creator/upload" className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-colors flex items-center gap-2">
+                    <Link href="/creator/upload" className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-zinc-900 dark:text-white rounded-xl font-medium transition-colors flex items-center gap-2">
                       <UploadCloud className="w-4 h-4" /> {t("profile.uploadNew")}
                     </Link>
                   </div>
                   {uploadedGames.length === 0 ? (
-                    <div className="text-center py-12 text-zinc-500 border border-dashed border-zinc-800 rounded-2xl">
+                    <div className="text-center py-12 text-zinc-500 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl">
                       <p>{t("profile.noGamesUploaded")}</p>
                     </div>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="border-b border-zinc-800 text-zinc-400 text-sm">
+                          <tr className="border-b border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 text-sm">
                             <th className="py-4 font-medium">{t("profile.game")}</th>
                             <th className="py-4 font-medium">{t("profile.status")}</th>
                             <th className="py-4 font-medium text-right">{t("profile.actions")}</th>
@@ -454,12 +454,12 @@ export default function ProfilePage() {
                         </thead>
                         <tbody>
                           {uploadedGames.map(game => (
-                            <tr key={game.id} className="border-b border-zinc-800/50 hover:bg-zinc-800/20 transition-colors">
+                            <tr key={game.id} className="border-b border-zinc-200/50 dark:border-zinc-800/50 hover:bg-zinc-100/20 dark:bg-zinc-800/20 transition-colors">
                               <td className="py-4">
                                 <div className="flex items-center gap-3">
                                   <img src={game.coverImageUrl || '/placeholder.png'} className="w-12 h-12 rounded-lg object-cover" />
                                   <div>
-                                    <p className="font-bold text-white">{game.title}</p>
+                                    <p className="font-bold text-zinc-900 dark:text-white">{game.title}</p>
                                     <p className="text-xs text-zinc-500">{new Date(game.createdAt).toLocaleDateString()}</p>
                                   </div>
                                 </div>
@@ -474,7 +474,7 @@ export default function ProfilePage() {
                                   {game.status === 'published' && (
                                     <Link href={`/game/play?id=${game.id}`} className="text-xs font-medium px-3 py-1.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors">{t("profile.play")}</Link>
                                   )}
-                                  <Link href={`/creator/edit/${game.id}`} className="text-xs font-medium px-3 py-1.5 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 rounded-lg transition-colors">{t("profile.edit")}</Link>
+                                  <Link href={`/creator/edit/${game.id}`} className="text-xs font-medium px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:bg-zinc-700 rounded-lg transition-colors">{t("profile.edit")}</Link>
                                   <button onClick={() => handleDeleteGame(game.id)} className="text-xs font-medium px-3 py-1.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg transition-colors">{t("profile.delete")}</button>
                                 </div>
                               </td>

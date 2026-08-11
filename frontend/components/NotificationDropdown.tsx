@@ -84,18 +84,18 @@ export default function NotificationDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-md hover:bg-zinc-800 transition-colors"
+        className="relative p-2 rounded-md hover:bg-zinc-100 dark:bg-zinc-800 transition-colors"
       >
-        <Bell className="w-5 h-5 text-zinc-300" />
+        <Bell className="w-5 h-5 text-zinc-700 dark:text-zinc-300" />
         {unreadCount > 0 && (
           <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-zinc-900"></span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl overflow-hidden z-50">
-          <div className="p-3 border-b border-zinc-800 flex justify-between items-center bg-zinc-800/50">
-            <h3 className="font-semibold text-white">Notifications</h3>
+        <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl overflow-hidden z-50">
+          <div className="p-3 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center bg-zinc-100/50 dark:bg-zinc-800/50">
+            <h3 className="font-semibold text-zinc-900 dark:text-white">Notifications</h3>
             {unreadCount > 0 && (
               <button 
                 onClick={markAllAsRead}
@@ -118,12 +118,12 @@ export default function NotificationDropdown() {
                   <div 
                     key={notif.id}
                     onClick={() => markAsRead(notif.id, notif.link)}
-                    className={`p-4 cursor-pointer hover:bg-zinc-800/50 transition-colors ${!notif.isRead ? 'bg-blue-500/5' : ''}`}
+                    className={`p-4 cursor-pointer hover:bg-zinc-100/50 dark:bg-zinc-800/50 transition-colors ${!notif.isRead ? 'bg-blue-500/5' : ''}`}
                   >
                     <div className="flex gap-3">
                       <div className={`mt-1 flex-shrink-0 w-2 h-2 rounded-full ${!notif.isRead ? 'bg-blue-500' : 'bg-transparent'}`}></div>
                       <div>
-                        <p className={`text-sm ${!notif.isRead ? 'text-white font-medium' : 'text-zinc-300'}`}>
+                        <p className={`text-sm ${!notif.isRead ? 'text-zinc-900 dark:text-white font-medium' : 'text-zinc-700 dark:text-zinc-300'}`}>
                           {notif.message}
                         </p>
                         <p className="text-xs text-zinc-500 mt-1">

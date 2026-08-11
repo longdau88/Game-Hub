@@ -50,16 +50,16 @@ export default function AdminReportsPage() {
               <li key={report.id} className="p-4 flex items-start justify-between gap-4">
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium text-zinc-300">{t("admin.reportsUser")}:</span>
-                    <span className="text-zinc-400">{report.reporter?.username || report.reporter?.email}</span>
+                    <span className="font-medium text-zinc-700 dark:text-zinc-300">{t("admin.reportsUser")}:</span>
+                    <span className="text-zinc-600 dark:text-zinc-400">{report.reporter?.username || report.reporter?.email}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium text-zinc-300">{t("admin.reportsGame")}:</span>
-                    <span className="text-zinc-400">{report.game?.title}</span>
+                    <span className="font-medium text-zinc-700 dark:text-zinc-300">{t("admin.reportsGame")}:</span>
+                    <span className="text-zinc-600 dark:text-zinc-400">{report.game?.title}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium text-zinc-300">{t("admin.reportsReason")}:</span>
-                    <span className="text-zinc-400">{report.reason}</span>
+                    <span className="font-medium text-zinc-700 dark:text-zinc-300">{t("admin.reportsReason")}:</span>
+                    <span className="text-zinc-600 dark:text-zinc-400">{report.reason}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">

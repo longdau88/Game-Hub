@@ -62,10 +62,10 @@ export default function AdminStoragePage() {
       {storageStats && (
         <div className="bg-card border border-border rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <span className="text-zinc-400">{t("admin.storageUsed")}</span>
+            <span className="text-zinc-600 dark:text-zinc-400">{t("admin.storageUsed")}</span>
             <span className="text-2xl font-bold">{formatBytes(storageStats.totalBytes)}</span>
           </div>
-          <div className="w-full bg-zinc-800 rounded-full h-2">
+          <div className="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-2">
             <div
               className="bg-primary rounded-full h-2 transition-all"
               style={{ width: `${Math.min(storageStats.percentage || 0, 100)}%` }}
@@ -79,11 +79,11 @@ export default function AdminStoragePage() {
 
       <div className="bg-card border border-border rounded-xl p-6">
         <h4 className="font-semibold mb-2">{t("admin.storageGC")}</h4>
-        <p className="text-sm text-zinc-400 mb-4">{t("admin.storageGCDesc")}</p>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">{t("admin.storageGCDesc")}</p>
         <button
           onClick={runGC}
           disabled={running}
-          className="px-5 py-2.5 bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
+          className="px-5 py-2.5 bg-red-600 hover:bg-red-500 disabled:opacity-50 text-zinc-900 dark:text-white rounded-lg font-medium transition-colors"
         >
           {running ? "Running..." : t("admin.storageGCBtn")}
         </button>

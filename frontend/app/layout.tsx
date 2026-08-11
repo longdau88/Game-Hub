@@ -34,7 +34,7 @@ export default function RootLayout({
                 <div className="flex items-center gap-8">
                   <Link href="/" className="flex items-center gap-2 group">
                     <div className="p-2 bg-blue-600 rounded-lg group-hover:bg-blue-500 transition-colors">
-                      <Gamepad2 className="w-5 h-5 text-white" />
+                      <Gamepad2 className="w-5 h-5 text-zinc-900 dark:text-white" />
                     </div>
                     <span className="font-bold text-xl tracking-tight">Game Hub</span>
                   </Link>

@@ -12,19 +12,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const getTabClass = (path: string) => {
     return pathname === path
       ? "bg-primary/10 text-primary w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
-      : "text-zinc-400 hover:text-white hover:bg-zinc-800 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors";
+      : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white hover:bg-zinc-100 dark:bg-zinc-800 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors";
   };
 
   const getSubTabClass = (path: string) => {
     return pathname === path
       ? "bg-primary/10 text-primary w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors pl-8"
-      : "text-zinc-400 hover:text-white hover:bg-zinc-800 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors pl-8";
+      : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white hover:bg-zinc-100 dark:bg-zinc-800 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors pl-8";
   };
   
   const getSubTabClassYellow = (path: string) => {
     return pathname === path
       ? "bg-yellow-500/10 text-yellow-500 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors pl-8"
-      : "text-zinc-400 hover:text-white hover:bg-zinc-800 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors pl-8";
+      : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white hover:bg-zinc-100 dark:bg-zinc-800 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors pl-8";
   };
 
   return (

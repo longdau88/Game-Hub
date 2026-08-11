@@ -93,7 +93,7 @@ export default function AdminGamificationPage() {
               placeholder="https://.../icon.png"
             />
           </div>
-          <button type="submit" className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-md text-sm font-medium w-full">
+          <button type="submit" className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-zinc-900 dark:text-white rounded-md text-sm font-medium w-full">
             {t("admin.badgeBtnCreate")}
           </button>
         </form>

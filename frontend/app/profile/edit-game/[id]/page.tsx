@@ -128,7 +128,7 @@ export default function EditGamePage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <div className="mb-6">
-        <Link href="/profile" className="inline-flex items-center text-sm font-medium text-zinc-400 hover:text-white transition-colors">
+        <Link href="/profile" className="inline-flex items-center text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Profile
         </Link>
@@ -138,7 +138,7 @@ export default function EditGamePage() {
         <h1 className="text-3xl font-bold mb-2">{t("profile.editGame")}</h1>
       </div>
 
-      <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 md:p-8">
+      <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 md:p-8">
         {error && (
           <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-lg mb-6">
             {error}
@@ -147,43 +147,43 @@ export default function EditGamePage() {
 
         <form onSubmit={handleUpdate} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.gameTitle")}</label>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">{t("upload.gameTitle")}</label>
             <input 
               type="text" 
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors" 
+              className="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-zinc-900 dark:text-white transition-colors" 
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.description")} (VI)</label>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">{t("upload.description")} (VI)</label>
             <textarea 
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
-              className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors resize-none" 
+              className="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-zinc-900 dark:text-white transition-colors resize-none" 
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.description")} (EN)</label>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">{t("upload.description")} (EN)</label>
             <textarea 
               value={descriptionEn}
               onChange={(e) => setDescriptionEn(e.target.value)}
               rows={4}
               placeholder="Game description in English..."
-              className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors resize-none" 
+              className="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-zinc-900 dark:text-white transition-colors resize-none" 
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.category")}</label>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">{t("upload.category")}</label>
             <select 
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors"
+              className="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-zinc-900 dark:text-white transition-colors"
             >
               {categories.map(cat => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -193,7 +193,7 @@ export default function EditGamePage() {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-zinc-300">{t("upload.controls")}</label>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("upload.controls")}</label>
               <button 
                 type="button" 
                 onClick={() => setControls([...controls, { action: "", key: "" }])}
@@ -214,7 +214,7 @@ export default function EditGamePage() {
                       setControls(newControls);
                     }}
                     placeholder={t("upload.controlAction")}
-                    className="flex-1 bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-sm text-white"
+                    className="flex-1 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-sm text-zinc-900 dark:text-white"
                   />
                   <input
                     type="text"
@@ -225,7 +225,7 @@ export default function EditGamePage() {
                       setControls(newControls);
                     }}
                     placeholder={t("upload.controlKey")}
-                    className="flex-1 bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-sm text-white"
+                    className="flex-1 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-sm text-zinc-900 dark:text-white"
                   />
                   <button
                     type="button"
@@ -248,8 +248,8 @@ export default function EditGamePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.coverImage")}</label>
-            <div className="border-2 border-dashed border-zinc-700 rounded-xl p-8 text-center hover:bg-zinc-800/30 transition-colors relative">
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">{t("upload.coverImage")}</label>
+            <div className="border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-8 text-center hover:bg-zinc-100/30 dark:bg-zinc-800/30 transition-colors relative">
               <input 
                 type="file" 
                 accept="image/*"
@@ -257,22 +257,22 @@ export default function EditGamePage() {
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
               <FileType2 className="w-12 h-12 text-zinc-500 mx-auto mb-4" />
-              <p className="text-zinc-300 font-medium mb-1">
+              <p className="text-zinc-700 dark:text-zinc-300 font-medium mb-1">
                 {coverImage ? coverImage.name : t("upload.coverImageHint")}
               </p>
               {(coverImage || existingCoverUrl) && (
                 <div className="mt-4 flex justify-center">
-                  <img src={coverImage ? URL.createObjectURL(coverImage) : existingCoverUrl} alt="Cover preview" className="h-32 object-contain rounded-lg border border-zinc-700" />
+                  <img src={coverImage ? URL.createObjectURL(coverImage) : existingCoverUrl} alt="Cover preview" className="h-32 object-contain rounded-lg border border-zinc-300 dark:border-zinc-700" />
                 </div>
               )}
             </div>
           </div>
 
-          <div className="pt-4 border-t border-zinc-800">
+          <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
             <button 
               type="submit" 
               disabled={saving}
-              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-4 rounded-lg font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(37,99,235,0.2)]"
+              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-zinc-900 dark:text-white px-6 py-4 rounded-lg font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(37,99,235,0.2)]"
             >
               {saving ? (
                 <>

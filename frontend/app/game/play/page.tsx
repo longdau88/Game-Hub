@@ -222,8 +222,8 @@ function GamePlayerContent() {
     return (
       <div className="container mx-auto px-4 py-24 text-center">
         <h1 className="text-3xl font-bold mb-4">Game Not Found</h1>
-        <p className="text-zinc-400 mb-8">The game you are looking for does not exist or has been removed.</p>
-        <Link href="/" className="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-medium">
+        <p className="text-zinc-600 dark:text-zinc-400 mb-8">The game you are looking for does not exist or has been removed.</p>
+        <Link href="/" className="px-6 py-3 bg-blue-600 hover:bg-blue-500 rounded-lg text-zinc-900 dark:text-white font-medium">
           {t("game.backToStore")}
         </Link>
       </div>
@@ -235,7 +235,7 @@ function GamePlayerContent() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
-        <Link href="/" className="inline-flex items-center text-sm font-medium text-zinc-400 hover:text-white transition-colors">
+        <Link href="/" className="inline-flex items-center text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" />
           {t("game.backToStore")}
         </Link>
@@ -243,7 +243,7 @@ function GamePlayerContent() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          <div className="bg-black rounded-xl overflow-hidden border border-zinc-800 shadow-2xl relative group aspect-video">
+          <div className="bg-black rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-2xl relative group aspect-video">
             <iframe
               ref={iframeRef}
               src={r2PublicUrl}
@@ -255,7 +255,7 @@ function GamePlayerContent() {
             <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
               <button 
                 onClick={toggleFullscreen}
-                className="p-2 bg-black/60 hover:bg-black/80 rounded-md backdrop-blur-sm border border-white/10 text-white transition-colors" 
+                className="p-2 bg-black/60 hover:bg-black/80 rounded-md backdrop-blur-sm border border-black/10 dark:border-white/10 text-zinc-900 dark:text-white transition-colors" 
                 title="Fullscreen (F11)"
               >
                 <Maximize2 className="w-4 h-4" />
@@ -265,7 +265,7 @@ function GamePlayerContent() {
 
           <div>
             <h1 className="text-3xl font-bold mb-2">{game.title}</h1>
-            <div className="flex items-center justify-between gap-4 text-sm text-zinc-400 mb-6 border-b border-zinc-800/50 pb-6">
+            <div className="flex items-center justify-between gap-4 text-sm text-zinc-600 dark:text-zinc-400 mb-6 border-b border-zinc-200/50 dark:border-zinc-800/50 pb-6">
               <div className="flex items-center gap-4">
                 <span>{t("game.publishedOn")} {new Date(game.createdAt).toLocaleDateString()}</span>
                 <span>•</span>
@@ -275,7 +275,7 @@ function GamePlayerContent() {
                 </span>
                 <span>•</span>
                 <span className="flex items-center">
-                  <Bookmark className="w-4 h-4 mr-1 text-zinc-400" />
+                  <Bookmark className="w-4 h-4 mr-1 text-zinc-600 dark:text-zinc-400" />
                   {game.saveCount || 0} {t("game.saves") || "Lượt lưu"}
                 </span>
               </div>
@@ -283,7 +283,7 @@ function GamePlayerContent() {
                 <button 
                   onClick={handleBookmark}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isBookmarked ? 'bg-blue-600 text-white hover:bg-blue-500' : 'bg-zinc-800 hover:bg-zinc-700 text-white'
+                    isBookmarked ? 'bg-blue-600 text-zinc-900 dark:text-white hover:bg-blue-500' : 'bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-white'
                   }`}
                 >
                   <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} /> 
@@ -297,7 +297,7 @@ function GamePlayerContent() {
                     navigator.clipboard.writeText(window.location.href);
                     alert(t("game.copied"));
                   }}
-                  className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg text-sm font-medium transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg text-sm font-medium transition-colors"
                 >
                   <Share2 className="w-4 h-4" /> {t("game.share")}
                 </button>
@@ -305,13 +305,13 @@ function GamePlayerContent() {
             </div>
             
             <div className="mb-8">
-              <h3 className="text-sm font-medium text-zinc-400 mb-2">{t("game.rateThisGame")}</h3>
+              <h3 className="text-sm font-medium text-zinc-600 dark:text-zinc-400 mb-2">{t("game.rateThisGame")}</h3>
               <GameRating gameId={gameId!} averageRating={game.averageRating} totalRatings={game.totalRatings} />
             </div>
             
             <div>
               <h2 className="text-lg font-semibold mb-3">{t("game.aboutThisGame")}</h2>
-              <div className="text-zinc-300 leading-relaxed space-y-4 whitespace-pre-wrap">
+              <div className="text-zinc-700 dark:text-zinc-300 leading-relaxed space-y-4 whitespace-pre-wrap">
                 {(game.descriptionTranslations?.[language] || game.description) ? (
                   <p>{game.descriptionTranslations?.[language] || game.description}</p>
                 ) : (
@@ -325,25 +325,25 @@ function GamePlayerContent() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6">
-            <h3 className="font-medium text-lg mb-4 text-white">{t("game.controls")}</h3>
-            <div className="space-y-3 text-sm text-zinc-400">
+          <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6">
+            <h3 className="font-medium text-lg mb-4 text-zinc-900 dark:text-white">{t("game.controls")}</h3>
+            <div className="space-y-3 text-sm text-zinc-600 dark:text-zinc-400">
               {game.controls && game.controls.length > 0 ? (
                 game.controls.map((control: any, index: number) => (
-                  <div key={index} className="flex justify-between items-center pb-2 border-b border-zinc-800/50">
+                  <div key={index} className="flex justify-between items-center pb-2 border-b border-zinc-200/50 dark:border-zinc-800/50">
                     <span>{control.action}</span>
-                    <span className="font-mono bg-zinc-800 px-2 py-1 rounded text-zinc-300">{control.key}</span>
+                    <span className="font-mono bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded text-zinc-700 dark:text-zinc-300">{control.key}</span>
                   </div>
                 ))
               ) : (
                 <>
-                  <div className="flex justify-between items-center pb-2 border-b border-zinc-800/50">
+                  <div className="flex justify-between items-center pb-2 border-b border-zinc-200/50 dark:border-zinc-800/50">
                     <span>{t("game.movement")}</span>
-                    <span className="font-mono bg-zinc-800 px-2 py-1 rounded text-zinc-300">W A S D</span>
+                    <span className="font-mono bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded text-zinc-700 dark:text-zinc-300">W A S D</span>
                   </div>
-                  <div className="flex justify-between items-center pb-2 border-b border-zinc-800/50">
+                  <div className="flex justify-between items-center pb-2 border-b border-zinc-200/50 dark:border-zinc-800/50">
                     <span>{t("game.action")}</span>
-                    <span className="font-mono bg-zinc-800 px-2 py-1 rounded text-zinc-300">Space</span>
+                    <span className="font-mono bg-zinc-100 dark:bg-zinc-800 px-2 py-1 rounded text-zinc-700 dark:text-zinc-300">Space</span>
                   </div>
                 </>
               )}
@@ -352,19 +352,19 @@ function GamePlayerContent() {
           </div>
 
           <div className="bg-gradient-to-b from-yellow-900/20 to-zinc-900/50 border border-yellow-900/30 rounded-xl p-6 relative overflow-hidden">
-            <h3 className="font-medium text-lg mb-4 text-white flex items-center gap-2"><span className="text-yellow-500">🏆</span> Leaderboard</h3>
+            <h3 className="font-medium text-lg mb-4 text-zinc-900 dark:text-white flex items-center gap-2"><span className="text-yellow-500">🏆</span> Leaderboard</h3>
             <div className="space-y-3">
               {leaderboard.length === 0 ? (
                 <p className="text-sm text-zinc-500 italic">No scores yet. Be the first!</p>
               ) : (
                 leaderboard.map((entry, index) => (
-                  <div key={entry.id} className="flex justify-between items-center p-2 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                  <div key={entry.id} className="flex justify-between items-center p-2 rounded-lg bg-zinc-100/50 dark:bg-zinc-800/50 border border-zinc-300/50 dark:border-zinc-700/50">
                     <div className="flex items-center gap-3">
-                      <div className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${index === 0 ? 'bg-yellow-500 text-black' : index === 1 ? 'bg-zinc-300 text-black' : index === 2 ? 'bg-amber-700 text-white' : 'bg-zinc-700 text-zinc-400'}`}>
+                      <div className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${index === 0 ? 'bg-yellow-500 text-black' : index === 1 ? 'bg-zinc-300 text-black' : index === 2 ? 'bg-amber-700 text-zinc-900 dark:text-white' : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-400'}`}>
                         {index + 1}
                       </div>
                       <div className="flex items-center gap-2">
-                        {entry.user.avatarUrl ? <img src={entry.user.avatarUrl} alt="" className="w-6 h-6 rounded-full" /> : <div className="w-6 h-6 bg-zinc-700 rounded-full"></div>}
+                        {entry.user.avatarUrl ? <img src={entry.user.avatarUrl} alt="" className="w-6 h-6 rounded-full" /> : <div className="w-6 h-6 bg-zinc-200 dark:bg-zinc-700 rounded-full"></div>}
                         <span className="text-sm font-medium">{entry.user.username}</span>
                       </div>
                     </div>
@@ -380,10 +380,10 @@ function GamePlayerContent() {
       {/* Report Modal */}
       {reportModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden">
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden">
             <div className="p-6">
               <h3 className="text-xl font-bold mb-4">Report Game</h3>
-              <p className="text-sm text-zinc-400 mb-4">
+              <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
                 Please describe the issue with this game (e.g., broken file, inappropriate content, etc.)
               </p>
               
@@ -393,21 +393,21 @@ function GamePlayerContent() {
                   value={reportReason}
                   onChange={(e) => setReportReason(e.target.value)}
                   placeholder="Reason for reporting..."
-                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-500 resize-none h-32 mb-6"
+                  className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg p-3 text-zinc-900 dark:text-white focus:outline-none focus:border-red-500 resize-none h-32 mb-6"
                 />
                 
                 <div className="flex gap-3">
                   <button
                     type="button"
                     onClick={() => setReportModalOpen(false)}
-                    className="flex-1 py-2.5 bg-zinc-800 hover:bg-zinc-700 rounded-lg font-medium transition-colors"
+                    className="flex-1 py-2.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:bg-zinc-700 rounded-lg font-medium transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={!reportReason.trim() || reporting}
-                    className="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                    className="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-zinc-900 dark:text-white rounded-lg font-medium transition-colors disabled:opacity-50"
                   >
                     {reporting ? "Submitting..." : "Submit Report"}
                   </button>

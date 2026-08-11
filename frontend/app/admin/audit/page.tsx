@@ -38,18 +38,18 @@ export default function AdminAuditPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-muted/30 border-b border-border">
               <tr>
-                <th className="p-4 font-medium text-zinc-400">{t("admin.auditLogTime")}</th>
-                <th className="p-4 font-medium text-zinc-400">{t("admin.auditLogAdmin")}</th>
-                <th className="p-4 font-medium text-zinc-400">{t("admin.auditLogAction")}</th>
-                <th className="p-4 font-medium text-zinc-400">{t("admin.auditLogEntity")}</th>
-                <th className="p-4 font-medium text-zinc-400">{t("admin.auditLogDetails")}</th>
+                <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.auditLogTime")}</th>
+                <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.auditLogAdmin")}</th>
+                <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.auditLogAction")}</th>
+                <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.auditLogEntity")}</th>
+                <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.auditLogDetails")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {auditLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-muted/20">
-                  <td className="p-4 whitespace-nowrap text-zinc-400">{new Date(log.createdAt).toLocaleString()}</td>
-                  <td className="p-4 font-medium text-white">
+                  <td className="p-4 whitespace-nowrap text-zinc-600 dark:text-zinc-400">{new Date(log.createdAt).toLocaleString()}</td>
+                  <td className="p-4 font-medium text-zinc-900 dark:text-white">
                     {log.admin?.username || log.admin?.email || `Admin ID: ${log.adminId}`}
                   </td>
                   <td className="p-4">
@@ -57,7 +57,7 @@ export default function AdminAuditPage() {
                       {log.action}
                     </span>
                   </td>
-                  <td className="p-4 text-zinc-300">{log.entity}</td>
+                  <td className="p-4 text-zinc-700 dark:text-zinc-300">{log.entity}</td>
                   <td className="p-4">
                     <pre className="text-xs text-zinc-500 whitespace-pre-wrap max-w-xs overflow-hidden">
                       {log.details ? JSON.stringify(log.details, null, 2) : "—"}

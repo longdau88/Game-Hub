@@ -95,7 +95,7 @@ export default function RegisterPage() {
   if (success) {
     return (
       <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full text-center space-y-6 bg-zinc-900/50 p-8 rounded-2xl border border-zinc-800 backdrop-blur-sm shadow-2xl">
+        <div className="max-w-md w-full text-center space-y-6 bg-white/50 dark:bg-zinc-900/50 p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 backdrop-blur-sm shadow-2xl">
           <div className="mx-auto w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mb-4">
             <CheckCircle2 className="w-8 h-8 text-emerald-400" />
           </div>
@@ -112,11 +112,11 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-zinc-900/50 p-8 rounded-2xl border border-zinc-800 backdrop-blur-sm shadow-2xl">
+      <div className="max-w-md w-full space-y-8 bg-white/50 dark:bg-zinc-900/50 p-8 rounded-2xl border border-zinc-200 dark:border-zinc-800 backdrop-blur-sm shadow-2xl">
         <div className="text-center">
           <Gamepad2 className="mx-auto h-12 w-12 text-blue-500" />
           <h2 className="mt-6 text-3xl font-extrabold">{t("register.title")}</h2>
-          <p className="mt-2 text-sm text-zinc-400">
+          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
             {t("register.hasAccount")}{" "}
             <Link href="/login" className="font-medium text-blue-500 hover:text-blue-400 transition-colors">
               {t("register.loginLink")}
@@ -131,7 +131,7 @@ export default function RegisterPage() {
           )}
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.username")}</label>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.username")}</label>
               <input
                 type="text"
                 required
@@ -142,7 +142,7 @@ export default function RegisterPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.email")}</label>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.email")}</label>
               <div className="flex gap-2">
                 <input
                   type="email"
@@ -157,7 +157,7 @@ export default function RegisterPage() {
                   type="button"
                   onClick={handleSendOtp}
                   disabled={loading || countdown > 0 || !email}
-                  className="whitespace-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none disabled:opacity-50 disabled:bg-zinc-600 transition-colors"
+                  className="whitespace-nowrap px-4 py-2 border border-transparent text-sm font-medium rounded-md text-zinc-900 dark:text-white bg-blue-600 hover:bg-blue-700 focus:outline-none disabled:opacity-50 disabled:bg-zinc-600 transition-colors"
                 >
                   {countdown > 0 ? t("register.resendCode").replace("{s}", countdown.toString()) : t("register.sendCode")}
                 </button>
@@ -166,7 +166,7 @@ export default function RegisterPage() {
 
             {otpSent && (
               <div>
-                <label className="block text-sm font-medium text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.code")}</label>
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.code")}</label>
                 <input
                   type="text"
                   required
@@ -180,7 +180,7 @@ export default function RegisterPage() {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.password")}</label>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 dark:text-zinc-300 text-zinc-700 mb-1">{t("register.password")}</label>
               <input
                 type="password"
                 required

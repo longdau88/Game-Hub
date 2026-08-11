@@ -106,10 +106,10 @@ export default function UploadGamePage() {
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">{t("upload.title")}</h1>
-        <p className="text-zinc-400">{t("upload.subtitle")}</p>
+        <p className="text-zinc-600 dark:text-zinc-400">{t("upload.subtitle")}</p>
       </div>
 
-      <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 md:p-8">
+      <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 md:p-8">
         {error && (
           <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-lg mb-6">
             {error}
@@ -118,40 +118,40 @@ export default function UploadGamePage() {
 
         <form onSubmit={handleUpload} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.gameTitle")}</label>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">{t("upload.gameTitle")}</label>
             <input 
               type="text" 
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors" 
+              className="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-zinc-900 dark:text-white transition-colors" 
               placeholder={t("upload.gameTitlePlaceholder")}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.description")} (VI)</label>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">{t("upload.description")} (VI)</label>
             <textarea 
               required
               value={description}
               onChange={e => setDescription(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl px-4 py-3 text-white min-h-[120px]"
+              className="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl px-4 py-3 text-zinc-900 dark:text-white min-h-[120px]"
               placeholder={t("upload.descPlaceholder")}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.description")} (EN)</label>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">{t("upload.description")} (EN)</label>
             <textarea 
               value={descriptionEn}
               onChange={e => setDescriptionEn(e.target.value)}
-              className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl px-4 py-3 text-white min-h-[120px]"
+              className="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl px-4 py-3 text-zinc-900 dark:text-white min-h-[120px]"
               placeholder="Game description in English..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.category")}</label>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">{t("upload.category")}</label>
             <div className="flex flex-wrap gap-2">
               {categories.map(cat => (
                 <button
@@ -167,8 +167,8 @@ export default function UploadGamePage() {
                   }}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${
                     selectedCategories.includes(cat.id.toString())
-                      ? 'bg-blue-600 border-blue-500 text-white'
-                      : 'bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white'
+                      ? 'bg-blue-600 border-blue-500 text-zinc-900 dark:text-white'
+                      : 'bg-zinc-100 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:bg-zinc-700 hover:text-zinc-900 dark:text-white'
                   }`}
                 >
                   {cat.name}
@@ -182,7 +182,7 @@ export default function UploadGamePage() {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-zinc-300">{t("upload.controls")}</label>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("upload.controls")}</label>
               <button 
                 type="button" 
                 onClick={() => setControls([...controls, { action: "", key: "" }])}
@@ -203,7 +203,7 @@ export default function UploadGamePage() {
                       setControls(newControls);
                     }}
                     placeholder={t("upload.controlAction")}
-                    className="flex-1 bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-sm text-white"
+                    className="flex-1 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-sm text-zinc-900 dark:text-white"
                   />
                   <input
                     type="text"
@@ -214,7 +214,7 @@ export default function UploadGamePage() {
                       setControls(newControls);
                     }}
                     placeholder={t("upload.controlKey")}
-                    className="flex-1 bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-sm text-white"
+                    className="flex-1 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-sm text-zinc-900 dark:text-white"
                   />
                   <button
                     type="button"
@@ -237,8 +237,8 @@ export default function UploadGamePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.coverImage")}</label>
-            <div className="border-2 border-dashed border-zinc-700 rounded-xl p-8 text-center hover:bg-zinc-800/30 transition-colors relative">
+            <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">{t("upload.coverImage")}</label>
+            <div className="border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-8 text-center hover:bg-zinc-100/30 dark:bg-zinc-800/30 transition-colors relative">
               <input 
                 type="file" 
                 accept="image/*"
@@ -246,12 +246,12 @@ export default function UploadGamePage() {
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
               <FileType2 className="w-12 h-12 text-zinc-500 mx-auto mb-4" />
-              <p className="text-zinc-300 font-medium mb-1">
+              <p className="text-zinc-700 dark:text-zinc-300 font-medium mb-1">
                 {coverImage ? coverImage.name : t("upload.coverImageHint")}
               </p>
               {coverImage && (
                 <div className="mt-4 flex justify-center">
-                  <img src={URL.createObjectURL(coverImage)} alt="Cover preview" className="h-32 object-contain rounded-lg border border-zinc-700" />
+                  <img src={URL.createObjectURL(coverImage)} alt="Cover preview" className="h-32 object-contain rounded-lg border border-zinc-300 dark:border-zinc-700" />
                 </div>
               )}
             </div>
@@ -259,10 +259,10 @@ export default function UploadGamePage() {
           
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <label className="block text-sm font-medium text-zinc-300">{t("upload.gameFile")}</label>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("upload.gameFile")}</label>
               <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded">* Required</span>
             </div>
-            <div className="border-2 border-dashed border-zinc-700 rounded-xl p-8 text-center hover:bg-zinc-800/30 transition-colors relative">
+            <div className="border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-8 text-center hover:bg-zinc-100/30 dark:bg-zinc-800/30 transition-colors relative">
               <input 
                 type="file" 
                 required
@@ -271,7 +271,7 @@ export default function UploadGamePage() {
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
               <UploadCloud className="w-12 h-12 text-blue-500 mx-auto mb-4" />
-              <p className="text-zinc-300 font-medium mb-1">
+              <p className="text-zinc-700 dark:text-zinc-300 font-medium mb-1">
                 {file ? file.name : t("upload.gameFileHint")}
               </p>
               <p className="text-zinc-500 text-sm">
@@ -286,16 +286,16 @@ export default function UploadGamePage() {
           </div>
 
           {/* Engine Configuration */}
-          <div className="bg-zinc-800/30 rounded-xl p-6 border border-zinc-700/50">
-            <h3 className="text-lg font-medium text-zinc-200 mb-4">{t("upload.engineConfig")}</h3>
+          <div className="bg-zinc-100/30 dark:bg-zinc-800/30 rounded-xl p-6 border border-zinc-300/50 dark:border-zinc-700/50">
+            <h3 className="text-lg font-medium text-zinc-800 dark:text-zinc-200 mb-4">{t("upload.engineConfig")}</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-zinc-300 mb-1">{t("upload.memorySize")}</label>
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{t("upload.memorySize")}</label>
                 <input 
                   type="number" 
                   value={memorySize}
                   onChange={(e) => setMemorySize(parseInt(e.target.value) || 256)}
-                  className="w-full max-w-xs bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-white transition-colors" 
+                  className="w-full max-w-xs bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-zinc-900 dark:text-white transition-colors" 
                 />
                 <p className="text-xs text-zinc-500 mt-1">{t("upload.memorySizeHint")}</p>
               </div>
@@ -305,41 +305,41 @@ export default function UploadGamePage() {
                     type="checkbox" 
                     checked={enableBrotli}
                     onChange={(e) => setEnableBrotli(e.target.checked)}
-                    className="w-4 h-4 rounded border-zinc-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-zinc-900 bg-zinc-900"
+                    className="w-4 h-4 rounded border-zinc-300 dark:border-zinc-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-zinc-900 bg-white dark:bg-zinc-900"
                   />
-                  <span className="text-sm font-medium text-zinc-300">{t("upload.enableBrotli")}</span>
+                  <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("upload.enableBrotli")}</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input 
                     type="checkbox" 
                     checked={enableGzip}
                     onChange={(e) => setEnableGzip(e.target.checked)}
-                    className="w-4 h-4 rounded border-zinc-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-zinc-900 bg-zinc-900"
+                    className="w-4 h-4 rounded border-zinc-300 dark:border-zinc-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-zinc-900 bg-white dark:bg-zinc-900"
                   />
-                  <span className="text-sm font-medium text-zinc-300">{t("upload.enableGzip")}</span>
+                  <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("upload.enableGzip")}</span>
                 </label>
               </div>
               <p className="text-xs text-zinc-500 italic mt-2">{t("upload.compressionHint")}</p>
               
               <div className="pt-2">
-                <label className="block text-sm font-medium text-zinc-300 mb-1">{t("upload.firebaseTracking")}</label>
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{t("upload.firebaseTracking")}</label>
                 <input 
                   type="text" 
                   value={firebaseTrackingId}
                   onChange={(e) => setFirebaseTrackingId(e.target.value)}
                   placeholder="G-XXXXXXXXXX"
-                  className="w-full max-w-xs bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-white transition-colors uppercase" 
+                  className="w-full max-w-xs bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-zinc-900 dark:text-white transition-colors uppercase" 
                 />
                 <p className="text-xs text-zinc-500 mt-1">{t("upload.firebaseTrackingHint")}</p>
               </div>
             </div>
           </div>
 
-          <div className="pt-4 border-t border-zinc-800">
+          <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
             <button 
               type="submit" 
               disabled={loading || !file}
-              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-4 rounded-lg font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(37,99,235,0.2)]"
+              className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-zinc-900 dark:text-white px-6 py-4 rounded-lg font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(37,99,235,0.2)]"
             >
               {loading ? (
                 <>

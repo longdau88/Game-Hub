@@ -65,15 +65,15 @@ export default function GameRating({ gameId, averageRating = 0, totalRatings = 0
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-3">
-        <div className="flex items-center bg-zinc-800/50 px-3 py-1.5 rounded-full border border-zinc-700/50">
+        <div className="flex items-center bg-zinc-100/50 dark:bg-zinc-800/50 px-3 py-1.5 rounded-full border border-zinc-300/50 dark:border-zinc-700/50">
           <Star className="w-5 h-5 fill-yellow-500 text-yellow-500 mr-2" />
-          <span className="font-bold text-white text-lg">{averageRating > 0 ? averageRating.toFixed(1) : "-"}</span>
+          <span className="font-bold text-zinc-900 dark:text-white text-lg">{averageRating > 0 ? averageRating.toFixed(1) : "-"}</span>
           <span className="text-zinc-500 text-sm ml-2">({totalRatings} {t("game.totalRatings")})</span>
         </div>
       </div>
       
       <div className="flex items-center gap-1 mt-2">
-        <span className="text-sm text-zinc-400 mr-2">{t("game.rateThisGame")}:</span>
+        <span className="text-sm text-zinc-600 dark:text-zinc-400 mr-2">{t("game.rateThisGame")}:</span>
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}

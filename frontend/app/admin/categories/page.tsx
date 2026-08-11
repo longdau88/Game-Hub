@@ -126,7 +126,7 @@ export default function AdminCategoriesPage() {
               placeholder="e.g. action"
             />
           </div>
-          <button type="submit" className="w-full px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-md font-medium transition-colors">
+          <button type="submit" className="w-full px-4 py-2 bg-primary hover:bg-primary/90 text-zinc-900 dark:text-white rounded-md font-medium transition-colors">
             {t("admin.btnCreateCat")}
           </button>
         </form>
@@ -178,36 +178,36 @@ export default function AdminCategoriesPage() {
       {/* Edit Modal */}
       {editCatModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden">
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden">
             <div className="p-6">
               <h3 className="text-xl font-bold mb-4">{t("admin.catEditTitle")}</h3>
               <form onSubmit={updateCategory}>
                 <div className="space-y-4 mb-6">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-zinc-400">{t("admin.catEditName")} (VI)</label>
+                    <label className="block text-sm font-medium mb-1 text-zinc-600 dark:text-zinc-400">{t("admin.catEditName")} (VI)</label>
                     <input
                       required
                       type="text"
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary"
+                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg px-4 py-2 text-zinc-900 dark:text-white focus:outline-none focus:border-primary"
                       value={editCatName}
                       onChange={(e) => setEditCatName(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-zinc-400">{t("admin.catEditName")} (EN)</label>
+                    <label className="block text-sm font-medium mb-1 text-zinc-600 dark:text-zinc-400">{t("admin.catEditName")} (EN)</label>
                     <input
                       type="text"
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary"
+                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg px-4 py-2 text-zinc-900 dark:text-white focus:outline-none focus:border-primary"
                       value={editCatNameEn}
                       onChange={(e) => setEditCatNameEn(e.target.value)}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-zinc-400">{t("admin.catEditSlug")}</label>
+                    <label className="block text-sm font-medium mb-1 text-zinc-600 dark:text-zinc-400">{t("admin.catEditSlug")}</label>
                     <input
                       required
                       type="text"
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                      className="w-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded-lg px-3 py-2 text-zinc-900 dark:text-white focus:outline-none focus:border-blue-500"
                       value={editCatSlug}
                       onChange={(e) => setEditCatSlug(e.target.value)}
                     />
@@ -217,13 +217,13 @@ export default function AdminCategoriesPage() {
                   <button
                     type="button"
                     onClick={() => setEditCatModalOpen(false)}
-                    className="flex-1 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg font-medium transition-colors"
+                    className="flex-1 py-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:bg-zinc-700 rounded-lg font-medium transition-colors"
                   >
                     {t("admin.btnCancel")}
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors"
+                    className="flex-1 py-2 bg-blue-600 hover:bg-blue-500 text-zinc-900 dark:text-white rounded-lg font-medium transition-colors"
                   >
                     Save Changes
                   </button>

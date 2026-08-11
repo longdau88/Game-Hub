@@ -52,7 +52,7 @@ export default function MaintenanceOverlay() {
         {t("system.maintenanceTitle") || "Hệ Thống Đang Bảo Trì"}
       </h1>
       
-      <p className="text-xl text-zinc-400 max-w-lg mx-auto mb-8 leading-relaxed">
+      <p className="text-xl text-zinc-600 dark:text-zinc-400 max-w-lg mx-auto mb-8 leading-relaxed">
         {t("system.maintenanceDesc") || "Chúng tôi đang tiến hành nâng cấp hệ thống để mang lại trải nghiệm tốt hơn. Vui lòng quay lại sau ít phút!"}
       </p>
 

@@ -53,7 +53,7 @@ export default function AdminSettingsPage() {
         />
         <div>
           <label htmlFor="maintenanceMode" className="font-medium text-sm">{t("admin.settingsMaintenance")}</label>
-          <p className="text-xs text-zinc-400">{t("admin.settingsMaintenanceDesc")}</p>
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">{t("admin.settingsMaintenanceDesc")}</p>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ export default function AdminSettingsPage() {
         />
         <div>
           <label htmlFor="registrationEnabled" className="font-medium text-sm">{t("admin.settingsRegistration")}</label>
-          <p className="text-xs text-zinc-400">{t("admin.settingsRegistrationDesc")}</p>
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">{t("admin.settingsRegistrationDesc")}</p>
         </div>
       </div>
 
@@ -79,7 +79,7 @@ export default function AdminSettingsPage() {
           onChange={(e) => setSettings({ ...settings, maxUploadSizeMB: parseInt(e.target.value) })}
           className="w-full px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:border-primary"
         />
-        <p className="text-xs text-zinc-400 mt-1">{t("admin.settingsUploadLimitDesc")}</p>
+        <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">{t("admin.settingsUploadLimitDesc")}</p>
       </div>
 
       <div>
@@ -92,13 +92,13 @@ export default function AdminSettingsPage() {
           <option value="resend">Resend (API)</option>
           <option value="nodemailer">Gmail SMTP (Nodemailer)</option>
         </select>
-        <p className="text-sm text-zinc-400 mt-2">{t("admin.settingsEmailProviderDesc")}</p>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-2">{t("admin.settingsEmailProviderDesc")}</p>
       </div>
 
-      <div className="pt-4 border-t border-zinc-800">
+      <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
         <button
           onClick={saveSettings}
-          className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-semibold transition-colors"
+          className="px-6 py-2.5 bg-primary hover:bg-primary/90 text-zinc-900 dark:text-white rounded-lg font-semibold transition-colors"
         >
           {t("admin.settingsSave")}
         </button>

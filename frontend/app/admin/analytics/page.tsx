@@ -42,17 +42,17 @@ export default function AdminAnalyticsPage() {
         <table className="w-full text-left text-sm">
           <thead className="bg-muted/30 border-b border-border">
             <tr>
-              <th className="p-4 font-medium text-zinc-400">Game</th>
-              <th className="p-4 font-medium text-zinc-400">{t("admin.analyticsAvgSeconds")}</th>
-              <th className="p-4 font-medium text-zinc-400">{t("admin.analyticsTotalSessions")}</th>
+              <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">Game</th>
+              <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.analyticsAvgSeconds")}</th>
+              <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.analyticsTotalSessions")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {sessionStats.map((s, i) => (
               <tr key={i} className="hover:bg-muted/20">
                 <td className="p-4 font-medium">{s.gameTitle || s.gameId}</td>
-                <td className="p-4 text-zinc-400">{s.avgDuration?.toFixed(1) ?? "—"}</td>
-                <td className="p-4 text-zinc-400">{s.count}</td>
+                <td className="p-4 text-zinc-600 dark:text-zinc-400">{s.avgDuration?.toFixed(1) ?? "—"}</td>
+                <td className="p-4 text-zinc-600 dark:text-zinc-400">{s.count}</td>
               </tr>
             ))}
             {sessionStats.length === 0 && (
@@ -70,17 +70,17 @@ export default function AdminAnalyticsPage() {
         <table className="w-full text-left text-sm">
           <thead className="bg-muted/30 border-b border-border">
             <tr>
-              <th className="p-4 font-medium text-zinc-400">{t("admin.analyticsTime")}</th>
-              <th className="p-4 font-medium text-zinc-400">{t("admin.analyticsError")}</th>
-              <th className="p-4 font-medium text-zinc-400">{t("admin.analyticsBrowser")}</th>
+              <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.analyticsTime")}</th>
+              <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.analyticsError")}</th>
+              <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.analyticsBrowser")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {crashLogs.map((c) => (
               <tr key={c.id} className="hover:bg-muted/20">
-                <td className="p-4 text-zinc-400 whitespace-nowrap">{new Date(c.createdAt).toLocaleString()}</td>
+                <td className="p-4 text-zinc-600 dark:text-zinc-400 whitespace-nowrap">{new Date(c.createdAt).toLocaleString()}</td>
                 <td className="p-4 text-red-400 font-mono text-xs max-w-xs truncate">{c.errorMessage}</td>
-                <td className="p-4 text-zinc-400 text-xs">{c.browser}</td>
+                <td className="p-4 text-zinc-600 dark:text-zinc-400 text-xs">{c.browser}</td>
               </tr>
             ))}
             {crashLogs.length === 0 && (

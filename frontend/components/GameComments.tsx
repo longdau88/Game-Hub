@@ -71,8 +71,8 @@ export default function GameComments({ gameId }: { gameId: string }) {
   };
 
   return (
-    <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 mt-6">
-      <h3 className="font-medium text-lg mb-4 text-white flex items-center gap-2">
+    <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 mt-6">
+      <h3 className="font-medium text-lg mb-4 text-zinc-900 dark:text-white flex items-center gap-2">
         <MessageSquare className="w-5 h-5" />
         {t("game.comments")} ({comments.length})
       </h3>
@@ -86,18 +86,18 @@ export default function GameComments({ gameId }: { gameId: string }) {
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder={t("game.addComment")}
-            className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2 text-sm text-white outline-none focus:border-blue-500"
+            className="flex-1 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg px-4 py-2 text-sm text-zinc-900 dark:text-white outline-none focus:border-blue-500"
           />
           <button
             type="submit"
             disabled={loading || !newComment.trim()}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg disabled:opacity-50"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-zinc-900 dark:text-white text-sm font-medium rounded-lg disabled:opacity-50"
           >
             {t("game.btnPost")}
           </button>
         </form>
       ) : (
-        <div className="mb-6 p-4 bg-zinc-800/50 rounded-lg text-sm text-zinc-400 text-center">
+        <div className="mb-6 p-4 bg-zinc-100/50 dark:bg-zinc-800/50 rounded-lg text-sm text-zinc-600 dark:text-zinc-400 text-center">
           {t("game.loginToComment")}
         </div>
       )}
@@ -108,21 +108,21 @@ export default function GameComments({ gameId }: { gameId: string }) {
         ) : (
           comments.map(comment => (
             <div key={comment.id} className="flex gap-3">
-              <div className="w-8 h-8 rounded-full bg-zinc-800 flex-shrink-0 overflow-hidden">
+              <div className="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 flex-shrink-0 overflow-hidden">
                 {comment.user.avatarUrl ? (
                   <img src={comment.user.avatarUrl} alt="" className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-xs font-bold text-zinc-500 bg-zinc-700">
+                  <div className="w-full h-full flex items-center justify-center text-xs font-bold text-zinc-500 bg-zinc-200 dark:bg-zinc-700">
                     {comment.user.username.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm text-zinc-200">{comment.user.username}</span>
+                  <span className="font-medium text-sm text-zinc-800 dark:text-zinc-200">{comment.user.username}</span>
                   <span className="text-xs text-zinc-500">{new Date(comment.createdAt).toLocaleDateString()}</span>
                 </div>
-                <p className="text-sm text-zinc-300 mt-1">{comment.content}</p>
+                <p className="text-sm text-zinc-700 dark:text-zinc-300 mt-1">{comment.content}</p>
               </div>
             </div>
           ))

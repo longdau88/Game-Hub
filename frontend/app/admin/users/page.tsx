@@ -59,25 +59,25 @@ export default function AdminUsersPage() {
         <table className="w-full text-left text-sm">
           <thead className="bg-muted/30 border-b border-border">
             <tr>
-              <th className="p-4 font-medium text-zinc-400">{t("admin.colUsername")}</th>
-              <th className="p-4 font-medium text-zinc-400">{t("admin.colEmail")}</th>
-              <th className="p-4 font-medium text-zinc-400">{t("admin.colRole")}</th>
-              <th className="p-4 font-medium text-zinc-400">{t("admin.colGames")}</th>
-              <th className="p-4 font-medium text-zinc-400">{t("admin.colStatus")}</th>
-              <th className="p-4 font-medium text-zinc-400">{t("admin.colActions")}</th>
+              <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.colUsername")}</th>
+              <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.colEmail")}</th>
+              <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.colRole")}</th>
+              <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.colGames")}</th>
+              <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.colStatus")}</th>
+              <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.colActions")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {users.map((user) => (
               <tr key={user.id} className="hover:bg-muted/20">
                 <td className="p-4 font-medium">{user.username || "—"}</td>
-                <td className="p-4 text-zinc-400">{user.email}</td>
+                <td className="p-4 text-zinc-600 dark:text-zinc-400">{user.email}</td>
                 <td className="p-4">
-                  <span className={`px-2 py-1 rounded text-xs font-semibold ${user.role === "admin" ? "bg-purple-500/10 text-purple-400 border border-purple-500/20" : "bg-zinc-800 text-zinc-400 border border-zinc-700"}`}>
+                  <span className={`px-2 py-1 rounded text-xs font-semibold ${user.role === "admin" ? "bg-purple-500/10 text-purple-400 border border-purple-500/20" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-300 dark:border-zinc-700"}`}>
                     {user.role}
                   </span>
                 </td>
-                <td className="p-4 text-zinc-400">{user.gamesUploaded ?? 0}</td>
+                <td className="p-4 text-zinc-600 dark:text-zinc-400">{user.gamesUploaded ?? 0}</td>
                 <td className="p-4">
                   <span className={`px-2 py-1 rounded text-xs font-semibold ${user.isBanned ? "bg-red-500/10 text-red-400 border border-red-500/20" : "bg-green-500/10 text-green-400 border border-green-500/20"}`}>
                     {user.isBanned ? t("admin.banned") : t("admin.active")}
@@ -87,7 +87,7 @@ export default function AdminUsersPage() {
                   <div className="flex gap-2">
                     <button
                       onClick={() => toggleRole(user.id, user.role)}
-                      className="px-2 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded text-xs transition-colors"
+                      className="px-2 py-1 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded text-xs transition-colors"
                     >
                       {user.role === "admin" ? t("admin.makeUser") : t("admin.makeAdmin")}
                     </button>
