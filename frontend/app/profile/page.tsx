@@ -401,12 +401,12 @@ export default function ProfilePage() {
 
               {activeTab === 'history' && (
                 <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
-                  <h2 className="text-2xl font-bold mb-6">Recently Played</h2>
+                  <h2 className="text-2xl font-bold mb-6">{t("profile.recentlyPlayed")}</h2>
                   {gameHistory.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
                       <History className="w-16 h-16 mb-4 opacity-20" />
-                      <p>You haven't played any games yet.</p>
-                      <Link href="/" className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium transition-colors">Play Games</Link>
+                      <p>{t("profile.noHistory")}</p>
+                      <Link href="/" className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium transition-colors">{t("profile.playGames")}</Link>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -418,11 +418,11 @@ export default function ProfilePage() {
 
               {activeTab === 'bookmarks' && (
                 <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
-                  <h2 className="text-2xl font-bold mb-6">Saved Games</h2>
+                  <h2 className="text-2xl font-bold mb-6">{t("profile.savedGames")}</h2>
                   {bookmarkedGames.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
                       <Bookmark className="w-16 h-16 mb-4 opacity-20" />
-                      <p>No bookmarked games.</p>
+                      <p>{t("profile.noBookmarks")}</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -435,9 +435,9 @@ export default function ProfilePage() {
               {activeTab === 'uploads' && profile?.role !== 'user' && (
                 <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold">My Uploads</h2>
-                    <Link href="/upload" className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-colors flex items-center gap-2">
-                      <UploadCloud className="w-4 h-4" /> Upload New
+                    <h2 className="text-2xl font-bold">{t("profile.myUploads")}</h2>
+                    <Link href="/creator/upload" className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-colors flex items-center gap-2">
+                      <UploadCloud className="w-4 h-4" /> {t("profile.uploadNew")}
                     </Link>
                   </div>
                   {uploadedGames.length === 0 ? (
@@ -474,7 +474,7 @@ export default function ProfilePage() {
                               <td className="py-4 text-right">
                                 <div className="flex items-center justify-end gap-2">
                                   {game.status === 'published' && (
-                                    <Link href={`/game/play?id=${game.id}`} className="text-xs font-medium px-3 py-1.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors">Play</Link>
+                                    <Link href={`/game/play?id=${game.id}`} className="text-xs font-medium px-3 py-1.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors">{t("profile.play")}</Link>
                                   )}
                                   <Link href={`/game/edit/${game.id}`} className="text-xs font-medium px-3 py-1.5 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 rounded-lg transition-colors">{t("profile.edit")}</Link>
                                   <button onClick={() => handleDeleteGame(game.id)} className="text-xs font-medium px-3 py-1.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg transition-colors">{t("profile.delete")}</button>
