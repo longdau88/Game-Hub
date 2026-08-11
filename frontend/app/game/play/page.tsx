@@ -7,6 +7,7 @@ import { ArrowLeft, Maximize2, Share2, Eye, Loader2, Flag } from "lucide-react";
 import GameComments from "../../../components/GameComments";
 import GameRating from "../../../components/GameRating";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import Cookies from "js-cookie";
 
 function GamePlayerContent() {
   const { t } = useLanguage();
