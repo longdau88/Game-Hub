@@ -329,7 +329,7 @@ exports.getPublishedGames = async (req, res) => {
     if (sort === 'mostPlayed') {
       orderByClause = { playCount: 'desc' };
     } else if (sort === 'mostLiked') {
-      orderByClause = { saveCount: 'desc' };
+      orderByClause = { libraryEntries: { _count: 'desc' } };
     }
 
     const games = await prisma.game.findMany({
