@@ -2,7 +2,38 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const AdmZip = require('adm-zip');
-const { PutObjectCommand } = require('@aws-sdk/client-s3');
+const { GetObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
+
+function injectEngineConfigToHtml(htmlContent, engineConfig) {
+  if (!engineConfig) return htmlContent;
+  let newHtml = htmlContent;
+  
+  if (engineConfig.memorySize) {
+    const memSize = parseInt(engineConfig.memorySize) * 1024 * 1024;
+    if (newHtml.includes('TOTAL_MEMORY:')) {
+      newHtml = newHtml.replace(/TOTAL_MEMORY:\s*\d+,?/g, `TOTAL_MEMORY: ${memSize},`);
+    } else if (newHtml.includes('var config = {')) {
+      newHtml = newHtml.replace('var config = {', `var config = {\n        TOTAL_MEMORY: ${memSize},`);
+    }
+  }
+  
+  // Clean up any existing .br or .gz extensions before applying new ones to avoid stacking
+  newHtml = newHtml.replace(/\.data\.br"/g, '.data"').replace(/\.data\.gz"/g, '.data"');
+  newHtml = newHtml.replace(/\.framework\.js\.br"/g, '.framework.js"').replace(/\.framework\.js\.gz"/g, '.framework.js"');
+  newHtml = newHtml.replace(/\.wasm\.br"/g, '.wasm"').replace(/\.wasm\.gz"/g, '.wasm"');
+  
+  if (engineConfig.enableBrotli) {
+    newHtml = newHtml.replace(/\.data"/g, '.data.br"');
+    newHtml = newHtml.replace(/\.framework\.js"/g, '.framework.js.br"');
+    newHtml = newHtml.replace(/\.wasm"/g, '.wasm.br"');
+  } else if (engineConfig.enableGzip) {
+    newHtml = newHtml.replace(/\.data"/g, '.data.gz"');
+    newHtml = newHtml.replace(/\.framework\.js"/g, '.framework.js.gz"');
+    newHtml = newHtml.replace(/\.wasm"/g, '.wasm.gz"');
+  }
+  
+  return newHtml;
+}
 const mime = require('mime-types'); // We should install this package if not already
 const { v4: uuidv4 } = require('uuid'); // Install this as well
 const r2Client = require('../config/r2');
@@ -188,21 +219,27 @@ exports.uploadGame = async (req, res) => {
           throw new Error('Zip file does not contain an index.html at the root');
         }
 
-        if (parsedEngineConfig && parsedEngineConfig.firebaseTrackingId) {
+        if (parsedEngineConfig) {
           try {
-            const gtagId = parsedEngineConfig.firebaseTrackingId;
-            const gtagScript = `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${gtagId}"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n  gtag('config', '${gtagId}');\n</script>\n`;
             let htmlContent = fs.readFileSync(indexPath, 'utf8');
-            if (htmlContent.includes('</head>')) {
-              htmlContent = htmlContent.replace('</head>', `${gtagScript}\n</head>`);
-            } else if (htmlContent.includes('</body>')) {
-              htmlContent = htmlContent.replace('</body>', `${gtagScript}\n</body>`);
-            } else {
-              htmlContent += gtagScript;
+            
+            if (parsedEngineConfig.firebaseTrackingId) {
+              const gtagId = parsedEngineConfig.firebaseTrackingId;
+              const gtagScript = `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${gtagId}"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n  gtag('config', '${gtagId}');\n</script>\n`;
+              if (htmlContent.includes('</head>')) {
+                htmlContent = htmlContent.replace('</head>', `${gtagScript}\n</head>`);
+              } else if (htmlContent.includes('</body>')) {
+                htmlContent = htmlContent.replace('</body>', `${gtagScript}\n</body>`);
+              } else {
+                htmlContent += gtagScript;
+              }
             }
+            
+            htmlContent = injectEngineConfigToHtml(htmlContent, parsedEngineConfig);
+            
             fs.writeFileSync(indexPath, htmlContent, 'utf8');
           } catch (e) {
-            console.error('Failed to inject Firebase Tracking:', e);
+            console.error('Failed to inject Engine Config / Firebase Tracking:', e);
           }
         }
 
@@ -600,6 +637,29 @@ exports.updateGame = async (req, res) => {
     if (engineConfig) {
       try {
         parsedEngineConfig = JSON.parse(engineConfig);
+        
+        // Dynamic re-injection of engine config to R2
+        try {
+          const bucketName = process.env.R2_BUCKET_NAME;
+          const r2Key = `games/${id}/index.html`;
+          const getParams = { Bucket: bucketName, Key: r2Key };
+          const data = await r2Client.send(new GetObjectCommand(getParams));
+          const htmlContent = await data.Body.transformToString();
+          
+          const newHtmlContent = injectEngineConfigToHtml(htmlContent, parsedEngineConfig);
+          
+          if (newHtmlContent !== htmlContent) {
+            const uploadParams = {
+              Bucket: bucketName,
+              Key: r2Key,
+              Body: newHtmlContent,
+              ContentType: 'text/html'
+            };
+            await r2Client.send(new PutObjectCommand(uploadParams));
+          }
+        } catch (err) {
+          console.error('Failed to update engine config on R2', err);
+        }
       } catch (e) {
         console.error('Failed to parse engineConfig:', e);
       }

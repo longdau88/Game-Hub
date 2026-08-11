@@ -22,6 +22,10 @@ export default function UploadGamePage() {
     { action: "Action", key: "Space" }
   ]);
   
+  const [memorySize, setMemorySize] = useState(256);
+  const [enableBrotli, setEnableBrotli] = useState(false);
+  const [enableGzip, setEnableGzip] = useState(false);
+  
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -58,6 +62,7 @@ export default function UploadGamePage() {
     formData.append("descriptionTranslations", JSON.stringify({ vi: description, en: descriptionEn }));
     formData.append("categoryIds", selectedCategory);
     formData.append("controls", JSON.stringify(controls));
+    formData.append("engineConfig", JSON.stringify({ memorySize, enableBrotli, enableGzip }));
     formData.append("gameFile", file);
     if (coverImage) {
       formData.append("coverImage", coverImage);
@@ -228,29 +233,70 @@ export default function UploadGamePage() {
               )}
             </div>
           </div>
-
+          
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.gameFiles")}</label>
+            <div className="flex items-center gap-2 mb-2">
+              <label className="block text-sm font-medium text-zinc-300">{t("upload.gameFile")}</label>
+              <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded">* Required</span>
+            </div>
             <div className="border-2 border-dashed border-zinc-700 rounded-xl p-8 text-center hover:bg-zinc-800/30 transition-colors relative">
               <input 
                 type="file" 
-                accept=".zip"
                 required
+                accept=".zip"
                 onChange={(e) => setFile(e.target.files?.[0] || null)}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
-              <FileType2 className="w-12 h-12 text-zinc-500 mx-auto mb-4" />
+              <UploadCloud className="w-12 h-12 text-blue-500 mx-auto mb-4" />
               <p className="text-zinc-300 font-medium mb-1">
-                {file ? file.name : t("upload.dropzone")}
+                {file ? file.name : t("upload.gameFileHint")}
               </p>
               <p className="text-zinc-500 text-sm">
-                {t("upload.dropzoneHint")}
+                {t("upload.gameFileHintSub")}
               </p>
               {file && (
                 <div className="mt-4 inline-block bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-xs font-medium border border-blue-500/30">
                   {t("upload.selected")} {(file.size / 1024 / 1024).toFixed(2)} MB
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Engine Configuration */}
+          <div className="bg-zinc-800/30 rounded-xl p-6 border border-zinc-700/50">
+            <h3 className="text-lg font-medium text-zinc-200 mb-4">{t("upload.engineConfig")}</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 mb-1">{t("upload.memorySize")}</label>
+                <input 
+                  type="number" 
+                  value={memorySize}
+                  onChange={(e) => setMemorySize(parseInt(e.target.value) || 256)}
+                  className="w-full max-w-xs bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-white transition-colors" 
+                />
+                <p className="text-xs text-zinc-500 mt-1">{t("upload.memorySizeHint")}</p>
+              </div>
+              <div className="flex gap-6 pt-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    checked={enableBrotli}
+                    onChange={(e) => setEnableBrotli(e.target.checked)}
+                    className="w-4 h-4 rounded border-zinc-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-zinc-900 bg-zinc-900"
+                  />
+                  <span className="text-sm font-medium text-zinc-300">{t("upload.enableBrotli")}</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    checked={enableGzip}
+                    onChange={(e) => setEnableGzip(e.target.checked)}
+                    className="w-4 h-4 rounded border-zinc-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-zinc-900 bg-zinc-900"
+                  />
+                  <span className="text-sm font-medium text-zinc-300">{t("upload.enableGzip")}</span>
+                </label>
+              </div>
+              <p className="text-xs text-zinc-500 italic mt-2">{t("upload.compressionHint")}</p>
             </div>
           </div>
 

@@ -21,6 +21,10 @@ export default function EditGamePage() {
   
   const [controls, setControls] = useState<{ action: string; key: string }[]>([]);
   
+  const [memorySize, setMemorySize] = useState(256);
+  const [enableBrotli, setEnableBrotli] = useState(false);
+  const [enableGzip, setEnableGzip] = useState(false);
+  
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -51,6 +55,11 @@ export default function EditGamePage() {
           if (gameData.controls) {
             setControls(gameData.controls);
           }
+          if (gameData.engineConfig) {
+            setMemorySize(gameData.engineConfig.memorySize || 256);
+            setEnableBrotli(gameData.engineConfig.enableBrotli || false);
+            setEnableGzip(gameData.engineConfig.enableGzip || false);
+          }
         }
       } catch (err) {
         console.error("Failed to load data", err);
@@ -73,6 +82,7 @@ export default function EditGamePage() {
     formData.append("descriptionTranslations", JSON.stringify({ vi: description, en: descriptionEn }));
     formData.append("categoryIds", selectedCategory);
     formData.append("controls", JSON.stringify(controls));
+    formData.append("engineConfig", JSON.stringify({ memorySize, enableBrotli, enableGzip }));
     if (coverImage) {
       formData.append("coverImage", coverImage);
     }
@@ -244,6 +254,44 @@ export default function EditGamePage() {
                   <img src={coverImage ? URL.createObjectURL(coverImage) : existingCover} alt="Cover preview" className="h-32 object-contain rounded-lg border border-zinc-700" />
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Engine Configuration */}
+          <div className="bg-zinc-800/30 rounded-xl p-6 border border-zinc-700/50">
+            <h3 className="text-lg font-medium text-zinc-200 mb-4">{t("upload.engineConfig")}</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-zinc-300 mb-1">{t("upload.memorySize")}</label>
+                <input 
+                  type="number" 
+                  value={memorySize}
+                  onChange={(e) => setMemorySize(parseInt(e.target.value) || 256)}
+                  className="w-full max-w-xs bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-white transition-colors" 
+                />
+                <p className="text-xs text-zinc-500 mt-1">{t("upload.memorySizeHint")}</p>
+              </div>
+              <div className="flex gap-6 pt-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    checked={enableBrotli}
+                    onChange={(e) => setEnableBrotli(e.target.checked)}
+                    className="w-4 h-4 rounded border-zinc-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-zinc-900 bg-zinc-900"
+                  />
+                  <span className="text-sm font-medium text-zinc-300">{t("upload.enableBrotli")}</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    checked={enableGzip}
+                    onChange={(e) => setEnableGzip(e.target.checked)}
+                    className="w-4 h-4 rounded border-zinc-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-zinc-900 bg-zinc-900"
+                  />
+                  <span className="text-sm font-medium text-zinc-300">{t("upload.enableGzip")}</span>
+                </label>
+              </div>
+              <p className="text-xs text-zinc-500 italic mt-2">{t("upload.compressionHint")}</p>
             </div>
           </div>
 
