@@ -338,8 +338,10 @@ exports.getPublishedGames = async (req, res) => {
       include: {
         categories: true,
         uploader: { select: { id: true, username: true, avatarUrl: true } },
-        ratings: { select: { score: true } }
-      }
+        ratings: { select: { score: true } },
+        _count: { select: { libraryEntries: true } }
+      },
+      take: req.query.limit ? parseInt(req.query.limit) : undefined,
     });
 
     const formattedGames = games.map(game => {
@@ -348,6 +350,7 @@ exports.getPublishedGames = async (req, res) => {
         : 0;
       return {
         ...game,
+        saveCount: game._count?.libraryEntries || 0,
         averageRating: parseFloat(avgRating.toFixed(1)),
         totalRatings: game.ratings.length
       };
@@ -401,7 +404,8 @@ exports.semanticSearch = async (req, res) => {
         include: {
           categories: true,
           uploader: { select: { id: true, username: true, avatarUrl: true } },
-          ratings: { select: { score: true } }
+          ratings: { select: { score: true } },
+          _count: { select: { libraryEntries: true } }
         }
       });
 
@@ -416,6 +420,7 @@ exports.semanticSearch = async (req, res) => {
           ...g,
           categories: related?.categories || [],
           uploader: related?.uploader || null,
+          saveCount: related?._count?.libraryEntries || 0,
           averageRating: parseFloat(avgRating.toFixed(1)),
           totalRatings: related?.ratings?.length || 0
         };
@@ -438,7 +443,8 @@ exports.getFeaturedGames = async (req, res) => {
       include: {
         categories: true,
         ratings: { select: { score: true } },
-        uploader: { select: { username: true } }
+        uploader: { select: { username: true } },
+        _count: { select: { libraryEntries: true } }
       }
     });
 
@@ -448,6 +454,7 @@ exports.getFeaturedGames = async (req, res) => {
         : 0;
       return {
         ...game,
+        saveCount: game._count?.libraryEntries || 0,
         averageRating: parseFloat(avgRating.toFixed(1)),
         totalRatings: game.ratings.length
       };
