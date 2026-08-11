@@ -209,3 +209,61 @@ exports.toggleFeaturedGame = async (req, res) => {
     res.status(500).json({ error: 'Failed to toggle featured status' });
   }
 };
+
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
+
+exports.getStorageStats = async (req, res) => {
+  try {
+    const result = await prisma.game.aggregate({
+      _sum: {
+        sizeBytes: true
+      }
+    });
+    const usedBytes = result._sum.sizeBytes || 0;
+    const totalBytes = 10 * 1024 * 1024 * 1024; // 10 GB limit for R2 free tier
+    
+    res.json({
+      usedBytes: Number(usedBytes),
+      totalBytes,
+      percentage: (Number(usedBytes) / totalBytes) * 100
+    });
+  } catch (error) {
+    console.error("Storage stats error:", error);
+    res.status(500).json({ error: 'Failed to fetch storage stats' });
+  }
+};
+
+exports.garbageCollect = async (req, res) => {
+  try {
+    const tmpDir = os.tmpdir();
+    let deletedFiles = 0;
+    let deletedDirs = 0;
+
+    // Clean up temporary extract directories
+    const files = fs.readdirSync(tmpDir);
+    files.forEach(file => {
+      if (file.startsWith('game-extract-')) {
+        const fullPath = path.join(tmpDir, file);
+        if (fs.statSync(fullPath).isDirectory()) {
+          fs.rmSync(fullPath, { recursive: true, force: true });
+          deletedDirs++;
+        }
+      }
+      if (file.endsWith('.zip') && file.startsWith('upload-')) { // assuming multer temp files if named this way
+         const fullPath = path.join(tmpDir, file);
+         fs.unlinkSync(fullPath);
+         deletedFiles++;
+      }
+    });
+
+    res.json({ 
+      message: 'Garbage collection completed successfully',
+      details: { deletedDirs, deletedFiles }
+    });
+  } catch (error) {
+    console.error("Garbage collection error:", error);
+    res.status(500).json({ error: 'Failed to run garbage collection' });
+  }
+};

@@ -20,6 +20,9 @@ function GamePlayerContent() {
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [reporting, setReporting] = useState(false);
+  
+  const sessionStartTime = useRef<number>(Date.now());
+  const sessionLogged = useRef<boolean>(false);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -41,8 +44,57 @@ function GamePlayerContent() {
       }
     };
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+    
+    // Telemetry: Catch iframe messages if game supports it
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data && e.data.type === 'CRASH') {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+        fetch(`${apiUrl}/api/games/${gameId}/crash`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            errorMsg: e.data.error || 'Unknown iframe crash',
+            stackTrace: e.data.stack || '',
+            browserInfo: navigator.userAgent
+          })
+        }).catch(console.error);
+      }
+    };
+    window.addEventListener('message', handleMessage);
+
+    // Telemetry: Log Session Length on Unload
+    const logSessionTelemetry = () => {
+      if (sessionLogged.current || !gameId) return;
+      sessionLogged.current = true;
+      const lengthSeconds = Math.round((Date.now() - sessionStartTime.current) / 1000);
+      if (lengthSeconds > 5) { // Only log if they played for at least 5 seconds
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+        // Use sendBeacon for reliable unload tracking if possible
+        const url = `${apiUrl}/api/games/${gameId}/session`;
+        const data = JSON.stringify({ sessionLength: lengthSeconds });
+        
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(url, new Blob([data], { type: 'application/json' }));
+        } else {
+          fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: data,
+            keepalive: true
+          }).catch(console.error);
+        }
+      }
+    };
+
+    window.addEventListener('beforeunload', logSessionTelemetry);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener('message', handleMessage);
+      window.removeEventListener('beforeunload', logSessionTelemetry);
+      logSessionTelemetry(); // Log when component unmounts (navigating away)
+    };
+  }, [gameId]);
 
   const handleReport = async (e: React.FormEvent) => {
     e.preventDefault();
