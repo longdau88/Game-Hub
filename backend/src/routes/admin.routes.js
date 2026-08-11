@@ -1,9 +1,8 @@
 const express = require('express');
 const { requireAuth, requireAdmin } = require('../middleware/auth.middleware');
-const { getDashboardStats, getAllUsers, toggleBanUser, changeUserRole, rejectGame, deleteGame, toggleFeaturedGame } = require('../controllers/admin.controller');
+const { getDashboardStats, getAllUsers, toggleBanUser, changeUserRole, rejectGame, deleteGame, toggleFeaturedGame, getStorageStats, garbageCollect } = require('../controllers/admin.controller');
 const { getPendingGames, getPublishedGames, approveGame } = require('../controllers/game.controller');
 const { 
-  getStorageStats,
   runGarbageCollection, 
   updateHiddenTags, syncVectorDB, 
   getSessionStats, getCrashLogs, 
@@ -37,7 +36,8 @@ router.put('/games/:id/versions/:versionId/rollback', rollbackGame);
 
 // Storage
 router.get('/storage/stats', getStorageStats);
-router.post('/storage/gc', runGarbageCollection);
+router.post('/storage/gc', garbageCollect);
+router.post('/storage/cleanup', garbageCollect); // alias for cleanup
 
 // AI & Recommendations
 router.post('/games/:id/tags', updateHiddenTags);
