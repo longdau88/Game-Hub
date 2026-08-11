@@ -36,7 +36,7 @@ const sendEmail = async ({ to, subject, html }) => {
       return { success: true, data: info };
     } else {
       const { data, error } = await resend.emails.send({
-        from: 'Game Hub <onboarding@resend.dev>', // Update this to your verified domain later if you have one
+        from: 'Game Hub <no-reply@game-hub.best>', 
         to,
         subject,
         html
