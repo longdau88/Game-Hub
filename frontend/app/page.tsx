@@ -378,7 +378,7 @@ export default function Home() {
                     <div className="p-2.5 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl shadow-lg shadow-orange-500/20">
                       <TrendingUp className="w-6 h-6 text-white" />
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-bold">Trending Now</h2>
+                    <h2 className="text-2xl md:text-3xl font-bold">{t("home.trendingNow")}</h2>
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -394,12 +394,12 @@ export default function Home() {
                   <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/20">
                     <Zap className="w-6 h-6 text-white" />
                   </div>
-                  <h2 className="text-2xl md:text-3xl font-bold">New Releases</h2>
+                  <h2 className="text-2xl md:text-3xl font-bold">{t("home.newReleases")}</h2>
                 </div>
                 
                 {/* Secondary Category Filter */}
                 <div id="all-categories" className="hidden lg:flex items-center gap-2 bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-800">
-                  <button onClick={() => handleCategorySelect("")} className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedCategory === "" ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'}`}>All</button>
+                  <button onClick={() => handleCategorySelect("")} className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedCategory === "" ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'}`}>{t("home.filterAll")}</button>
                   {categories.slice(0, 5).map(cat => (
                     <button
                       key={`sec-${cat.id}`}

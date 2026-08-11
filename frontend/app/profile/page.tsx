@@ -265,14 +265,14 @@ export default function ProfilePage() {
             <div className="flex-1">
               <h1 className="text-3xl font-black text-white tracking-tight mb-1">{profile?.username || "Player"}</h1>
               <p className="text-zinc-400 text-sm mb-3 flex items-center justify-center md:justify-start gap-2">
-                <ShieldAlert className="w-4 h-4" /> Role: <span className="text-white capitalize">{profile?.role}</span>
+                <ShieldAlert className="w-4 h-4" /> {t("profile.role")}: <span className="text-white capitalize">{profile?.role}</span>
               </p>
-              <p className="text-zinc-300 max-w-xl">{profile?.bio || "No bio provided."}</p>
+              <p className="text-zinc-300 max-w-xl">{profile?.bio || t("profile.noBio")}</p>
             </div>
             <div className="flex gap-4">
               <div className="text-center px-4 py-2 bg-black/40 rounded-xl border border-white/5">
                 <p className="text-2xl font-bold text-white">{gameHistory.length}</p>
-                <p className="text-xs text-zinc-400 font-medium uppercase tracking-wider">Games Played</p>
+                <p className="text-xs text-zinc-400 font-medium uppercase tracking-wider">{t("profile.gamesPlayed")}</p>
               </div>
               {profile?.role !== 'user' && (
                 <div className="text-center px-4 py-2 bg-black/40 rounded-xl border border-white/5">
@@ -287,9 +287,9 @@ export default function ProfilePage() {
         {/* Tabs */}
         <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-8 bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-800 w-fit mx-auto">
           {[
-            { id: 'settings', icon: Settings, label: 'Settings' },
-            { id: 'history', icon: History, label: 'History' },
-            { id: 'bookmarks', icon: Bookmark, label: 'Bookmarks' },
+            { id: 'settings', icon: Settings, label: t("profile.tabSettings") },
+            { id: 'history', icon: History, label: t("profile.tabHistory") },
+            { id: 'bookmarks', icon: Bookmark, label: t("profile.tabBookmarks") },
             ...(profile?.role !== 'user' ? [{ id: 'uploads', icon: UploadCloud, label: 'My Uploads' }] : [])
           ].map(tab => (
             <button
@@ -321,7 +321,7 @@ export default function ProfilePage() {
                   <div className="md:col-span-2 space-y-6">
                     <div className="bg-zinc-900/50 border border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl">
                       <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                        <User className="w-5 h-5 text-blue-400" /> Public Profile
+                        <User className="w-5 h-5 text-blue-400" /> {t("profile.publicProfile")}
                       </h2>
                       
                       {message.text && (
@@ -342,8 +342,8 @@ export default function ProfilePage() {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-zinc-400 mb-2">Bio</label>
-                          <textarea value={bio} onChange={e => setBio(e.target.value)} rows={3} placeholder="Tell us about yourself..." className="w-full bg-zinc-900 border border-zinc-800 focus:border-blue-500 rounded-xl px-4 py-3 text-white outline-none transition-colors shadow-inner resize-none" />
+                          <label className="block text-sm font-medium text-zinc-400 mb-2">{t("profile.bio")}</label>
+                          <textarea value={bio} onChange={e => setBio(e.target.value)} rows={3} placeholder={t("profile.bioPlaceholder")} className="w-full bg-zinc-900 border border-zinc-800 focus:border-blue-500 rounded-xl px-4 py-3 text-white outline-none transition-colors shadow-inner resize-none" />
                         </div>
 
                         <div>
@@ -388,7 +388,7 @@ export default function ProfilePage() {
                           <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} required placeholder={t("profile.newPassword")} className="w-full bg-zinc-900 border border-zinc-800 focus:border-purple-500 rounded-xl px-4 py-3 text-white outline-none transition-colors shadow-inner" />
                         </div>
                         <div>
-                          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required placeholder={t("profile.confirmNewPassword")} className="w-full bg-zinc-900 border border-zinc-800 focus:border-purple-500 rounded-xl px-4 py-3 text-white outline-none transition-colors shadow-inner" />
+                          <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required placeholder={t("profile.confirmPassword")} className="w-full bg-zinc-900 border border-zinc-800 focus:border-purple-500 rounded-xl px-4 py-3 text-white outline-none transition-colors shadow-inner" />
                         </div>
                         <button type="submit" disabled={changingPassword} className="w-full py-3.5 bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-white rounded-xl font-bold transition-all border border-zinc-700">
                           {changingPassword ? "Updating..." : t("profile.changePassword")}

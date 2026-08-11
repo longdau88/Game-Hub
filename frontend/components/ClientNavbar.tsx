@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, Settings, User } from "lucide-react";
+import { LogOut, Settings, User, UploadCloud } from "lucide-react";
 import Cookies from "js-cookie";
 import ThemeSwitcher from "./ThemeSwitcher";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -56,6 +56,13 @@ export default function ClientNavbar() {
               {t("nav.admin")}
             </Link>
           )}
+          <Link
+            href="/creator/upload"
+            className="flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors"
+          >
+            <UploadCloud className="w-4 h-4" />
+            {t("nav.uploadGame")}
+          </Link>
           <Link
             href="/profile"
             className="flex items-center gap-2 px-4 py-2 rounded-md bg-zinc-800 dark:bg-zinc-800 hover:bg-zinc-700 text-white text-sm font-medium transition-colors"
