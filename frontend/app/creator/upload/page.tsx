@@ -25,6 +25,7 @@ export default function UploadGamePage() {
   const [memorySize, setMemorySize] = useState(256);
   const [enableBrotli, setEnableBrotli] = useState(false);
   const [enableGzip, setEnableGzip] = useState(false);
+  const [firebaseTrackingId, setFirebaseTrackingId] = useState("");
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -62,7 +63,7 @@ export default function UploadGamePage() {
     formData.append("descriptionTranslations", JSON.stringify({ vi: description, en: descriptionEn }));
     formData.append("categoryIds", selectedCategory);
     formData.append("controls", JSON.stringify(controls));
-    formData.append("engineConfig", JSON.stringify({ memorySize, enableBrotli, enableGzip }));
+    formData.append("engineConfig", JSON.stringify({ memorySize, enableBrotli, enableGzip, firebaseTrackingId }));
     formData.append("gameFile", file);
     if (coverImage) {
       formData.append("coverImage", coverImage);
@@ -297,6 +298,18 @@ export default function UploadGamePage() {
                 </label>
               </div>
               <p className="text-xs text-zinc-500 italic mt-2">{t("upload.compressionHint")}</p>
+              
+              <div className="pt-2">
+                <label className="block text-sm font-medium text-zinc-300 mb-1">{t("upload.firebaseTracking")}</label>
+                <input 
+                  type="text" 
+                  value={firebaseTrackingId}
+                  onChange={(e) => setFirebaseTrackingId(e.target.value)}
+                  placeholder="G-XXXXXXXXXX"
+                  className="w-full max-w-xs bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-2 text-white transition-colors uppercase" 
+                />
+                <p className="text-xs text-zinc-500 mt-1">{t("upload.firebaseTrackingHint")}</p>
+              </div>
             </div>
           </div>
 

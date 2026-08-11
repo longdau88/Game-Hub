@@ -32,6 +32,22 @@ function injectEngineConfigToHtml(htmlContent, engineConfig) {
     newHtml = newHtml.replace(/\.wasm"/g, '.wasm.gz"');
   }
   
+  // Remove existing gtag script if present to allow updating
+  newHtml = newHtml.replace(/<script async src="https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-.*?"><\/script>\s*<script>\s*window\.dataLayer.*?\s*function gtag.*?dataLayer\.push.*?gtag\('js'.*?gtag\('config'.*?<\/script>\s*/gs, '');
+  
+  if (engineConfig.firebaseTrackingId) {
+    const gtagId = engineConfig.firebaseTrackingId;
+    const gtagScript = `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${gtagId}"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n  gtag('config', '${gtagId}');\n</script>\n`;
+    
+    if (newHtml.includes('</head>')) {
+      newHtml = newHtml.replace('</head>', `${gtagScript}</head>`);
+    } else if (newHtml.includes('</body>')) {
+      newHtml = newHtml.replace('</body>', `${gtagScript}</body>`);
+    } else {
+      newHtml += gtagScript;
+    }
+  }
+  
   return newHtml;
 }
 const mime = require('mime-types'); // We should install this package if not already
@@ -222,21 +238,7 @@ exports.uploadGame = async (req, res) => {
         if (parsedEngineConfig) {
           try {
             let htmlContent = fs.readFileSync(indexPath, 'utf8');
-            
-            if (parsedEngineConfig.firebaseTrackingId) {
-              const gtagId = parsedEngineConfig.firebaseTrackingId;
-              const gtagScript = `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${gtagId}"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n  gtag('config', '${gtagId}');\n</script>\n`;
-              if (htmlContent.includes('</head>')) {
-                htmlContent = htmlContent.replace('</head>', `${gtagScript}\n</head>`);
-              } else if (htmlContent.includes('</body>')) {
-                htmlContent = htmlContent.replace('</body>', `${gtagScript}\n</body>`);
-              } else {
-                htmlContent += gtagScript;
-              }
-            }
-            
             htmlContent = injectEngineConfigToHtml(htmlContent, parsedEngineConfig);
-            
             fs.writeFileSync(indexPath, htmlContent, 'utf8');
           } catch (e) {
             console.error('Failed to inject Engine Config / Firebase Tracking:', e);
