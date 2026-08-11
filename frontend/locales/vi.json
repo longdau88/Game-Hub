@@ -255,5 +255,16 @@
   "admin.advConfirmGC": "Chạy dọn dẹp hệ thống?",
   "admin.catEditTitle": "Chỉnh sửa Thể loại",
   "admin.catEditName": "Tên",
-  "admin.catEditSlug": "Đường dẫn (Slug)"
+  "admin.catEditSlug": "Đường dẫn (Slug)",
+  "admin.settingsEmailProviderDesc": "Chọn dịch vụ gửi mail cho các tính năng hệ thống và chiến dịch.",
+  "admin.badgesEmpty": "Chưa có huy hiệu nào.",
+  "admin.badgeCreateTitle": "Tạo Huy hiệu (Badge)",
+  "admin.badgeName": "Tên Huy hiệu",
+  "admin.badgeNamePlaceholder": "VD: Master Trí Tuệ",
+  "admin.badgeDesc": "Mô tả",
+  "admin.badgeDescPlaceholder": "Chi tiết...",
+  "admin.badgeIcon": "Icon URL (Trống sẽ dùng mặc định)",
+  "admin.badgeBtnCreate": "Tạo Huy hiệu",
+  "admin.badgeListTitle": "Danh sách Huy hiệu",
+  "admin.auditLogsEmpty": "Chưa có nhật ký nào."
 }

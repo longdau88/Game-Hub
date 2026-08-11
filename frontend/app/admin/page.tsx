@@ -630,7 +630,7 @@ export default function AdminPage() {
               </div>
               <div className="p-0">
                 {reports.length === 0 ? (
-                  <p className="p-6 text-center text-zinc-500">Chưa có báo cáo nào.</p>
+                  <p className="p-6 text-center text-zinc-500">{t("admin.reportsEmpty")}</p>
                 ) : (
                   <ul className="divide-y divide-border">
                     {reports.map(report => (
@@ -716,7 +716,7 @@ export default function AdminPage() {
                     <option value="resend">Resend (API)</option>
                     <option value="nodemailer">Gmail SMTP (Nodemailer)</option>
                   </select>
-                  <p className="text-sm text-zinc-400 mt-2">Chọn dịch vụ gửi mail cho các tính năng hệ thống và chiến dịch.</p>
+                  <p className="text-sm text-zinc-400 mt-2">{t("admin.settingsEmailProviderDesc")}</p>
                 </div>
 
                 <div className="pt-4 border-t border-zinc-800">
@@ -910,7 +910,7 @@ export default function AdminPage() {
                   </li>
                 ))}
                 {mailCampaigns.length === 0 && (
-                  <li className="p-8 text-center text-zinc-500">Chưa có chiến dịch nào.</li>
+                  <li className="p-8 text-center text-zinc-500">{t("admin.mailNoHistory")}</li>
                 )}
               </ul>
             </div>
@@ -948,7 +948,7 @@ export default function AdminPage() {
                   </tr>
                 ))}
                 {auditLogs.length === 0 && (
-                  <tr><td colSpan={5} className="p-8 text-center text-zinc-500">No logs found.</td></tr>
+                  <tr><td colSpan={5} className="p-8 text-center text-zinc-500">{t("admin.auditLogsEmpty")}</td></tr>
                 )}
               </tbody>
             </table>
@@ -959,28 +959,28 @@ export default function AdminPage() {
         return (
           <div className="grid md:grid-cols-2 gap-8">
             <div className="bg-card border border-border rounded-xl p-6">
-              <h3 className="font-semibold mb-4 text-purple-400">Tạo Huy hiệu (Badge)</h3>
+              <h3 className="font-semibold mb-4 text-purple-400">{t("admin.badgeCreateTitle")}</h3>
               <form onSubmit={addBadge} className="space-y-4">
                 <div>
-                  <label className="block text-sm mb-1 text-zinc-500">Tên Huy hiệu</label>
-                  <input required value={newBadgeName} onChange={e => setNewBadgeName(e.target.value)} className="w-full px-3 py-2 bg-background border border-border rounded-md" placeholder="e.g. Master Trí Tuệ"/>
+                  <label className="block text-sm mb-1 text-zinc-500">{t("admin.badgeName")}</label>
+                  <input required value={newBadgeName} onChange={e => setNewBadgeName(e.target.value)} className="w-full px-3 py-2 bg-background border border-border rounded-md" placeholder={t("admin.badgeNamePlaceholder")}/>
                 </div>
                 <div>
-                  <label className="block text-sm mb-1 text-zinc-500">Mô tả</label>
-                  <textarea value={newBadgeDesc} onChange={e => setNewBadgeDesc(e.target.value)} className="w-full px-3 py-2 bg-background border border-border rounded-md min-h-[80px]" placeholder="Chi tiết..."/>
+                  <label className="block text-sm mb-1 text-zinc-500">{t("admin.badgeDesc")}</label>
+                  <textarea value={newBadgeDesc} onChange={e => setNewBadgeDesc(e.target.value)} className="w-full px-3 py-2 bg-background border border-border rounded-md min-h-[80px]" placeholder={t("admin.badgeDescPlaceholder")}/>
                 </div>
                 <div>
-                  <label className="block text-sm mb-1 text-zinc-500">Icon URL (Trống sẽ dùng mặc định)</label>
+                  <label className="block text-sm mb-1 text-zinc-500">{t("admin.badgeIcon")}</label>
                   <input value={newBadgeIcon} onChange={e => setNewBadgeIcon(e.target.value)} className="w-full px-3 py-2 bg-background border border-border rounded-md" placeholder="https://.../icon.png"/>
                 </div>
-                <button type="submit" className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-md text-sm font-medium w-full">Tạo Huy hiệu</button>
+                <button type="submit" className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-md text-sm font-medium w-full">{t("admin.badgeBtnCreate")}</button>
               </form>
             </div>
             
             <div className="bg-card border border-border rounded-xl overflow-hidden">
-              <div className="p-4 border-b border-border bg-muted/30"><h3 className="font-semibold">Danh sách Huy hiệu</h3></div>
+              <div className="p-4 border-b border-border bg-muted/30"><h3 className="font-semibold">{t("admin.badgeListTitle")}</h3></div>
               <ul className="divide-y divide-border">
-                {badges.length === 0 ? <p className="p-4 text-zinc-500 text-sm">Chưa có huy hiệu nào</p> : badges.map(badge => (
+                {badges.length === 0 ? <p className="p-4 text-zinc-500 text-sm">{t("admin.badgesEmpty")}</p> : badges.map(badge => (
                   <li key={badge.id} className="p-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       {badge.iconUrl ? <img src={badge.iconUrl} alt="badge" className="w-8 h-8 rounded-full" /> : <div className="w-8 h-8 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center font-bold">★</div>}

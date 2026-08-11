@@ -255,5 +255,16 @@
   "admin.advConfirmGC": "Run system cleanup?",
   "admin.catEditTitle": "Edit Category",
   "admin.catEditName": "Name",
-  "admin.catEditSlug": "Slug"
+  "admin.catEditSlug": "Slug",
+  "admin.settingsEmailProviderDesc": "Choose the email provider for system features and campaigns.",
+  "admin.badgesEmpty": "No badges yet.",
+  "admin.badgeCreateTitle": "Create Badge",
+  "admin.badgeName": "Badge Name",
+  "admin.badgeNamePlaceholder": "e.g. Brain Master",
+  "admin.badgeDesc": "Description",
+  "admin.badgeDescPlaceholder": "Details...",
+  "admin.badgeIcon": "Icon URL (Leave empty for default)",
+  "admin.badgeBtnCreate": "Create Badge",
+  "admin.badgeListTitle": "Badge List",
+  "admin.auditLogsEmpty": "No logs found."
 }
