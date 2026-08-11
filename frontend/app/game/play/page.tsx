@@ -3,27 +3,28 @@
 import { useEffect, useState, Suspense, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Maximize2, Share2, Eye, Loader2, Flag } from "lucide-react";
+import { ArrowLeft, Maximize2, Share2, Eye, Loader2, Flag, ShieldAlert } from "lucide-react";
 import GameComments from "../../../components/GameComments";
 import GameRating from "../../../components/GameRating";
 import { useLanguage } from "../../../contexts/LanguageContext";
 import Cookies from "js-cookie";
 
 function GamePlayerContent() {
-  const { t } = useLanguage();
+  const { locale: language, t } = useLanguage();
   const searchParams = useSearchParams();
   const gameId = searchParams.get("id");
   
   const [game, setGame] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-  
   const [reportModalOpen, setReportModalOpen] = useState(false);
   const [reportReason, setReportReason] = useState("");
   const [reporting, setReporting] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const sessionLogged = useRef<boolean>(false);
   
   const sessionStartTime = useRef<number>(Date.now());
-  const sessionLogged = useRef<boolean>(false);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -155,6 +156,14 @@ function GamePlayerContent() {
         setLoading(false);
       });
       
+    // Fetch Leaderboard
+    fetch(`${apiUrl}/api/gamification/leaderboard/${gameId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setLeaderboard(data);
+      })
+      .catch(console.error);
+
     // Increment play count
     fetch(`${apiUrl}/api/games/${gameId}/play`, { method: "POST" }).catch(console.error);
   }, [gameId]);
@@ -246,9 +255,9 @@ function GamePlayerContent() {
             
             <div>
               <h2 className="text-lg font-semibold mb-3">{t("game.aboutThisGame")}</h2>
-              <div className="text-zinc-300 leading-relaxed space-y-4">
-                {game.description ? (
-                  <p>{game.description}</p>
+              <div className="text-zinc-300 leading-relaxed space-y-4 whitespace-pre-wrap">
+                {(game.descriptionTranslations?.[language] || game.description) ? (
+                  <p>{game.descriptionTranslations?.[language] || game.description}</p>
                 ) : (
                   <p className="italic text-zinc-500">{t("game.noDescription")}</p>
                 )}
@@ -284,6 +293,30 @@ function GamePlayerContent() {
               )}
             </div>
             <p className="text-xs text-zinc-500 mt-4 italic">{t("game.controlsVary")}</p>
+          </div>
+
+          <div className="bg-gradient-to-b from-yellow-900/20 to-zinc-900/50 border border-yellow-900/30 rounded-xl p-6 relative overflow-hidden">
+            <h3 className="font-medium text-lg mb-4 text-white flex items-center gap-2"><span className="text-yellow-500">🏆</span> Leaderboard</h3>
+            <div className="space-y-3">
+              {leaderboard.length === 0 ? (
+                <p className="text-sm text-zinc-500 italic">No scores yet. Be the first!</p>
+              ) : (
+                leaderboard.map((entry, index) => (
+                  <div key={entry.id} className="flex justify-between items-center p-2 rounded-lg bg-zinc-800/50 border border-zinc-700/50">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${index === 0 ? 'bg-yellow-500 text-black' : index === 1 ? 'bg-zinc-300 text-black' : index === 2 ? 'bg-amber-700 text-white' : 'bg-zinc-700 text-zinc-400'}`}>
+                        {index + 1}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {entry.user.avatarUrl ? <img src={entry.user.avatarUrl} alt="" className="w-6 h-6 rounded-full" /> : <div className="w-6 h-6 bg-zinc-700 rounded-full"></div>}
+                        <span className="text-sm font-medium">{entry.user.username}</span>
+                      </div>
+                    </div>
+                    <span className="font-mono text-yellow-500 font-bold">{entry.score.toLocaleString()}</span>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>

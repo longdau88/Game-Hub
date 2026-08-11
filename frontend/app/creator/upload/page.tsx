@@ -11,6 +11,7 @@ export default function UploadGamePage() {
   const { t } = useLanguage();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [descriptionEn, setDescriptionEn] = useState("");
   const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -54,6 +55,7 @@ export default function UploadGamePage() {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
+    formData.append("descriptionTranslations", JSON.stringify({ vi: description, en: descriptionEn }));
     formData.append("categoryIds", selectedCategory);
     formData.append("controls", JSON.stringify(controls));
     formData.append("gameFile", file);
@@ -117,13 +119,23 @@ export default function UploadGamePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.description")}</label>
+            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.description")} (VI)</label>
             <textarea 
+              required
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={4}
-              className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-lg px-4 py-3 text-white transition-colors resize-none" 
-              placeholder={t("upload.descriptionPlaceholder")}
+              onChange={e => setDescription(e.target.value)}
+              className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl px-4 py-3 text-white min-h-[120px]"
+              placeholder={t("upload.descPlaceholder")}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-zinc-300 mb-2">{t("upload.description")} (EN)</label>
+            <textarea 
+              value={descriptionEn}
+              onChange={e => setDescriptionEn(e.target.value)}
+              className="w-full bg-zinc-900 border border-zinc-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-xl px-4 py-3 text-white min-h-[120px]"
+              placeholder="Game description in English..."
             />
           </div>
 

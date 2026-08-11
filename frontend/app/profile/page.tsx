@@ -383,7 +383,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div>
+        <div className="space-y-6">
           {/* Stats Widget */}
           <div className="bg-gradient-to-b from-blue-900/20 to-zinc-900/50 border border-blue-900/30 rounded-2xl p-6 relative overflow-hidden">
             <h2 className="text-lg font-semibold mb-6">{t("profile.stats")}</h2>
@@ -425,6 +425,37 @@ export default function ProfilePage() {
               >
                 {t("profile.goCreatorHub")}
               </button>
+            </div>
+          </div>
+
+          {/* Badges Widget */}
+          <div className="bg-gradient-to-b from-purple-900/20 to-zinc-900/50 border border-purple-900/30 rounded-2xl p-6 relative overflow-hidden h-full">
+            <h2 className="text-lg font-semibold mb-6 flex items-center gap-2"><span className="text-purple-400">★</span> Huy hiệu của bạn</h2>
+            
+            <div className="grid grid-cols-3 gap-4">
+              {!profile?.badges || profile.badges.length === 0 ? (
+                <div className="col-span-3 text-center py-6 text-zinc-500 text-sm italic">
+                  Chưa có huy hiệu nào. Hãy chơi game và đạt thành tích để nhận!
+                </div>
+              ) : (
+                profile.badges.map((ub: any) => (
+                  <div key={ub.id} className="flex flex-col items-center justify-center p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl hover:bg-purple-500/20 transition-colors group relative">
+                    {ub.badge.iconUrl ? (
+                      <img src={ub.badge.iconUrl} alt={ub.badge.name} className="w-10 h-10 mb-2 rounded-full" />
+                    ) : (
+                      <div className="w-10 h-10 mb-2 rounded-full bg-purple-500/20 flex items-center justify-center font-bold text-purple-400 text-lg">★</div>
+                    )}
+                    <span className="text-xs font-medium text-center text-zinc-300 line-clamp-2">{ub.badge.name}</span>
+                    
+                    {/* Tooltip */}
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-zinc-800 text-xs text-white rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10 text-center pointer-events-none">
+                      <p className="font-bold mb-1">{ub.badge.name}</p>
+                      <p className="text-zinc-400">{ub.badge.description}</p>
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-zinc-800"></div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

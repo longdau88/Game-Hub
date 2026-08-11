@@ -7,7 +7,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 import Cookies from "js-cookie";
 
 export default function Home() {
-  const { t } = useLanguage();
+  const { locale: language, t } = useLanguage();
   const [games, setGames] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [search, setSearch] = useState("");
@@ -172,12 +172,13 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="p-5">
-                    <h3 className="font-bold text-xl mb-1 text-white group-hover:text-yellow-400 transition-colors">{game.title}</h3>
-                    <p className="text-sm text-zinc-400 mb-3 truncate">{game.description || "No description"}</p>
-                    <div className="flex items-center gap-4 text-xs font-medium text-zinc-500">
-                      <span>{game.categories?.map((c: any) => c.name).join(', ')}</span>
-                      <span>•</span>
-                      <span>★ {game.averageRating}</span>
+                    <h3 className="font-bold text-lg mb-1 text-white group-hover:text-blue-400 transition-colors truncate">{game.title}</h3>
+                    <p className="text-sm text-zinc-400 mb-3 line-clamp-2 min-h-[40px]">{game.descriptionTranslations?.[language] || game.description || "No description"}</p>
+                    <div className="flex items-center justify-between text-xs font-medium text-zinc-500 mt-auto">
+                      <span className="bg-zinc-800 px-2 py-1 rounded truncate max-w-[120px]">
+                        {game.categories && game.categories.length > 0 ? (game.categories[0].nameTranslations?.[language] || game.categories[0].name) : "Uncategorized"}
+                      </span>
+                      <span className="flex items-center gap-1 text-yellow-500">★ {game.averageRating}</span>
                     </div>
                   </div>
                 </div>
@@ -224,7 +225,7 @@ export default function Home() {
               onClick={() => handleCategorySelect(cat.slug)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${selectedCategory === cat.slug ? 'bg-blue-600 text-white border-blue-500' : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-white'}`}
             >
-              {cat.name}
+              {cat.nameTranslations?.[language] || cat.name}
             </button>
           ))}
         </div>
@@ -265,9 +266,9 @@ export default function Home() {
                     <h2 className="text-xl font-bold mb-1 group-hover:text-blue-400 transition-colors">{game.title}</h2>
                   </Link>
                   <p className="text-xs text-zinc-400 mb-3 flex items-center gap-1">
-                    By <span className="font-semibold">{game.uploader?.username || "Admin"}</span>
+                    By <span className="font-semibold">{game.uploader?.username || game.uploader?.email || "Admin"}</span>
                   </p>
-                  <p className="text-zinc-500 text-sm mb-6 line-clamp-2 dark:text-zinc-400">{game.description}</p>
+                  <p className="text-zinc-500 text-sm mb-6 line-clamp-2 dark:text-zinc-400">{game.descriptionTranslations?.[language] || game.description}</p>
                   
                   <Link 
                     href={`/game/play?id=${game.id}`}

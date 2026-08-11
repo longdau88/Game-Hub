@@ -14,11 +14,11 @@ exports.getAllCategories = async (req, res) => {
 
 exports.createCategory = async (req, res) => {
   try {
-    const { name, slug } = req.body;
+    const { name, slug, nameTranslations } = req.body;
     if (!name || !slug) return res.status(400).json({ error: 'Name and slug are required' });
     
     const category = await prisma.category.create({
-      data: { name, slug }
+      data: { name, slug, nameTranslations }
     });
     clearCache('/api/categories');
     res.status(201).json(category);
@@ -33,11 +33,11 @@ exports.createCategory = async (req, res) => {
 exports.updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, slug } = req.body;
+    const { name, slug, nameTranslations } = req.body;
     
     const category = await prisma.category.update({
       where: { id: parseInt(id) },
-      data: { name, slug }
+      data: { name, slug, nameTranslations }
     });
     clearCache('/api/categories');
     res.json(category);

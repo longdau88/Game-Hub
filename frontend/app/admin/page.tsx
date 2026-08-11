@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Check, X, Play, Settings, LayoutDashboard, Gamepad2, Users, Tags, Trash2, Ban, Flag } from "lucide-react";
+import { Check, X, Play, Settings, LayoutDashboard, Gamepad2, Users, Tags, Trash2, Ban, Flag, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import { useLanguage } from "../../contexts/LanguageContext";
@@ -29,7 +29,14 @@ export default function AdminPage() {
   const [advancedModalOpen, setAdvancedModalOpen] = useState(false);
   const [advGame, setAdvGame] = useState<any>(null);
   const [advTags, setAdvTags] = useState("");
+  const [advEngineConfig, setAdvEngineConfig] = useState<any>({});
   const [advVersions, setAdvVersions] = useState<any[]>([]);
+
+  // Gamification state
+  const [badges, setBadges] = useState<any[]>([]);
+  const [newBadgeName, setNewBadgeName] = useState("");
+  const [newBadgeDesc, setNewBadgeDesc] = useState("");
+  const [newBadgeIcon, setNewBadgeIcon] = useState("");
 
   // Modals state
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
@@ -38,11 +45,13 @@ export default function AdminPage() {
   const [previewGameId, setPreviewGameId] = useState<string | null>(null);
 
   const [newCatName, setNewCatName] = useState("");
+  const [newCatNameEn, setNewCatNameEn] = useState("");
   const [newCatSlug, setNewCatSlug] = useState("");
   
   const [editCatModalOpen, setEditCatModalOpen] = useState(false);
   const [editCatId, setEditCatId] = useState<number | null>(null);
   const [editCatName, setEditCatName] = useState("");
+  const [editCatNameEn, setEditCatNameEn] = useState("");
   const [editCatSlug, setEditCatSlug] = useState("");
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
@@ -86,6 +95,9 @@ export default function AdminPage() {
       } else if (activeTab === "categories") {
         const res = await fetch(`${apiUrl}/api/categories`, { headers });
         if (res.ok) setCategories(await res.json());
+      } else if (activeTab === "gamification") {
+        const res = await fetch(`${apiUrl}/api/gamification/admin/badges`, { headers });
+        if (res.ok) setBadges(await res.json());
       } else if (activeTab === "reports") {
         const res = await fetch(`${apiUrl}/api/reports/admin`, { headers });
         if (res.ok) setReports(await res.json());
@@ -208,6 +220,7 @@ export default function AdminPage() {
   const openAdvancedModal = async (game: any) => {
     setAdvGame(game);
     setAdvTags(game.hiddenTags || "");
+    setAdvEngineConfig(game.engineConfig || {});
     setAdvancedModalOpen(true);
     try {
       const res = await fetch(`${apiUrl}/api/admin/games/${game.id}/versions`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -229,6 +242,20 @@ export default function AdminPage() {
       });
       if(res.ok) {
         alert("Saved tags!");
+        fetchData();
+      }
+    } catch (e) {}
+  };
+
+  const saveEngineConfig = async () => {
+    try {
+      const res = await fetch(`${apiUrl}/api/creator/games/${advGame.id}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ engineConfig: JSON.stringify(advEngineConfig) })
+      });
+      if(res.ok) {
+        alert("Saved Engine Config!");
         fetchData();
       }
     } catch (e) {}
@@ -324,10 +351,15 @@ export default function AdminPage() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name: newCatName, slug: newCatSlug })
+        body: JSON.stringify({ 
+          name: newCatName, 
+          slug: newCatSlug,
+          nameTranslations: { vi: newCatName, en: newCatNameEn }
+        })
       });
       if (res.ok) {
         setNewCatName("");
+        setNewCatNameEn("");
         setNewCatSlug("");
         alert("Đã thêm thể loại thành công!");
         fetchData();
@@ -363,7 +395,11 @@ export default function AdminPage() {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name: editCatName, slug: editCatSlug })
+        body: JSON.stringify({ 
+          name: editCatName, 
+          slug: editCatSlug,
+          nameTranslations: { vi: editCatName, en: editCatNameEn }
+        })
       });
       if (res.ok) {
         setEditCatModalOpen(false);
@@ -402,6 +438,51 @@ export default function AdminPage() {
       else alert("Failed to save settings");
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const addBadge = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`${apiUrl}/api/gamification/admin/badges`, {
+        method: "POST",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          name: newBadgeName,
+          description: newBadgeDesc,
+          iconUrl: newBadgeIcon
+        })
+      });
+      if (res.ok) {
+        setNewBadgeName("");
+        setNewBadgeDesc("");
+        setNewBadgeIcon("");
+        alert("Đã thêm huy hiệu thành công!");
+        fetchData();
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to add badge");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const deleteBadge = async (id: number) => {
+    if(!confirm("Bạn có chắc chắn muốn xóa huy hiệu này?")) return;
+    try {
+      const res = await fetch(`${apiUrl}/api/gamification/admin/badges/${id}`, {
+        method: "DELETE",
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        fetchData();
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -515,7 +596,7 @@ export default function AdminPage() {
                           {game.title}
                           {game.isFeatured && <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-500 text-xs rounded-full border border-yellow-500/20">Featured</span>}
                         </p>
-                        <p className="text-sm text-zinc-400">By: {game.uploader?.username || `User #${game.uploaderId}`}</p>
+                        <p className="text-sm text-zinc-400">By: {game.uploader?.username || game.uploader?.email || `User #${game.uploaderId}`}</p>
                       </div>
                       <div className="flex gap-2">
                         <button 
@@ -874,6 +955,50 @@ export default function AdminPage() {
           </div>
         );
 
+      case "gamification":
+        return (
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-card border border-border rounded-xl p-6">
+              <h3 className="font-semibold mb-4 text-purple-400">Tạo Huy hiệu (Badge)</h3>
+              <form onSubmit={addBadge} className="space-y-4">
+                <div>
+                  <label className="block text-sm mb-1 text-zinc-500">Tên Huy hiệu</label>
+                  <input required value={newBadgeName} onChange={e => setNewBadgeName(e.target.value)} className="w-full px-3 py-2 bg-background border border-border rounded-md" placeholder="e.g. Master Trí Tuệ"/>
+                </div>
+                <div>
+                  <label className="block text-sm mb-1 text-zinc-500">Mô tả</label>
+                  <textarea value={newBadgeDesc} onChange={e => setNewBadgeDesc(e.target.value)} className="w-full px-3 py-2 bg-background border border-border rounded-md min-h-[80px]" placeholder="Chi tiết..."/>
+                </div>
+                <div>
+                  <label className="block text-sm mb-1 text-zinc-500">Icon URL (Trống sẽ dùng mặc định)</label>
+                  <input value={newBadgeIcon} onChange={e => setNewBadgeIcon(e.target.value)} className="w-full px-3 py-2 bg-background border border-border rounded-md" placeholder="https://.../icon.png"/>
+                </div>
+                <button type="submit" className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-md text-sm font-medium w-full">Tạo Huy hiệu</button>
+              </form>
+            </div>
+            
+            <div className="bg-card border border-border rounded-xl overflow-hidden">
+              <div className="p-4 border-b border-border bg-muted/30"><h3 className="font-semibold">Danh sách Huy hiệu</h3></div>
+              <ul className="divide-y divide-border">
+                {badges.length === 0 ? <p className="p-4 text-zinc-500 text-sm">Chưa có huy hiệu nào</p> : badges.map(badge => (
+                  <li key={badge.id} className="p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {badge.iconUrl ? <img src={badge.iconUrl} alt="badge" className="w-8 h-8 rounded-full" /> : <div className="w-8 h-8 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center font-bold">★</div>}
+                      <div>
+                        <p className="font-medium">{badge.name}</p>
+                        <p className="text-xs text-zinc-500">{badge.description}</p>
+                      </div>
+                    </div>
+                    <button onClick={() => deleteBadge(badge.id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-md" title="Xóa">
+                      <Trash2 className="w-4 h-4"/>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        );
+
       case "default":
         return <div>Tab not found</div>;
 
@@ -931,8 +1056,12 @@ export default function AdminPage() {
               <h3 className="font-semibold mb-4">{t("admin.addNewCat")}</h3>
               <form onSubmit={addCategory} className="space-y-4">
                 <div>
-                  <label className="block text-sm mb-1 text-zinc-500">{t("admin.catName")}</label>
-                  <input required value={newCatName} onChange={e => setNewCatName(e.target.value)} className="w-full px-3 py-2 bg-background border border-border rounded-md" placeholder="e.g. Action RPG"/>
+                  <label className="block text-sm mb-1 text-zinc-500">{t("admin.catName")} (VI)</label>
+                  <input required value={newCatName} onChange={e => setNewCatName(e.target.value)} className="w-full px-3 py-2 bg-background border border-border rounded-md" placeholder="VD: Hành động"/>
+                </div>
+                <div>
+                  <label className="block text-sm mb-1 text-zinc-500">{t("admin.catName")} (EN)</label>
+                  <input value={newCatNameEn} onChange={e => setNewCatNameEn(e.target.value)} className="w-full px-3 py-2 bg-background border border-border rounded-md" placeholder="e.g. Action RPG"/>
                 </div>
                 <div>
                   <label className="block text-sm mb-1 text-zinc-500">{t("admin.catSlug")}</label>
@@ -956,6 +1085,7 @@ export default function AdminPage() {
                         onClick={() => {
                           setEditCatId(cat.id);
                           setEditCatName(cat.name);
+                          setEditCatNameEn(cat.nameTranslations?.en || "");
                           setEditCatSlug(cat.slug);
                           setEditCatModalOpen(true);
                         }}
@@ -1049,6 +1179,12 @@ export default function AdminPage() {
             <button onClick={() => setActiveTab('categories')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'categories' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}>
               <Tags className="w-4 h-4" /> {t("admin.tabCategories")}
             </button>
+            <button onClick={() => setActiveTab('gamification')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'gamification' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}>
+              <span className="text-purple-400 text-lg">★</span> Gamification
+            </button>
+            <button onClick={() => setActiveTab('reports')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'reports' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}>
+              <ShieldAlert className="w-4 h-4" /> {t("admin.reports")}
+            </button>
             <button onClick={() => setActiveTab('audit-logs')} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'audit-logs' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> {t("admin.tabAudit")}
             </button>
@@ -1108,13 +1244,22 @@ export default function AdminPage() {
               <form onSubmit={updateCategory}>
                 <div className="space-y-4 mb-6">
                   <div>
-                    <label className="block text-sm font-medium mb-1 text-zinc-400">{t("admin.catEditName")}</label>
+                    <label className="block text-sm font-medium mb-1 text-zinc-400">{t("admin.catEditName")} (VI)</label>
                     <input
                       required
                       type="text"
-                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500"
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary"
                       value={editCatName}
                       onChange={e => setEditCatName(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1 text-zinc-400">{t("admin.catEditName")} (EN)</label>
+                    <input
+                      type="text"
+                      className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary"
+                      value={editCatNameEn}
+                      onChange={e => setEditCatNameEn(e.target.value)}
                     />
                   </div>
                   <div>
@@ -1178,6 +1323,38 @@ export default function AdminPage() {
                     <button onClick={saveAdvancedTags} className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-md transition-colors">{t("admin.advSaveTags")}</button>
                   </div>
                   <p className="text-xs text-zinc-500 mt-2">Ngăn cách bởi dấu phẩy. Các tag này giúp AI gợi ý game chính xác hơn mà không hiển thị ra UI.</p>
+                </div>
+              </section>
+
+              {/* Engine Config */}
+              <section>
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="font-semibold text-lg text-emerald-400">Cấu hình Engine & Tracking</h4>
+                </div>
+                <div className="bg-zinc-800/50 p-4 rounded-lg border border-zinc-700/50 space-y-4">
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-2">Memory Size (MB)</label>
+                    <input 
+                      type="number"
+                      value={advEngineConfig?.memorySize || ""} 
+                      onChange={e => setAdvEngineConfig({...advEngineConfig, memorySize: parseInt(e.target.value)})} 
+                      placeholder="e.g. 256"
+                      className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-zinc-400 mb-2">Firebase Analytics Tracking ID</label>
+                    <input 
+                      value={advEngineConfig?.firebaseTrackingId || ""} 
+                      onChange={e => setAdvEngineConfig({...advEngineConfig, firebaseTrackingId: e.target.value})} 
+                      placeholder="e.g. G-12345678"
+                      className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md focus:outline-none focus:border-blue-500"
+                    />
+                    <p className="text-xs text-zinc-500 mt-1">Lưu ý: Tracking ID chỉ được tiêm tự động vào lúc Upload game lên R2. Bạn cần re-upload game để áp dụng script.</p>
+                  </div>
+                  <div className="flex justify-end">
+                    <button onClick={saveEngineConfig} className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-md transition-colors font-medium">Lưu Cấu hình Engine</button>
+                  </div>
                 </div>
               </section>
 

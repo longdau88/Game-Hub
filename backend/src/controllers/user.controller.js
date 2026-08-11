@@ -14,6 +14,11 @@ exports.getMe = async (req, res) => {
           role: true,
           avatarUrl: true,
           createdAt: true,
+          badges: {
+            include: {
+              badge: true
+            }
+          }
         }
       }),
       prisma.game.aggregate({

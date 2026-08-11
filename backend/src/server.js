@@ -9,6 +9,7 @@ const reportRoutes = require('./routes/report.routes');
 const settingRoutes = require('./routes/setting.routes');
 const userRoutes = require('./routes/user.routes');
 const socialRoutes = require('./routes/social.routes');
+const gamificationRoutes = require('./routes/gamification.routes');
 const prisma = require('./config/db');
 const bcrypt = require('bcryptjs');
 const path = require('path');
@@ -64,6 +65,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/social', socialRoutes);
+app.use('/api/gamification', gamificationRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

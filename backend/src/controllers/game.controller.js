@@ -27,7 +27,7 @@ const getAllFiles = (dirPath, arrayOfFiles) => {
 
 exports.uploadGame = async (req, res) => {
   try {
-    const { title, description, categoryIds, controls } = req.body;
+    const { title, description, categoryIds, controls, descriptionTranslations, engineConfig } = req.body;
     const file = req.files && req.files['gameFile'] ? req.files['gameFile'][0] : null;
     const coverFile = req.files && req.files['coverImage'] ? req.files['coverImage'][0] : null;
 
@@ -49,6 +49,39 @@ exports.uploadGame = async (req, res) => {
       fs.rmSync(tempExtractDir, { recursive: true, force: true });
       fs.unlinkSync(file.path);
       return res.status(400).json({ error: 'Zip file does not contain an index.html at the root' });
+    }
+
+    // Process engineConfig to inject Firebase tracking if present
+    let parsedEngineConfig = null;
+    if (engineConfig) {
+      try {
+        parsedEngineConfig = JSON.parse(engineConfig);
+        if (parsedEngineConfig.firebaseTrackingId) {
+          const gtagId = parsedEngineConfig.firebaseTrackingId;
+          const gtagScript = `
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=${gtagId}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '${gtagId}');
+</script>
+`;
+          let htmlContent = fs.readFileSync(indexPath, 'utf8');
+          // Inject before </head> if exists, else before </body>
+          if (htmlContent.includes('</head>')) {
+            htmlContent = htmlContent.replace('</head>', `${gtagScript}\n</head>`);
+          } else if (htmlContent.includes('</body>')) {
+            htmlContent = htmlContent.replace('</body>', `${gtagScript}\n</body>`);
+          } else {
+            htmlContent += gtagScript;
+          }
+          fs.writeFileSync(indexPath, htmlContent, 'utf8');
+        }
+      } catch (e) {
+        console.error('Failed to parse engineConfig JSON:', e);
+      }
     }
 
     // Get all files and upload to R2
@@ -116,16 +149,28 @@ exports.uploadGame = async (req, res) => {
       }
     }
     
+    // Process descriptionTranslations
+    let parsedDescTranslations = null;
+    if (descriptionTranslations) {
+      try {
+        parsedDescTranslations = JSON.parse(descriptionTranslations);
+      } catch (e) {
+        console.error('Failed to parse descriptionTranslations JSON:', e);
+      }
+    }
+    
     const newGame = await prisma.game.create({
       data: {
         id: gameId,
         title: title || 'Untitled Game',
         description: description || '',
+        descriptionTranslations: parsedDescTranslations,
         r2FolderPath: `games/${gameId}/`,
         status: 'pending', // pending approval
         sizeBytes: file.size,
         uploaderId: req.user.userId,
         controls: parsedControls,
+        engineConfig: parsedEngineConfig,
         coverImageUrl: coverImageUrl,
         ...(categoryConnect.length > 0 && {
           categories: {
@@ -346,7 +391,7 @@ exports.getBookmarkedGames = async (req, res) => {
 exports.updateGame = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, categoryIds, controls } = req.body;
+    const { title, description, categoryIds, controls, descriptionTranslations, engineConfig } = req.body;
     
     // Verify ownership
     const game = await prisma.game.findUnique({ where: { id } });
@@ -393,13 +438,33 @@ exports.updateGame = async (req, res) => {
         console.error('Failed to parse controls JSON:', e);
       }
     }
+    
+    let parsedDescTranslations = game.descriptionTranslations;
+    if (descriptionTranslations) {
+      try {
+        parsedDescTranslations = JSON.parse(descriptionTranslations);
+      } catch (e) {
+        console.error('Failed to parse descriptionTranslations:', e);
+      }
+    }
+
+    let parsedEngineConfig = game.engineConfig;
+    if (engineConfig) {
+      try {
+        parsedEngineConfig = JSON.parse(engineConfig);
+      } catch (e) {
+        console.error('Failed to parse engineConfig:', e);
+      }
+    }
 
     const updatedGame = await prisma.game.update({
       where: { id },
       data: {
         ...(title && { title }),
         ...(description && { description }),
+        ...(parsedDescTranslations && { descriptionTranslations: parsedDescTranslations }),
         ...(parsedControls && { controls: parsedControls }),
+        ...(parsedEngineConfig && { engineConfig: parsedEngineConfig }),
         ...(coverImageUrl && { coverImageUrl }),
         ...(categoryConnect && {
           categories: { set: [], connect: categoryConnect }

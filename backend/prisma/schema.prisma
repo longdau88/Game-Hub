@@ -28,6 +28,8 @@ model User {
   gameSessions GameSession[]
   crashReports CrashReport[]
   auditLogs    AuditLog[]
+  badges       UserBadge[]
+  leaderboardEntries Leaderboard[]
 
   @@map("users")
 }
@@ -36,6 +38,7 @@ model Game {
   id             String        @id @default(uuid()) @db.Uuid
   title          String        @db.VarChar(150)
   description    String?       @db.Text
+  descriptionTranslations Json?   @map("description_translations")
   coverImageUrl  String?       @map("cover_image_url") @db.Text
   r2FolderPath   String        @map("r2_folder_path") @db.Text
   uploaderId     Int?          @map("uploader_id")
@@ -45,6 +48,8 @@ model Game {
   sizeBytes      BigInt?       @map("size_bytes")
   playCount      Int           @default(0) @map("play_count")
   controls       Json?
+  engineConfig   Json?         @map("engine_config")
+  secretKey      String?       @unique @default(uuid()) @map("secret_key") @db.VarChar(50)
   isFeatured     Boolean       @default(false) @map("is_featured")
   hiddenTags     String?       @map("hidden_tags") @db.Text // Store as comma separated or JSON string
   vectorSynced   Boolean       @default(false) @map("vector_synced")
@@ -57,6 +62,7 @@ model Game {
   versions       GameVersion[]
   sessions       GameSession[]
   crashes        CrashReport[]
+  leaderboards   Leaderboard[]
 
   @@index([status])
   @@index([playCount])
@@ -77,10 +83,11 @@ model UserLibrary {
 }
 
 model Category {
-  id    Int    @id @default(autoincrement())
-  name  String @unique @db.VarChar(50)
-  slug  String @unique @db.VarChar(50)
-  games Game[] @relation("GameCategories")
+  id               Int    @id @default(autoincrement())
+  name             String @unique @db.VarChar(50)
+  nameTranslations Json?  @map("name_translations")
+  slug             String @unique @db.VarChar(50)
+  games            Game[] @relation("GameCategories")
 
   @@map("categories")
 }
@@ -223,4 +230,43 @@ model AuditLog {
   @@index([adminId])
   @@index([createdAt])
   @@map("audit_logs")
+}
+
+model Leaderboard {
+  id        Int      @id @default(autoincrement())
+  gameId    String   @map("game_id") @db.Uuid
+  userId    Int      @map("user_id")
+  score     Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([gameId, score(sort: Desc)])
+  @@map("leaderboards")
+}
+
+model Badge {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(100)
+  nameTranslations Json? @map("name_translations")
+  description String?  @db.Text
+  descriptionTranslations Json? @map("description_translations")
+  iconUrl     String?  @map("icon_url") @db.Text
+  createdAt   DateTime @default(now()) @map("created_at")
+  users       UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  userId    Int      @map("user_id")
+  badgeId   Int      @map("badge_id")
+  grantedAt DateTime @default(now()) @map("granted_at")
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, badgeId])
+  @@map("user_badges")
 }
