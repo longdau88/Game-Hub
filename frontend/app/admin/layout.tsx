@@ -84,7 +84,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </Link>
             
             <Link href="/admin/gamification" className={getTabClass("/admin/gamification")}>
-              <span className="text-purple-400 text-lg">★</span> Gamification
+              <span className="text-purple-400 text-lg">★</span> {t("admin.tabGamification")}
             </Link>
             
             <Link href="/admin/audit" className={getTabClass("/admin/audit")}>

@@ -190,6 +190,7 @@
   "admin.tabStorage": "Storage & Bandwidth",
   "admin.tabAnalytics": "Analytics & Crashes",
   "admin.tabMail": "Mail Campaigns",
+  "admin.tabGamification": "Gamification",
   "admin.reportsTitle": "Manage Reports",
   "admin.reportsEmpty": "No reports yet.",
   "admin.reportsUser": "User",
