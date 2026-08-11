@@ -709,6 +709,9 @@ export default function AdminPage() {
                   if(res.ok) {
                     alert('Đã gửi thành công!');
                     fetchData(); // reload campaigns
+                  } else {
+                    const data = await res.json();
+                    alert(`Lỗi: ${data.error || 'Không thể gửi chiến dịch'}`);
                   }
                 }
               }} className="space-y-4 max-w-2xl">
