@@ -18,10 +18,13 @@ export default function Home() {
   const [bookmarkedGames, setBookmarkedGames] = useState<Set<string>>(new Set());
   const [isSearching, setIsSearching] = useState(false);
 
+  const [mostLikedGames, setMostLikedGames] = useState<any[]>([]);
+
   useEffect(() => {
     fetchFeaturedGames();
     fetchGames();
     fetchMostPlayedGames();
+    fetchMostLikedGames();
     fetchCategories();
     fetchBookmarks();
   }, []);
@@ -71,6 +74,21 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Failed to fetch most played games", error);
+    }
+  };
+
+  const fetchMostLikedGames = async () => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      // Use limit=10 but server might not support limit query param directly yet, we can slice it here.
+      // Assuming getPublishedGames supports limit, otherwise we just slice.
+      const res = await fetch(`${apiUrl}/api/games?sort=mostLiked`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) setMostLikedGames(data.slice(0, 10)); // Top 10
+      }
+    } catch (error) {
+      console.error("Failed to fetch most liked games", error);
     }
   };
 
@@ -370,60 +388,103 @@ export default function Home() {
               </section>
             )}
 
-            {/* Trending & Most Played Section */}
-            {mostPlayedGames.length > 0 && (
-              <section className="mb-20">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl shadow-lg shadow-orange-500/20">
-                      <TrendingUp className="w-6 h-6 text-white" />
+            {/* Layout for Trending, New Releases and Sidebar */}
+            <div className="flex flex-col xl:flex-row gap-8">
+              {/* Main Content Column */}
+              <div className="flex-1 min-w-0">
+                {/* Trending & Most Played Section */}
+                {mostPlayedGames.length > 0 && (
+                  <section className="mb-20">
+                    <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl shadow-lg shadow-orange-500/20">
+                          <TrendingUp className="w-6 h-6 text-white" />
+                        </div>
+                        <h2 className="text-2xl md:text-3xl font-bold">{t("home.trendingNow")}</h2>
+                      </div>
                     </div>
-                    <h2 className="text-2xl md:text-3xl font-bold">{t("home.trendingNow")}</h2>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {mostPlayedGames.map(game => <GameCard key={`most-played-${game.id}`} game={game} />)}
-                </div>
-              </section>
-            )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+                      {mostPlayedGames.map(game => <GameCard key={`most-played-${game.id}`} game={game} />)}
+                    </div>
+                  </section>
+                )}
 
-            {/* New Releases Section */}
-            <section className="mb-20">
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/20">
-                    <Zap className="w-6 h-6 text-white" />
+                {/* New Releases Section */}
+                <section className="mb-20">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/20">
+                        <Zap className="w-6 h-6 text-white" />
+                      </div>
+                      <h2 className="text-2xl md:text-3xl font-bold">{t("home.newReleases")}</h2>
+                    </div>
+                    
+                    {/* Secondary Category Filter */}
+                    <div id="all-categories" className="hidden lg:flex items-center gap-2 bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-800">
+                      <button onClick={() => handleCategorySelect("")} className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedCategory === "" ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'}`}>{t("home.filterAll")}</button>
+                      {categories.slice(0, 5).map(cat => (
+                        <button
+                          key={`sec-${cat.id}`}
+                          onClick={() => handleCategorySelect(cat.slug)}
+                          className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedCategory === cat.slug ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'}`}
+                        >
+                          {cat.nameTranslations?.[language] || cat.name}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <h2 className="text-2xl md:text-3xl font-bold">{t("home.newReleases")}</h2>
-                </div>
-                
-                {/* Secondary Category Filter */}
-                <div id="all-categories" className="hidden lg:flex items-center gap-2 bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-800">
-                  <button onClick={() => handleCategorySelect("")} className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedCategory === "" ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'}`}>{t("home.filterAll")}</button>
-                  {categories.slice(0, 5).map(cat => (
-                    <button
-                      key={`sec-${cat.id}`}
-                      onClick={() => handleCategorySelect(cat.slug)}
-                      className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors ${selectedCategory === cat.slug ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white'}`}
-                    >
-                      {cat.nameTranslations?.[language] || cat.name}
-                    </button>
-                  ))}
-                </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+                    {games.slice(0, 12).map(game => <GameCard key={`new-${game.id}`} game={game} />)}
+                  </div>
+                  
+                  {games.length > 12 && (
+                    <div className="mt-12 flex justify-center">
+                      <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="px-8 py-3 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-full font-medium transition-all text-zinc-300 hover:text-white">
+                        Load More Games
+                      </button>
+                    </div>
+                  )}
+                </section>
               </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {games.slice(0, 12).map(game => <GameCard key={`new-${game.id}`} game={game} />)}
+
+              {/* Sidebar Column: Top Liked Games */}
+              <div className="w-full xl:w-[320px] shrink-0 space-y-8">
+                {mostLikedGames.length > 0 && (
+                  <div className="bg-zinc-900/40 border border-white/5 rounded-2xl p-6 backdrop-blur-md sticky top-32">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2 bg-pink-500/10 rounded-lg">
+                        <Heart className="w-5 h-5 text-pink-500 fill-pink-500" />
+                      </div>
+                      <h2 className="text-xl font-bold">{t("home.topLiked") || "Top Yêu Thích"}</h2>
+                    </div>
+                    <div className="flex flex-col gap-4">
+                      {mostLikedGames.map((game, idx) => (
+                        <Link href={`/game/play?id=${game.id}`} key={`liked-${game.id}`} className="flex items-center gap-4 group p-2 hover:bg-white/5 rounded-xl transition-colors -mx-2">
+                          <div className={`w-6 text-center text-lg font-black transition-colors ${idx === 0 ? 'text-yellow-400' : idx === 1 ? 'text-zinc-300' : idx === 2 ? 'text-amber-600' : 'text-zinc-700 group-hover:text-pink-500'}`}>
+                            {idx + 1}
+                          </div>
+                          <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-white/5">
+                            <img src={game.coverImageUrl || '/placeholder.png'} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-bold text-sm text-zinc-200 truncate group-hover:text-pink-400 transition-colors">{game.title}</h3>
+                            <div className="flex items-center gap-3 mt-1.5 text-xs">
+                              <span className="flex items-center gap-1 text-pink-500 font-medium">
+                                <Heart className="w-3 h-3 fill-pink-500" /> {game.saveCount || 0}
+                              </span>
+                              <span className="text-zinc-600 flex items-center gap-1">
+                                <Play className="w-3 h-3" /> {game.playCount || 0}
+                              </span>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              
-              {games.length > 12 && (
-                <div className="mt-12 flex justify-center">
-                  <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="px-8 py-3 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 hover:border-zinc-700 rounded-full font-medium transition-all text-zinc-300 hover:text-white">
-                    Load More Games
-                  </button>
-                </div>
-              )}
-            </section>
+            </div>
             
           </motion.div>
         )}
