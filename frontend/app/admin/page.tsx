@@ -872,11 +872,14 @@ export default function AdminPage() {
             >
               <LayoutDashboard className="w-4 h-4" /> {t("admin.tabDashboard")}
             </button>
+            <div className="pt-2">
+              <span className="px-3 text-xs font-semibold text-zinc-500 uppercase tracking-wider">{t("admin.tabGames")}</span>
+            </div>
             <button
               onClick={() => setActiveTab('games')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === 'games' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors pl-8 ${activeTab === 'games' ? 'bg-primary/10 text-primary' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
             >
-              <Gamepad2 className="w-4 h-4" /> {t("admin.tabGames")}
+              <Gamepad2 className="w-4 h-4" /> Game Đã Duyệt
             </button>
             <button
               onClick={() => setActiveTab('pending-games')}
