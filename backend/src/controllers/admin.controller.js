@@ -127,6 +127,8 @@ exports.changeUserRole = async (req, res) => {
   }
 };
 
+const { sendEmail } = require('../utils/email');
+
 exports.rejectGame = async (req, res) => {
   try {
     const { id } = req.params;
@@ -137,21 +139,32 @@ exports.rejectGame = async (req, res) => {
       data: { 
         status: 'rejected',
         rejectReason
+      },
+      include: {
+        uploader: true
       }
     });
     
-    // Delete files from R2 to save space
-    if (game.r2FolderPath) {
-      await deleteR2Folder(game.r2FolderPath);
-      // Remove folder path so we don't try to delete again
-      await prisma.game.update({
-        where: { id },
-        data: { r2FolderPath: "", sizeBytes: null }
+    // We do NOT delete files from R2 so the user can edit the game metadata and request re-approval if desired.
+    
+    // Send email to uploader
+    if (game.uploader && game.uploader.email) {
+      await sendEmail({
+        to: game.uploader.email,
+        subject: `[Game Hub] Your game "${game.title}" was rejected`,
+        html: `
+          <h3>Hello ${game.uploader.username},</h3>
+          <p>Unfortunately, your game <strong>${game.title}</strong> has been rejected by our moderation team.</p>
+          <p><strong>Reason:</strong> ${rejectReason || 'No specific reason provided.'}</p>
+          <p>You can edit your game details and submit it again for approval.</p>
+          <p>Best regards,<br/>The Game Hub Team</p>
+        `
       });
     }
     
     res.json({ message: 'Game rejected successfully', game });
   } catch (error) {
+    console.error("Reject game error:", error);
     res.status(500).json({ error: 'Failed to reject game' });
   }
 };
@@ -177,5 +190,22 @@ exports.deleteGame = async (req, res) => {
   } catch (error) {
     console.error("Delete game error:", error);
     res.status(500).json({ error: 'Failed to delete game' });
+  }
+};
+
+exports.toggleFeaturedGame = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isFeatured } = req.body;
+    
+    const game = await prisma.game.update({
+      where: { id },
+      data: { isFeatured }
+    });
+    
+    res.json({ message: `Game ${isFeatured ? 'featured' : 'unfeatured'} successfully`, game });
+  } catch (error) {
+    console.error("Toggle featured error:", error);
+    res.status(500).json({ error: 'Failed to toggle featured status' });
   }
 };

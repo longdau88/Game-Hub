@@ -5,6 +5,8 @@ const gameRoutes = require('./routes/game.routes');
 const authRoutes = require('./routes/auth.routes');
 const adminRoutes = require('./routes/admin.routes');
 const categoryRoutes = require('./routes/category.routes');
+const reportRoutes = require('./routes/report.routes');
+const settingRoutes = require('./routes/setting.routes');
 const userRoutes = require('./routes/user.routes');
 const socialRoutes = require('./routes/social.routes');
 const prisma = require('./config/db');
@@ -58,6 +60,8 @@ app.use('/api/games', gameRoutes);
 app.use('/api/auth', authLimiter, authRoutes); // Apply stricter rate limiter here
 app.use('/api/admin', adminRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/reports', reportRoutes);
+app.use('/api/settings', settingRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/social', socialRoutes);
 

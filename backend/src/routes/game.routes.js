@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const gameController = require('../controllers/game.controller');
-const { uploadGame, getPublishedGames, getGameDetails, getMyGames } = gameController;
+const { uploadGame, getPublishedGames, getGameDetails, getMyGames, logSession, logCrash } = gameController;
 const { requireAuth } = require('../middleware/auth.middleware');
 const cacheMiddleware = require('../middleware/cache.middleware');
 
@@ -15,8 +15,11 @@ const upload = multer({ dest: os.tmpdir() });
 
 // Public game routes
 router.get('/', cacheMiddleware(60), getPublishedGames);
+router.get('/featured', cacheMiddleware(60), gameController.getFeaturedGames);
 router.get('/:id', cacheMiddleware(30), getGameDetails);
 router.post('/:id/play', gameController.incrementPlayCount); // Called when iframe loads
+router.post('/:id/session', logSession);
+router.post('/:id/crash', logCrash);
 
 // Protected routes
 router.post('/upload', requireAuth, upload.fields([{ name: 'gameFile', maxCount: 1 }, { name: 'coverImage', maxCount: 1 }]), uploadGame);

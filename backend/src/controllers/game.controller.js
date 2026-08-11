@@ -131,7 +131,18 @@ exports.uploadGame = async (req, res) => {
           categories: {
             connect: categoryConnect
           }
-        })
+        }),
+        versions: {
+          create: [{
+            version: '1.0.0',
+            r2FolderPath: `games/${gameId}/`,
+            changelog: 'Initial Release',
+            isActive: true
+          }]
+        }
+      },
+      include: {
+        versions: true
       }
     });
 
@@ -165,12 +176,54 @@ exports.getPublishedGames = async (req, res) => {
       orderBy: { createdAt: 'desc' },
       include: {
         categories: true,
-        uploader: { select: { id: true, username: true, avatarUrl: true } }
+        uploader: { select: { id: true, username: true, avatarUrl: true } },
+        ratings: { select: { score: true } }
       }
     });
-    res.json(games);
+
+    const formattedGames = games.map(game => {
+      const avgRating = game.ratings.length > 0 
+        ? game.ratings.reduce((acc, curr) => acc + curr.score, 0) / game.ratings.length
+        : 0;
+      return {
+        ...game,
+        averageRating: parseFloat(avgRating.toFixed(1)),
+        totalRatings: game.ratings.length
+      };
+    });
+
+    res.json(formattedGames);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch games' });
+  }
+};
+
+exports.getFeaturedGames = async (req, res) => {
+  try {
+    const games = await prisma.game.findMany({
+      where: { status: 'published', isFeatured: true },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        categories: true,
+        ratings: { select: { score: true } },
+        uploader: { select: { username: true } }
+      }
+    });
+
+    const formattedGames = games.map(game => {
+      const avgRating = game.ratings.length > 0 
+        ? game.ratings.reduce((acc, curr) => acc + curr.score, 0) / game.ratings.length
+        : 0;
+      return {
+        ...game,
+        averageRating: parseFloat(avgRating.toFixed(1)),
+        totalRatings: game.ratings.length
+      };
+    });
+
+    res.json(formattedGames);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch featured games' });
   }
 };
 
@@ -392,6 +445,10 @@ exports.getPendingGames = async (req, res) => {
   try {
     const games = await prisma.game.findMany({
       where: { status: 'pending' },
+      include: {
+        uploader: { select: { id: true, username: true, email: true } },
+        categories: true
+      },
       orderBy: { createdAt: 'desc' }
     });
     res.json(games);
@@ -410,5 +467,52 @@ exports.approveGame = async (req, res) => {
     res.json({ message: 'Game approved successfully', game: updatedGame });
   } catch (error) {
     res.status(500).json({ error: 'Failed to approve game' });
+  }
+};
+
+// Telemetry Endpoints
+exports.logSession = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { sessionLength } = req.body;
+    const userId = req.user ? req.user.userId : null;
+
+    if (!sessionLength) return res.status(400).json({ error: 'Missing sessionLength' });
+
+    await prisma.gameSession.create({
+      data: {
+        gameId: id,
+        userId: userId,
+        sessionLength: parseInt(sessionLength)
+      }
+    });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('logSession error:', error);
+    res.status(500).json({ error: 'Failed to log session' });
+  }
+};
+
+exports.logCrash = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { errorMsg, stackTrace, browserInfo } = req.body;
+    const userId = req.user ? req.user.userId : null;
+
+    if (!errorMsg) return res.status(400).json({ error: 'Missing errorMsg' });
+
+    await prisma.crashReport.create({
+      data: {
+        gameId: id,
+        userId: userId,
+        errorMsg,
+        stackTrace: stackTrace || '',
+        browserInfo: browserInfo || req.headers['user-agent'] || ''
+      }
+    });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('logCrash error:', error);
+    res.status(500).json({ error: 'Failed to log crash' });
   }
 };

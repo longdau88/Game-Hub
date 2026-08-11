@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Maximize2, Share2, Eye, Loader2 } from "lucide-react";
+import { ArrowLeft, Maximize2, Share2, Eye, Loader2, Flag } from "lucide-react";
 import GameComments from "../../../components/GameComments";
 import GameRating from "../../../components/GameRating";
 import { useLanguage } from "../../../contexts/LanguageContext";
@@ -16,6 +16,10 @@ function GamePlayerContent() {
   const [game, setGame] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  
+  const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [reportReason, setReportReason] = useState("");
+  const [reporting, setReporting] = useState(false);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -39,6 +43,44 @@ function GamePlayerContent() {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  const handleReport = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reportReason.trim()) return;
+    
+    setReporting(true);
+    try {
+      const token = Cookies.get("token");
+      if (!token) {
+        alert("You must be logged in to report a game.");
+        setReporting(false);
+        return;
+      }
+      
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/reports`, {
+        method: "POST",
+        headers: { 
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ gameId, reason: reportReason })
+      });
+      
+      if (res.ok) {
+        alert("Report submitted successfully.");
+        setReportModalOpen(false);
+        setReportReason("");
+      } else {
+        alert("Failed to submit report.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred.");
+    } finally {
+      setReporting(false);
+    }
+  };
 
   useEffect(() => {
     if (!gameId) {
@@ -119,24 +161,29 @@ function GamePlayerContent() {
 
           <div>
             <h1 className="text-3xl font-bold mb-2">{game.title}</h1>
-            <div className="flex items-center gap-4 text-sm text-zinc-400 mb-6 border-b border-zinc-800/50 pb-6">
-              <span>{t("game.publishedOn")} {new Date(game.createdAt).toLocaleDateString()}</span>
-              <span>•</span>
-              <span className="flex items-center">
-                <Eye className="w-4 h-4 mr-1" />
-                {game.playCount || 0} {t("game.plays")}
-              </span>
-              <span>•</span>
-              <button 
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  alert(t("game.copied"));
-                }}
-                className="flex items-center hover:text-blue-400 transition-colors"
-              >
-                <Share2 className="w-4 h-4 mr-1" />
-                {t("game.share")}
-              </button>
+            <div className="flex items-center justify-between gap-4 text-sm text-zinc-400 mb-6 border-b border-zinc-800/50 pb-6">
+              <div className="flex items-center gap-4">
+                <span>{t("game.publishedOn")} {new Date(game.createdAt).toLocaleDateString()}</span>
+                <span>•</span>
+                <span className="flex items-center">
+                  <Eye className="w-4 h-4 mr-1" />
+                  {game.playCount || 0} {t("game.plays")}
+                </span>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => setReportModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg text-sm font-medium transition-colors">
+                  <Flag className="w-4 h-4" /> Báo cáo
+                </button>
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert(t("game.copied"));
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  <Share2 className="w-4 h-4" /> {t("game.share")}
+                </button>
+              </div>
             </div>
             
             <div className="mb-8">
@@ -187,6 +234,47 @@ function GamePlayerContent() {
           </div>
         </div>
       </div>
+      
+      {/* Report Modal */}
+      {reportModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden">
+            <div className="p-6">
+              <h3 className="text-xl font-bold mb-4">Report Game</h3>
+              <p className="text-sm text-zinc-400 mb-4">
+                Please describe the issue with this game (e.g., broken file, inappropriate content, etc.)
+              </p>
+              
+              <form onSubmit={handleReport}>
+                <textarea
+                  required
+                  value={reportReason}
+                  onChange={(e) => setReportReason(e.target.value)}
+                  placeholder="Reason for reporting..."
+                  className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 text-white focus:outline-none focus:border-red-500 resize-none h-32 mb-6"
+                />
+                
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setReportModalOpen(false)}
+                    className="flex-1 py-2.5 bg-zinc-800 hover:bg-zinc-700 rounded-lg font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!reportReason.trim() || reporting}
+                    className="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                  >
+                    {reporting ? "Submitting..." : "Submit Report"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

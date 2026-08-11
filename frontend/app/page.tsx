@@ -12,13 +12,28 @@ export default function Home() {
   const [categories, setCategories] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [featuredGames, setFeaturedGames] = useState<any[]>([]);
   const [bookmarkedGames, setBookmarkedGames] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    fetchFeaturedGames();
     fetchGames();
     fetchCategories();
     fetchBookmarks();
   }, []);
+
+  const fetchFeaturedGames = async () => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/games/featured`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) setFeaturedGames(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch featured games", error);
+    }
+  };
 
   const fetchGames = async (searchQuery = search, catSlug = selectedCategory) => {
     try {
@@ -134,7 +149,45 @@ export default function Home() {
         <div className="absolute bottom-0 right-40 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl"></div>
       </section>
 
-      {/* Featured Games Grid */}
+      {/* Featured Games Section */}
+      {featuredGames.length > 0 && (
+        <section className="mb-16">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            <span className="text-yellow-500">★</span> Editor's Choice
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredGames.slice(0, 3).map(game => (
+              <Link href={`/game/play?id=${game.id}`} key={`featured-${game.id}`} className="group block">
+                <div className="bg-zinc-900/80 border border-yellow-500/30 rounded-2xl overflow-hidden shadow-[0_0_15px_rgba(234,179,8,0.1)] hover:shadow-[0_0_25px_rgba(234,179,8,0.2)] transition-all">
+                  <div className="aspect-video bg-zinc-800 relative overflow-hidden">
+                    {game.coverImageUrl ? (
+                      <img src={game.coverImageUrl} alt={game.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Gamepad2 className="w-12 h-12 text-zinc-600" />
+                      </div>
+                    )}
+                    <div className="absolute top-3 left-3 bg-yellow-500 text-black text-xs font-bold px-3 py-1 rounded-full shadow-lg uppercase tracking-wider">
+                      Featured
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-bold text-xl mb-1 text-white group-hover:text-yellow-400 transition-colors">{game.title}</h3>
+                    <p className="text-sm text-zinc-400 mb-3 truncate">{game.description || "No description"}</p>
+                    <div className="flex items-center gap-4 text-xs font-medium text-zinc-500">
+                      <span>{game.categories?.map((c: any) => c.name).join(', ')}</span>
+                      <span>•</span>
+                      <span>★ {game.averageRating}</span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Main Store Section */}
       <section id="store-section">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div className="flex items-center gap-3">
