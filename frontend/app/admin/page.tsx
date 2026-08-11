@@ -515,7 +515,7 @@ export default function AdminPage() {
                           {game.title}
                           {game.isFeatured && <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-500 text-xs rounded-full border border-yellow-500/20">Featured</span>}
                         </p>
-                        <p className="text-sm text-zinc-400">By: User #{game.uploaderId}</p>
+                        <p className="text-sm text-zinc-400">By: {game.uploader?.username || `User #${game.uploaderId}`}</p>
                       </div>
                       <div className="flex gap-2">
                         <button 
