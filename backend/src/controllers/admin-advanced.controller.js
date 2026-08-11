@@ -247,7 +247,7 @@ exports.getEmailCampaigns = async (req, res) => {
 exports.deleteEmailCampaigns = async (req, res) => {
   try {
     const { all, ids } = req.body;
-    const adminId = req.user.id;
+    const adminId = req.user.userId;
 
     let deletedCount = 0;
     if (all === true || all === 'true') {
