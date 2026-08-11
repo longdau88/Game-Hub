@@ -691,8 +691,8 @@ export default function AdminPage() {
         return (
           <div className="space-y-8">
             <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="font-semibold mb-4 text-xl">Phân phối Email ({t("admin.tabMail")})</h3>
-              <p className="text-zinc-400 mb-6 text-sm">Gửi thông báo, newsletter hàng loạt đến người dùng.</p>
+              <h3 className="font-semibold mb-4 text-xl">{t("admin.mailTitle")}</h3>
+              <p className="text-zinc-400 mb-6 text-sm">{t("admin.mailCreate")}</p>
               
               <form onSubmit={async (e) => {
                 e.preventDefault();
@@ -713,18 +713,18 @@ export default function AdminPage() {
                 }
               }} className="space-y-4 max-w-2xl">
                 <div>
-                  <label className="block text-sm mb-1 text-zinc-400">Tiêu đề (Subject)</label>
+                  <label className="block text-sm mb-1 text-zinc-400">{t("admin.mailSubject")}</label>
                   <input name="subject" required className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md focus:border-primary focus:outline-none" />
                 </div>
                 <div>
-                  <label className="block text-sm mb-1 text-zinc-400">Nội dung (HTML/Text)</label>
+                  <label className="block text-sm mb-1 text-zinc-400">{t("admin.mailContent")}</label>
                   <textarea name="body" required rows={6} className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md focus:border-primary focus:outline-none"></textarea>
                 </div>
                 <div>
-                  <label className="block text-sm mb-1 text-zinc-400">Đối tượng</label>
+                  <label className="block text-sm mb-1 text-zinc-400">{t("admin.mailRecipients")}</label>
                   <select name="target" className="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-md focus:border-primary focus:outline-none">
                     <option value="all">{t("admin.mailAllUsers")}</option>
-                    <option value="active">Người dùng đang hoạt động (Không bị Ban)</option>
+                    <option value="active">{t("admin.mailActiveUsers")}</option>
                   </select>
                 </div>
                 <button type="submit" className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition-colors">
@@ -735,14 +735,14 @@ export default function AdminPage() {
             
             <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
               <div className="p-4 border-b border-border bg-muted/30">
-                <h3 className="font-semibold">Lịch sử Chiến dịch</h3>
+                <h3 className="font-semibold">{t("admin.mailHistory")}</h3>
               </div>
               <ul className="divide-y divide-border">
                 {mailCampaigns.map(camp => (
                   <li key={camp.id} className="p-4 flex items-center justify-between">
                     <div>
                       <p className="font-medium text-white">{camp.subject}</p>
-                      <p className="text-xs text-zinc-400 mt-1">Đã gửi: {camp.sentCount} người | Group: {camp.targetGroup}</p>
+                      <p className="text-xs text-zinc-400 mt-1">{t("admin.mailSentHeader")}: {camp.sentCount} | {t("admin.mailTargetHeader")}: {camp.targetGroup}</p>
                     </div>
                     <div className="text-right text-xs text-zinc-500">
                       {new Date(camp.createdAt).toLocaleString()}

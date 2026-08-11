@@ -193,18 +193,28 @@ exports.createEmailTemplate = async (req, res) => {
   }
 };
 
+const { sendEmail } = require('../utils/email');
+
 exports.sendEmailCampaign = async (req, res) => {
   try {
     const { subject, body, targetGroup } = req.body;
     
-    // Mock sending process
-    // In reality, this would use Resend SDK:
-    // import { Resend } from 'resend';
-    // const resend = new Resend('re_123456789');
-    
     const users = await prisma.user.findMany({
       where: targetGroup === 'active' ? { isBanned: false } : {}
     });
+
+    // Send email to all selected users
+    let sentCount = 0;
+    for (const user of users) {
+      if (user.email) {
+        const result = await sendEmail({
+          to: user.email,
+          subject: subject,
+          html: body
+        });
+        if (result.success) sentCount++;
+      }
+    }
 
     const campaign = await prisma.emailCampaign.create({
       data: {
@@ -212,7 +222,7 @@ exports.sendEmailCampaign = async (req, res) => {
         body,
         targetGroup: targetGroup || 'all',
         status: 'completed',
-        sentCount: users.length,
+        sentCount: sentCount,
         completedAt: new Date()
       }
     });
