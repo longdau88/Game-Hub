@@ -245,9 +245,10 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-transparent text-zinc-900 dark:text-zinc-100 selection:bg-blue-500/30">
       {/* Search Header Bar (Sticky) */}
-      <div className="sticky top-0 z-40 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5 py-4">
-        <div className="container mx-auto px-4 flex gap-4 md:gap-8 items-center justify-between">
-          <form onSubmit={handleSearch} className="flex-1 max-w-2xl relative group">
+      <div className="sticky top-0 z-40 bg-white/80 dark:bg-[#050505]/80 backdrop-blur-xl border-b border-black/5 dark:border-white/5 py-3">
+        <div className="container mx-auto px-4 space-y-2">
+          {/* Row 1: Search bar */}
+          <form onSubmit={handleSearch} className="relative group max-w-2xl w-full">
             <input
               type="text"
               placeholder={t("home.search") || "Search games..."}
@@ -258,26 +259,31 @@ export default function Home() {
             <Search className="w-5 h-5 text-zinc-500 absolute left-4 top-1/2 -translate-y-1/2 group-focus-within:text-blue-400 transition-colors" />
             <button type="submit" className="hidden">Search</button>
           </form>
-          
-          <div className="hidden md:flex gap-2 shrink-0">
-            {categories.slice(0, 4).map(cat => (
+          {/* Row 2: Category filter - all categories */}
+          <div className="flex overflow-x-auto hide-scrollbar gap-2 pb-1">
+            <button
+              onClick={() => handleCategorySelect("")}
+              className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-all duration-300 shrink-0 whitespace-nowrap ${
+                selectedCategory === ""
+                  ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 border border-transparent'
+                  : 'bg-white/60 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-white dark:hover:bg-zinc-800'
+              }`}
+            >
+              {t("home.filterAll")}
+            </button>
+            {categories.map(cat => (
               <button
                 key={cat.id}
                 onClick={() => handleCategorySelect(cat.slug)}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  selectedCategory === cat.slug 
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-zinc-900 dark:text-white shadow-lg shadow-blue-500/25 border border-transparent' 
-                    : 'bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white hover:bg-zinc-100 dark:bg-zinc-800'
+                className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-all duration-300 shrink-0 whitespace-nowrap ${
+                  selectedCategory === cat.slug
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 border border-transparent'
+                    : 'bg-white/60 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-white dark:hover:bg-zinc-800'
                 }`}
               >
                 {cat.nameTranslations?.[language] || cat.name}
               </button>
             ))}
-            {categories.length > 4 && (
-              <button onClick={() => { document.getElementById('all-categories')?.scrollIntoView({ behavior: 'smooth' }) }} className="px-4 py-2 rounded-xl text-sm font-medium bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white transition-all">
-                More...
-              </button>
-            )}
           </div>
         </div>
       </div>
@@ -428,33 +434,17 @@ export default function Home() {
                 )}
 
                 <section className="mb-16">
-                  <div className="mb-6">
-                    {/* Row 1: Title + See More */}
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/20">
-                          <Zap className="w-6 h-6 text-white" />
-                        </div>
-                        <h2 className="text-2xl md:text-3xl font-bold whitespace-nowrap">{t("home.newReleases")}</h2>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/20">
+                        <Zap className="w-6 h-6 text-white" />
                       </div>
-                      <Link href="/games/new" className="flex items-center gap-1.5 text-sm font-medium text-blue-500 hover:text-blue-400 transition-colors group shrink-0 ml-4">
-                        {t("home.seeMore") || "Xem thêm"}
-                        <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                      </Link>
+                      <h2 className="text-2xl md:text-3xl font-bold">{t("home.newReleases")}</h2>
                     </div>
-                    {/* Row 2: Category Filter */}
-                    <div id="all-categories" className="flex overflow-x-auto hide-scrollbar items-center gap-2 bg-white/50 dark:bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800">
-                      <button onClick={() => handleCategorySelect("")} className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap shrink-0 ${selectedCategory === "" ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'}`}>{t("home.filterAll")}</button>
-                      {categories.slice(0, 8).map(cat => (
-                        <button
-                          key={`sec-${cat.id}`}
-                          onClick={() => handleCategorySelect(cat.slug)}
-                          className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-colors whitespace-nowrap shrink-0 ${selectedCategory === cat.slug ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'}`}
-                        >
-                          {cat.nameTranslations?.[language] || cat.name}
-                        </button>
-                      ))}
-                    </div>
+                    <Link href="/games/new" className="flex items-center gap-1.5 text-sm font-medium text-blue-500 hover:text-blue-400 transition-colors group shrink-0 ml-4">
+                      {t("home.seeMore") || "Xem thêm"}
+                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </Link>
                   </div>
 
                   <div className="flex gap-5 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory items-stretch">
