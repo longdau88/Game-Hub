@@ -300,7 +300,10 @@ export default function AdminPage() {
       if (res.ok) {
         setNewCatName("");
         setNewCatSlug("");
+        alert("Đã thêm thể loại thành công!");
         fetchData();
+      } else {
+        alert("Thêm thể loại thất bại (có thể đã tồn tại).");
       }
     } catch (error) {
       console.error(error);

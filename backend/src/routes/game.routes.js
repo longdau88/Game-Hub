@@ -3,7 +3,7 @@ const multer = require('multer');
 const gameController = require('../controllers/game.controller');
 const { uploadGame, getPublishedGames, getGameDetails, getMyGames, logSession, logCrash } = gameController;
 const { requireAuth } = require('../middleware/auth.middleware');
-const cacheMiddleware = require('../middleware/cache.middleware');
+const { cacheMiddleware } = require('../middleware/cache.middleware');
 
 const router = express.Router();
 

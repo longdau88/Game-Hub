@@ -31,4 +31,13 @@ const cacheMiddleware = (durationInSeconds = 60) => {
   };
 };
 
-module.exports = cacheMiddleware;
+const clearCache = (keyPattern) => {
+  const keys = cache.keys();
+  keys.forEach(k => {
+    if (k.includes(keyPattern)) {
+      cache.del(k);
+    }
+  });
+};
+
+module.exports = { cacheMiddleware, clearCache };

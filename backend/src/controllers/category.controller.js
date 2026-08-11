@@ -1,4 +1,5 @@
 const prisma = require('../config/db');
+const { clearCache } = require('../middleware/cache.middleware');
 
 exports.getAllCategories = async (req, res) => {
   try {
@@ -19,6 +20,7 @@ exports.createCategory = async (req, res) => {
     const category = await prisma.category.create({
       data: { name, slug }
     });
+    clearCache('/api/categories');
     res.status(201).json(category);
   } catch (error) {
     if (error.code === 'P2002') {
@@ -37,6 +39,7 @@ exports.updateCategory = async (req, res) => {
       where: { id: parseInt(id) },
       data: { name, slug }
     });
+    clearCache('/api/categories');
     res.json(category);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update category' });
@@ -60,7 +63,8 @@ exports.deleteCategory = async (req, res) => {
     await prisma.category.delete({
       where: { id: parseInt(id) }
     });
-    res.json({ message: 'Category deleted successfully' });
+    clearCache('/api/categories');
+    res.status(204).send();
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete category' });
   }
