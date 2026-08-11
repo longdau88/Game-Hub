@@ -596,6 +596,19 @@ export default function AdminPage() {
                   <p className="text-sm text-zinc-400 mt-2">{t("admin.settingsUploadLimitDesc")}</p>
                 </div>
 
+                <div>
+                  <label className="block font-medium mb-2">Email Provider</label>
+                  <select 
+                    className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary"
+                    value={settings.emailProvider || 'resend'}
+                    onChange={(e) => setSettings({...settings, emailProvider: e.target.value})}
+                  >
+                    <option value="resend">Resend (API)</option>
+                    <option value="nodemailer">Gmail SMTP (Nodemailer)</option>
+                  </select>
+                  <p className="text-sm text-zinc-400 mt-2">Chọn dịch vụ gửi mail cho các tính năng hệ thống và chiến dịch.</p>
+                </div>
+
                 <div className="pt-4 border-t border-zinc-800">
                   <button 
                     onClick={saveSettings}
