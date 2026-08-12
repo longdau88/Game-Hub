@@ -110,7 +110,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
 
       {/* Desktop Sidebar Navigation */}
-      <aside className="hidden md:block w-64 shrink-0">
+      <aside className="hidden md:block w-64 shrink-0 sticky top-8 self-start max-h-[calc(100vh-4rem)] overflow-y-auto scrollbar-hide pr-2">
         <div className="flex items-center gap-3 mb-8 px-2">
           <Settings className="w-6 h-6 text-primary" />
           <h1 className="text-xl font-bold">{t("admin.title")}</h1>
