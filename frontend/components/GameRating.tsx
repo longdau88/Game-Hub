@@ -8,7 +8,14 @@ export default function GameRating({ gameId, averageRating = 0, totalRatings = 0
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number>(0);
   const [loading, setLoading] = useState(false);
+  const [localAvg, setLocalAvg] = useState(averageRating);
+  const [localTotal, setLocalTotal] = useState(totalRatings);
   const token = Cookies.get("token");
+
+  useEffect(() => {
+    setLocalAvg(averageRating);
+    setLocalTotal(totalRatings);
+  }, [averageRating, totalRatings]);
 
   useEffect(() => {
     if (token) {
@@ -49,7 +56,10 @@ export default function GameRating({ gameId, averageRating = 0, totalRatings = 0
         body: JSON.stringify({ score })
       });
       if (res.ok) {
+        const data = await res.json();
         setRating(score);
+        if (data.averageRating !== undefined) setLocalAvg(data.averageRating);
+        if (data.totalRatings !== undefined) setLocalTotal(data.totalRatings);
       } else {
         const data = await res.json();
         alert(data.error || "Failed to submit rating");
@@ -67,8 +77,8 @@ export default function GameRating({ gameId, averageRating = 0, totalRatings = 0
       <div className="flex items-center gap-3">
         <div className="flex items-center bg-zinc-100/50 dark:bg-zinc-800/50 px-3 py-1.5 rounded-full border border-zinc-300/50 dark:border-zinc-700/50">
           <Star className="w-5 h-5 fill-yellow-500 text-yellow-500 mr-2" />
-          <span className="font-bold text-zinc-900 dark:text-white text-lg">{averageRating > 0 ? averageRating.toFixed(1) : "-"}</span>
-          <span className="text-zinc-500 text-sm ml-2">({totalRatings} {t("game.totalRatings")})</span>
+          <span className="font-bold text-zinc-900 dark:text-white text-lg">{localAvg > 0 ? localAvg.toFixed(1) : "-"}</span>
+          <span className="text-zinc-500 text-sm ml-2">({localTotal} {t("game.totalRatings")})</span>
         </div>
       </div>
       

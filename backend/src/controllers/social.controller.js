@@ -40,7 +40,18 @@ exports.rateGame = async (req, res) => {
       }
     });
 
-    res.json({ message: 'Rating saved', rating });
+    const stats = await prisma.rating.aggregate({
+      where: { gameId },
+      _avg: { score: true },
+      _count: { score: true }
+    });
+
+    res.json({ 
+      message: 'Rating saved', 
+      rating, 
+      averageRating: stats._avg.score || 0,
+      totalRatings: stats._count.score || 0
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
