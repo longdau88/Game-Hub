@@ -109,54 +109,12 @@ exports.uploadGame = async (req, res) => {
     if (engineConfig) {
       try {
         parsedEngineConfig = JSON.parse(engineConfig);
-        if (parsedEngineConfig.firebaseTrackingId) {
-          const gtagId = parsedEngineConfig.firebaseTrackingId;
-          const gtagScript = `
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=${gtagId}"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', '${gtagId}');
-</script>
-`;
-          let htmlContent = fs.readFileSync(indexPath, 'utf8');
-          // Inject before </head> if exists, else before </body>
-          if (htmlContent.includes('</head>')) {
-            htmlContent = htmlContent.replace('</head>', `${gtagScript}\n</head>`);
-          } else if (htmlContent.includes('</body>')) {
-            htmlContent = htmlContent.replace('</body>', `${gtagScript}\n</body>`);
-          } else {
-            htmlContent += gtagScript;
-          }
-          fs.writeFileSync(indexPath, htmlContent, 'utf8');
-        }
       } catch (e) {
         console.error('Failed to parse engineConfig JSON:', e);
       }
     }
 
-    // Get all files and upload to R2
-    const allFiles = getAllFiles(tempExtractDir);
-    const bucketName = process.env.R2_BUCKET_NAME;
 
-    for (const filePath of allFiles) {
-      const relativePath = path.relative(tempExtractDir, filePath).replace(/\\/g, '/');
-      const r2Key = `games/${gameId}/${relativePath}`;
-      
-      const fileStream = fs.createReadStream(filePath);
-      const mimeType = mime.lookup(filePath) || 'application/octet-stream';
-
-      const uploadParams = {
-        Bucket: bucketName,
-        Key: r2Key,
-        Body: fileStream,
-        ContentType: mimeType,
-      };
-
-      await r2Client.send(new PutObjectCommand(uploadParams));
-    }
     
     // Process cover image if exists
     let coverImageUrl = null;
