@@ -6,6 +6,8 @@ import { Play, Gamepad2, Search, Heart, Star, Zap, Flame, TrendingUp, ChevronRig
 import { useLanguage } from "../contexts/LanguageContext";
 import Cookies from "js-cookie";
 import { motion, AnimatePresence } from "framer-motion";
+import { GameService } from "../services/GameService";
+import { CategoryService } from "../services/CategoryService";
 
 export default function Home() {
   const { locale: language, t } = useLanguage();
@@ -60,12 +62,8 @@ export default function Home() {
 
   const fetchFeaturedGames = async () => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/games/featured`, { cache: 'no-store' });
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data)) setFeaturedGames(data);
-      }
+      const data = await GameService.getFeaturedGames();
+      if (Array.isArray(data)) setFeaturedGames(data);
     } catch (error) {
       console.error("Failed to fetch featured games", error);
     }
@@ -73,21 +71,9 @@ export default function Home() {
 
   const fetchGames = async (searchQuery = search, catSlug = selectedCategory) => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const params = new URLSearchParams();
-      if (searchQuery) {
-        params.append("search", searchQuery);
-        setIsSearching(true);
-      } else {
-        setIsSearching(false);
-      }
-      if (catSlug) params.append("category", catSlug);
-      
-      const res = await fetch(`${apiUrl}/api/games?${params.toString()}`, { cache: 'no-store' });
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data)) setGames(data);
-      }
+      setIsSearching(!!searchQuery);
+      const data = await GameService.getPublishedGames({ search: searchQuery, category: catSlug });
+      if (Array.isArray(data)) setGames(data);
     } catch (error) {
       console.error("Failed to fetch games", error);
     }
@@ -95,12 +81,8 @@ export default function Home() {
 
   const fetchMostPlayedGames = async () => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/games?sort=mostPlayed&limit=8`, { cache: 'no-store' });
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data)) setMostPlayedGames(data.slice(0, 8)); // Just to be safe
-      }
+      const data = await GameService.getMostPlayedGames();
+      if (Array.isArray(data)) setMostPlayedGames(data);
     } catch (error) {
       console.error("Failed to fetch most played games", error);
     }
@@ -108,14 +90,8 @@ export default function Home() {
 
   const fetchMostLikedGames = async () => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      // Use limit=10 but server might not support limit query param directly yet, we can slice it here.
-      // Assuming getPublishedGames supports limit, otherwise we just slice.
-      const res = await fetch(`${apiUrl}/api/games?sort=mostLiked`, { cache: 'no-store' });
-      if (res.ok) {
-        const data = await res.json();
-        if (Array.isArray(data)) setMostLikedGames(data.slice(0, 10)); // Top 10
-      }
+      const data = await GameService.getMostLikedGames();
+      if (Array.isArray(data)) setMostLikedGames(data);
     } catch (error) {
       console.error("Failed to fetch most liked games", error);
     }
@@ -123,12 +99,8 @@ export default function Home() {
 
   const fetchCategories = async () => {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/categories`);
-      if (res.ok) {
-        const data = await res.json();
-        setCategories(data);
-      }
+      const data = await CategoryService.getAllCategories();
+      setCategories(data);
     } catch (error) {
       console.error("Failed to load categories", error);
     }
@@ -138,42 +110,32 @@ export default function Home() {
     const token = Cookies.get("token");
     if (!token) return;
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/games/user/bookmarked`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const bSet = new Set<string>();
-        data.forEach((g: any) => bSet.add(g.id));
-        setBookmarkedGames(bSet);
+      const data = await GameService.getBookmarks();
+      if (Array.isArray(data)) {
+        setBookmarkedGames(new Set(data.map((b: any) => b.gameId || b.id))); // Adjust based on actual API response
       }
     } catch (error) {
-      console.error("Failed to fetch bookmarks", error);
+      console.error("Failed to load bookmarks", error);
     }
   };
 
   const fetchAllGamesPage = async (page: number, searchQuery: string, catSlug: string) => {
     setAllGamesLoading(true);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const params = new URLSearchParams();
-      params.append("page", String(page));
-      params.append("limit", String(PAGE_SIZE));
-      if (searchQuery) params.append("search", searchQuery);
-      if (catSlug) params.append("category", catSlug);
-      const res = await fetch(`${apiUrl}/api/games?${params.toString()}`);
-      if (res.ok) {
-        const data = await res.json();
-        const list: any[] = Array.isArray(data) ? data : data.games || [];
-        if (page === 1) {
-          setAllGames(list);
-        } else {
-          setAllGames(prev => [...prev, ...list]);
-        }
-        setAllGamesHasMore(list.length >= PAGE_SIZE);
-        setAllGamesPage(page);
+      const data = await GameService.getPublishedGames({
+        page,
+        limit: PAGE_SIZE,
+        search: searchQuery,
+        category: catSlug
+      });
+      const list: any[] = Array.isArray(data) ? data : data.games || [];
+      if (page === 1) {
+        setAllGames(list);
+      } else {
+        setAllGames(prev => [...prev, ...list]);
       }
+      setAllGamesHasMore(list.length >= PAGE_SIZE);
+      setAllGamesPage(page);
     } catch (error) {
       console.error("Failed to fetch all games", error);
     } finally {
