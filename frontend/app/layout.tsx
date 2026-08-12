@@ -26,7 +26,6 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <LanguageProvider>
-            <MaintenanceOverlay />
             <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors selection:bg-blue-500/30">
               {/* Navigation Bar */}
               <nav className="sticky top-0 z-50 bg-white dark:bg-[#050505] shadow-sm">
@@ -45,8 +44,10 @@ export default function RootLayout({
             </div>
           </nav>
 
-              <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 w-full">
-                {children}
+              <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col w-full">
+                <MaintenanceOverlay>
+                  {children}
+                </MaintenanceOverlay>
               </main>
 
               <Footer />

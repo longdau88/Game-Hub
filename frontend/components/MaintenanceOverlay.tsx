@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import { Wrench } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 
-export default function MaintenanceOverlay() {
+export default function MaintenanceOverlay({ children }: { children?: React.ReactNode }) {
   const { t } = useLanguage();
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -39,11 +39,11 @@ export default function MaintenanceOverlay() {
     return () => clearInterval(interval);
   }, [apiUrl]);
 
-  if (!mounted) return null;
-  if (!isMaintenance || isAdmin) return null;
+  if (!mounted) return <>{children}</>;
+  if (!isMaintenance || isAdmin) return <>{children}</>;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-background flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
+    <div className="flex flex-col items-center justify-center flex-1 w-full py-20 text-center animate-in fade-in duration-300">
       <div className="bg-primary/10 p-6 rounded-full mb-8">
         <Wrench className="w-16 h-16 text-primary animate-pulse" />
       </div>
