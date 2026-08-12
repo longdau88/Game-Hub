@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { Trash2 } from "lucide-react";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import { useAppDialog } from "../../../contexts/DialogContext";
 
 export default function AdminGamificationPage() {
   const { t } = useLanguage();
+  const { confirm, notify } = useAppDialog();
   const [badges, setBadges] = useState<any[]>([]);
   const [newBadgeName, setNewBadgeName] = useState("");
   const [newBadgeDesc, setNewBadgeDesc] = useState("");
@@ -38,17 +40,17 @@ export default function AdminGamificationPage() {
       });
       if (res.ok) {
         setNewBadgeName(""); setNewBadgeDesc(""); setNewBadgeIcon("");
-        alert("Badge added successfully!");
+        await notify({ message: t("admin.badgeAdded"), variant: "success" });
         fetchData();
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to add badge");
+        await notify({ message: data.error || t("admin.badgeAddFailed"), variant: "error" });
       }
     } catch (e) { console.error(e); }
   };
 
   const deleteBadge = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this badge?")) return;
+    if (!await confirm({ message: t("admin.badgeDeleteConfirm"), variant: "warning" })) return;
     try {
       const res = await fetch(`${apiUrl}/api/gamification/admin/badges/${id}`, {
         method: "DELETE",

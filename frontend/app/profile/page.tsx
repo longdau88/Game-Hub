@@ -5,12 +5,14 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { User, Settings, Gamepad2, Play, Save, History, Bookmark, UploadCloud, ShieldAlert, Star } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
+import { useAppDialog } from "../../contexts/DialogContext";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { locale: language, t } = useLanguage();
+  const { confirm, notify } = useAppDialog();
   
   const [activeTab, setActiveTab] = useState("settings");
   
@@ -121,7 +123,7 @@ export default function ProfilePage() {
   };
 
   const handleDeleteGame = async (gameId: string) => {
-    if (!confirm(t("profile.confirmDelete"))) return;
+    if (!await confirm({ message: t("profile.confirmDelete"), variant: "warning" })) return;
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
       const res = await fetch(`${apiUrl}/api/games/${gameId}`, {
@@ -129,15 +131,15 @@ export default function ProfilePage() {
         headers: getAuthHeaders()
       });
       if (res.ok) {
-        alert(t("profile.deleteSuccess"));
+        await notify({ message: t("profile.deleteSuccess"), variant: "success" });
         setUploadedGames(uploadedGames.filter(g => g.id !== gameId));
         fetchProfile();
       } else {
         const data = await res.json();
-        alert(data.error || t("profile.deleteError"));
+        await notify({ message: data.error || t("profile.deleteError"), variant: "error" });
       }
     } catch (error) {
-      alert(t("profile.deleteError"));
+      await notify({ message: t("profile.deleteError"), variant: "error" });
     }
   };
 
@@ -181,7 +183,7 @@ export default function ProfilePage() {
       const data = await res.json();
       if (res.ok) {
         setMessage({ text: t("profile.success"), isError: false });
-        alert(t("profile.success")); 
+        await notify({ message: t("profile.success"), variant: "success" });
         setProfile({ ...profile, username, avatarUrl: finalAvatarUrl, bio });
       } else {
         setMessage({ text: data.error || "Failed to update profile", isError: true });
@@ -212,7 +214,7 @@ export default function ProfilePage() {
       if (res.ok) {
         setPasswordMessage({ text: data.message, isError: false });
         setCurrentPassword(""); setNewPassword(""); setConfirmPassword("");
-        alert(data.message);
+        await notify({ message: data.message, variant: "success" });
       } else {
         setPasswordMessage({ text: data.error || "Failed to change password", isError: true });
       }

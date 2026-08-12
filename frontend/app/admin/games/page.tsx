@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import { Trash2, X } from "lucide-react";
 import Cookies from "js-cookie";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import { useAppDialog } from "../../../contexts/DialogContext";
 
 export default function AdminPublishedGamesPage() {
   const { t } = useLanguage();
+  const { confirm, notify } = useAppDialog();
   const [publishedGames, setPublishedGames] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [advancedModalOpen, setAdvancedModalOpen] = useState(false);
@@ -42,14 +44,15 @@ export default function AdminPublishedGamesPage() {
   useEffect(() => { fetchData(); }, []);
 
   const deleteGame = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this game permanently? This action removes files from Cloudflare R2.")) return;
+    if (!await confirm({ message: t("admin.deleteGameConfirm"), variant: "warning" })) return;
     try {
       const res = await fetch(`${apiUrl}/api/admin/games/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) fetchData();
-    } catch (error) { console.error(error); }
+      if (res.ok) { await notify({ message: t("admin.deleteGameSuccess"), variant: "success" }); fetchData(); }
+      else await notify({ message: t("admin.actionFailed"), variant: "error" });
+    } catch (error) { console.error(error); await notify({ message: t("admin.actionFailed"), variant: "error" }); }
   };
 
   const toggleFeatured = async (id: string, currentStatus: boolean) => {
@@ -86,7 +89,8 @@ export default function AdminPublishedGamesPage() {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ tags: advTags }),
       });
-      if (res.ok) { alert("Saved tags!"); fetchData(); }
+      if (res.ok) { await notify({ message: t("admin.tagsSaved"), variant: "success" }); fetchData(); }
+      else await notify({ message: t("admin.actionFailed"), variant: "error" });
     } catch (e) {}
   };
 
@@ -97,7 +101,8 @@ export default function AdminPublishedGamesPage() {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ engineConfig: JSON.stringify(advEngineConfig) }),
       });
-      if (res.ok) { alert("Saved Engine Config!"); fetchData(); }
+      if (res.ok) { await notify({ message: t("admin.engineSaved"), variant: "success" }); fetchData(); }
+      else await notify({ message: t("admin.actionFailed"), variant: "error" });
     } catch (e) {}
   };
 
@@ -107,18 +112,20 @@ export default function AdminPublishedGamesPage() {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) { const data = await res.json(); alert(data.message); }
+      if (res.ok) { const data = await res.json(); await notify({ message: data.message, variant: "success" }); }
+      else await notify({ message: t("admin.actionFailed"), variant: "error" });
     } catch (e) {}
   };
 
   const rollbackVersion = async (versionId: number) => {
-    if (!confirm(t("admin.advConfirmRollback"))) return;
+    if (!await confirm({ message: t("admin.advConfirmRollback"), variant: "warning" })) return;
     try {
       const res = await fetch(`${apiUrl}/api/admin/games/${advGame.id}/versions/${versionId}/rollback`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) { alert("Rollback thành công!"); openAdvancedModal(advGame); }
+      if (res.ok) { await notify({ message: t("admin.rollbackSuccess"), variant: "success" }); openAdvancedModal(advGame); }
+      else await notify({ message: t("admin.actionFailed"), variant: "error" });
     } catch (e) {}
   };
 

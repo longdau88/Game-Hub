@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import { useAppDialog } from "../../../contexts/DialogContext";
 
 export default function AdminStoragePage() {
   const { t } = useLanguage();
+  const { confirm, notify } = useAppDialog();
   const [storageStats, setStorageStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
@@ -38,7 +40,7 @@ export default function AdminStoragePage() {
   }, []);
 
   const runGC = async () => {
-    if (!confirm(t("admin.advConfirmGC"))) return;
+    if (!await confirm({ message: t("admin.advConfirmGC"), variant: "warning" })) return;
     setRunning(true);
     try {
       const res = await fetch(`${apiUrl}/api/admin/storage/cleanup`, {
@@ -47,7 +49,7 @@ export default function AdminStoragePage() {
       });
       if (res.ok) {
         const data = await res.json();
-        alert(data.message || "Cleanup complete!");
+        await notify({ message: data.message || t("admin.actionFailed"), variant: "success" });
       }
     } catch (e) { console.error(e); }
     finally { setRunning(false); }

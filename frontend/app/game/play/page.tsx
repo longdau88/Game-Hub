@@ -7,10 +7,12 @@ import { ArrowLeft, Maximize2, Share2, Eye, Loader2, Flag, ShieldAlert, Bookmark
 import GameComments from "../../../components/GameComments";
 import GameRating from "../../../components/GameRating";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import { useAppDialog } from "../../../contexts/DialogContext";
 import Cookies from "js-cookie";
 
 function GamePlayerContent() {
   const { locale: language, t } = useLanguage();
+  const { notify } = useAppDialog();
   const searchParams = useSearchParams();
   const gameId = searchParams.get("id");
   
@@ -107,7 +109,7 @@ function GamePlayerContent() {
     try {
       const token = Cookies.get("token");
       if (!token) {
-        alert("You must be logged in to report a game.");
+        await notify({ message: t("dialog.loginRequired"), variant: "info" });
         setReporting(false);
         return;
       }
@@ -123,15 +125,15 @@ function GamePlayerContent() {
       });
       
       if (res.ok) {
-        alert("Report submitted successfully.");
+        await notify({ message: t("game.reportSuccess"), variant: "success" });
         setReportModalOpen(false);
         setReportReason("");
       } else {
-        alert("Failed to submit report.");
+        await notify({ message: t("game.reportError"), variant: "error" });
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred.");
+      await notify({ message: t("dialog.genericError"), variant: "error" });
     } finally {
       setReporting(false);
     }
@@ -191,7 +193,7 @@ function GamePlayerContent() {
   const handleBookmark = async () => {
     const token = Cookies.get("token");
     if (!token) {
-      alert("Vui lòng đăng nhập để lưu game.");
+      await notify({ message: t("dialog.loginRequired"), variant: "info" });
       return;
     }
     
@@ -300,7 +302,7 @@ function GamePlayerContent() {
                 <button 
                   onClick={() => {
                     navigator.clipboard.writeText(window.location.href);
-                    alert(t("game.copied"));
+                    void notify({ message: t("game.copied"), variant: "success" });
                   }}
                   className="flex items-center gap-2 px-4 py-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-white rounded-lg text-sm font-medium transition-colors"
                 >

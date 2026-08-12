@@ -6,6 +6,7 @@ import { Gamepad2 } from "lucide-react";
 import ClientNavbar from "../components/ClientNavbar";
 import { ThemeProvider } from "../components/ThemeProvider";
 import { LanguageProvider } from "../contexts/LanguageContext";
+import { DialogProvider } from "../contexts/DialogContext";
 import MaintenanceOverlay from "../components/MaintenanceOverlay";
 import Footer from "../components/Footer";
 
@@ -26,6 +27,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <LanguageProvider>
+            <DialogProvider>
             <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors selection:bg-blue-500/30">
               {/* Navigation Bar */}
               <nav className="sticky top-0 z-50 bg-white dark:bg-[#050505] shadow-sm">
@@ -52,6 +54,7 @@ export default function RootLayout({
 
               <Footer />
             </div>
+            </DialogProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

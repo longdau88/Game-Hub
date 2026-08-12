@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import { Trash2 } from "lucide-react";
 import Cookies from "js-cookie";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import { useAppDialog } from "../../../contexts/DialogContext";
 
 export default function AdminCategoriesPage() {
   const { t } = useLanguage();
+  const { confirm, notify } = useAppDialog();
   const [categories, setCategories] = useState<any[]>([]);
   const [newCatName, setNewCatName] = useState("");
   const [newCatNameEn, setNewCatNameEn] = useState("");
@@ -47,23 +49,23 @@ export default function AdminCategoriesPage() {
       });
       if (res.ok) {
         setNewCatName(""); setNewCatNameEn(""); setNewCatSlug("");
-        alert("Category added successfully!");
+        await notify({ message: t("admin.categoryAdded"), variant: "success" });
         fetchData();
       } else {
-        alert("Failed to add category (may already exist).");
+        await notify({ message: t("admin.categoryAddFailed"), variant: "error" });
       }
     } catch (error) { console.error(error); }
   };
 
   const deleteCategory = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this category?")) return;
+    if (!await confirm({ message: t("admin.categoryDeleteConfirm"), variant: "warning" })) return;
     try {
       const res = await fetch(`${apiUrl}/api/categories/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) fetchData();
-      else alert("Cannot delete category (maybe games are attached)");
+      else await notify({ message: t("admin.categoryDeleteFailed"), variant: "error" });
     } catch (error) { console.error(error); }
   };
 
@@ -84,7 +86,7 @@ export default function AdminCategoriesPage() {
         setEditCatModalOpen(false);
         fetchData();
       } else {
-        alert("Failed to update category");
+        await notify({ message: t("admin.categoryUpdateFailed"), variant: "error" });
       }
     } catch (error) { console.error(error); }
   };

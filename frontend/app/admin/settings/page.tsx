@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import { useAppDialog } from "../../../contexts/DialogContext";
 
 export default function AdminSettingsPage() {
   const { t } = useLanguage();
+  const { notify } = useAppDialog();
   const [settings, setSettings] = useState<any>({});
   const [loading, setLoading] = useState(true);
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -32,8 +34,8 @@ export default function AdminSettingsPage() {
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(settings),
       });
-      if (res.ok) alert("Settings saved successfully!");
-      else alert("Failed to save settings");
+      if (res.ok) await notify({ message: t("admin.settingsSaved"), variant: "success" });
+      else await notify({ message: t("admin.settingsSaveFailed"), variant: "error" });
     } catch (error) { console.error(error); }
   };
 

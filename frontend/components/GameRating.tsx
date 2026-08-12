@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { Star } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
+import { useAppDialog } from "../contexts/DialogContext";
 
 export default function GameRating({ gameId, averageRating = 0, totalRatings = 0 }: { gameId: string, averageRating?: number, totalRatings?: number }) {
   const { t } = useLanguage();
+  const { notify } = useAppDialog();
   const [rating, setRating] = useState<number>(0);
   const [hover, setHover] = useState<number>(0);
   const [loading, setLoading] = useState(false);
@@ -40,7 +42,7 @@ export default function GameRating({ gameId, averageRating = 0, totalRatings = 0
 
   const handleRate = async (score: number) => {
     if (!token) {
-      alert("Please login to rate games");
+      await notify({ message: t("dialog.loginRequired"), variant: "info" });
       return;
     }
 
@@ -62,11 +64,11 @@ export default function GameRating({ gameId, averageRating = 0, totalRatings = 0
         if (data.totalRatings !== undefined) setLocalTotal(data.totalRatings);
       } else {
         const data = await res.json();
-        alert(data.error || "Failed to submit rating");
+        await notify({ message: data.error || t("dialog.genericError"), variant: "error" });
       }
     } catch (error) {
       console.error("Failed to submit rating", error);
-      alert("An error occurred");
+      await notify({ message: t("dialog.genericError"), variant: "error" });
     } finally {
       setLoading(false);
     }

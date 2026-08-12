@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Play, Gamepad2, Search, Heart, Star, Zap, Flame, TrendingUp, ChevronRight, Loader2 } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
+import { useAppDialog } from "../contexts/DialogContext";
 import Cookies from "js-cookie";
 import { motion, AnimatePresence } from "framer-motion";
 import { GameService } from "../services/GameService";
@@ -11,6 +12,7 @@ import { CategoryService } from "../services/CategoryService";
 
 export default function Home() {
   const { locale: language, t } = useLanguage();
+  const { notify } = useAppDialog();
   const [games, setGames] = useState<any[]>([]);
   const [mostPlayedGames, setMostPlayedGames] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -181,7 +183,7 @@ export default function Home() {
     e.preventDefault();
     const token = Cookies.get("token");
     if (!token) {
-      alert("Vui lòng đăng nhập để lưu game!"); // Use translation if available
+      await notify({ message: t("dialog.loginRequired"), variant: "info" });
       return;
     }
 

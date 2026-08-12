@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { Trash2 } from "lucide-react";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import { useAppDialog } from "../../../contexts/DialogContext";
 
 export default function AdminMailPage() {
   const { t } = useLanguage();
+  const { confirm, notify } = useAppDialog();
   const [mailTemplates, setMailTemplates] = useState<any[]>([]);
   const [mailCampaigns, setMailCampaigns] = useState<any[]>([]);
   const [selectedCampaigns, setSelectedCampaigns] = useState<number[]>([]);
@@ -33,7 +35,7 @@ export default function AdminMailPage() {
 
   const sendCampaign = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!confirm("Send this email campaign to all selected recipients?")) return;
+    if (!await confirm({ message: t("admin.sendCampaignConfirm"), variant: "warning" })) return;
     setSending(true);
     try {
       const res = await fetch(`${apiUrl}/api/admin/mail/campaigns`, {
@@ -43,18 +45,18 @@ export default function AdminMailPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        alert(`Campaign sent! Sent count: ${data.sentCount}`);
+        await notify({ message: t("admin.campaignSent").replace("{count}", String(data.sentCount)), variant: "success" });
         setMailForm({ target: "all", subject: "", content: "" });
         fetchData();
       } else {
-        alert(data.error || "Failed to send campaign.");
+        await notify({ message: data.error || t("admin.campaignFailed"), variant: "error" });
       }
     } catch (e) { console.error(e); }
     finally { setSending(false); }
   };
 
   const deleteCampaigns = async (all: boolean, ids: number[] = []) => {
-    if (!confirm("Are you sure you want to delete the selected campaigns?")) return;
+    if (!await confirm({ message: t("admin.deleteCampaignsConfirm"), variant: "warning" })) return;
     try {
       const res = await fetch(`${apiUrl}/api/admin/mail/campaigns`, {
         method: "DELETE",
@@ -62,8 +64,8 @@ export default function AdminMailPage() {
         body: JSON.stringify({ all, ids }),
       });
       if (res.ok) { setSelectedCampaigns([]); fetchData(); }
-      else alert("Failed to delete campaigns.");
-    } catch (error) { console.error(error); }
+      else await notify({ message: t("admin.actionFailed"), variant: "error" });
+    } catch (error) { console.error(error); await notify({ message: t("admin.actionFailed"), variant: "error" }); }
   };
 
   const toggleCampaignSelect = (id: number) => {

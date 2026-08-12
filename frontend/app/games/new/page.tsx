@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Zap, ArrowLeft, Play, Heart, Star, Gamepad2 } from "lucide-react";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import { useAppDialog } from "../../../contexts/DialogContext";
 import Cookies from "js-cookie";
 import { motion } from "framer-motion";
 
 export default function NewGamesPage() {
   const { locale: language, t } = useLanguage();
+  const { notify } = useAppDialog();
   const [games, setGames] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [bookmarkedGames, setBookmarkedGames] = useState<Set<string>>(new Set());
@@ -42,7 +44,7 @@ export default function NewGamesPage() {
   const toggleBookmark = async (e: React.MouseEvent, gameId: string) => {
     e.preventDefault();
     const token = Cookies.get("token");
-    if (!token) { alert("Vui lòng đăng nhập để lưu game!"); return; }
+    if (!token) { await notify({ message: t("dialog.loginRequired"), variant: "info" }); return; }
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
       const res = await fetch(`${apiUrl}/api/games/${gameId}/bookmark`, {
