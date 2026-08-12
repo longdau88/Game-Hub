@@ -88,7 +88,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   );
 
   return (
-    <div className="py-4 sm:py-8 max-w-7xl mx-auto flex flex-col md:flex-row gap-4 md:gap-8">
+    <div className="py-4 sm:py-8 w-full px-4 lg:px-8 max-w-7xl mx-auto flex flex-col md:flex-row gap-4 md:gap-8">
       
       {/* Mobile Sidebar Toggle */}
       <div className="md:hidden">
