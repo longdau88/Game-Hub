@@ -129,6 +129,7 @@
   "creator.statusPublished": "Đã xuất bản",
   "creator.statusRejected": "Bị từ chối",
   "creator.statusPending": "Chờ duyệt",
+  "creator.statusProcessing": "Đang xử lý & Tải lên...",
   "creator.noDesc": "Không có mô tả",
   "upload.title": "Tải Game Lên",
   "upload.subtitle": "Chia sẻ game HTML5 của bạn với cộng đồng Game Hub.",

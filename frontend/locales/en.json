@@ -129,6 +129,7 @@
   "creator.statusPublished": "Published",
   "creator.statusRejected": "Rejected",
   "creator.statusPending": "Pending Review",
+  "creator.statusProcessing": "Processing & Uploading...",
   "creator.noDesc": "No description",
   "upload.title": "Upload Game",
   "upload.subtitle": "Share your HTML5 game with the Game Hub community.",

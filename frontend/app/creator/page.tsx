@@ -56,7 +56,7 @@ export default function CreatorHub() {
     switch(status) {
       case 'published': return <span className="text-green-500 font-medium">{t("creator.statusPublished")}</span>;
       case 'rejected': return <span className="text-red-500 font-medium">{t("creator.statusRejected")}</span>;
-      case 'processing': return <span className="text-blue-500 font-medium">Processing & Uploading...</span>;
+      case 'processing': return <span className="text-blue-500 font-medium">{t("creator.statusProcessing")}</span>;
       default: return <span className="text-yellow-500 font-medium">{t("creator.statusPending")}</span>;
     }
   };

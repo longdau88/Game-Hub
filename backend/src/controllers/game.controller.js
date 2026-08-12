@@ -254,6 +254,25 @@ exports.uploadGame = async (req, res) => {
           data: { status: 'pending' }
         });
 
+        // Notify admins about the new game
+        const admins = await prisma.user.findMany({ where: { role: 'admin' } });
+        const gameTitle = title || 'Untitled Game';
+        for (const admin of admins) {
+          const notification = await prisma.notification.create({
+            data: {
+              userId: admin.id,
+              type: 'GAME_SUBMITTED',
+              title: 'Game Mới Cần Duyệt',
+              message: `Game "${gameTitle}" vừa được tải lên và đang chờ bạn xét duyệt.`,
+              link: '/admin/games'
+            }
+          });
+          pushToUser(admin.id, {
+            ...notification,
+            isRead: false
+          });
+        }
+
       } catch (err) {
         console.error('Background Upload Job Failed:', err);
         // Mark as rejected due to upload failure
