@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { Trash2, X } from "lucide-react";
@@ -118,11 +118,11 @@ export default function AdminPublishedGamesPage() {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) { alert("Rollback thành công!"); openAdvancedModal(advGame); }
+      if (res.ok) { alert("Rollback thÃ nh cÃ´ng!"); openAdvancedModal(advGame); }
     } catch (e) {}
   };
 
-  if (loading) return <div className="text-center py-12 text-zinc-500">Loading...</div>;
+  if (loading) return <div className="flex flex-col items-center justify-center py-20 text-zinc-500 dark:text-zinc-400"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div><p className="font-medium">{t("common.loading") || "Đang tải..."}</p></div>;
 
   return (
     <div className="space-y-8">
@@ -157,7 +157,7 @@ export default function AdminPublishedGamesPage() {
                       onClick={() => toggleFeatured(game.id, game.isFeatured)}
                       className={`px-2 py-1 rounded text-xs font-medium ${game.isFeatured ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-300 dark:border-zinc-700"}`}
                     >
-                      {game.isFeatured ? `★ ${t("admin.featured")}` : `☆ ${t("admin.feature")}`}
+                      {game.isFeatured ? `â˜… ${t("admin.featured")}` : `â˜† ${t("admin.feature")}`}
                     </button>
                   </td>
                   <td className="p-4">
@@ -292,3 +292,4 @@ export default function AdminPublishedGamesPage() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { Ban } from "lucide-react";
@@ -49,7 +49,7 @@ export default function AdminUsersPage() {
     } catch (error) { console.error(error); }
   };
 
-  if (loading) return <div className="text-center py-12 text-zinc-500">Loading...</div>;
+  if (loading) return <div className="flex flex-col items-center justify-center py-20 text-zinc-500 dark:text-zinc-400"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div><p className="font-medium">{t("common.loading") || "Đang tải..."}</p></div>;
 
   const filteredUsers = users.filter(user => {
     if (!searchQuery) return true;
@@ -85,7 +85,7 @@ export default function AdminUsersPage() {
           <tbody className="divide-y divide-border">
             {filteredUsers.map((user) => (
               <tr key={user.id} className="hover:bg-muted/20">
-                <td className="p-4 font-medium">{user.username || "—"}</td>
+                <td className="p-4 font-medium">{user.username || "â€”"}</td>
                 <td className="p-4 text-zinc-600 dark:text-zinc-400">{user.email}</td>
                 <td className="p-4">
                   <span className={`px-2 py-1 rounded text-xs font-semibold ${user.role === "admin" ? "bg-purple-500/10 text-purple-400 border border-purple-500/20" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-300 dark:border-zinc-700"}`}>
@@ -125,3 +125,4 @@ export default function AdminUsersPage() {
     </div>
   );
 }
+

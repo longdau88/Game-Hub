@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -66,7 +66,7 @@ export default function AdminPendingGamesPage() {
     } catch (error) { console.error(error); }
   };
 
-  if (loading) return <div className="text-center py-12 text-zinc-500">Loading...</div>;
+  if (loading) return <div className="flex flex-col items-center justify-center py-20 text-zinc-500 dark:text-zinc-400"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div><p className="font-medium">{t("common.loading") || "Đang tải..."}</p></div>;
 
   return (
     <div className="space-y-8">
@@ -141,3 +141,4 @@ export default function AdminPendingGamesPage() {
     </div>
   );
 }
+

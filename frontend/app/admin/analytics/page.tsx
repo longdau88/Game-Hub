@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
@@ -28,7 +28,7 @@ export default function AdminAnalyticsPage() {
     fetchData();
   }, []);
 
-  if (loading) return <div className="text-center py-12 text-zinc-500">Loading...</div>;
+  if (loading) return <div className="flex flex-col items-center justify-center py-20 text-zinc-500 dark:text-zinc-400"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div><p className="font-medium">{t("common.loading") || "Đang tải..."}</p></div>;
 
   return (
     <div className="space-y-8">
@@ -51,7 +51,7 @@ export default function AdminAnalyticsPage() {
             {sessionStats.map((s, i) => (
               <tr key={i} className="hover:bg-muted/20">
                 <td className="p-4 font-medium">{s.gameTitle || s.gameId}</td>
-                <td className="p-4 text-zinc-600 dark:text-zinc-400">{s.avgDuration?.toFixed(1) ?? "—"}</td>
+                <td className="p-4 text-zinc-600 dark:text-zinc-400">{s.avgDuration?.toFixed(1) ?? "â€”"}</td>
                 <td className="p-4 text-zinc-600 dark:text-zinc-400">{s.count}</td>
               </tr>
             ))}
@@ -92,3 +92,4 @@ export default function AdminAnalyticsPage() {
     </div>
   );
 }
+

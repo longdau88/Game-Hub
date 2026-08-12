@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
@@ -58,7 +58,7 @@ export default function AdminGamificationPage() {
     } catch (e) { console.error(e); }
   };
 
-  if (loading) return <div className="text-center py-12 text-zinc-500">Loading...</div>;
+  if (loading) return <div className="flex flex-col items-center justify-center py-20 text-zinc-500 dark:text-zinc-400"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div><p className="font-medium">{t("common.loading") || "Đang tải..."}</p></div>;
 
   return (
     <div className="grid md:grid-cols-2 gap-8">
@@ -113,7 +113,7 @@ export default function AdminGamificationPage() {
                   {badge.iconUrl ? (
                     <img src={badge.iconUrl} alt="badge" className="w-8 h-8 rounded-full" />
                   ) : (
-                    <div className="w-8 h-8 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center font-bold">★</div>
+                    <div className="w-8 h-8 bg-purple-500/20 text-purple-400 rounded-full flex items-center justify-center font-bold">â˜…</div>
                   )}
                   <div>
                     <p className="font-medium">{badge.name}</p>
@@ -134,3 +134,4 @@ export default function AdminGamificationPage() {
     </div>
   );
 }
+
