@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 class ApiClient {
@@ -8,7 +10,7 @@ class ApiClient {
     
     // Check if we're in the browser environment
     if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token');
+      const token = Cookies.get('token');
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
