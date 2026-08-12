@@ -251,6 +251,7 @@
   "game.noComments": "Chưa có bình luận nào.",
   "game.leaderboard": "Bảng Xếp Hạng",
   "game.noScores": "Chưa có điểm số nào. Hãy là người đầu tiên!",
+  "footer.builtBy": "Được xây dựng bởi Thanh Long",
   "admin.tabGamesPublished": "Game Đã Duyệt",
   "admin.tabGamesPending": "Game Chờ Duyệt",
   "admin.tabReports": "Quản lý Báo cáo",

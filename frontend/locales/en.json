@@ -251,6 +251,7 @@
   "game.noComments": "No comments yet.",
   "game.leaderboard": "Leaderboard",
   "game.noScores": "No scores yet. Be the first!",
+  "footer.builtBy": "Built by Thanh Long",
   "admin.tabGamesPublished": "Published Games",
   "admin.tabGamesPending": "Pending Games",
   "admin.tabReports": "Reports",

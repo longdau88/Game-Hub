@@ -7,6 +7,7 @@ import ClientNavbar from "../components/ClientNavbar";
 import { ThemeProvider } from "../components/ThemeProvider";
 import { LanguageProvider } from "../contexts/LanguageContext";
 import MaintenanceOverlay from "../components/MaintenanceOverlay";
+import Footer from "../components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,7 +27,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <LanguageProvider>
             <MaintenanceOverlay />
-            <div className="min-h-screen bg-background text-foreground transition-colors selection:bg-blue-500/30">
+            <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors selection:bg-blue-500/30">
               {/* Navigation Bar */}
               <nav className="sticky top-0 z-50 bg-white dark:bg-[#050505] shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,9 +45,11 @@ export default function RootLayout({
             </div>
           </nav>
 
-              <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 w-full">
                 {children}
               </main>
+
+              <Footer />
             </div>
           </LanguageProvider>
         </ThemeProvider>
