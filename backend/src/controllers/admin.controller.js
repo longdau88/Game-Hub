@@ -1,6 +1,7 @@
 const prisma = require('../config/db');
 const r2Client = require('../config/r2');
 const { ListObjectsV2Command, DeleteObjectsCommand } = require('@aws-sdk/client-s3');
+const { pushToUser } = require('./notification.controller');
 
 // Helper to delete folder in R2
 const deleteR2Folder = async (folderPath) => {
@@ -159,7 +160,7 @@ exports.rejectGame = async (req, res) => {
     });
     
     if (game.uploader) {
-      await prisma.notification.create({
+      const notif = await prisma.notification.create({
         data: {
           userId: game.uploader.id,
           type: 'GAME_REJECTED',
@@ -168,6 +169,7 @@ exports.rejectGame = async (req, res) => {
           link: '/creator'
         }
       });
+      pushToUser(game.uploader.id, notif);
     }
 
     await logAudit(adminId, 'REJECT_GAME', 'Game', {

@@ -4,11 +4,18 @@ const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey123';
 
 exports.requireAuth = async (req, res, next) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  // Also accept token as query param (needed for EventSource SSE which can't set headers)
+  const queryToken = req.query.token;
+  
+  let token;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  } else if (queryToken) {
+    token = queryToken;
+  } else {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const token = authHeader.split(' ')[1];
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
     

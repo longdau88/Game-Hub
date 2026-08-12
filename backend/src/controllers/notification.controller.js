@@ -1,4 +1,48 @@
 const prisma = require('../config/db');
+const { EventEmitter } = require('events');
+
+// SSE: Map of userId -> array of response objects
+const clients = new Map();
+
+// Helper: push notification to all SSE clients of a user
+exports.pushToUser = (userId, notification) => {
+  const userClients = clients.get(userId) || [];
+  userClients.forEach(res => {
+    try {
+      res.write(`data: ${JSON.stringify(notification)}\n\n`);
+    } catch (e) {}
+  });
+};
+
+// SSE stream endpoint
+exports.streamNotifications = (req, res) => {
+  const userId = req.user.userId;
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no'); // disable nginx buffering
+  res.flushHeaders();
+
+  // Register this client
+  if (!clients.has(userId)) clients.set(userId, []);
+  clients.get(userId).push(res);
+
+  // Send heartbeat every 25s to keep connection alive
+  const heartbeat = setInterval(() => {
+    try { res.write(':heartbeat\n\n'); } catch (e) {}
+  }, 25000);
+
+  req.on('close', () => {
+    clearInterval(heartbeat);
+    const remaining = (clients.get(userId) || []).filter(r => r !== res);
+    if (remaining.length === 0) {
+      clients.delete(userId);
+    } else {
+      clients.set(userId, remaining);
+    }
+  });
+};
+
 
 exports.getNotifications = async (req, res) => {
   try {

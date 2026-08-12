@@ -54,6 +54,7 @@ const mime = require('mime-types'); // We should install this package if not alr
 const { v4: uuidv4 } = require('uuid'); // Install this as well
 const r2Client = require('../config/r2');
 const prisma = require('../config/db');
+const { pushToUser } = require('./notification.controller');
 
 // Recursive function to get all files in a directory
 const getAllFiles = (dirPath, arrayOfFiles) => {
@@ -802,7 +803,7 @@ exports.approveGame = async (req, res) => {
     });
 
     if (updatedGame.uploader) {
-      await prisma.notification.create({
+      const notif = await prisma.notification.create({
         data: {
           userId: updatedGame.uploader.id,
           type: 'GAME_APPROVED',
@@ -811,6 +812,7 @@ exports.approveGame = async (req, res) => {
           link: `/game/play?id=${updatedGame.id}`
         }
       });
+      pushToUser(updatedGame.uploader.id, notif);
     }
 
     // Audit log

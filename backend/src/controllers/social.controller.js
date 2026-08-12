@@ -1,4 +1,5 @@
 const prisma = require('../config/db');
+const { pushToUser } = require('./notification.controller');
 
 // Add or update rating for a game
 exports.rateGame = async (req, res) => {
@@ -85,7 +86,7 @@ exports.addComment = async (req, res) => {
 
     // Notify game uploader if it's not their own comment
     if (game.uploaderId && game.uploaderId !== req.user.userId) {
-      await prisma.notification.create({
+      const notif = await prisma.notification.create({
         data: {
           userId: game.uploaderId,
           type: 'NEW_COMMENT',
@@ -94,6 +95,7 @@ exports.addComment = async (req, res) => {
           link: `/game/play?id=${game.id}`
         }
       });
+      pushToUser(game.uploaderId, notif);
     }
 
     res.status(201).json(comment);

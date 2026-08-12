@@ -6,6 +6,7 @@ const { requireAuth } = require('../middleware/auth.middleware');
 router.use(requireAuth);
 
 router.get('/', notificationController.getNotifications);
+router.get('/stream', notificationController.streamNotifications);
 router.post('/read-all', notificationController.markAllAsRead);
 router.post('/:id/read', notificationController.markAsRead);
 

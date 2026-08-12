@@ -16,12 +16,25 @@ export default function NotificationDropdown() {
   const token = Cookies.get("token");
 
   useEffect(() => {
-    if (token) {
+    if (!token) return;
+
+    fetchNotifications(); // Initial load
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    // SSE: connect for real-time push; EventSource doesn't support custom headers,
+    // so pass token as query param (backend must accept it)
+    const evtSource = new EventSource(`${apiUrl}/api/notifications/stream?token=${token}`);
+
+    evtSource.onmessage = () => {
+      // A new notification arrived – re-fetch to get full list + update unread count
       fetchNotifications();
-      // Poll every 30s
-      const interval = setInterval(fetchNotifications, 30000);
-      return () => clearInterval(interval);
-    }
+    };
+
+    evtSource.onerror = () => {
+      // SSE auto-reconnects; ignore transient errors
+    };
+
+    return () => evtSource.close();
   }, [token]);
 
   useEffect(() => {
