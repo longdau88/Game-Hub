@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import Cookies from "js-cookie";
 import { Save, FileType2, Loader2, ArrowLeft } from "lucide-react";
 import { useLanguage } from "../../../../contexts/LanguageContext";
+import { useAppDialog } from "../../../../contexts/DialogContext";
 import Link from "next/link";
 
 export default function EditGamePage() {
@@ -12,6 +13,7 @@ export default function EditGamePage() {
   const id = params?.id as string;
   const router = useRouter();
   const { t } = useLanguage();
+  const { notify } = useAppDialog();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [descriptionEn, setDescriptionEn] = useState("");
@@ -105,7 +107,7 @@ export default function EditGamePage() {
       const data = await res.json();
       
       if (res.ok) {
-        alert(t("profile.updateSuccess"));
+        await notify({ message: t("profile.updateSuccess"), variant: "success" });
         router.push("/profile");
       } else {
         setError(data.error || t("profile.updateError"));

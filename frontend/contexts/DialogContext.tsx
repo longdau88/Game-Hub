@@ -22,11 +22,11 @@ export function DialogProvider({ children }: { children: ReactNode }) {
 
   return <DialogContext.Provider value={{ confirm, notify }}>
     {children}
-    {dialog && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/55 p-4" role="presentation" onMouseDown={() => close(false)}>
-      <div role="dialog" aria-modal="true" aria-labelledby="app-dialog-title" className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl" onMouseDown={event => event.stopPropagation()}>
-        <div className="flex gap-3"><Icon className={`mt-0.5 h-6 w-6 shrink-0 ${iconClass}`} /><div><h2 id="app-dialog-title" className="font-semibold">{dialog.title || (dialog.type === "confirm" ? t("dialog.confirmTitle") : t("dialog.noticeTitle"))}</h2><p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{dialog.message}</p></div></div>
+    {dialog && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" role="presentation" onMouseDown={() => close(false)}>
+      <div role="dialog" aria-modal="true" aria-labelledby="app-dialog-title" className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 text-zinc-900 shadow-2xl dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50" onMouseDown={event => event.stopPropagation()}>
+        <div className="flex gap-3"><Icon className={`mt-0.5 h-6 w-6 shrink-0 ${iconClass}`} /><div className="min-w-0"><h2 id="app-dialog-title" className="font-semibold">{dialog.title || (dialog.type === "confirm" ? t("dialog.confirmTitle") : t("dialog.noticeTitle"))}</h2><p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-300">{dialog.message}</p></div></div>
         <div className="mt-6 flex justify-end gap-3">
-          {dialog.type === "confirm" && <button type="button" onClick={() => close(false)} className="rounded-lg border border-border px-4 py-2 text-sm font-medium hover:bg-muted">{t("dialog.cancel")}</button>}
+          {dialog.type === "confirm" && <button type="button" onClick={() => close(false)} className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800">{t("dialog.cancel")}</button>}
           <button type="button" autoFocus onClick={() => close(true)} className={`rounded-lg px-4 py-2 text-sm font-medium text-white ${variant === "error" || variant === "warning" ? "bg-red-600 hover:bg-red-700" : "bg-primary hover:bg-primary/90"}`}>{dialog.confirmLabel || t("dialog.confirm")}</button>
         </div>
       </div>
