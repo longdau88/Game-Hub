@@ -321,13 +321,13 @@ export default function Home() {
             <button type="submit" className="hidden">Search</button>
           </form>
           {/* Row 2: Category filter - all categories */}
-          <div className="flex overflow-x-auto hide-scrollbar gap-2 pb-1">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => handleCategorySelect("")}
               className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-all duration-300 shrink-0 whitespace-nowrap ${
                 selectedCategory === ""
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 border border-transparent'
-                  : 'bg-white/60 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-white dark:hover:bg-zinc-800'
+                  : 'bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800'
               }`}
             >
               {t("home.filterAll")}
@@ -339,7 +339,7 @@ export default function Home() {
                 className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-all duration-300 shrink-0 whitespace-nowrap ${
                   selectedCategory === cat.slug
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 border border-transparent'
-                    : 'bg-white/60 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-white dark:hover:bg-zinc-800'
+                    : 'bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800'
                 }`}
               >
                 {cat.nameTranslations?.[language] || cat.name}
