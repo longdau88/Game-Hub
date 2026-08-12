@@ -119,6 +119,7 @@ exports.uploadGame = async (req, res) => {
     // Process cover image if exists
     let coverImageUrl = null;
     if (coverFile) {
+      const bucketName = process.env.R2_BUCKET_NAME;
       const coverExt = path.extname(coverFile.originalname);
       const coverKey = `games/${gameId}/cover${coverExt}`;
       const coverStream = fs.createReadStream(coverFile.path);
