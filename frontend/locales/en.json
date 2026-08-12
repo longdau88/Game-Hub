@@ -12,6 +12,7 @@
   "notif.gameRejected": "Your game \"{title}\" was rejected. Reason: {reason}",
   "notif.gameSubmitted": "A new game \"{title}\" has been submitted and is waiting for your review.",
   "notif.newComment": "{username} commented on your game \"{title}\".",
+  "notif.gameDeleted": "Your game \"{title}\" was permanently deleted by an admin.",
   "home.title": "Featured Games",
   "home.play": "Play",
   "login.title": "Welcome Back",

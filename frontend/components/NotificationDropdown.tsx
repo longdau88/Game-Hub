@@ -112,6 +112,8 @@ export default function NotificationDropdown() {
         const userMatch = notif.message.match(/^(.*?)\s+(commented|bình luận)/);
         const username = userMatch ? userMatch[1] : 'Someone';
         return gameTitle ? t("notif.newComment").replace("{username}", username).replace("{title}", gameTitle) : notif.message;
+      case 'GAME_DELETED':
+        return gameTitle ? t("notif.gameDeleted").replace("{title}", gameTitle) : notif.message;
       default:
         return notif.message;
     }

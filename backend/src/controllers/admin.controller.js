@@ -214,6 +214,20 @@ exports.deleteGame = async (req, res) => {
     await prisma.userLibrary.deleteMany({ where: { gameId: id } });
     await prisma.game.delete({ where: { id } });
     
+    if (game.uploaderId) {
+      const notif = await prisma.notification.create({
+        data: {
+          userId: game.uploaderId,
+          type: 'GAME_DELETED',
+          title: 'Game Deleted',
+          message: `Your game "${game.title}" was permanently deleted by an admin.`,
+          link: '/creator'
+        }
+      });
+      const { pushToUser } = require('./notification.controller');
+      pushToUser(game.uploaderId, notif);
+    }
+    
     await logAudit(adminId, 'DELETE_GAME', 'Game', {
       gameId: id,
       gameTitle: game.title,

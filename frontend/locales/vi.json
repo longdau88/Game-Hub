@@ -12,6 +12,7 @@
   "notif.gameRejected": "Game \"{title}\" của bạn đã bị từ chối. Lý do: {reason}",
   "notif.gameSubmitted": "Game \"{title}\" vừa được tải lên và đang chờ bạn xét duyệt.",
   "notif.newComment": "{username} đã bình luận về game \"{title}\" của bạn.",
+  "notif.gameDeleted": "Game \"{title}\" của bạn đã bị xóa vĩnh viễn bởi Quản trị viên.",
   "home.title": "Game Nổi Bật",
   "home.play": "Chơi Ngay",
   "login.title": "Chào Mừng Trở Lại",
