@@ -88,13 +88,20 @@ exports.uploadGame = async (req, res) => {
     
     // We will do extraction and upload in background. First create the game record as 'processing'.
 
-    // Validate index.html
-    const indexPath = path.join(tempExtractDir, 'index.html');
-    if (!fs.existsSync(indexPath)) {
-      // Cleanup
-      fs.rmSync(tempExtractDir, { recursive: true, force: true });
+    // Validate index.html exists at root before proceeding
+    let zip;
+    try {
+      zip = new AdmZip(file.path);
+      const zipEntries = zip.getEntries();
+      const hasIndex = zipEntries.some(entry => entry.entryName === 'index.html');
+      
+      if (!hasIndex) {
+        fs.unlinkSync(file.path);
+        return res.status(400).json({ error: 'Zip file does not contain an index.html at the root' });
+      }
+    } catch (err) {
       fs.unlinkSync(file.path);
-      return res.status(400).json({ error: 'Zip file does not contain an index.html at the root' });
+      return res.status(400).json({ error: 'Invalid zip file format' });
     }
 
     // Process engineConfig to inject Firebase tracking if present
