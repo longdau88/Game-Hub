@@ -85,7 +85,7 @@ export default function AdminUsersPage() {
           <tbody className="divide-y divide-border">
             {filteredUsers.map((user) => (
               <tr key={user.id} className="hover:bg-muted/20">
-                <td className="p-4 font-medium">{user.username || "â€”"}</td>
+                <td className="p-4 font-medium">{user.username || "-"}</td>
                 <td className="p-4 text-zinc-600 dark:text-zinc-400">{user.email}</td>
                 <td className="p-4">
                   <span className={`px-2 py-1 rounded text-xs font-semibold ${user.role === "admin" ? "bg-purple-500/10 text-purple-400 border border-purple-500/20" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-300 dark:border-zinc-700"}`}>

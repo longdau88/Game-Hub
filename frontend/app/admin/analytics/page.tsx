@@ -4,16 +4,30 @@ import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useLanguage } from "../../../contexts/LanguageContext";
 
+type SessionStat = {
+  gameId: string;
+  gameTitle: string;
+  averageLength: number | null;
+  totalSessions: number;
+};
+
+type CrashLog = {
+  id: number;
+  createdAt: string;
+  errorMsg: string;
+  browserInfo: string | null;
+};
+
 export default function AdminAnalyticsPage() {
   const { t } = useLanguage();
-  const [sessionStats, setSessionStats] = useState<any[]>([]);
-  const [crashLogs, setCrashLogs] = useState<any[]>([]);
+  const [sessionStats, setSessionStats] = useState<SessionStat[]>([]);
+  const [crashLogs, setCrashLogs] = useState<CrashLog[]>([]);
   const [loading, setLoading] = useState(true);
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-  const token = Cookies.get("token");
 
   useEffect(() => {
     const fetchData = async () => {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const token = Cookies.get("token");
       setLoading(true);
       try {
         const [r1, r2] = await Promise.all([
@@ -51,8 +65,10 @@ export default function AdminAnalyticsPage() {
             {sessionStats.map((s, i) => (
               <tr key={i} className="hover:bg-muted/20">
                 <td className="p-4 font-medium">{s.gameTitle || s.gameId}</td>
-                <td className="p-4 text-zinc-600 dark:text-zinc-400">{s.avgDuration?.toFixed(1) ?? "â€”"}</td>
-                <td className="p-4 text-zinc-600 dark:text-zinc-400">{s.count}</td>
+                <td className="p-4 text-zinc-600 dark:text-zinc-400">
+                  {typeof s.averageLength === "number" ? s.averageLength.toFixed(1) : "-"}
+                </td>
+                <td className="p-4 text-zinc-600 dark:text-zinc-400">{s.totalSessions}</td>
               </tr>
             ))}
             {sessionStats.length === 0 && (
@@ -79,8 +95,8 @@ export default function AdminAnalyticsPage() {
             {crashLogs.map((c) => (
               <tr key={c.id} className="hover:bg-muted/20">
                 <td className="p-4 text-zinc-600 dark:text-zinc-400 whitespace-nowrap">{new Date(c.createdAt).toLocaleString()}</td>
-                <td className="p-4 text-red-400 font-mono text-xs max-w-xs truncate">{c.errorMessage}</td>
-                <td className="p-4 text-zinc-600 dark:text-zinc-400 text-xs">{c.browser}</td>
+                <td className="p-4 text-red-400 font-mono text-xs max-w-xs truncate">{c.errorMsg}</td>
+                <td className="p-4 text-zinc-600 dark:text-zinc-400 text-xs">{c.browserInfo || "-"}</td>
               </tr>
             ))}
             {crashLogs.length === 0 && (

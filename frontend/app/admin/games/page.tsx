@@ -118,7 +118,7 @@ export default function AdminPublishedGamesPage() {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) { alert("Rollback thÃ nh cÃ´ng!"); openAdvancedModal(advGame); }
+      if (res.ok) { alert("Rollback thành công!"); openAdvancedModal(advGame); }
     } catch (e) {}
   };
 
@@ -157,7 +157,7 @@ export default function AdminPublishedGamesPage() {
                       onClick={() => toggleFeatured(game.id, game.isFeatured)}
                       className={`px-2 py-1 rounded text-xs font-medium ${game.isFeatured ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-300 dark:border-zinc-700"}`}
                     >
-                      {game.isFeatured ? `â˜… ${t("admin.featured")}` : `â˜† ${t("admin.feature")}`}
+                      {game.isFeatured ? `★ ${t("admin.featured")}` : `☆ ${t("admin.feature")}`}
                     </button>
                   </td>
                   <td className="p-4">

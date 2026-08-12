@@ -157,7 +157,7 @@ export default function AdminMailPage() {
               />
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{campaign.subject}</p>
-                <p className="text-xs text-zinc-500">{campaign.targetGroup || campaign.target} â€¢ {new Date(campaign.createdAt).toLocaleString()}</p>
+                <p className="text-xs text-zinc-500">{campaign.targetGroup || campaign.target} - {new Date(campaign.createdAt).toLocaleString()}</p>
               </div>
               <div className="shrink-0 text-right">
                 <p className="text-sm font-medium">{campaign.sentCount ?? 0}</p>

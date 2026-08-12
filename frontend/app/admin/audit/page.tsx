@@ -60,7 +60,7 @@ export default function AdminAuditPage() {
                   <td className="p-4 text-zinc-700 dark:text-zinc-300">{log.entity}</td>
                   <td className="p-4">
                     <pre className="text-xs text-zinc-500 whitespace-pre-wrap max-w-xs overflow-hidden">
-                      {log.details ? JSON.stringify(log.details, null, 2) : "â€”"}
+                      {log.details ? JSON.stringify(log.details, null, 2) : "-"}
                     </pre>
                   </td>
                 </tr>
