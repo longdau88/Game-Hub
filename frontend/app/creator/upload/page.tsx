@@ -29,6 +29,7 @@ export default function UploadGamePage() {
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -336,9 +337,28 @@ export default function UploadGamePage() {
           </div>
 
           <div className="pt-4 border-t border-zinc-200 dark:border-zinc-800">
+            <label className="flex items-start gap-3 mb-6 cursor-pointer group">
+              <div className="relative flex items-start pt-0.5">
+                <input 
+                  type="checkbox" 
+                  checked={agreeToTerms}
+                  onChange={(e) => setAgreeToTerms(e.target.checked)}
+                  className="w-5 h-5 rounded border-zinc-300 dark:border-zinc-700 text-blue-600 focus:ring-blue-500 focus:ring-offset-zinc-900 bg-white dark:bg-zinc-900 transition-colors"
+                />
+              </div>
+              <div className="flex-1">
+                <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 block">
+                  Tôi cam kết sở hữu bản quyền hoặc có quyền hợp pháp để đăng tải tựa game này.
+                </span>
+                <span className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 block">
+                  Mọi hành vi vi phạm bản quyền sẽ dẫn đến việc trò chơi bị gỡ bỏ và tài khoản có thể bị khóa vĩnh viễn theo <Link href="/terms" className="text-blue-500 hover:underline">Điều khoản Dịch vụ</Link>.
+                </span>
+              </div>
+            </label>
+
             <button 
               type="submit" 
-              disabled={loading || !file}
+              disabled={loading || !file || !agreeToTerms}
               className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-zinc-900 dark:text-white px-6 py-4 rounded-lg font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(37,99,235,0.2)]"
             >
               {loading ? (

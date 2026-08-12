@@ -24,8 +24,29 @@ BigInt.prototype.toJSON = function () {
   return this.toString();
 };
 
-// Enable CORS for all routes (important for Next.js communicating with Express)
-app.use(cors());
+const helmet = require('helmet');
+const xss = require('xss-clean');
+
+// Security Headers
+app.use(helmet());
+
+// Prevent XSS attacks
+app.use(xss());
+
+// Enable CORS securely
+const allowedOrigins = process.env.ALLOWED_ORIGIN ? process.env.ALLOWED_ORIGIN.split(',') : ['http://localhost:3000'];
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
 
 // Enable body parsing
 app.use(express.json());

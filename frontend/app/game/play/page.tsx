@@ -382,9 +382,9 @@ function GamePlayerContent() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden">
             <div className="p-6">
-              <h3 className="text-xl font-bold mb-4">Report Game</h3>
+              <h3 className="text-xl font-bold mb-4">Báo cáo Trò chơi (Report/DMCA)</h3>
               <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
-                Please describe the issue with this game (e.g., broken file, inappropriate content, etc.)
+                Vui lòng mô tả vấn đề (ví dụ: lỗi game, nội dung độc hại, hoặc <b>vi phạm bản quyền/DMCA</b>). Chúng tôi sẽ xem xét và gỡ bỏ nếu có vi phạm.
               </p>
               
               <form onSubmit={handleReport}>
