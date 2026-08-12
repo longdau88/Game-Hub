@@ -15,7 +15,13 @@ export default function NewGamesPage() {
 
   useEffect(() => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-    fetch(`${apiUrl}/api/games?sort=newest&limit=50`)
+    const token = Cookies.get("token");
+    const headers: HeadersInit = {};
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    fetch(`${apiUrl}/api/games?sort=newest&limit=50`, { headers })
       .then((res) => res.json())
       .then((data) => {
         setGames(Array.isArray(data) ? data : data.games || []);
@@ -23,14 +29,11 @@ export default function NewGamesPage() {
       .catch(console.error)
       .finally(() => setLoading(false));
 
-    const token = Cookies.get("token");
     if (token) {
-      fetch(`${apiUrl}/api/users/me/bookmarks`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      fetch(`${apiUrl}/api/games/user/bookmarked`, { headers })
         .then((res) => res.json())
         .then((data) => {
-          if (Array.isArray(data)) setBookmarkedGames(new Set(data.map((g: any) => g.id)));
+          if (Array.isArray(data)) setBookmarkedGames(new Set(data.map((g: any) => g.gameId || g.id)));
         })
         .catch(console.error);
     }

@@ -26,7 +26,11 @@ export default function GameComments({ gameId }: { gameId: string }) {
   const fetchComments = async () => {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/social/comments/${gameId}`);
+      const headers: HeadersInit = {};
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const res = await fetch(`${apiUrl}/api/social/comments/${gameId}`, { headers });
       if (res.ok) {
         const data = await res.json();
         setComments(data);
