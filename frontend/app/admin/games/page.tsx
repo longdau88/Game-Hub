@@ -134,10 +134,10 @@ export default function AdminPublishedGamesPage() {
           <table className="w-full text-left text-sm">
             <thead className="bg-muted/30 border-b border-border">
               <tr>
-                <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">Game</th>
+                <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.colGame")}</th>
                 <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.size")}</th>
-                <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">Uploader</th>
-                <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">Featured</th>
+                <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.colUploader")}</th>
+                <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.colFeatured")}</th>
                 <th className="p-4 font-medium text-zinc-600 dark:text-zinc-400">{t("admin.colActions")}</th>
               </tr>
             </thead>
@@ -157,7 +157,7 @@ export default function AdminPublishedGamesPage() {
                       onClick={() => toggleFeatured(game.id, game.isFeatured)}
                       className={`px-2 py-1 rounded text-xs font-medium ${game.isFeatured ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20" : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-300 dark:border-zinc-700"}`}
                     >
-                      {game.isFeatured ? "★ Featured" : "☆ Feature"}
+                      {game.isFeatured ? `★ ${t("admin.featured")}` : `☆ ${t("admin.feature")}`}
                     </button>
                   </td>
                   <td className="p-4">

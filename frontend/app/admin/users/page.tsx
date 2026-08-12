@@ -9,6 +9,7 @@ export default function AdminUsersPage() {
   const { t } = useLanguage();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
   const token = Cookies.get("token");
 
@@ -50,10 +51,24 @@ export default function AdminUsersPage() {
 
   if (loading) return <div className="text-center py-12 text-zinc-500">Loading...</div>;
 
+  const filteredUsers = users.filter(user => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (user.username && user.username.toLowerCase().includes(query)) || 
+           (user.email && user.email.toLowerCase().includes(query));
+  });
+
   return (
     <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
-      <div className="p-4 border-b border-border bg-muted/30">
+      <div className="p-4 border-b border-border bg-muted/30 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h3 className="font-semibold">{t("admin.tabUsers")}</h3>
+        <input 
+          type="text" 
+          placeholder={t("admin.searchUsersPlaceholder") || "Search by username or email..."}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="px-3 py-1.5 text-sm rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 focus:outline-none focus:border-blue-500 w-full sm:w-64"
+        />
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm">
@@ -68,7 +83,7 @@ export default function AdminUsersPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <tr key={user.id} className="hover:bg-muted/20">
                 <td className="p-4 font-medium">{user.username || "—"}</td>
                 <td className="p-4 text-zinc-600 dark:text-zinc-400">{user.email}</td>
