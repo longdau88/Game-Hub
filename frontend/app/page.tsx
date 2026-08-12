@@ -38,12 +38,30 @@ export default function Home() {
     fetchCategories();
     fetchBookmarks();
     fetchAllGamesPage(1, "", "");
+
+    const handleFocus = () => {
+      fetchMostPlayedGames();
+      fetchMostLikedGames();
+      fetchFeaturedGames();
+    };
+
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        handleFocus();
+      }
+    });
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleFocus);
+    };
   }, []);
 
   const fetchFeaturedGames = async () => {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/games/featured`);
+      const res = await fetch(`${apiUrl}/api/games/featured`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) setFeaturedGames(data);
@@ -65,7 +83,7 @@ export default function Home() {
       }
       if (catSlug) params.append("category", catSlug);
       
-      const res = await fetch(`${apiUrl}/api/games?${params.toString()}`);
+      const res = await fetch(`${apiUrl}/api/games?${params.toString()}`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) setGames(data);
@@ -78,7 +96,7 @@ export default function Home() {
   const fetchMostPlayedGames = async () => {
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/games?sort=mostPlayed&limit=8`);
+      const res = await fetch(`${apiUrl}/api/games?sort=mostPlayed&limit=8`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) setMostPlayedGames(data.slice(0, 8)); // Just to be safe
@@ -93,7 +111,7 @@ export default function Home() {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
       // Use limit=10 but server might not support limit query param directly yet, we can slice it here.
       // Assuming getPublishedGames supports limit, otherwise we just slice.
-      const res = await fetch(`${apiUrl}/api/games?sort=mostLiked`);
+      const res = await fetch(`${apiUrl}/api/games?sort=mostLiked`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data)) setMostLikedGames(data.slice(0, 10)); // Top 10
