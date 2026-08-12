@@ -44,14 +44,36 @@ exports.clearSettingsCache = () => {
   cachedSettings.lastFetched = 0;
 };
 
+const jwt = require('jsonwebtoken');
+
 exports.maintenanceCheck = async (req, res, next) => {
-  // Allow admin and auth routes bypass (so admins can login and turn it off)
-  if (req.path.startsWith('/api/admin') || req.path.startsWith('/api/auth/login') || req.path.startsWith('/api/settings')) {
+  // Allow system status and specific routes to bypass
+  if (req.path.startsWith('/api/system/status') || req.path.startsWith('/api/admin') || req.path.startsWith('/api/auth/login') || req.path.startsWith('/api/settings')) {
     return next();
   }
   
   const settings = await getSystemSettings();
   if (settings.maintenanceMode) {
+    // Check if user is admin
+    let token = null;
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } else if (req.query.token) {
+      token = req.query.token;
+    }
+
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecretkey123');
+        if (decoded.role === 'admin') {
+          return next();
+        }
+      } catch (err) {
+        // Ignore invalid token, just block them
+      }
+    }
+    
     return res.status(503).json({ error: 'System is currently under maintenance. Please try again later.' });
   }
   next();

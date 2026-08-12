@@ -19,28 +19,40 @@ export default function NotificationDropdown() {
     if (!token) return;
 
     fetchNotifications(); // Initial load
+    
+    let evtSource: EventSource | null = null;
+    let reconnectTimeout: NodeJS.Timeout;
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    // SSE: connect for real-time push; EventSource doesn't support custom headers,
-    // so pass token as query param (backend must accept it)
-    const evtSource = new EventSource(`${apiUrl}/api/notifications/stream?token=${token}`);
+    const connectSSE = () => {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      evtSource = new EventSource(`${apiUrl}/api/notifications/stream?token=${token}`);
 
-    evtSource.onmessage = (event) => {
-      // A new notification arrived – re-fetch to get full list + update unread count
-      fetchNotifications();
-      try {
-        const notif = JSON.parse(event.data);
-        window.dispatchEvent(new CustomEvent('newNotification', { detail: notif }));
-      } catch (e) {
-        console.error("Error parsing SSE notification", e);
-      }
+      evtSource.onmessage = (event) => {
+        fetchNotifications();
+        try {
+          const notif = JSON.parse(event.data);
+          window.dispatchEvent(new CustomEvent('newNotification', { detail: notif }));
+        } catch (e) {
+          console.error("Error parsing SSE notification", e);
+        }
+      };
+
+      evtSource.onerror = (err) => {
+        // Stop default rapid reconnect on 429/503 errors
+        if (evtSource) {
+          evtSource.close();
+        }
+        // Try reconnecting after 30 seconds instead of rapid retries
+        reconnectTimeout = setTimeout(connectSSE, 30000);
+      };
     };
 
-    evtSource.onerror = () => {
-      // SSE auto-reconnects; ignore transient errors
-    };
+    connectSSE();
 
-    return () => evtSource.close();
+    return () => {
+      if (evtSource) evtSource.close();
+      clearTimeout(reconnectTimeout);
+    };
   }, [token]);
 
   useEffect(() => {
