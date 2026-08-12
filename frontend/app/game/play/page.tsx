@@ -352,10 +352,10 @@ function GamePlayerContent() {
           </div>
 
           <div className="bg-gradient-to-b from-yellow-900/20 to-zinc-900/50 border border-yellow-900/30 rounded-xl p-6 relative overflow-hidden">
-            <h3 className="font-medium text-lg mb-4 text-zinc-900 dark:text-white flex items-center gap-2"><span className="text-yellow-500">🏆</span> Leaderboard</h3>
+            <h3 className="font-medium text-lg mb-4 text-zinc-900 dark:text-white flex items-center gap-2"><span className="text-yellow-500">🏆</span> {t("game.leaderboard")}</h3>
             <div className="space-y-3">
               {leaderboard.length === 0 ? (
-                <p className="text-sm text-zinc-500 italic">No scores yet. Be the first!</p>
+                <p className="text-sm text-zinc-500 italic">{t("game.noScores")}</p>
               ) : (
                 leaderboard.map((entry, index) => (
                   <div key={entry.id} className="flex justify-between items-center p-2 rounded-lg bg-zinc-100/50 dark:bg-zinc-800/50 border border-zinc-300/50 dark:border-zinc-700/50">
