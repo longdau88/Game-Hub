@@ -314,7 +314,10 @@ exports.uploadGame = async (req, res) => {
 exports.getPublishedGames = async (req, res) => {
   try {
     const { search, category, sort } = req.query;
-    
+    const limit = req.query.limit ? parseInt(req.query.limit) : undefined;
+    const page  = req.query.page  ? parseInt(req.query.page)  : 1;
+    const skip  = limit ? (page - 1) * limit : undefined;
+
     const whereClause = { status: 'published' };
     
     if (search) {
@@ -341,7 +344,8 @@ exports.getPublishedGames = async (req, res) => {
         ratings: { select: { score: true } },
         _count: { select: { libraryEntries: true } }
       },
-      take: req.query.limit ? parseInt(req.query.limit) : undefined,
+      take: limit,
+      skip: skip,
     });
 
     const formattedGames = games.map(game => {

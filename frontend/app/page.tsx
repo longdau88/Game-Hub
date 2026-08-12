@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { Play, Gamepad2, Search, Heart, Star, Zap, Flame, TrendingUp, ChevronRight } from "lucide-react";
+import { Play, Gamepad2, Search, Heart, Star, Zap, Flame, TrendingUp, ChevronRight, Loader2 } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 import Cookies from "js-cookie";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,6 +20,16 @@ export default function Home() {
 
   const [mostLikedGames, setMostLikedGames] = useState<any[]>([]);
 
+  // All Games (infinite scroll)
+  const ROWS = 3;
+  const COLS = 4;
+  const PAGE_SIZE = ROWS * COLS; // 12 per page
+  const [allGames, setAllGames] = useState<any[]>([]);
+  const [allGamesPage, setAllGamesPage] = useState(1);
+  const [allGamesHasMore, setAllGamesHasMore] = useState(true);
+  const [allGamesLoading, setAllGamesLoading] = useState(false);
+  const loaderRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     fetchFeaturedGames();
     fetchGames();
@@ -27,6 +37,7 @@ export default function Home() {
     fetchMostLikedGames();
     fetchCategories();
     fetchBookmarks();
+    fetchAllGamesPage(1, "", "");
   }, []);
 
   const fetchFeaturedGames = async () => {
@@ -124,9 +135,41 @@ export default function Home() {
     }
   };
 
+  const fetchAllGamesPage = async (page: number, searchQuery: string, catSlug: string) => {
+    setAllGamesLoading(true);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const params = new URLSearchParams();
+      params.append("page", String(page));
+      params.append("limit", String(PAGE_SIZE));
+      if (searchQuery) params.append("search", searchQuery);
+      if (catSlug) params.append("category", catSlug);
+      const res = await fetch(`${apiUrl}/api/games?${params.toString()}`);
+      if (res.ok) {
+        const data = await res.json();
+        const list: any[] = Array.isArray(data) ? data : data.games || [];
+        if (page === 1) {
+          setAllGames(list);
+        } else {
+          setAllGames(prev => [...prev, ...list]);
+        }
+        setAllGamesHasMore(list.length >= PAGE_SIZE);
+        setAllGamesPage(page);
+      }
+    } catch (error) {
+      console.error("Failed to fetch all games", error);
+    } finally {
+      setAllGamesLoading(false);
+    }
+  };
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     fetchGames(search, selectedCategory);
+    setAllGames([]);
+    setAllGamesPage(1);
+    setAllGamesHasMore(true);
+    fetchAllGamesPage(1, search, selectedCategory);
     setTimeout(() => {
       document.getElementById('search-results')?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
@@ -136,6 +179,10 @@ export default function Home() {
     const newCat = slug === selectedCategory ? "" : slug;
     setSelectedCategory(newCat);
     fetchGames(search, newCat);
+    setAllGames([]);
+    setAllGamesPage(1);
+    setAllGamesHasMore(true);
+    fetchAllGamesPage(1, search, newCat);
   };
 
   const toggleBookmark = async (e: React.MouseEvent, gameId: string) => {
@@ -167,6 +214,20 @@ export default function Home() {
       console.error("Failed to toggle bookmark", error);
     }
   };
+
+  // IntersectionObserver for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && allGamesHasMore && !allGamesLoading) {
+          fetchAllGamesPage(allGamesPage + 1, search, selectedCategory);
+        }
+      },
+      { threshold: 0.1 }
+    );
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [allGamesHasMore, allGamesLoading, allGamesPage, search, selectedCategory]);
 
   // Reusable Game Card Component
   const GameCard = ({ game }: { game: any }) => (
@@ -465,6 +526,45 @@ export default function Home() {
                     )}
                   </div>
                 </section>
+
+                {/* All Games Section - Infinite Scroll Grid */}
+                {!isSearching && !selectedCategory && (
+                  <section className="mb-8">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-2.5 bg-gradient-to-br from-zinc-500 to-zinc-700 rounded-xl shadow-lg">
+                        <Gamepad2 className="w-6 h-6 text-white" />
+                      </div>
+                      <h2 className="text-2xl md:text-3xl font-bold">{t("home.allGames") || "Tất Cả Game"}</h2>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+                      {allGames.map((game, idx) => (
+                        <motion.div
+                          key={`all-${game.id}-${idx}`}
+                          initial={{ opacity: 0, y: 16 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.25, delay: Math.min((idx % PAGE_SIZE) * 0.04, 0.4) }}
+                          className="flex flex-col"
+                        >
+                          <GameCard game={game} />
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Infinite scroll sentinel */}
+                    <div ref={loaderRef} className="mt-8 flex justify-center">
+                      {allGamesLoading && (
+                        <div className="flex items-center gap-3 text-zinc-500">
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          <span className="text-sm">Đang tải thêm game...</span>
+                        </div>
+                      )}
+                      {!allGamesHasMore && allGames.length > 0 && (
+                        <p className="text-zinc-400 text-sm">Bạn đã xem hết tất cả game 🎮</p>
+                      )}
+                    </div>
+                  </section>
+                )}
               </div>
 
               {/* Sidebar Column: Top Liked Games */}
