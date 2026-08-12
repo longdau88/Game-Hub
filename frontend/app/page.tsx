@@ -138,6 +138,7 @@ export default function Home() {
       setAllGamesPage(page);
     } catch (error) {
       console.error("Failed to fetch all games", error);
+      setAllGamesHasMore(false); // Prevent infinite retry loop on 503/errors
     } finally {
       setAllGamesLoading(false);
     }
