@@ -185,6 +185,17 @@ export default function Home() {
     fetchAllGamesPage(1, search, newCat);
   };
 
+  const updateGameSaveCount = (gameId: string, delta: number) => {
+    const updateFn = (prev: any[]) => prev.map(game => 
+      game.id === gameId ? { ...game, saveCount: (game.saveCount || 0) + delta } : game
+    );
+    setGames(updateFn);
+    setMostPlayedGames(updateFn);
+    setMostLikedGames(updateFn);
+    setAllGames(updateFn);
+    setFeaturedGames(updateFn);
+  };
+
   const toggleBookmark = async (e: React.MouseEvent, gameId: string) => {
     e.preventDefault();
     const token = Cookies.get("token");
@@ -205,8 +216,10 @@ export default function Home() {
         const newBookmarks = new Set(bookmarkedGames);
         if (data.bookmarked) {
           newBookmarks.add(gameId);
+          updateGameSaveCount(gameId, 1);
         } else {
           newBookmarks.delete(gameId);
+          updateGameSaveCount(gameId, -1);
         }
         setBookmarkedGames(newBookmarks);
       }
