@@ -337,5 +337,8 @@
   "admin.badgeIcon": "Icon URL (Leave empty for default)",
   "admin.badgeBtnCreate": "Create Badge",
   "admin.badgeListTitle": "Badge List",
-  "admin.auditLogsEmpty": "No logs found."
+  "admin.auditLogsEmpty": "No logs found.",
+  "system.maintenanceTitle": "System Under Maintenance",
+  "system.maintenanceDesc": "We are currently performing system upgrades to provide a better experience. Please come back in a few minutes!",
+  "system.maintenanceReload": "Reload Page"
 }

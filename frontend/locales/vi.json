@@ -337,5 +337,8 @@
   "admin.badgeIcon": "Icon URL (Trống sẽ dùng mặc định)",
   "admin.badgeBtnCreate": "Tạo Huy hiệu",
   "admin.badgeListTitle": "Danh sách Huy hiệu",
-  "admin.auditLogsEmpty": "Chưa có nhật ký nào."
+  "admin.auditLogsEmpty": "Chưa có nhật ký nào.",
+  "system.maintenanceTitle": "Hệ Thống Đang Bảo Trì",
+  "system.maintenanceDesc": "Chúng tôi đang tiến hành nâng cấp hệ thống để mang lại trải nghiệm tốt hơn. Vui lòng quay lại sau ít phút!",
+  "system.maintenanceReload": "Tải lại trang"
 }
