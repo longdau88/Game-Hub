@@ -93,6 +93,30 @@ export default function NotificationDropdown() {
     }
   };
 
+  const getLocalizedMessage = (notif: any) => {
+    if (!notif.type) return notif.message;
+    
+    let match = notif.message.match(/"(.*?)"/);
+    const gameTitle = match ? match[1] : '';
+
+    switch(notif.type) {
+      case 'GAME_APPROVED':
+        return gameTitle ? t("notif.gameApproved").replace("{title}", gameTitle) : notif.message;
+      case 'GAME_REJECTED':
+        const reasonMatch = notif.message.match(/Reason: (.*)/) || notif.message.match(/Lý do: (.*)/);
+        const reason = reasonMatch ? reasonMatch[1] : '';
+        return gameTitle ? t("notif.gameRejected").replace("{title}", gameTitle).replace("{reason}", reason) : notif.message;
+      case 'GAME_SUBMITTED':
+        return gameTitle ? t("notif.gameSubmitted").replace("{title}", gameTitle) : notif.message;
+      case 'NEW_COMMENT':
+        const userMatch = notif.message.match(/^(.*?)\s+(commented|bình luận)/);
+        const username = userMatch ? userMatch[1] : 'Someone';
+        return gameTitle ? t("notif.newComment").replace("{username}", username).replace("{title}", gameTitle) : notif.message;
+      default:
+        return notif.message;
+    }
+  };
+
   if (!token) return null;
 
   return (
@@ -139,7 +163,7 @@ export default function NotificationDropdown() {
                       <div className={`mt-1 flex-shrink-0 w-2 h-2 rounded-full ${!notif.isRead ? 'bg-blue-500' : 'bg-transparent'}`}></div>
                       <div>
                         <p className={`text-sm ${!notif.isRead ? 'text-zinc-900 dark:text-white font-medium' : 'text-zinc-700 dark:text-zinc-300'}`}>
-                          {notif.message}
+                          {getLocalizedMessage(notif)}
                         </p>
                         <p className="text-xs text-zinc-500 mt-1">
                           {new Date(notif.createdAt).toLocaleDateString()}
