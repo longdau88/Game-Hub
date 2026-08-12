@@ -5,7 +5,7 @@ const { getPendingGames, getPublishedGames, approveGame } = require('../controll
 const { 
   runGarbageCollection, 
   updateHiddenTags, syncVectorDB, 
-  getSessionStats, getCrashLogs, 
+  getAnalyticsOverview, getSessionStats, getCrashLogs,
   getEmailTemplates, createEmailTemplate, sendEmailCampaign, getEmailCampaigns,
   getGameVersions, rollbackGame 
 } = require('../controllers/admin-advanced.controller');
@@ -44,6 +44,7 @@ router.post('/games/:id/tags', updateHiddenTags);
 router.post('/ai/sync', syncVectorDB);
 
 // Analytics
+router.get('/analytics/overview', getAnalyticsOverview);
 router.get('/analytics/sessions', getSessionStats);
 router.get('/analytics/crashes', getCrashLogs);
 

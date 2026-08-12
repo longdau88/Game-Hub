@@ -207,12 +207,25 @@ exports.deleteGame = async (req, res) => {
     const game = await prisma.game.findUnique({ where: { id } });
     if (!game) return res.status(404).json({ error: 'Game not found' });
     
-    if (game.r2FolderPath && game.r2FolderPath !== "") {
-      await deleteR2Folder(game.r2FolderPath);
+    // Ratings, comments and reports use restrictive foreign keys. Delete every
+    // dependent record atomically before deleting the game itself.
+    await prisma.$transaction([
+      prisma.userLibrary.deleteMany({ where: { gameId: id } }),
+      prisma.rating.deleteMany({ where: { gameId: id } }),
+      prisma.comment.deleteMany({ where: { gameId: id } }),
+      prisma.report.deleteMany({ where: { gameId: id } }),
+      prisma.game.delete({ where: { id } })
+    ]);
+
+    // Object storage is external to the database transaction. A cleanup issue
+    // must not make a successfully deleted game appear as a failed request.
+    if (game.r2FolderPath) {
+      try {
+        await deleteR2Folder(game.r2FolderPath);
+      } catch (storageError) {
+        console.error('Game deleted but R2 cleanup failed:', storageError);
+      }
     }
-    
-    await prisma.userLibrary.deleteMany({ where: { gameId: id } });
-    await prisma.game.delete({ where: { id } });
     
     if (game.uploaderId) {
       const notif = await prisma.notification.create({

@@ -116,6 +116,130 @@ exports.syncVectorDB = async (req, res) => {
 };
 
 // 3. Analytics
+const getAnalyticsStartDate = (range) => {
+  const days = { '7d': 7, '30d': 30, '90d': 90 }[range] || 30;
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  start.setDate(start.getDate() - (days - 1));
+  return { start, days };
+};
+
+const toDateKey = (date) => new Date(date).toISOString().slice(0, 10);
+
+exports.getAnalyticsOverview = async (req, res) => {
+  try {
+    const { start, days } = getAnalyticsStartDate(req.query.range);
+    const gameId = req.query.gameId || undefined;
+    const gameFilter = gameId ? { gameId } : {};
+    const sessionWhere = { ...gameFilter, startedAt: { gte: start } };
+    const crashWhere = { ...gameFilter, createdAt: { gte: start } };
+
+    const [sessions, allTrackedSessions, crashes, publishedGames, approvedGames, availableGames] = await Promise.all([
+      prisma.gameSession.findMany({
+        where: sessionWhere,
+        select: { gameId: true, userId: true, sessionLength: true, startedAt: true }
+      }),
+      prisma.gameSession.findMany({
+        where: { ...gameFilter, userId: { not: null } },
+        select: { userId: true, startedAt: true }
+      }),
+      prisma.crashReport.findMany({
+        where: crashWhere,
+        select: { gameId: true, createdAt: true }
+      }),
+      prisma.game.findMany({
+        where: { status: 'published', ...(gameId ? { id: gameId } : {}) },
+        select: {
+          id: true, title: true, playCount: true,
+          ratings: { select: { score: true } },
+          libraryEntries: { select: { userId: true } }
+        }
+      }),
+      gameId ? Promise.resolve([]) : prisma.auditLog.findMany({
+        where: { action: 'APPROVE_GAME', createdAt: { gte: start } },
+        select: { id: true }
+      }),
+      prisma.game.findMany({ where: { status: 'published' }, select: { id: true, title: true }, orderBy: { title: 'asc' } })
+    ]);
+
+    const gamesById = new Map(publishedGames.map(game => [game.id, game]));
+    const perGame = new Map();
+    const daily = new Map();
+    for (let offset = 0; offset < days; offset++) {
+      const date = new Date(start);
+      date.setDate(start.getDate() + offset);
+      daily.set(toDateKey(date), { date: toDateKey(date), sessions: 0, users: new Set(), crashes: 0 });
+    }
+
+    sessions.forEach(session => {
+      const item = perGame.get(session.gameId) || { sessions: 0, duration: 0, users: new Set() };
+      item.sessions++;
+      item.duration += session.sessionLength;
+      if (session.userId) item.users.add(session.userId);
+      perGame.set(session.gameId, item);
+      const day = daily.get(toDateKey(session.startedAt));
+      if (day) { day.sessions++; if (session.userId) day.users.add(session.userId); }
+    });
+    crashes.forEach(crash => {
+      const day = daily.get(toDateKey(crash.createdAt));
+      if (day) day.crashes++;
+    });
+
+    const topGames = publishedGames.map(game => {
+      const stat = perGame.get(game.id) || { sessions: 0, duration: 0, users: new Set() };
+      const totalRatings = game.ratings.length;
+      return {
+        gameId: game.id,
+        gameTitle: game.title,
+        sessions: stat.sessions,
+        uniquePlayers: stat.users.size,
+        averageSessionLength: stat.sessions ? stat.duration / stat.sessions : 0,
+        crashRate: stat.sessions ? (crashes.filter(crash => crash.gameId === game.id).length / stat.sessions) * 100 : 0,
+        averageRating: totalRatings ? game.ratings.reduce((sum, rating) => sum + rating.score, 0) / totalRatings : 0,
+        totalRatings,
+        favorites: game.libraryEntries.length,
+        playCount: game.playCount
+      };
+    }).sort((a, b) => b.sessions - a.sessions).slice(0, 20);
+
+    const knownUsers = new Set(sessions.map(session => session.userId).filter(Boolean));
+    const sessionsByUser = new Map();
+    allTrackedSessions.forEach(session => {
+      const userSessions = sessionsByUser.get(session.userId) || [];
+      userSessions.push(session.startedAt);
+      sessionsByUser.set(session.userId, userSessions);
+    });
+    const retention = {};
+    for (const targetDay of [1, 7, 30]) {
+      const cutoff = Date.now() - targetDay * 86400000;
+      let eligible = 0;
+      let retained = 0;
+      sessionsByUser.forEach(userSessions => {
+        const firstSession = Math.min(...userSessions.map(date => new Date(date).getTime()));
+        if (firstSession > cutoff) return;
+        eligible++;
+        if (userSessions.some(date => new Date(date).getTime() >= firstSession + targetDay * 86400000)) retained++;
+      });
+      retention[`d${targetDay}`] = eligible ? Number((retained / eligible * 100).toFixed(1)) : 0;
+    }
+
+    const totalDuration = sessions.reduce((sum, session) => sum + session.sessionLength, 0);
+    res.json({
+      success: true,
+      data: {
+        summary: { sessions: sessions.length, uniquePlayers: knownUsers.size, totalDuration, approvedGames: approvedGames.length, crashes: crashes.length, crashRate: sessions.length ? Number((crashes.length / sessions.length * 100).toFixed(2)) : 0 },
+        trend: [...daily.values()].map(day => ({ date: day.date, sessions: day.sessions, uniquePlayers: day.users.size, crashes: day.crashes })),
+        topGames,
+        retention,
+        games: availableGames
+      }
+    });
+  } catch (error) {
+    console.error('getAnalyticsOverview error:', error);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+};
+
 exports.getSessionStats = async (req, res) => {
   try {
     // Get average session length per game

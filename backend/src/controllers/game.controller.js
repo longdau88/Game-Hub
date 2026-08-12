@@ -701,12 +701,14 @@ exports.deleteGame = async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized to delete this game' });
     }
 
-    // Delete related records first (if you have foreign keys without cascade)
-    await prisma.userLibrary.deleteMany({ where: { gameId: id } });
-    await prisma.rating.deleteMany({ where: { gameId: id } });
-    await prisma.comment.deleteMany({ where: { gameId: id } });
-
-    await prisma.game.delete({ where: { id } });
+    // Delete records protected by restrictive foreign keys atomically.
+    await prisma.$transaction([
+      prisma.userLibrary.deleteMany({ where: { gameId: id } }),
+      prisma.rating.deleteMany({ where: { gameId: id } }),
+      prisma.comment.deleteMany({ where: { gameId: id } }),
+      prisma.report.deleteMany({ where: { gameId: id } }),
+      prisma.game.delete({ where: { id } })
+    ]);
     // Note: For a complete solution we should also delete files from R2, but for now we skip to save time.
 
     res.json({ message: 'Game deleted successfully' });
