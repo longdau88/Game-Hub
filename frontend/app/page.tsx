@@ -456,7 +456,7 @@ export default function Home() {
             )}
 
             {/* Layout for Trending, New Releases and Sidebar */}
-            <div className="flex flex-col xl:flex-row gap-8">
+            <div className="flex flex-col xl:flex-row gap-8 items-start">
               {/* Main Content Column */}
               <div className="flex-1 min-w-0">
                 {/* Trending & Most Played Section */}
@@ -568,9 +568,9 @@ export default function Home() {
               </div>
 
               {/* Sidebar Column: Top Liked Games */}
-              <div className="w-full xl:w-[320px] shrink-0 space-y-8">
+              <div className="w-full xl:w-[320px] shrink-0 self-start sticky top-[148px]">
                 {mostLikedGames.length > 0 && (
-                  <div className="bg-white dark:bg-zinc-900/40 shadow-xl shadow-zinc-200/50 dark:shadow-none border border-black/5 dark:border-white/5 rounded-2xl p-6 backdrop-blur-md sticky top-32">
+                  <div className="bg-white dark:bg-zinc-900/40 shadow-xl shadow-zinc-200/50 dark:shadow-none border border-black/5 dark:border-white/5 rounded-2xl p-6 backdrop-blur-md">
                     <div className="flex items-center gap-3 mb-6">
                       <div className="p-2 bg-pink-500/10 rounded-lg">
                         <Heart className="w-5 h-5 text-pink-500 fill-pink-500" />
