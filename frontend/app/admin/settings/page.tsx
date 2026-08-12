@@ -47,7 +47,7 @@ export default function AdminSettingsPage() {
         <input
           type="checkbox"
           id="maintenanceMode"
-          checked={!!settings.maintenanceMode}
+          checked={settings.maintenanceMode === 'true' || settings.maintenanceMode === true}
           onChange={(e) => setSettings({ ...settings, maintenanceMode: e.target.checked })}
           className="w-4 h-4 accent-primary"
         />
@@ -61,7 +61,7 @@ export default function AdminSettingsPage() {
         <input
           type="checkbox"
           id="registrationEnabled"
-          checked={!!settings.registrationEnabled}
+          checked={settings.registrationEnabled === 'true' || settings.registrationEnabled === true}
           onChange={(e) => setSettings({ ...settings, registrationEnabled: e.target.checked })}
           className="w-4 h-4 accent-primary"
         />

@@ -1,4 +1,5 @@
 const prisma = require('../config/db');
+const { clearSettingsCache } = require('../middleware/maintenance.middleware');
 
 exports.getSettings = async (req, res) => {
   try {
@@ -33,6 +34,8 @@ exports.updateSettings = async (req, res) => {
         create: { key, value: String(value) }
       });
     }
+    
+    clearSettingsCache(); // Clear the cache so changes take effect immediately
     
     res.json({ message: 'Settings updated successfully' });
   } catch (error) {
