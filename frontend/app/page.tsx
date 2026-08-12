@@ -306,7 +306,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-transparent text-zinc-900 dark:text-zinc-100 selection:bg-blue-500/30">
       {/* Search Header Bar (Sticky) */}
-      <div className="sticky top-16 z-40 bg-white/90 dark:bg-[#050505]/90 backdrop-blur-xl shadow-[0_1px_0_0_rgba(0,0,0,0.06)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.05)] py-3">
+      <div className="sticky top-16 z-40 bg-white dark:bg-[#050505] backdrop-blur-xl shadow-[0_1px_0_0_rgba(0,0,0,0.08)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.06)] py-3">
         <div className="container mx-auto px-4 space-y-2">
           {/* Row 1: Search bar */}
           <form onSubmit={handleSearch} className="relative group max-w-2xl w-full">

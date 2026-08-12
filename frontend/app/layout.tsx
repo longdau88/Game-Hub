@@ -28,7 +28,7 @@ export default function RootLayout({
             <MaintenanceOverlay />
             <div className="min-h-screen bg-background text-foreground transition-colors selection:bg-blue-500/30">
               {/* Navigation Bar */}
-              <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl shadow-[0_1px_0_0_rgba(0,0,0,0.06)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.06)]">
+              <nav className="sticky top-0 z-50 bg-background backdrop-blur-xl shadow-[0_1px_0_0_rgba(0,0,0,0.06)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.06)]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between h-16">
                 <div className="flex items-center gap-8">
