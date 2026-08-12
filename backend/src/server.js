@@ -25,13 +25,31 @@ BigInt.prototype.toJSON = function () {
 };
 
 const helmet = require('helmet');
-const xss = require('xss-clean');
+const xss = require('xss');
 
 // Security Headers
 app.use(helmet());
 
-// Prevent XSS attacks
-app.use(xss());
+// Prevent XSS attacks via custom middleware
+const sanitizeObj = (obj) => {
+  if (typeof obj !== 'object' || obj === null) return;
+  for (let key in obj) {
+    if (Object.hasOwn(obj, key)) {
+      if (typeof obj[key] === 'string') {
+        obj[key] = xss(obj[key]);
+      } else if (typeof obj[key] === 'object') {
+        sanitizeObj(obj[key]);
+      }
+    }
+  }
+};
+
+app.use((req, res, next) => {
+  if (req.body) sanitizeObj(req.body);
+  if (req.query) sanitizeObj(req.query);
+  if (req.params) sanitizeObj(req.params);
+  next();
+});
 
 // Enable CORS securely
 const allowedOrigins = process.env.ALLOWED_ORIGIN ? process.env.ALLOWED_ORIGIN.split(',') : ['http://localhost:3000'];
