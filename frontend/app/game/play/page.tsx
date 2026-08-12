@@ -144,9 +144,14 @@ function GamePlayerContent() {
     }
     
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    const token = Cookies.get("token");
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
     
     // Fetch game details
-    fetch(`${apiUrl}/api/games/${gameId}`)
+    fetch(`${apiUrl}/api/games/${gameId}`, { headers })
       .then(res => res.json())
       .then(data => {
         if (!data.error) setGame(data);
@@ -158,7 +163,7 @@ function GamePlayerContent() {
       });
       
     // Fetch Leaderboard
-    fetch(`${apiUrl}/api/gamification/leaderboard/${gameId}`)
+    fetch(`${apiUrl}/api/gamification/leaderboard/${gameId}`, { headers })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setLeaderboard(data);
@@ -166,9 +171,9 @@ function GamePlayerContent() {
       .catch(console.error);
 
     // Increment play count
-    fetch(`${apiUrl}/api/games/${gameId}/play`, { method: "POST" }).catch(console.error);
+    fetch(`${apiUrl}/api/games/${gameId}/play`, { method: "POST", headers }).catch(console.error);
+    
     // Check if bookmarked
-    const token = Cookies.get("token");
     if (token) {
       fetch(`${apiUrl}/api/games/user/bookmarked`, {
         headers: { "Authorization": `Bearer ${token}` }
