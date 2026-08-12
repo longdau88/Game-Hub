@@ -25,9 +25,15 @@ export default function NotificationDropdown() {
     // so pass token as query param (backend must accept it)
     const evtSource = new EventSource(`${apiUrl}/api/notifications/stream?token=${token}`);
 
-    evtSource.onmessage = () => {
+    evtSource.onmessage = (event) => {
       // A new notification arrived – re-fetch to get full list + update unread count
       fetchNotifications();
+      try {
+        const notif = JSON.parse(event.data);
+        window.dispatchEvent(new CustomEvent('newNotification', { detail: notif }));
+      } catch (e) {
+        console.error("Error parsing SSE notification", e);
+      }
     };
 
     evtSource.onerror = () => {

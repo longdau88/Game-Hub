@@ -41,6 +41,16 @@ export default function CreatorHub() {
     };
 
     fetchGames();
+
+    const handleNewNotification = (e: any) => {
+      const notif = e.detail;
+      if (notif && ['GAME_APPROVED', 'GAME_REJECTED', 'GAME_DELETED', 'GAME_SUBMITTED'].includes(notif.type)) {
+        fetchGames();
+      }
+    };
+
+    window.addEventListener('newNotification', handleNewNotification);
+    return () => window.removeEventListener('newNotification', handleNewNotification);
   }, []);
 
   const getStatusIcon = (status: string) => {
