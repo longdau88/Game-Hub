@@ -309,7 +309,7 @@ export default function Home() {
         <p className="text-zinc-500 text-sm mb-4 line-clamp-2 leading-relaxed">{game.descriptionTranslations?.[language] || game.description}</p>
         
         <div className="mt-auto flex items-center justify-between text-xs text-zinc-500 pt-3 border-t border-zinc-200/50 dark:border-zinc-800/50">
-          <span className="flex items-center gap-1.5"><Play className="w-3.5 h-3.5" /> {game.playCount || 0} plays</span>
+          <span className="flex items-center gap-1.5"><Play className="w-3.5 h-3.5" /> {game.playCount || 0} {t("game.plays") ? t("game.plays").toLowerCase() : "plays"}</span>
           <span>{new Date(game.createdAt).toLocaleDateString()}</span>
         </div>
       </div>
@@ -596,8 +596,12 @@ export default function Home() {
                           <div className={`w-6 text-center text-lg font-black transition-colors ${idx === 0 ? 'text-yellow-400' : idx === 1 ? 'text-zinc-700 dark:text-zinc-300' : idx === 2 ? 'text-amber-600' : 'text-zinc-700 group-hover:text-pink-500'}`}>
                             {idx + 1}
                           </div>
-                          <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-black/5 dark:border-white/5">
-                            <img src={game.coverImageUrl || '/placeholder.png'} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                          <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 border border-black/5 dark:border-white/5 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center relative">
+                            {game.coverImageUrl ? (
+                              <img src={game.coverImageUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                            ) : (
+                              <Gamepad2 className="w-8 h-8 text-zinc-400 dark:text-zinc-600 group-hover:scale-110 transition-transform duration-500" />
+                            )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <h3 className="font-bold text-sm text-zinc-800 dark:text-zinc-200 truncate group-hover:text-pink-400 transition-colors">{game.title}</h3>
