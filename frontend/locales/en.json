@@ -1,4 +1,5 @@
 {
+  "common.loading": "Loading...",
   "nav.admin": "Admin Dashboard",
   "nav.login": "Login",
   "nav.register": "Register",
