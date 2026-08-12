@@ -4,8 +4,10 @@ import { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 import { Bell, Check, Info } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function NotificationDropdown() {
+  const { t } = useLanguage();
   const [notifications, setNotifications] = useState<any[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -95,13 +97,13 @@ export default function NotificationDropdown() {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-2xl overflow-hidden z-50">
           <div className="p-3 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center bg-zinc-100/50 dark:bg-zinc-800/50">
-            <h3 className="font-semibold text-zinc-900 dark:text-white">Notifications</h3>
+            <h3 className="font-semibold text-zinc-900 dark:text-white">{t("notif.title")}</h3>
             {unreadCount > 0 && (
               <button 
                 onClick={markAllAsRead}
                 className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
               >
-                <Check className="w-3 h-3" /> Mark all read
+                <Check className="w-3 h-3" /> {t("notif.markAllRead")}
               </button>
             )}
           </div>
@@ -110,7 +112,7 @@ export default function NotificationDropdown() {
             {notifications.length === 0 ? (
               <div className="p-8 text-center text-zinc-500">
                 <Bell className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                <p className="text-sm">No notifications</p>
+                <p className="text-sm">{t("notif.noNotifications")}</p>
               </div>
             ) : (
               <div className="divide-y divide-zinc-800/50">
