@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Cookies from "js-cookie";
 import { UploadCloud, FileType2, Loader2 } from "lucide-react";
 import { useLanguage } from "../../../contexts/LanguageContext";
