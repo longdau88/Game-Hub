@@ -68,7 +68,7 @@ export default async function RootLayout({
               <DialogProvider>
               <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors selection:bg-blue-500/30">
                 {/* Navigation Bar */}
-                <nav className="sticky top-4 z-50 mx-4 sm:mx-6 lg:mx-8 mb-4">
+                <nav className="sticky top-4 z-50 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 mb-4">
                   <div className="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl border border-white/20 dark:border-zinc-800/50 shadow-lg shadow-blue-500/5 rounded-2xl px-4 sm:px-6">
                     <div className="flex items-center justify-between h-16">
                       <div className="flex items-center gap-8">
