@@ -9,6 +9,7 @@ import Cookies from "js-cookie";
 import { motion, AnimatePresence } from "framer-motion";
 import { GameService } from "../services/GameService";
 import { CategoryService } from "../services/CategoryService";
+import AdBanner from "../components/AdBanner";
 
 export default function Home() {
   const { locale: language, t } = useLanguage();
@@ -462,6 +463,11 @@ export default function Home() {
                 </div>
               </section>
             )}
+
+            {/* Top Leaderboard Ad */}
+            <div className="mb-8 w-full flex justify-center">
+              <AdBanner dataAdSlot="2970928598" className="min-w-[320px] max-w-[970px] min-h-[90px]" />
+            </div>
 
             {/* Layout for Trending, New Releases and Sidebar */}
             <div className="flex flex-col xl:flex-row gap-8 items-start">

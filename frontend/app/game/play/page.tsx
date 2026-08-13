@@ -10,6 +10,7 @@ import CreatorProfileModal from "../../../components/CreatorProfileModal";
 import { useLanguage } from "../../../contexts/LanguageContext";
 import { useAppDialog } from "../../../contexts/DialogContext";
 import Cookies from "js-cookie";
+import AdBanner from "../../../components/AdBanner";
 
 function GamePlayerContent() {
   const { locale: language, t } = useLanguage();
@@ -505,6 +506,11 @@ function GamePlayerContent() {
                 ))
               )}
             </div>
+          </div>
+          
+          {/* Sidebar Sidebar Ad */}
+          <div className="mt-6 w-full hidden lg:flex justify-center">
+            <AdBanner dataAdSlot="2970928598" className="w-full min-h-[600px]" dataFullWidthResponsive={false} />
           </div>
         </div>
       </div>

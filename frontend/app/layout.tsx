@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   description: "Play awesome web games directly in your browser",
 };
 
+import Script from "next/script";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -29,6 +31,14 @@ export default async function RootLayout({
 
   return (
     <html lang={initialLocale} suppressHydrationWarning>
+      <head>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7121527745227718"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
       <body className={`${inter.className} overflow-x-hidden`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <LanguageProvider initialLocale={initialLocale}>
