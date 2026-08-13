@@ -163,7 +163,7 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
             ) : profile ? (
               <div className="flex flex-col">
                 {/* Header / Cover */}
-                <div className="h-32 relative overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                <div className="h-32 relative bg-zinc-100 dark:bg-zinc-800">
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-400/80 via-purple-400/80 to-pink-400/80 dark:from-blue-600/80 dark:via-purple-600/80 dark:to-pink-600/80 animate-gradient-x" />
                   <div className="absolute inset-0 bg-black/10 dark:bg-black/20" />
                   

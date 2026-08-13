@@ -8,6 +8,7 @@ import { useLanguage } from "../../contexts/LanguageContext";
 import { useAppDialog } from "../../contexts/DialogContext";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import CreatorProfileModal from "../../components/CreatorProfileModal";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -29,8 +30,11 @@ export default function ProfilePage() {
   const [friends, setFriends] = useState<any[]>([]);
   const [friendRequests, setFriendRequests] = useState<any[]>([]);
   const [searchFriendQuery, setSearchFriendQuery] = useState("");
-  const [searchFriendResults, setSearchFriendResults] = useState<any[]>([]);
   const [isSearchingFriends, setIsSearchingFriends] = useState(false);
+  const [searchFriendResults, setSearchFriendResults] = useState<any[]>([]);
+
+  const [selectedCreatorId, setSelectedCreatorId] = useState<number | null>(null);
+  const [isCreatorProfileOpen, setIsCreatorProfileOpen] = useState(false);
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -249,13 +253,22 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSearchFriends = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchFriendQuery.length < 2) return;
+  useEffect(() => {
+    if (searchFriendQuery.trim().length >= 2) {
+      const delayDebounceFn = setTimeout(() => {
+        fetchFriendSearch(searchFriendQuery);
+      }, 500);
+      return () => clearTimeout(delayDebounceFn);
+    } else {
+      setSearchFriendResults([]);
+    }
+  }, [searchFriendQuery]);
+
+  const fetchFriendSearch = async (query: string) => {
     setIsSearchingFriends(true);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/friends/search?q=${encodeURIComponent(searchFriendQuery)}`, { headers: getAuthHeaders() });
+      const res = await fetch(`${apiUrl}/api/friends/search?q=${encodeURIComponent(query)}`, { headers: getAuthHeaders() });
       if (res.ok) {
         const data = await res.json();
         setSearchFriendResults(data);
@@ -878,7 +891,7 @@ export default function ProfilePage() {
                   <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><UserMinus className="w-6 h-6 text-blue-500" /> Bạn bè & Xã hội</h2>
                   
                   {/* Friend Search */}
-                  <form onSubmit={handleSearchFriends} className="mb-8 relative">
+                  <div className="mb-8 relative">
                     <div className="relative">
                       <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" />
                       <input 
@@ -888,9 +901,11 @@ export default function ProfilePage() {
                         placeholder="Tìm kiếm người chơi bằng tên..." 
                         className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:border-blue-500 rounded-2xl pl-12 pr-4 py-4 text-zinc-900 dark:text-white outline-none transition-colors"
                       />
-                      <button type="submit" disabled={isSearchingFriends} className="absolute right-2 top-1/2 -translate-y-1/2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium text-sm transition-colors">
-                        {isSearchingFriends ? "Đang tìm..." : "Tìm"}
-                      </button>
+                      {isSearchingFriends && (
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                      )}
                     </div>
 
                     {searchFriendResults.length > 0 && (
@@ -900,15 +915,22 @@ export default function ProfilePage() {
                           <button type="button" onClick={() => setSearchFriendResults([])} className="text-xs text-red-500 hover:underline">Đóng</button>
                         </div>
                         {searchFriendResults.map(user => (
-                          <div key={user.id} className="flex items-center justify-between p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 rounded-xl transition-colors">
+                          <div 
+                            key={user.id} 
+                            onClick={() => {
+                              setSelectedCreatorId(user.id);
+                              setIsCreatorProfileOpen(true);
+                            }}
+                            className="flex items-center justify-between p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 rounded-xl transition-colors cursor-pointer"
+                          >
                             <div className="flex items-center gap-3">
                               <img src={user.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`} alt={user.username} className="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-700" />
                               <div>
-                                <h4 className="font-bold text-sm text-zinc-900 dark:text-white">{user.username}</h4>
+                                <h4 className="font-bold text-sm text-zinc-900 dark:text-white group-hover:text-blue-500 transition-colors">{user.username}</h4>
                                 <span className="text-xs text-yellow-500 font-medium">Lv. {user.level}</span>
                               </div>
                             </div>
-                            <div>
+                            <div onClick={e => e.stopPropagation()}>
                               {user.friendshipStatus === 'accepted' ? (
                                 <span className="text-xs font-medium text-green-500 flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Bạn bè</span>
                               ) : user.friendshipStatus === 'pending' ? (
@@ -925,7 +947,7 @@ export default function ProfilePage() {
                         ))}
                       </div>
                     )}
-                  </form>
+                  </div>
 
                   {/* Friend Requests */}
                   {friendRequests.length > 0 && (
@@ -1050,6 +1072,16 @@ export default function ProfilePage() {
           </AnimatePresence>
         </div>
       </div>
+      {isCreatorProfileOpen && selectedCreatorId && (
+        <CreatorProfileModal
+          creatorId={selectedCreatorId}
+          isOpen={isCreatorProfileOpen}
+          onClose={() => {
+            setIsCreatorProfileOpen(false);
+            setSelectedCreatorId(null);
+          }}
+        />
+      )}
     </div>
   );
 }
