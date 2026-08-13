@@ -26,6 +26,7 @@ export default function Home() {
 
   const [mostLikedGames, setMostLikedGames] = useState<any[]>([]);
   const [recommendations, setRecommendations] = useState<any[]>([]);
+  const isFirstMount = useRef(true);
 
   // All Games (infinite scroll)
   const ROWS = 3;
@@ -65,6 +66,23 @@ export default function Home() {
       document.removeEventListener("visibilitychange", handleFocus);
     };
   }, []);
+
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
+    const delayDebounceFn = setTimeout(() => {
+      fetchGames(search, selectedCategory);
+      setAllGames([]);
+      setAllGamesPage(1);
+      setAllGamesHasMore(true);
+      fetchAllGamesPage(1, search, selectedCategory);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [search]);
 
   const fetchFeaturedGames = async () => {
     try {
@@ -310,8 +328,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-transparent text-zinc-900 dark:text-zinc-100 selection:bg-blue-500/30">
-      {/* Search Header Bar (Sticky) */}
-      <div className="sticky top-16 z-40 bg-white dark:bg-[#050505] backdrop-blur-xl shadow-[0_1px_0_0_rgba(0,0,0,0.08)] dark:shadow-[0_1px_0_0_rgba(255,255,255,0.06)] py-3">
+      {/* Sticky Header with Search and Categories */}
+      <div className="sticky top-[80px] z-40 border-b border-zinc-200/50 dark:border-zinc-800/50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl pb-4 pt-2 shadow-sm">
         <div className="container mx-auto px-4 space-y-2">
           {/* Row 1: Search bar */}
           <form onSubmit={handleSearch} className="relative group max-w-2xl w-full">
@@ -325,8 +343,8 @@ export default function Home() {
             <Search className="w-5 h-5 text-zinc-500 absolute left-4 top-1/2 -translate-y-1/2 group-focus-within:text-blue-400 transition-colors" />
             <button type="submit" className="hidden">Search</button>
           </form>
-          {/* Row 2: Category filter - all categories */}
-          <div className="flex flex-wrap gap-2">
+          {/* Row 2: Category filter - horizontally scrollable on mobile */}
+          <div className="flex overflow-x-auto gap-2 pb-1 [&::-webkit-scrollbar]:hidden">
             <button
               onClick={() => handleCategorySelect("")}
               className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-all duration-300 shrink-0 whitespace-nowrap ${
@@ -402,15 +420,15 @@ export default function Home() {
                 <div className="relative z-10 flex flex-col lg:flex-row gap-8 items-center bg-white/40 dark:bg-zinc-900/30 border border-white/50 dark:border-white/5 p-4 md:p-6 rounded-[2.5rem] backdrop-blur-2xl shadow-[0_8px_40px_rgb(0,0,0,0.04)] dark:shadow-none">
                   {/* Main Featured Game */}
                   <div className="w-full lg:w-2/3">
-                    <Link href={`/game/play?id=${featuredGames[0].id}`} className="group relative block rounded-3xl overflow-hidden aspect-video shadow-2xl">
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10" />
+                    <Link href={`/game/play?id=${featuredGames[0].id}`} className="group relative block rounded-3xl overflow-hidden aspect-[4/3] sm:aspect-video shadow-2xl">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 sm:via-black/20 to-transparent z-10" />
                       <img 
                         src={featuredGames[0].coverImageUrl || '/placeholder.png'} 
                         alt={featuredGames[0].title} 
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
                       />
                       
-                      <div className="absolute bottom-0 left-0 p-8 md:p-12 z-20 w-full max-w-3xl">
+                      <div className="absolute bottom-0 left-0 p-5 sm:p-8 md:p-12 z-20 w-full max-w-3xl">
                         <div className="flex gap-2 mb-4">
                           <span className="px-3 py-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full text-xs font-bold uppercase tracking-wider text-white shadow-lg flex items-center gap-1.5">
                             <Flame className="w-3.5 h-3.5" /> Featured
@@ -421,16 +439,22 @@ export default function Home() {
                             </span>
                           )}
                         </div>
-                        <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-white mb-4 leading-tight drop-shadow-lg">
+                        <h1 className="text-2xl sm:text-4xl md:text-6xl font-black text-white mb-2 sm:mb-4 leading-tight drop-shadow-lg">
                           {featuredGames[0].title}
                         </h1>
-                        <p className="text-zinc-200 text-lg md:text-xl mb-8 line-clamp-2 md:line-clamp-3 font-medium drop-shadow-md">
+                        <p className="text-zinc-200 text-sm sm:text-lg md:text-xl mb-4 sm:mb-8 line-clamp-2 md:line-clamp-3 font-medium drop-shadow-md">
                           {featuredGames[0].descriptionTranslations?.[language] || featuredGames[0].description}
                         </p>
                         
-                        <div className="flex gap-4">
-                          <button className="px-8 py-4 bg-white text-black hover:bg-zinc-200 rounded-2xl font-bold text-lg flex items-center gap-3 transition-transform hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.3)]">
-                            <Play className="w-6 h-6 fill-current" /> Play Now
+                        <div className="flex gap-2 sm:gap-4">
+                          <button className="px-4 py-2.5 sm:px-8 sm:py-4 bg-white text-black hover:bg-zinc-200 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-lg flex items-center gap-2 sm:gap-3 transition-transform hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+                            <Play className="w-4 h-4 sm:w-6 sm:h-6 fill-current" /> Play Now
+                          </button>
+                          <button 
+                            onClick={(e) => { e.preventDefault(); toggleBookmark(e, featuredGames[0].id); }}
+                            className="px-3 py-2.5 sm:px-6 sm:py-4 bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/20 text-white rounded-xl sm:rounded-2xl font-bold transition-all hover:scale-105 active:scale-95"
+                          >
+                            <Heart className={`w-4 h-4 sm:w-6 sm:h-6 ${bookmarkedGames.has(featuredGames[0].id) ? 'fill-red-500 text-red-500' : ''}`} />
                           </button>
                         </div>
                       </div>
