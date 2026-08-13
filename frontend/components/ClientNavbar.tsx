@@ -31,9 +31,22 @@ export default function ClientNavbar() {
         setMenuOpen(false);
       }
     }
+    
+    // Close menu when scrolling
+    function handleScroll() {
+      if (menuOpen) {
+        setMenuOpen(false);
+      }
+    }
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [menuOpen]);
 
   if (!mounted) return null;
 
@@ -100,10 +113,14 @@ export default function ClientNavbar() {
       {menuOpen && (
         <div className="absolute top-full right-0 mt-4 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl flex flex-col md:hidden z-50 pb-2">
           
-          <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
-            <span className="text-sm font-medium text-zinc-500">Settings</span>
-            <div className="flex gap-2">
+          <div className="px-4 py-2 border-b border-zinc-100 dark:border-zinc-800 flex flex-col gap-3 pt-4 pb-4">
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-1">Settings</span>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Theme</span>
               <ThemeSwitcher />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Language</span>
               <LanguageSwitcher />
             </div>
           </div>
