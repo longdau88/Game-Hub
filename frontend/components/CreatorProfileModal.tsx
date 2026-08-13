@@ -240,6 +240,34 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
                     : "Kết bạn"}
                 </button>
               </div>
+
+              {/* Games List */}
+              {profile.games && profile.games.length > 0 && (
+                <div className="mt-6 border-t border-zinc-200 dark:border-zinc-800 pt-4">
+                  <h4 className="text-sm font-semibold mb-3 text-zinc-900 dark:text-white">Game Đã Đăng</h4>
+                  <div className="flex gap-3 overflow-x-auto pb-2 snap-x" style={{ scrollbarWidth: 'none' }}>
+                    {profile.games.map((game: any) => (
+                      <a 
+                        key={game.id} 
+                        href={`/game/play?id=${game.id}`}
+                        className="min-w-[100px] max-w-[100px] flex-shrink-0 snap-start group"
+                      >
+                        <div className="aspect-square bg-zinc-200 dark:bg-zinc-800 rounded-lg mb-2 overflow-hidden relative">
+                          {game.coverImageUrl ? (
+                            <img src={game.coverImageUrl} alt={game.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-zinc-500 text-2xl font-bold bg-zinc-300 dark:bg-zinc-700">
+                              {game.title.charAt(0)}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-xs font-medium text-zinc-900 dark:text-white truncate group-hover:text-blue-500 transition-colors">{game.title}</div>
+                        <div className="text-[10px] text-zinc-500">{game.playCount.toLocaleString()} lượt chơi</div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         ) : (

@@ -93,6 +93,17 @@ class UserController {
               games: { where: { status: 'published' } },
               followers: true
             }
+          },
+          games: {
+            where: { status: 'published' },
+            select: {
+              id: true,
+              title: true,
+              coverImageUrl: true,
+              playCount: true
+            },
+            orderBy: { playCount: 'desc' },
+            take: 10
           }
         }
       });
