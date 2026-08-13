@@ -640,6 +640,37 @@ export default function Home() {
               </div>
             </div>
             
+            {/* SEO & Semantic FAQ Section */}
+            {!isSearching && !selectedCategory && (
+              <section className="mt-20 pt-10 border-t border-zinc-200/50 dark:border-zinc-800/50">
+                <div className="max-w-4xl mx-auto">
+                  <h2 className="text-2xl font-bold text-zinc-900 dark:text-white mb-6">Game Hub - Nền tảng chơi game trực tuyến miễn phí tốt nhất</h2>
+                  
+                  <div className="space-y-6">
+                    <article>
+                      <h3 className="text-lg font-bold text-zinc-800 dark:text-zinc-200 mb-2">Game Hub là gì?</h3>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        Game Hub là trang web chơi game miễn phí hàng đầu, nơi bạn có thể khám phá hàng nghìn tựa game hấp dẫn mà không cần tải về hay cài đặt. Từ những trò <strong>chơi game hành động 3D</strong> nghẹt thở, đến các tựa <strong>game giải đố miễn phí</strong> rèn luyện trí não, mọi thứ đều có sẵn để bạn trải nghiệm trực tiếp trên trình duyệt.
+                      </p>
+                    </article>
+
+                    <article>
+                      <h3 className="text-lg font-bold text-zinc-800 dark:text-zinc-200 mb-2">Chơi game trên Game Hub có mất phí không?</h3>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        Hoàn toàn không! Mọi trò chơi web, game HTML5 tại Game Hub đều miễn phí 100%. Bạn có thể chơi trên máy tính, điện thoại hay máy tính bảng mọi lúc mọi nơi. Nền tảng của chúng tôi tối ưu tốc độ tải trang cực nhanh, đảm bảo bạn có trải nghiệm chơi game trực tuyến mượt mà nhất.
+                      </p>
+                    </article>
+
+                    <article>
+                      <h3 className="text-lg font-bold text-zinc-800 dark:text-zinc-200 mb-2">Thể loại game nào được yêu thích nhất?</h3>
+                      <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                        Cộng đồng game thủ tại Game Hub đặc biệt yêu thích các thể loại như game bắn súng nhiều người chơi, game đua xe 3D, game đối kháng, và các tựa game phiêu lưu thế giới mở. Hãy xem mục "Đang Thịnh Hành" để bắt kịp xu hướng mới nhất!
+                      </p>
+                    </article>
+                  </div>
+                </div>
+              </section>
+            )}
           </motion.div>
         )}
       </div>

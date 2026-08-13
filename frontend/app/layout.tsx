@@ -44,6 +44,22 @@ export default async function RootLayout({
           crossOrigin="anonymous"
           strategy="beforeInteractive"
         />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Game Hub",
+              "url": "https://game-hub.best",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://game-hub.best/?search={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
+            })
+          }}
+        />
       </head>
       <body className={`${inter.className} overflow-x-hidden`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>

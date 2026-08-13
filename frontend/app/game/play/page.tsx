@@ -54,6 +54,50 @@ export async function generateMetadata(
   }
 }
 
-export default async function Page() {
-  return <ClientPage />;
+export default async function Page({ searchParams }: Props) {
+  const resolvedSearchParams = await searchParams;
+  const id = resolvedSearchParams?.id;
+  let game = null;
+  
+  if (id) {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/games/${id}`, { cache: "no-store" });
+      if (res.ok) {
+        game = await res.json();
+      }
+    } catch (error) {
+      console.error("Failed to fetch game for schema", error);
+    }
+  }
+
+  const jsonLd = game ? {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": game.title,
+    "description": game.description,
+    "image": game.coverImageUrl,
+    "genre": game.categories?.map((c: any) => c.name) || ["Web Game"],
+    "url": `https://game-hub.best/game/play?id=${id}`,
+    "playMode": "SinglePlayer",
+    "applicationCategory": "Game",
+    "operatingSystem": "Web Browser",
+    "aggregateRating": game.totalRatings > 0 ? {
+      "@type": "AggregateRating",
+      "ratingValue": game.averageRating || 5,
+      "ratingCount": game.totalRatings || 1
+    } : undefined
+  } : null;
+
+  return (
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <ClientPage />
+    </>
+  );
 }
