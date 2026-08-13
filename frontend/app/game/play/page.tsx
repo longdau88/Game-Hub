@@ -23,9 +23,7 @@ function GamePlayerContent() {
   const [reportReason, setReportReason] = useState("");
   const [reporting, setReporting] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [followingCreator, setFollowingCreator] = useState(false);
   const [showCreatorModal, setShowCreatorModal] = useState(false);
-  const [followLoading, setFollowLoading] = useState(false);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [leaderboardFilter, setLeaderboardFilter] = useState<'global' | 'friends'>('global');
   const [collections, setCollections] = useState<any[]>([]);
@@ -164,7 +162,7 @@ function GamePlayerContent() {
     fetch(`${apiUrl}/api/games/${gameId}`, { headers })
       .then(res => res.json())
       .then(data => {
-        if (!data.error) { setGame(data); setFollowingCreator(Boolean(data.followingCreator)); }
+        if (!data.error) { setGame(data); }
         setLoading(false);
       })
       .catch(err => {
@@ -272,22 +270,7 @@ function GamePlayerContent() {
     }
   };
 
-  const handleFollowCreator = async () => {
-    const token = Cookies.get("token");
-    if (!token) { await notify({ message: t("dialog.loginRequired"), variant: "info" }); return; }
-    if (!game?.uploader?.id) return;
-    setFollowLoading(true);
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-      const response = await fetch(`${apiUrl}/api/users/${game.uploader.id}/follow`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
-      const result = await response.json();
-      if (response.ok) {
-        setFollowingCreator(result.following);
-        await notify({ message: result.following ? t("creator.followSuccess") : t("creator.unfollowSuccess"), variant: "success" });
-      } else await notify({ message: t("dialog.genericError"), variant: "error" });
-    } catch (error) { console.error(error); await notify({ message: t("dialog.genericError"), variant: "error" }); }
-    finally { setFollowLoading(false); }
-  };
+
 
   if (loading) {
     return (
@@ -380,9 +363,6 @@ function GamePlayerContent() {
                 </span>
               </div>
               <div className="flex flex-wrap gap-3">
-                {game.uploader && <button onClick={handleFollowCreator} disabled={followLoading} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${followingCreator ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/25" : "bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700"}`}>
-                  {followingCreator ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />} {followingCreator ? t("creator.following") : t("creator.follow")}
-                </button>}
                 <div className="relative">
                   <button 
                     onClick={() => handleBookmark(currentCollectionId)}
@@ -576,7 +556,6 @@ function GamePlayerContent() {
           creatorId={game.uploader.id}
           isOpen={showCreatorModal}
           onClose={() => setShowCreatorModal(false)}
-          onFollowChange={(isFollowing) => setFollowingCreator(isFollowing)}
         />
       )}
     </div>
