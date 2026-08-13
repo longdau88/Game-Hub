@@ -16,8 +16,9 @@ import { cookies } from "next/headers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Game Hub",
-  description: "Play awesome web games directly in your browser",
+  title: "Game Hub - Chơi game hành động 3D, game giải đố miễn phí",
+  description: "Play awesome web games directly in your browser. Nền tảng chơi game trực tuyến miễn phí với hàng ngàn tựa game hành động 3D, game giải đố, phiêu lưu hấp dẫn.",
+  keywords: ["chơi game miễn phí", "chơi game web", "game hành động 3D", "game giải đố miễn phí", "game html5", "chơi game trực tuyến", "game hub"],
   other: {
     "google-adsense-account": "ca-pub-7121527745227718"
   }
