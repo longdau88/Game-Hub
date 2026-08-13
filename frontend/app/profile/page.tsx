@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import { User, Settings, Gamepad2, Play, Save, History, Bookmark, UploadCloud, ShieldAlert, Star, Users, UserMinus, Folder, FolderPlus, Trash2, Target, CheckCircle2, Flame, Clock } from "lucide-react";
+import { User, Settings, Gamepad2, Play, Save, History, Bookmark, UploadCloud, ShieldAlert, Star, Users, UserMinus, Folder, FolderPlus, Trash2, Target, CheckCircle2, Flame, Clock, Search } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useAppDialog } from "../../contexts/DialogContext";
 import Link from "next/link";
