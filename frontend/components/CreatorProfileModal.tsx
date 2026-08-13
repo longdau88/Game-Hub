@@ -138,7 +138,7 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 overflow-y-auto"
           onClick={onClose}
         >
           <motion.div 
@@ -171,13 +171,11 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
                   <div className="absolute -bottom-10 left-6 z-10">
                     <div className="w-24 h-24 rounded-full p-1 bg-white/30 dark:bg-zinc-900/50 backdrop-blur-sm shadow-xl">
                       <div className="w-full h-full rounded-full border-[3px] border-white dark:border-zinc-900 overflow-hidden bg-zinc-200 dark:bg-zinc-800 relative group">
-                        {profile.avatarUrl ? (
-                          <img src={profile.avatarUrl} alt={profile.username} className="w-full h-full object-cover" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-3xl font-black text-zinc-500 bg-zinc-100 dark:bg-zinc-800">
-                            {profile.username?.charAt(0).toUpperCase()}
-                          </div>
-                        )}
+                        <img 
+                          src={profile.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub`} 
+                          alt={profile.username} 
+                          className="w-full h-full object-cover" 
+                        />
                         <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                     </div>

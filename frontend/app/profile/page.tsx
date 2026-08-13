@@ -520,7 +520,7 @@ export default function ProfilePage() {
           <div className="relative z-10 px-8 pb-8 pt-24 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
             <div className="w-32 h-32 rounded-full p-1 bg-white/30 dark:bg-zinc-900/50 backdrop-blur-md shadow-xl shrink-0 -mt-16 md:mt-0">
               <div className="w-full h-full rounded-full border-[4px] border-white dark:border-zinc-900 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
-                <img src={profile?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.username}`} alt="Avatar" className="w-full h-full object-cover" />
+                <img src={profile?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub`} alt="Avatar" className="w-full h-full object-cover" />
               </div>
             </div>
             
@@ -633,7 +633,7 @@ export default function ProfilePage() {
                               {selectedImage ? (
                                 <img src={URL.createObjectURL(selectedImage)} alt="Preview" className="w-full h-full object-cover" />
                               ) : (
-                                <img src={avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}`} alt="Avatar" className="w-full h-full object-cover" />
+                                <img src={avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub`} alt="Avatar" className="w-full h-full object-cover" />
                               )}
                             </div>
                             <input type="file" accept="image/*" onChange={e => e.target.files && setSelectedImage(e.target.files[0])} className="block w-full text-sm text-zinc-600 dark:text-zinc-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-blue-600/10 file:text-blue-400 hover:file:bg-blue-600/20 cursor-pointer transition-colors" />
@@ -651,7 +651,7 @@ export default function ProfilePage() {
                   <div className="space-y-6">
                     <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none">
                       <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                        <ShieldAlert className="w-5 h-5 text-purple-400" /> Security
+                        <ShieldAlert className="w-5 h-5 text-purple-400" /> {t("profile.security") || "Security"}
                       </h2>
                       
                       {passwordMessage.text && (
@@ -675,33 +675,33 @@ export default function ProfilePage() {
                         </button>
                       </form>
                     </div>
-                  </div>
 
-                  {/* Gamification Stats */}
-                  <div className="bg-zinc-100 dark:bg-zinc-800/50 rounded-2xl p-4 mt-6">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="text-center">
-                        <div className="flex items-center justify-center gap-1 text-orange-500 mb-1">
-                          <Flame className="w-4 h-4" />
-                          <span className="font-bold">{profile?.loginStreak || 0}</span>
+                    {/* Gamification Stats */}
+                    <div className="bg-zinc-100 dark:bg-zinc-800/50 rounded-2xl p-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="text-center">
+                          <div className="flex items-center justify-center gap-1 text-orange-500 mb-1">
+                            <Flame className="w-4 h-4" />
+                            <span className="font-bold">{profile?.loginStreak || 0}</span>
+                          </div>
+                          <p className="text-xs text-zinc-500 font-medium">Ngày Streak</p>
                         </div>
-                        <p className="text-xs text-zinc-500 font-medium">Ngày Streak</p>
-                      </div>
-                      <div className="text-center">
-                        <div className="flex items-center justify-center gap-1 text-blue-500 mb-1">
-                          <Clock className="w-4 h-4" />
-                          <span className="font-bold">{Math.floor((profile?.totalPlayTime || 0) / 60)}</span>
+                        <div className="text-center">
+                          <div className="flex items-center justify-center gap-1 text-blue-500 mb-1">
+                            <Clock className="w-4 h-4" />
+                            <span className="font-bold">{Math.floor((profile?.totalPlayTime || 0) / 60)}</span>
+                          </div>
+                          <p className="text-xs text-zinc-500 font-medium">Phút Chơi</p>
                         </div>
-                        <p className="text-xs text-zinc-500 font-medium">Phút Chơi</p>
                       </div>
-                    </div>
-                    <div className="mt-4">
-                      <div className="flex items-center justify-between text-xs font-bold mb-1">
-                        <span className="text-yellow-500">LVL {profile?.level || 1}</span>
-                        <span className="text-zinc-500">{profile?.xp || 0} XP</span>
-                      </div>
-                      <div className="h-2 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
-                        <div className="h-full bg-yellow-500 transition-all duration-500" style={{ width: `${(profile?.xp || 0) % 100}%` }} />
+                      <div className="mt-4">
+                        <div className="flex items-center justify-between text-xs font-bold mb-1">
+                          <span className="text-yellow-500">LVL {profile?.level || 1}</span>
+                          <span className="text-zinc-500">{profile?.xp || 0} XP</span>
+                        </div>
+                        <div className="h-2 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
+                          <div className="h-full bg-yellow-500 transition-all duration-500" style={{ width: `${(profile?.xp || 0) % 100}%` }} />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -862,7 +862,7 @@ export default function ProfilePage() {
                       {followingCreators.map(creator => (
                         <div key={creator.id} className="group relative flex items-center gap-4 bg-white/50 dark:bg-zinc-900/50 hover:bg-zinc-100/80 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl transition-all duration-300">
                           <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 border border-zinc-200 dark:border-zinc-700">
-                            <img src={creator.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${creator.username}`} alt={creator.username} className="w-full h-full object-cover" />
+                            <img src={creator.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub`} alt={creator.username} className="w-full h-full object-cover" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <h3 className="font-bold text-zinc-900 dark:text-white text-lg truncate">{creator.username}</h3>
@@ -924,7 +924,7 @@ export default function ProfilePage() {
                             className="flex items-center justify-between p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 rounded-xl transition-colors cursor-pointer"
                           >
                             <div className="flex items-center gap-3">
-                              <img src={user.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`} alt={user.username} className="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-700" />
+                              <img src={user.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub`} alt={user.username} className="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-700" />
                               <div>
                                 <h4 className="font-bold text-sm text-zinc-900 dark:text-white group-hover:text-blue-500 transition-colors">{user.username}</h4>
                                 <span className="text-xs text-yellow-500 font-medium">Lv. {user.level}</span>
@@ -955,15 +955,22 @@ export default function ProfilePage() {
                       <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-wider mb-4">Lời mời kết bạn ({friendRequests.length})</h3>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {friendRequests.map(req => (
-                          <div key={req.friendshipId} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl flex items-center justify-between gap-4">
+                          <div 
+                            key={req.friendshipId} 
+                            onClick={() => {
+                              setSelectedCreatorId(req.sender.id);
+                              setIsCreatorProfileOpen(true);
+                            }}
+                            className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl flex items-center justify-between gap-4 hover:border-blue-500/50 cursor-pointer transition-colors"
+                          >
                             <div className="flex items-center gap-3">
-                              <img src={req.sender.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.sender.username}`} alt={req.sender.username} className="w-12 h-12 rounded-full border border-zinc-200 dark:border-zinc-700" />
+                              <img src={req.sender.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub`} alt={req.sender.username} className="w-12 h-12 rounded-full border border-zinc-200 dark:border-zinc-700" />
                               <div>
-                                <h4 className="font-bold text-zinc-900 dark:text-white">{req.sender.username}</h4>
+                                <h4 className="font-bold text-zinc-900 dark:text-white group-hover:text-blue-500 transition-colors">{req.sender.username}</h4>
                                 <span className="text-xs text-yellow-500 font-medium">Lv. {req.sender.level}</span>
                               </div>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2" onClick={e => e.stopPropagation()}>
                               <button onClick={() => handleAcceptFriendRequest(req.friendshipId)} className="px-3 py-1.5 bg-green-500 text-white rounded-lg text-xs font-bold transition-colors shadow-lg shadow-green-500/20">
                                 Chấp nhận
                               </button>
@@ -988,22 +995,31 @@ export default function ProfilePage() {
                     ) : (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {friends.map(friend => (
-                          <div key={friend.friendshipId} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl flex items-center justify-between group">
+                          <div 
+                            key={friend.friendshipId} 
+                            onClick={() => {
+                              setSelectedCreatorId(friend.friend.id);
+                              setIsCreatorProfileOpen(true);
+                            }}
+                            className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl flex items-center justify-between gap-4 hover:border-blue-500/50 cursor-pointer transition-colors"
+                          >
                             <div className="flex items-center gap-3">
                               <div className="relative">
-                                <img src={friend.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${friend.username}`} alt={friend.username} className="w-14 h-14 rounded-full border-2 border-zinc-100 dark:border-zinc-800" />
+                                <img src={friend.friend.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub`} alt={friend.friend.username} className="w-14 h-14 rounded-full border-2 border-zinc-100 dark:border-zinc-800" />
                                 <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center border-2 border-white dark:border-zinc-900 text-[10px] font-bold text-white shadow-sm">
-                                  {friend.level}
+                                  {friend.friend.level}
                                 </div>
                               </div>
                               <div>
-                                <h4 className="font-bold text-zinc-900 dark:text-white text-lg">{friend.username}</h4>
-                                <p className="text-xs text-zinc-500 font-medium">{friend.xp} XP</p>
+                                <h4 className="font-bold text-zinc-900 dark:text-white text-lg">{friend.friend.username}</h4>
+                                <p className="text-xs text-zinc-500 font-medium">{friend.friend.xp} XP</p>
                               </div>
                             </div>
-                            <button onClick={() => handleRemoveFriend(friend.friendshipId)} className="opacity-0 group-hover:opacity-100 px-3 py-1.5 bg-red-500/10 text-red-500 rounded-lg text-xs font-bold hover:bg-red-500 hover:text-white transition-all">
-                              Xóa bạn
-                            </button>
+                            <div onClick={e => e.stopPropagation()}>
+                              <button onClick={() => handleRemoveFriend(friend.friendshipId)} className="px-3 py-1.5 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-lg text-xs font-bold transition-all">
+                                Xóa bạn
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>

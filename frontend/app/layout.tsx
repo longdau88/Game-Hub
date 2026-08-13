@@ -29,11 +29,11 @@ export default async function RootLayout({
 
   return (
     <html lang={initialLocale} suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.className} overflow-x-hidden`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <LanguageProvider initialLocale={initialLocale}>
             <DialogProvider>
-            <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors selection:bg-blue-500/30">
+            <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors selection:bg-blue-500/30 overflow-x-hidden">
               {/* Navigation Bar */}
               <nav className="sticky top-4 z-50 mx-4 sm:mx-6 lg:mx-8 mb-4">
                 <div className="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl border border-white/20 dark:border-zinc-800/50 shadow-lg shadow-blue-500/5 rounded-2xl px-4 sm:px-6">

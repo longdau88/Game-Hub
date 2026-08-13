@@ -1,4 +1,5 @@
 const prisma = require('../config/db');
+const { pushToUser } = require('./notification.controller');
 
 exports.sendFriendRequest = async (req, res) => {
   try {
@@ -34,16 +35,19 @@ exports.sendFriendRequest = async (req, res) => {
       }
     });
 
+    const senderUser = await prisma.user.findUnique({ where: { id: userId }, select: { username: true } });
+
     // Send notification
-    await prisma.notification.create({
+    const notif = await prisma.notification.create({
       data: {
         userId: targetUser.id,
         type: 'FRIEND_REQUEST',
         title: 'New Friend Request',
-        message: `You have a new friend request from someone.`, // In a real app we'd fetch the sender's username
+        message: `You have a new friend request from ${senderUser.username}.`,
         link: '/profile'
       }
     });
+    pushToUser(targetUser.id, notif);
 
     res.json({ message: 'Friend request sent', friendship });
   } catch (error) {
@@ -66,16 +70,19 @@ exports.acceptFriendRequest = async (req, res) => {
       data: { status: 'accepted' }
     });
 
+    const receiverUser = await prisma.user.findUnique({ where: { id: friendship.friendId }, select: { username: true } });
+
     // Notify sender
-    await prisma.notification.create({
+    const notif = await prisma.notification.create({
       data: {
         userId: friendship.userId,
         type: 'FRIEND_ACCEPTED',
         title: 'Friend Request Accepted',
-        message: `Your friend request was accepted.`,
+        message: `${receiverUser.username} accepted your friend request.`,
         link: '/profile'
       }
     });
+    pushToUser(friendship.userId, notif);
 
     res.json({ message: 'Friend request accepted', friendship: updated });
   } catch (error) {
