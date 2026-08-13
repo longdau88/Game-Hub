@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Cookies from "js-cookie";
+import { useAuth } from "../contexts/AuthContext";
 import { Star } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAppDialog } from "../contexts/DialogContext";
@@ -12,7 +12,7 @@ export default function GameRating({ gameId, averageRating = 0, totalRatings = 0
   const [loading, setLoading] = useState(false);
   const [localAvg, setLocalAvg] = useState(averageRating);
   const [localTotal, setLocalTotal] = useState(totalRatings);
-  const token = Cookies.get("token");
+  const { token, requireAuth } = useAuth();
 
   useEffect(() => {
     setLocalAvg(averageRating);
@@ -41,10 +41,7 @@ export default function GameRating({ gameId, averageRating = 0, totalRatings = 0
   };
 
   const handleRate = async (score: number) => {
-    if (!token) {
-      await notify({ message: t("dialog.loginRequired"), variant: "info" });
-      return;
-    }
+    if (!requireAuth()) return;
 
     setLoading(true);
     try {

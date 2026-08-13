@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Cookies from "js-cookie";
+import { useAuth } from "../contexts/AuthContext";
 import { MessageSquare, Trash2 } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 
@@ -10,7 +10,7 @@ export default function GameComments({ gameId }: { gameId: string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const token = Cookies.get("token");
+  const { token, requireAuth } = useAuth();
 
   useEffect(() => {
     fetchComments();
@@ -42,10 +42,7 @@ export default function GameComments({ gameId }: { gameId: string }) {
 
   const handlePostComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!token) {
-      setError("Please login to comment");
-      return;
-    }
+    if (!requireAuth()) return;
     if (!newComment.trim()) return;
 
     setLoading(true);
@@ -83,28 +80,23 @@ export default function GameComments({ gameId }: { gameId: string }) {
 
       {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
 
-      {token ? (
         <form onSubmit={handlePostComment} className="mb-6 flex gap-2">
           <input
             type="text"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
+            onFocus={() => requireAuth()}
             placeholder={t("game.addComment")}
             className="flex-1 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg px-4 py-2 text-sm text-zinc-900 dark:text-white outline-none focus:border-blue-500"
           />
           <button
             type="submit"
             disabled={loading || !newComment.trim()}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-zinc-900 dark:text-white text-sm font-medium rounded-lg disabled:opacity-50"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-colors"
           >
             {t("game.btnPost")}
           </button>
         </form>
-      ) : (
-        <div className="mb-6 p-4 bg-zinc-100/50 dark:bg-zinc-800/50 rounded-lg text-sm text-zinc-600 dark:text-zinc-400 text-center">
-          {t("game.loginToComment")}
-        </div>
-      )}
 
       <div className="space-y-4">
         {comments.length === 0 ? (

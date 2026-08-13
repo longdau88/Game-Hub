@@ -10,6 +10,10 @@ export function middleware(request: NextRequest) {
                      request.nextUrl.pathname.startsWith('/verify-email');
                      
   const isAdminPage = request.nextUrl.pathname.startsWith('/admin');
+  
+  const isProtectedPage = request.nextUrl.pathname.startsWith('/admin') ||
+                          request.nextUrl.pathname.startsWith('/profile') ||
+                          request.nextUrl.pathname.startsWith('/creator');
 
   // Handle Auth redirection
   if (isAuthPage && token) {
@@ -17,8 +21,8 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (!isAuthPage && !token) {
-    return NextResponse.redirect(new URL('/login', request.url));
+  if (isProtectedPage && !token) {
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
   if (isAdminPage && role !== 'admin') {

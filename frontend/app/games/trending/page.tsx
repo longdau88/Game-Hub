@@ -5,19 +5,19 @@ import Link from "next/link";
 import { TrendingUp, ArrowLeft, Play, Heart, Star, Gamepad2 } from "lucide-react";
 import { useLanguage } from "../../../contexts/LanguageContext";
 import { useAppDialog } from "../../../contexts/DialogContext";
-import Cookies from "js-cookie";
+import { useAuth } from "../../../contexts/AuthContext";
 import { motion } from "framer-motion";
 
 export default function TrendingGamesPage() {
   const { locale: language, t } = useLanguage();
   const { notify } = useAppDialog();
+  const { token, requireAuth } = useAuth();
   const [games, setGames] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [bookmarkedGames, setBookmarkedGames] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-    const token = Cookies.get("token");
     const headers: HeadersInit = {};
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
@@ -43,8 +43,7 @@ export default function TrendingGamesPage() {
 
   const toggleBookmark = async (e: React.MouseEvent, gameId: string) => {
     e.preventDefault();
-    const token = Cookies.get("token");
-    if (!token) { await notify({ message: t("dialog.loginRequired"), variant: "info" }); return; }
+    if (!requireAuth()) return;
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
       const res = await fetch(`${apiUrl}/api/games/${gameId}/bookmark`, {

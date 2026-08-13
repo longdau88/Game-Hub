@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Play, Gamepad2, Search, Heart, Star, Zap, Flame, TrendingUp, ChevronRight, Loader2 } from "lucide-react";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAppDialog } from "../contexts/DialogContext";
-import Cookies from "js-cookie";
+import { useAuth } from "../contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { GameService } from "../services/GameService";
 import { CategoryService } from "../services/CategoryService";
@@ -14,6 +14,7 @@ import AdBanner from "../components/AdBanner";
 export default function Home() {
   const { locale: language, t } = useLanguage();
   const { notify } = useAppDialog();
+  const { token, requireAuth } = useAuth();
   const [games, setGames] = useState<any[]>([]);
   const [mostPlayedGames, setMostPlayedGames] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -103,7 +104,7 @@ export default function Home() {
   };
 
   const fetchRecommendations = async () => {
-    if (!Cookies.get("token")) return;
+    if (!token) return;
     try {
       const data = await GameService.getRecommendations();
       if (Array.isArray(data)) setRecommendations(data);
@@ -122,7 +123,6 @@ export default function Home() {
   };
 
   const fetchBookmarks = async () => {
-    const token = Cookies.get("token");
     if (!token) return;
     try {
       const data = await GameService.getBookmarks();
@@ -194,11 +194,7 @@ export default function Home() {
 
   const toggleBookmark = async (e: React.MouseEvent, gameId: string) => {
     e.preventDefault();
-    const token = Cookies.get("token");
-    if (!token) {
-      await notify({ message: t("dialog.loginRequired"), variant: "info" });
-      return;
-    }
+    if (!requireAuth()) return;
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';

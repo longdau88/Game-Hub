@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { X, UserPlus, UserCheck, Loader2, Calendar, Gamepad2, Users, Star, Sparkles } from "lucide-react";
-import Cookies from "js-cookie";
 import { useLanguage } from "../contexts/LanguageContext";
+import { useAuth } from "../contexts/AuthContext";
 import { useAppDialog } from "../contexts/DialogContext";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -22,12 +22,12 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
   const [loading, setLoading] = useState(true);
   const [followLoading, setFollowLoading] = useState(false);
   const [friendLoading, setFriendLoading] = useState(false);
+  const { token, requireAuth } = useAuth();
 
   useEffect(() => {
     if (!isOpen || !creatorId) return;
 
     setLoading(true);
-    const token = Cookies.get("token");
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
     
     const headers: HeadersInit = { "Content-Type": "application/json" };
@@ -55,11 +55,7 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
   }, [creatorId, isOpen]);
 
   const handleFollow = async () => {
-    const token = Cookies.get("token");
-    if (!token) {
-      notify({ message: t("dialog.loginRequired") || "Vui lòng đăng nhập", variant: "info" });
-      return;
-    }
+    if (!requireAuth()) return;
     
     setFollowLoading(true);
     try {
@@ -93,11 +89,7 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
   };
 
   const handleAddFriend = async () => {
-    const token = Cookies.get("token");
-    if (!token) {
-      notify({ message: t("dialog.loginRequired") || "Vui lòng đăng nhập", variant: "info" });
-      return;
-    }
+    if (!requireAuth()) return;
 
     if (profile?.friendshipStatus === 'pending') {
       notify({ message: "Đã gửi yêu cầu kết bạn trước đó", variant: "info" });

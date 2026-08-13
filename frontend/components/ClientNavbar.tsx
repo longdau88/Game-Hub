@@ -8,35 +8,21 @@ import Cookies from "js-cookie";
 import ThemeSwitcher from "./ThemeSwitcher";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "../contexts/LanguageContext";
+import { useAuth } from "../contexts/AuthContext";
 import NotificationDropdown from "./NotificationDropdown";
 
 export default function ClientNavbar() {
   const { t } = useLanguage();
   const pathname = usePathname();
-  const [token, setToken] = useState<string | null>(null);
-  const [role, setRole] = useState<string | null>(null);
-  const [profile, setProfile] = useState<any>(null);
+  const { token, role, profile, logout, openLoginModal } = useAuth();
+  
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const tokenCookie = Cookies.get("token") || null;
-    setToken(tokenCookie);
-    setRole(Cookies.get("role") || null);
     setMounted(true);
-    
-    if (tokenCookie) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/users/me`, {
-        headers: { "Authorization": `Bearer ${tokenCookie}` }
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (!data.error) setProfile(data);
-      })
-      .catch(console.error);
-    }
-  }, [pathname]);
+  }, []);
 
   useEffect(() => {
     // Close menu when clicking outside
@@ -53,9 +39,7 @@ export default function ClientNavbar() {
 
   const handleLogout = (e: React.MouseEvent) => {
     e.preventDefault();
-    Cookies.remove("token");
-    Cookies.remove("role");
-    window.location.href = "/login";
+    logout();
   };
 
   return (
@@ -64,12 +48,12 @@ export default function ClientNavbar() {
       <ThemeSwitcher />
       
       {!token ? (
-        <Link
-          href="/login"
+        <button
+          onClick={openLoginModal}
           className="flex items-center gap-2 px-4 py-2 rounded-md bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium transition-colors"
         >
           {t("nav.login")}
-        </Link>
+        </button>
       ) : (
         <>
           <NotificationDropdown />

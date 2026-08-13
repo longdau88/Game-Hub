@@ -9,13 +9,14 @@ import GameRating from "../../../components/GameRating";
 import CreatorProfileModal from "../../../components/CreatorProfileModal";
 import { useLanguage } from "../../../contexts/LanguageContext";
 import { useAppDialog } from "../../../contexts/DialogContext";
-import Cookies from "js-cookie";
+import { useAuth } from "../../../contexts/AuthContext";
 import AdBanner from "../../../components/AdBanner";
 
 function GamePlayerContent() {
   const { locale: language, t } = useLanguage();
   const { notify } = useAppDialog();
   const searchParams = useSearchParams();
+  const { token, requireAuth } = useAuth();
   const gameId = searchParams.get("id");
   
   const [game, setGame] = useState<any>(null);
@@ -83,7 +84,6 @@ function GamePlayerContent() {
         const url = `${apiUrl}/api/games/${gameId}/session`;
         const data = JSON.stringify({ sessionLength: lengthSeconds });
         
-        const token = Cookies.get("token");
         const headers: HeadersInit = { 'Content-Type': 'application/json' };
         if (token) {
           headers['Authorization'] = `Bearer ${token}`;
@@ -114,12 +114,10 @@ function GamePlayerContent() {
     
     setReporting(true);
     try {
-      const token = Cookies.get("token");
-      if (!token) {
-        await notify({ message: t("dialog.loginRequired"), variant: "info" });
-        setReporting(false);
-        return;
-      }
+    if (!requireAuth()) {
+      setReporting(false);
+      return;
+    }
       
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
       const res = await fetch(`${apiUrl}/api/reports`, {
@@ -153,7 +151,6 @@ function GamePlayerContent() {
     }
     
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    const token = Cookies.get("token");
     const headers: HeadersInit = { "Content-Type": "application/json" };
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
@@ -211,7 +208,6 @@ function GamePlayerContent() {
     let headers = specificHeaders;
     if (!headers) {
       headers = { "Content-Type": "application/json" };
-      const token = Cookies.get("token");
       if (token) headers["Authorization"] = `Bearer ${token}`;
     }
     
@@ -225,8 +221,7 @@ function GamePlayerContent() {
   };
 
   const handleLeaderboardFilterChange = (newFilter: 'global' | 'friends') => {
-    if (newFilter === 'friends' && !Cookies.get('token')) {
-      notify({ message: t("dialog.loginRequired"), variant: "info" });
+    if (newFilter === 'friends' && !requireAuth()) {
       return;
     }
     setLeaderboardFilter(newFilter);
@@ -234,11 +229,7 @@ function GamePlayerContent() {
   };
 
   const handleBookmark = async (collectionId?: number | null) => {
-    const token = Cookies.get("token");
-    if (!token) {
-      await notify({ message: t("dialog.loginRequired"), variant: "info" });
-      return;
-    }
+    if (!requireAuth()) return;
     
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
