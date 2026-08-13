@@ -21,6 +21,7 @@ router.post('/upload', requireAuth, upload.fields([{ name: 'gameFile', maxCount:
 router.get('/creator/games', requireAuth, getMyGames);
 router.get('/user/bookmarked', requireAuth, gameController.getBookmarkedGames);
 router.get('/user/history', requireAuth, gameController.getGameHistory);
+router.get('/recommendations', requireAuth, gameController.getRecommendations);
 
 // Parameterized routes must be registered after fixed paths.
 router.get('/:id', optionalAuth, getGameDetails);

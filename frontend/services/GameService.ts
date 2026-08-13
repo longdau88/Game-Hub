@@ -43,4 +43,8 @@ export class GameService {
     // Assuming GET /api/games/user/bookmarked returns bookmarks
     return apiClient.get<{ gameId: string }[]>('/api/games/user/bookmarked');
   }
+
+  static async getRecommendations(): Promise<Game[]> {
+    return apiClient.get<Game[]>('/api/games/recommendations');
+  }
 }

@@ -909,13 +909,116 @@ exports.logCrash = async (req, res) => {
         gameId: id,
         userId: userId,
         errorMsg,
-        stackTrace: stackTrace || '',
-        browserInfo: browserInfo || req.headers['user-agent'] || ''
+        stackTrace,
+        browserInfo: typeof browserInfo === 'object' ? JSON.stringify(browserInfo) : browserInfo
       }
     });
     res.json({ success: true });
   } catch (error) {
     console.error('logCrash error:', error);
     res.status(500).json({ error: 'Failed to log crash' });
+  }
+};
+
+// Recommendations
+exports.getRecommendations = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    // 1. Get user history (played, rated > 3, bookmarked)
+    const [sessions, ratings, bookmarks] = await Promise.all([
+      prisma.gameSession.findMany({ where: { userId }, select: { gameId: true } }),
+      prisma.rating.findMany({ where: { userId, score: { gte: 3 } }, select: { gameId: true } }),
+      prisma.userLibrary.findMany({ where: { userId }, select: { gameId: true } })
+    ]);
+
+    const interactedGameIds = [...new Set([
+      ...sessions.map(s => s.gameId),
+      ...ratings.map(r => r.gameId),
+      ...bookmarks.map(b => b.gameId)
+    ])];
+
+    if (interactedGameIds.length === 0) {
+      // Fallback: Trending games
+      const trending = await prisma.game.findMany({
+        where: { status: 'approved' },
+        orderBy: { playCount: 'desc' },
+        take: 10,
+        include: { categories: true, uploader: { select: { id: true, username: true, avatarUrl: true } }, ratings: true }
+      });
+      return res.json(trending.map(g => ({
+        ...g,
+        averageRating: g.ratings.length ? parseFloat((g.ratings.reduce((s, r) => s + r.score, 0) / g.ratings.length).toFixed(1)) : 0,
+        totalRatings: g.ratings.length
+      })));
+    }
+
+    // 2. Find most common categories in those games
+    const interactedGames = await prisma.game.findMany({
+      where: { id: { in: interactedGameIds } },
+      include: { categories: true }
+    });
+
+    const categoryCounts = {};
+    interactedGames.forEach(game => {
+      game.categories.forEach(cat => {
+        categoryCounts[cat.id] = (categoryCounts[cat.id] || 0) + 1;
+      });
+    });
+
+    const sortedCategories = Object.entries(categoryCounts)
+      .sort((a, b) => b[1] - a[1])
+      .map(entry => parseInt(entry[0]))
+      .slice(0, 3); // Top 3 categories
+
+    if (sortedCategories.length === 0) {
+      // Fallback 2: Just return highly rated
+      const topRated = await prisma.game.findMany({
+        where: { status: 'approved', id: { notIn: interactedGameIds } },
+        take: 10,
+        include: { categories: true, uploader: { select: { id: true, username: true, avatarUrl: true } }, ratings: true }
+      });
+      return res.json(topRated.map(g => ({
+        ...g,
+        averageRating: g.ratings.length ? parseFloat((g.ratings.reduce((s, r) => s + r.score, 0) / g.ratings.length).toFixed(1)) : 0,
+        totalRatings: g.ratings.length
+      })));
+    }
+
+    // 3. Find games in these categories, not in interactedGameIds
+    const recommended = await prisma.game.findMany({
+      where: {
+        status: 'approved',
+        id: { notIn: interactedGameIds },
+        categories: { some: { id: { in: sortedCategories } } }
+      },
+      orderBy: { playCount: 'desc' },
+      take: 10,
+      include: { categories: true, uploader: { select: { id: true, username: true, avatarUrl: true } }, ratings: true }
+    });
+
+    // If still not enough, pad with trending
+    let finalRecs = recommended;
+    if (finalRecs.length < 5) {
+      const more = await prisma.game.findMany({
+        where: {
+          status: 'approved',
+          id: { notIn: [...interactedGameIds, ...finalRecs.map(g => g.id)] }
+        },
+        orderBy: { playCount: 'desc' },
+        take: 10 - finalRecs.length,
+        include: { categories: true, uploader: { select: { id: true, username: true, avatarUrl: true } }, ratings: true }
+      });
+      finalRecs = [...finalRecs, ...more];
+    }
+
+    res.json(finalRecs.map(g => ({
+      ...g,
+      averageRating: g.ratings.length ? parseFloat((g.ratings.reduce((s, r) => s + r.score, 0) / g.ratings.length).toFixed(1)) : 0,
+      totalRatings: g.ratings.length
+    })));
+  } catch (error) {
+    console.error('getRecommendations error:', error);
+    res.status(500).json({ error: 'Failed to fetch recommendations' });
   }
 };

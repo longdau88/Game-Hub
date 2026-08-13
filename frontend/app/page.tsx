@@ -23,6 +23,7 @@ export default function Home() {
   const [isSearching, setIsSearching] = useState(false);
 
   const [mostLikedGames, setMostLikedGames] = useState<any[]>([]);
+  const [recommendations, setRecommendations] = useState<any[]>([]);
 
   // All Games (infinite scroll)
   const ROWS = 3;
@@ -41,6 +42,7 @@ export default function Home() {
     fetchMostLikedGames();
     fetchCategories();
     fetchBookmarks();
+    fetchRecommendations();
     fetchAllGamesPage(1, "", "");
 
     const handleFocus = () => {
@@ -96,6 +98,16 @@ export default function Home() {
       if (Array.isArray(data)) setMostLikedGames(data);
     } catch (error) {
       console.error("Failed to fetch most liked games", error);
+    }
+  };
+
+  const fetchRecommendations = async () => {
+    if (!Cookies.get("token")) return;
+    try {
+      const data = await GameService.getRecommendations();
+      if (Array.isArray(data)) setRecommendations(data);
+    } catch (error) {
+      console.error("Failed to fetch recommendations", error);
     }
   };
 
@@ -455,6 +467,27 @@ export default function Home() {
             <div className="flex flex-col xl:flex-row gap-8 items-start">
               {/* Main Content Column */}
               <div className="flex-1 min-w-0">
+                {/* Personalized Recommendations Section */}
+                {recommendations.length > 0 && (
+                  <section className="mb-16">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shadow-purple-500/20">
+                          <Heart className="w-6 h-6 text-white" />
+                        </div>
+                        <h2 className="text-2xl md:text-3xl font-bold">Vì bạn đã chơi...</h2>
+                      </div>
+                    </div>
+                    <div className="flex gap-5 overflow-x-auto pb-4 hide-scrollbar snap-x snap-mandatory items-stretch">
+                      {recommendations.slice(0, 10).map(game => (
+                        <div key={`rec-${game.id}`} className="shrink-0 w-[240px] sm:w-[260px] snap-start flex flex-col">
+                          <GameCard game={game} />
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                )}
+
                 {/* Trending & Most Played Section */}
                 {mostPlayedGames.length > 0 && (
                   <section className="mb-16">
