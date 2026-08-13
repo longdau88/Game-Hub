@@ -1,5 +1,6 @@
 const userService = require('../services/user.service');
 const prisma = require('../config/db');
+const { pushToUser } = require('./notification.controller');
 
 class UserController {
   async getMe(req, res) {
@@ -65,6 +66,26 @@ class UserController {
         return res.json({ following: false });
       }
       await prisma.creatorFollow.create({ data: { followerId, creatorId } });
+      
+      // Notify the creator
+      try {
+        const followerUser = await prisma.user.findUnique({ where: { id: followerId }, select: { username: true } });
+        if (followerUser) {
+          const notif = await prisma.notification.create({
+            data: {
+              userId: creatorId,
+              type: 'NEW_FOLLOWER',
+              title: 'New Follower',
+              message: `${followerUser.username} started following you.`,
+              link: '/profile'
+            }
+          });
+          pushToUser(creatorId, notif);
+        }
+      } catch (notifErr) {
+        console.error('Failed to create follower notification:', notifErr);
+      }
+
       res.status(201).json({ following: true });
     } catch (error) {
       res.status(500).json({ error: 'Failed to update follow status' });

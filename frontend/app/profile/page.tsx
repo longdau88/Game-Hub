@@ -998,21 +998,21 @@ export default function ProfilePage() {
                           <div 
                             key={friend.friendshipId} 
                             onClick={() => {
-                              setSelectedCreatorId(friend.friend.id);
+                              setSelectedCreatorId(friend.id);
                               setIsCreatorProfileOpen(true);
                             }}
                             className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl flex items-center justify-between gap-4 hover:border-blue-500/50 cursor-pointer transition-colors"
                           >
                             <div className="flex items-center gap-3">
                               <div className="relative">
-                                <img src={friend.friend.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub`} alt={friend.friend.username} className="w-14 h-14 rounded-full border-2 border-zinc-100 dark:border-zinc-800" />
+                                <img src={friend.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub`} alt={friend.username} className="w-14 h-14 rounded-full border-2 border-zinc-100 dark:border-zinc-800" />
                                 <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center border-2 border-white dark:border-zinc-900 text-[10px] font-bold text-white shadow-sm">
-                                  {friend.friend.level}
+                                  {friend.level}
                                 </div>
                               </div>
                               <div>
-                                <h4 className="font-bold text-zinc-900 dark:text-white text-lg">{friend.friend.username}</h4>
-                                <p className="text-xs text-zinc-500 font-medium">{friend.friend.xp} XP</p>
+                                <h4 className="font-bold text-zinc-900 dark:text-white text-lg">{friend.username}</h4>
+                                <p className="text-xs text-zinc-500 font-medium">{friend.xp} XP</p>
                               </div>
                             </div>
                             <div onClick={e => e.stopPropagation()}>

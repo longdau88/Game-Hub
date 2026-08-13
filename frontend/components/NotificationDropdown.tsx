@@ -136,6 +136,21 @@ export default function NotificationDropdown() {
         return gameTitle ? t("notif.creatorGamePublished").replace("{title}", gameTitle) : notif.message;
       case 'CREATOR_GAME_UPDATED':
         return gameTitle ? t("notif.creatorGameUpdated").replace("{title}", gameTitle) : notif.message;
+      case 'FRIEND_REQUEST': {
+        const match = notif.message.match(/from (.*?)\.$/);
+        const username = match ? match[1] : 'Someone';
+        return t("notif.friendRequest") ? t("notif.friendRequest").replace("{username}", username) : notif.message;
+      }
+      case 'FRIEND_ACCEPTED': {
+        const match = notif.message.match(/^(.*?) accepted/);
+        const username = match ? match[1] : 'Someone';
+        return t("notif.friendAccepted") ? t("notif.friendAccepted").replace("{username}", username) : notif.message;
+      }
+      case 'NEW_FOLLOWER': {
+        const match = notif.message.match(/^(.*?) started following you/);
+        const username = match ? match[1] : 'Someone';
+        return t("notif.newFollower") ? t("notif.newFollower").replace("{username}", username) : notif.message;
+      }
       default:
         return notif.message;
     }
