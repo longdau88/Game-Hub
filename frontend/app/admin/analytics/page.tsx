@@ -31,6 +31,7 @@ function TrendChart({ trend }: { trend: TrendPoint[] }) {
   const x = (index: number) => padding.left + (index * (width - padding.left - padding.right)) / Math.max(1, trend.length - 1);
   const y = (value: number) => height - padding.bottom - (value * (height - padding.top - padding.bottom)) / max;
   const path = (key: "sessions" | "uniquePlayers") => trend.map((point, index) => `${index ? "L" : "M"}${x(index)},${y(point[key])}`).join(" ");
+  const { t } = useLanguage();
 
   return (
     <div className="p-4 sm:p-6">
