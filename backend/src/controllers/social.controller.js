@@ -46,6 +46,9 @@ exports.rateGame = async (req, res) => {
       _count: { score: true }
     });
 
+    const gamificationController = require('./gamification.controller');
+    await gamificationController.advanceQuest(req.user.userId, 'rate_game', 1);
+
     res.json({ 
       message: 'Rating saved', 
       rating, 

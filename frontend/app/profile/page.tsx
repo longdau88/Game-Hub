@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import { User, Settings, Gamepad2, Play, Save, History, Bookmark, UploadCloud, ShieldAlert, Star, Users, UserMinus, Folder, FolderPlus, Trash2 } from "lucide-react";
+import { User, Settings, Gamepad2, Play, Save, History, Bookmark, UploadCloud, ShieldAlert, Star, Users, UserMinus, Folder, FolderPlus, Trash2, Target, CheckCircle2, Flame, Clock } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useAppDialog } from "../../contexts/DialogContext";
 import Link from "next/link";
@@ -25,6 +25,7 @@ export default function ProfilePage() {
   const [isCreatingCollection, setIsCreatingCollection] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
   const [followingCreators, setFollowingCreators] = useState<any[]>([]);
+  const [quests, setQuests] = useState<any[]>([]);
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -49,6 +50,7 @@ export default function ProfilePage() {
     fetchBookmarkedGames();
     fetchCollections();
     fetchFollowingCreators();
+    fetchQuests();
   }, []);
 
   const getAuthHeaders = () => {
@@ -195,6 +197,43 @@ export default function ProfilePage() {
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const fetchQuests = async () => {
+    if (!Cookies.get("token")) return;
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/gamification/quests/daily`, { headers: getAuthHeaders() });
+      if (res.ok) {
+        const data = await res.json();
+        setQuests(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleClaimQuest = async (questId: number) => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/gamification/quests/claim`, {
+        method: "POST",
+        headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
+        body: JSON.stringify({ questId })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        await notify({ message: `Claimed ${data.reward} XP!`, variant: "success" });
+        fetchQuests();
+        fetchProfile(); // To update XP in profile UI if needed
+      } else {
+        const err = await res.json();
+        await notify({ message: err.error || "Failed to claim reward", variant: "error" });
+      }
+    } catch (error) {
+      console.error(error);
+      await notify({ message: t("dialog.genericError"), variant: "error" });
     }
   };
 
@@ -490,6 +529,36 @@ export default function ProfilePage() {
                       </form>
                     </div>
                   </div>
+
+                  {/* Gamification Stats */}
+                  <div className="bg-zinc-100 dark:bg-zinc-800/50 rounded-2xl p-4 mt-6">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center">
+                        <div className="flex items-center justify-center gap-1 text-orange-500 mb-1">
+                          <Flame className="w-4 h-4" />
+                          <span className="font-bold">{profile?.loginStreak || 0}</span>
+                        </div>
+                        <p className="text-xs text-zinc-500 font-medium">Ngày Streak</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="flex items-center justify-center gap-1 text-blue-500 mb-1">
+                          <Clock className="w-4 h-4" />
+                          <span className="font-bold">{Math.floor((profile?.totalPlayTime || 0) / 60)}</span>
+                        </div>
+                        <p className="text-xs text-zinc-500 font-medium">Phút Chơi</p>
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <div className="flex items-center justify-between text-xs font-bold mb-1">
+                        <span className="text-yellow-500">LVL {profile?.level || 1}</span>
+                        <span className="text-zinc-500">{profile?.xp || 0} XP</span>
+                      </div>
+                      <div className="h-2 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
+                        <div className="h-full bg-yellow-500 transition-all duration-500" style={{ width: `${(profile?.xp || 0) % 100}%` }} />
+                      </div>
+                    </div>
+                  </div>
+
                 </div>
               )}
 
@@ -578,6 +647,58 @@ export default function ProfilePage() {
                       </div>
                     );
                   })()}
+                </div>
+              )}
+
+              {activeTab === 'quests' && (
+                <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
+                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><Target className="w-6 h-6 text-purple-500" /> Nhiệm vụ hàng ngày</h2>
+                  {quests.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
+                      <Target className="w-16 h-16 mb-4 opacity-20" />
+                      <p>Hiện không có nhiệm vụ nào.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {quests.map(quest => {
+                        const progress = quest.progress;
+                        const isCompleted = progress?.isCompleted;
+                        const canClaim = !isCompleted && progress?.currentVal >= quest.targetValue;
+                        const percent = Math.min(100, Math.round(((progress?.currentVal || 0) / quest.targetValue) * 100));
+                        
+                        return (
+                          <div key={quest.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div className="flex-1">
+                              <h3 className="font-bold text-lg">{quest.title}</h3>
+                              <p className="text-sm text-zinc-500 mb-2">Phần thưởng: <span className="font-bold text-yellow-500">{quest.rewardXp} XP</span></p>
+                              
+                              <div className="flex items-center gap-3">
+                                <div className="flex-1 h-2 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
+                                  <div className={`h-full transition-all duration-500 ${isCompleted ? 'bg-green-500' : 'bg-blue-500'}`} style={{ width: `${percent}%` }} />
+                                </div>
+                                <span className="text-xs font-medium text-zinc-500 min-w-[40px]">{progress?.currentVal || 0} / {quest.targetValue}</span>
+                              </div>
+                            </div>
+                            <div className="flex-shrink-0">
+                              {isCompleted ? (
+                                <button disabled className="px-4 py-2 bg-green-500/10 text-green-500 rounded-xl font-bold flex items-center gap-2 text-sm cursor-not-allowed">
+                                  <CheckCircle2 className="w-4 h-4" /> Đã nhận
+                                </button>
+                              ) : (
+                                <button 
+                                  onClick={() => handleClaimQuest(quest.id)}
+                                  disabled={!canClaim}
+                                  className={`px-6 py-2 rounded-xl font-bold transition-all text-sm ${canClaim ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed'}`}
+                                >
+                                  Nhận thưởng
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
 

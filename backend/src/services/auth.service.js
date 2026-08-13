@@ -121,7 +121,49 @@ class AuthService {
       { expiresIn: '7d' }
     );
 
-    return { token, user };
+    // Calculate Login Streak
+    const now = new Date();
+    let newStreak = user.loginStreak || 0;
+    let xpGain = 0;
+    
+    if (user.lastLoginAt) {
+      const lastLoginDate = new Date(user.lastLoginAt);
+      lastLoginDate.setHours(0, 0, 0, 0);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const diffTime = today.getTime() - lastLoginDate.getTime();
+      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 1) {
+        newStreak += 1;
+        xpGain = 10; // Daily login reward
+      } else if (diffDays > 1) {
+        newStreak = 1;
+        xpGain = 10;
+      } else {
+        // diffDays === 0, already logged in today
+        newStreak = user.loginStreak || 1;
+        xpGain = 0;
+      }
+    } else {
+      newStreak = 1;
+      xpGain = 10;
+    }
+
+    const newXp = (user.xp || 0) + xpGain;
+    const newLevel = Math.floor(Math.sqrt(newXp / 100)) + 1;
+
+    await authRepository.updateUserStats(user.id, {
+      lastLoginAt: now,
+      loginStreak: newStreak,
+      xp: newXp,
+      level: newLevel
+    });
+
+    const updatedUser = { ...user, loginStreak: newStreak, xp: newXp, level: newLevel };
+
+    return { token, user: updatedUser };
   }
 }
 

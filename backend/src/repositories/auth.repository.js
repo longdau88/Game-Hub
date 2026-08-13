@@ -54,6 +54,13 @@ class AuthRepository {
       }
     });
   }
+
+  async updateUserStats(userId, data) {
+    return prisma.user.update({
+      where: { id: userId },
+      data
+    });
+  }
 }
 
 module.exports = new AuthRepository();

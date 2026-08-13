@@ -119,3 +119,124 @@ exports.grantBadge = async (req, res) => {
     res.status(500).json({ error: 'Failed to grant badge' });
   }
 };
+
+// Daily Quests
+const ensureDefaultQuests = async () => {
+  const count = await prisma.dailyQuest.count();
+  if (count === 0) {
+    await prisma.dailyQuest.createMany({
+      data: [
+        { title: 'Play a Game', targetType: 'play_game', targetValue: 1, rewardXp: 50 },
+        { title: 'Rate a Game', targetType: 'rate_game', targetValue: 1, rewardXp: 30 },
+        { title: 'Daily Login', targetType: 'login', targetValue: 1, rewardXp: 20 }
+      ]
+    });
+  }
+};
+
+exports.getDailyQuests = async (req, res) => {
+  try {
+    await ensureDefaultQuests();
+    const userId = req.user.userId;
+    const today = new Date().toISOString().split('T')[0];
+
+    const quests = await prisma.dailyQuest.findMany();
+    
+    // Get or create progress
+    const progressList = await Promise.all(quests.map(async (q) => {
+      let prog = await prisma.userQuestProgress.findUnique({
+        where: { userId_questId_date: { userId, questId: q.id, date: today } }
+      });
+      if (!prog) {
+        // Automatically complete the 'login' quest since they are fetching quests
+        let initialVal = 0;
+        let isCompleted = false;
+        if (q.targetType === 'login') {
+          initialVal = 1;
+          isCompleted = true; // Wait, they have to claim it.
+        }
+        prog = await prisma.userQuestProgress.create({
+          data: { userId, questId: q.id, date: today, currentVal: initialVal }
+        });
+      } else if (q.targetType === 'login' && prog.currentVal < q.targetValue) {
+         // Failsafe: if login wasn't recorded
+         prog = await prisma.userQuestProgress.update({
+           where: { userId_questId_date: { userId, questId: q.id, date: today } },
+           data: { currentVal: 1 }
+         });
+      }
+      return { ...q, progress: prog };
+    }));
+
+    res.json(progressList);
+  } catch (error) {
+    console.error('Get quests error:', error);
+    res.status(500).json({ error: 'Failed to fetch quests' });
+  }
+};
+
+exports.claimQuestReward = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { questId } = req.body;
+    const today = new Date().toISOString().split('T')[0];
+
+    const quest = await prisma.dailyQuest.findUnique({ where: { id: parseInt(questId) } });
+    if (!quest) return res.status(404).json({ error: 'Quest not found' });
+
+    const progress = await prisma.userQuestProgress.findUnique({
+      where: { userId_questId_date: { userId, questId: quest.id, date: today } }
+    });
+
+    if (!progress) return res.status(400).json({ error: 'No progress found for today' });
+    if (progress.isCompleted) return res.status(400).json({ error: 'Reward already claimed' });
+    if (progress.currentVal < quest.targetValue) return res.status(400).json({ error: 'Quest not completed yet' });
+
+    // Mark as completed
+    await prisma.userQuestProgress.update({
+      where: { userId_questId_date: { userId, questId: quest.id, date: today } },
+      data: { isCompleted: true }
+    });
+
+    // Reward XP
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    const newXp = (user.xp || 0) + quest.rewardXp;
+    const newLevel = Math.floor(Math.sqrt(newXp / 100)) + 1;
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { xp: newXp, level: newLevel }
+    });
+
+    res.json({ message: 'Reward claimed', xp: newXp, level: newLevel, reward: quest.rewardXp });
+  } catch (error) {
+    console.error('Claim reward error:', error);
+    res.status(500).json({ error: 'Failed to claim reward' });
+  }
+};
+
+// Internal utility to advance quest progress
+exports.advanceQuest = async (userId, targetType, amount = 1) => {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const quest = await prisma.dailyQuest.findFirst({ where: { targetType } });
+    if (!quest) return; // Quest doesn't exist
+
+    let prog = await prisma.userQuestProgress.findUnique({
+      where: { userId_questId_date: { userId, questId: quest.id, date: today } }
+    });
+
+    if (!prog) {
+      prog = await prisma.userQuestProgress.create({
+        data: { userId, questId: quest.id, date: today, currentVal: amount }
+      });
+    } else if (prog.currentVal < quest.targetValue) {
+      await prisma.userQuestProgress.update({
+        where: { userId_questId_date: { userId, questId: quest.id, date: today } },
+        data: { currentVal: Math.min(prog.currentVal + amount, quest.targetValue) }
+      });
+    }
+  } catch (error) {
+    console.error('Advance quest error:', error);
+  }
+};

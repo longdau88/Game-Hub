@@ -22,6 +22,11 @@ model User {
   verificationToken String?       @map("verification_token") @db.VarChar(255)
   avatarUrl         String?       @map("avatar_url") @db.Text
   bio               String?       @db.Text
+  xp                Int           @default(0)
+  level             Int           @default(1)
+  loginStreak       Int           @default(0) @map("login_streak")
+  lastLoginAt       DateTime?     @map("last_login_at")
+  totalPlayTime     Int           @default(0) @map("total_play_time")
   createdAt         DateTime      @default(now()) @map("created_at")
   games        Game[]
   library      UserLibrary[]
@@ -37,6 +42,7 @@ model User {
   following     CreatorFollow[] @relation("Follower")
   followers     CreatorFollow[] @relation("Creator")
   libraryCollections LibraryCollection[]
+  questProgress UserQuestProgress[]
 
   @@map("users")
 }
@@ -319,4 +325,32 @@ model UserBadge {
 
   @@id([userId, badgeId])
   @@map("user_badges")
+}
+
+model DailyQuest {
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(100)
+  description String?  @db.Text
+  targetType  String   @map("target_type") @db.VarChar(50) // play_game, rate_game, login
+  targetValue Int      @map("target_value")
+  rewardXp    Int      @map("reward_xp")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  progress UserQuestProgress[]
+
+  @@map("daily_quests")
+}
+
+model UserQuestProgress {
+  userId      Int      @map("user_id")
+  questId     Int      @map("quest_id")
+  currentVal  Int      @default(0) @map("current_val")
+  isCompleted Boolean  @default(false) @map("is_completed")
+  date        String   @db.VarChar(10) // "YYYY-MM-DD"
+  
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quest       DailyQuest @relation(fields: [questId], references: [id], onDelete: Cascade)
+
+  @@id([userId, questId, date])
+  @@map("user_quest_progress")
 }

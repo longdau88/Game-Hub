@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LogOut, Settings, User, UploadCloud, Menu, X } from "lucide-react";
+import { LogOut, Settings, User, UploadCloud, Menu, X, Star } from "lucide-react";
 import Cookies from "js-cookie";
 import ThemeSwitcher from "./ThemeSwitcher";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -15,14 +15,27 @@ export default function ClientNavbar() {
   const pathname = usePathname();
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [mounted, setMounted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setToken(Cookies.get("token") || null);
+    const tokenCookie = Cookies.get("token") || null;
+    setToken(tokenCookie);
     setRole(Cookies.get("role") || null);
     setMounted(true);
+    
+    if (tokenCookie) {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/users/me`, {
+        headers: { "Authorization": `Bearer ${tokenCookie}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) setProfile(data);
+      })
+      .catch(console.error);
+    }
   }, [pathname]);
 
   useEffect(() => {
@@ -79,6 +92,15 @@ export default function ClientNavbar() {
             <Link href="/creator/upload" className="flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors">
               <UploadCloud className="w-4 h-4" /> {t("nav.uploadGame")}
             </Link>
+            {profile && (
+              <div className="flex items-center gap-2 mr-2 bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700" title={`XP: ${profile.xp || 0}`}>
+                <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                <span className="text-xs font-bold text-zinc-900 dark:text-white">Lvl {profile.level || 1}</span>
+                <div className="w-16 h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden ml-1">
+                  <div className="h-full bg-yellow-500" style={{ width: `${((profile.xp || 0) % 100)}%` }} />
+                </div>
+              </div>
+            )}
             <Link href="/profile" className="flex items-center gap-2 px-4 py-2 rounded-md bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white text-sm font-medium transition-colors">
               <User className="w-4 h-4" /> {t("nav.profile")}
             </Link>

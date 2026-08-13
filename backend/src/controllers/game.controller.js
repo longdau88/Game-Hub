@@ -878,6 +878,17 @@ exports.logSession = async (req, res) => {
         sessionLength: parseInt(sessionLength)
       }
     });
+    
+    if (userId) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { totalPlayTime: { increment: parseInt(sessionLength) } }
+      });
+      
+      const gamificationController = require('./gamification.controller');
+      await gamificationController.advanceQuest(userId, 'play_game', 1);
+    }
+    
     res.json({ success: true });
   } catch (error) {
     console.error('logSession error:', error);
