@@ -129,8 +129,6 @@ export default function AdminPublishedGamesPage() {
     } catch (e) {}
   };
 
-  if (loading) return <div className="flex flex-col items-center justify-center py-20 text-zinc-500 dark:text-zinc-400"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div><p className="font-medium">{t("common.loading") || "Đang tải..."}</p></div>;
-
   return (
     <div className="space-y-8">
       <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
@@ -185,8 +183,7 @@ export default function AdminPublishedGamesPage() {
                   </td>
                 </tr>
               ))}
-              {publishedGames.length === 0 && (
-                <tr><td colSpan={5} className="p-8 text-center text-zinc-500">No published games.</td></tr>
+              {loading ? <tr><td colSpan={10} className="p-8 text-center text-zinc-500">{t("common.loading") || "Đang tải..."}</td></tr> : publishedGames.length === 0 && (<tr><td colSpan={5} className="p-8 text-center text-zinc-500">No published games.</td></tr>
               )}
             </tbody>
           </table>
@@ -285,8 +282,7 @@ export default function AdminPublishedGamesPage() {
                           </td>
                         </tr>
                       ))}
-                      {advVersions.length === 0 && (
-                        <tr><td colSpan={4} className="p-4 text-center text-zinc-500">{t("admin.advNoVersions")}</td></tr>
+                      {loading ? <tr><td colSpan={10} className="p-8 text-center text-zinc-500">{t("common.loading") || "Đang tải..."}</td></tr> : advVersions.length === 0 && (<tr><td colSpan={4} className="p-4 text-center text-zinc-500">{t("admin.advNoVersions")}</td></tr>
                       )}
                     </tbody>
                   </table>

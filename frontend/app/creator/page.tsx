@@ -71,10 +71,6 @@ export default function CreatorHub() {
     }
   };
 
-  if (loading) {
-    return <div className="flex justify-center py-20 text-zinc-600 dark:text-zinc-400">Loading your games...</div>;
-  }
-
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">

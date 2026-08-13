@@ -122,10 +122,6 @@ export default function EditGamePage() {
     }
   };
 
-  if (loading) {
-    return <div className="min-h-screen flex items-center justify-center text-zinc-900 dark:text-white">Loading...</div>;
-  }
-
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <div className="mb-8">

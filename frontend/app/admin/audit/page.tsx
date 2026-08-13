@@ -28,8 +28,6 @@ export default function AdminAuditPage() {
     fetchAuditLogs();
   }, []);
 
-  if (loading) return <div className="flex flex-col items-center justify-center py-20 text-zinc-500 dark:text-zinc-400"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div><p className="font-medium">{t("common.loading") || "Đang tải..."}</p></div>;
-
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">{t("admin.auditLogTitle")}</h3>
@@ -65,8 +63,7 @@ export default function AdminAuditPage() {
                   </td>
                 </tr>
               ))}
-              {auditLogs.length === 0 && (
-                <tr>
+              {loading ? <tr><td colSpan={10} className="p-8 text-center text-zinc-500">{t("common.loading") || "Đang tải..."}</td></tr> : auditLogs.length === 0 && (<tr>
                   <td colSpan={5} className="p-8 text-center text-zinc-500">{t("admin.auditLogsEmpty")}</td>
                 </tr>
               )}

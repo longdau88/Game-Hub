@@ -9,6 +9,7 @@ const {
   getEmailTemplates, createEmailTemplate, sendEmailCampaign, getEmailCampaigns,
   getGameVersions, rollbackGame 
 } = require('../controllers/admin-advanced.controller');
+const { cacheMiddleware } = require('../middleware/cache.middleware');
 
 const router = express.Router();
 
@@ -16,26 +17,26 @@ const router = express.Router();
 router.use(requireAuth, requireAdmin);
 
 // Analytics & System
-router.get('/stats', getDashboardStats);
+router.get('/stats', cacheMiddleware(10), getDashboardStats);
 
 
 // Users
-router.get('/users', getAllUsers);
+router.get('/users', cacheMiddleware(10), getAllUsers);
 router.put('/users/:id/ban', toggleBanUser);
 router.put('/users/:id/role', changeUserRole);
 
 // Games
-router.get('/games/pending', getPendingGames);
-router.get('/games/published', getPublishedGames);
+router.get('/games/pending', cacheMiddleware(10), getPendingGames);
+router.get('/games/published', cacheMiddleware(10), getPublishedGames);
 router.put('/games/:id/approve', approveGame);
 router.put('/games/:id/reject', rejectGame);
 router.put('/games/:id/feature', toggleFeaturedGame);
 router.delete('/games/:id', deleteGame);
-router.get('/games/:id/versions', getGameVersions);
+router.get('/games/:id/versions', cacheMiddleware(10), getGameVersions);
 router.put('/games/:id/versions/:versionId/rollback', rollbackGame);
 
 // Storage
-router.get('/storage/stats', getStorageStats);
+router.get('/storage/stats', cacheMiddleware(30), getStorageStats);
 router.post('/storage/gc', garbageCollect);
 router.post('/storage/cleanup', garbageCollect); // alias for cleanup
 
@@ -44,9 +45,9 @@ router.post('/games/:id/tags', updateHiddenTags);
 router.post('/ai/sync', syncVectorDB);
 
 // Analytics
-router.get('/analytics/overview', getAnalyticsOverview);
-router.get('/analytics/sessions', getSessionStats);
-router.get('/analytics/crashes', getCrashLogs);
+router.get('/analytics/overview', cacheMiddleware(10), getAnalyticsOverview);
+router.get('/analytics/sessions', cacheMiddleware(10), getSessionStats);
+router.get('/analytics/crashes', cacheMiddleware(10), getCrashLogs);
 
 // Mail Campaigns
 router.get('/mail/templates', getEmailTemplates);

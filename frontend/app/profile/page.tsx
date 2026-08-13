@@ -257,7 +257,7 @@ export default function ProfilePage() {
     if (searchFriendQuery.trim().length >= 2) {
       const delayDebounceFn = setTimeout(() => {
         fetchFriendSearch(searchFriendQuery);
-      }, 500);
+      }, 50);
       return () => clearTimeout(delayDebounceFn);
     } else {
       setSearchFriendResults([]);

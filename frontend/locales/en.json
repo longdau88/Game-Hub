@@ -435,5 +435,18 @@
   "admin.analytics.crashRate": "Crash rate",
   "admin.analytics.crashDetail": "{crashes} crashes out of {sessions} sessions",
   "admin.analytics.retention": "Retention",
-  "admin.analytics.crashByGame": "Crashes by game"
+  "admin.analytics.crashByGame": "Crashes by game",
+  "admin.analytics.sessions": "Sessions",
+  "admin.analytics.uniquePlayers": "Unique Players",
+  "admin.analytics.totalPlaytime": "Total Playtime",
+  "admin.analytics.approvedGames": "Newly Approved Games",
+  "admin.analytics.dateRange": "Date Range",
+  "admin.analytics.gameFilter": "Game Filter",
+  "admin.analytics.durationHours": "{hours} hrs {minutes} mins",
+  "admin.analytics.durationMinutes": "{minutes} mins",
+  "admin.analytics.trendAriaLabel": "Sessions and Unique Players trend chart",
+  "admin.analytics.noTrendData": "No data available in the selected time range.",
+  "admin.analytics.secondsShort": "s",
+  "admin.analytics.noMatchingGames": "No games match the filter.",
+  "admin.analytics.noData": "No data available."
 }
