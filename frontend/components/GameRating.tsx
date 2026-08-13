@@ -64,7 +64,7 @@ export default function GameRating({ gameId, averageRating = 0, totalRatings = 0
         if (data.totalRatings !== undefined) setLocalTotal(data.totalRatings);
       } else {
         const data = await res.json();
-        await notify({ message: data.error || t("dialog.genericError"), variant: "error" });
+        await notify({ message: t("dialog.genericError"), variant: "error" });
       }
     } catch (error) {
       console.error("Failed to submit rating", error);

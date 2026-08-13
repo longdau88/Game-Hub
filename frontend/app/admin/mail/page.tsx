@@ -49,7 +49,7 @@ export default function AdminMailPage() {
         setMailForm({ target: "all", subject: "", content: "" });
         fetchData();
       } else {
-        await notify({ message: data.error || t("admin.campaignFailed"), variant: "error" });
+        await notify({ message: t("admin.campaignFailed"), variant: "error" });
       }
     } catch (e) { console.error(e); }
     finally { setSending(false); }

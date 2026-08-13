@@ -44,7 +44,7 @@ export default function AdminGamificationPage() {
         fetchData();
       } else {
         const data = await res.json();
-        await notify({ message: data.error || t("admin.badgeAddFailed"), variant: "error" });
+        await notify({ message: t("admin.badgeAddFailed"), variant: "error" });
       }
     } catch (e) { console.error(e); }
   };

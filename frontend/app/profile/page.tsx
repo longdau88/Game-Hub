@@ -136,7 +136,7 @@ export default function ProfilePage() {
         fetchProfile();
       } else {
         const data = await res.json();
-        await notify({ message: data.error || t("profile.deleteError"), variant: "error" });
+        await notify({ message: t("profile.deleteError"), variant: "error" });
       }
     } catch (error) {
       await notify({ message: t("profile.deleteError"), variant: "error" });
@@ -214,7 +214,7 @@ export default function ProfilePage() {
       if (res.ok) {
         setPasswordMessage({ text: data.message, isError: false });
         setCurrentPassword(""); setNewPassword(""); setConfirmPassword("");
-        await notify({ message: data.message, variant: "success" });
+        await notify({ message: t("profile.passwordSuccess"), variant: "success" });
       } else {
         setPasswordMessage({ text: data.error || "Failed to change password", isError: true });
       }

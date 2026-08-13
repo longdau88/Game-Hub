@@ -48,10 +48,12 @@ export default function AdminStoragePage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
-        const data = await res.json();
-        await notify({ message: data.message || t("admin.actionFailed"), variant: "success" });
+        await res.json();
+        await notify({ message: t("admin.cleanupSuccess"), variant: "success" });
+      } else {
+        await notify({ message: t("admin.actionFailed"), variant: "error" });
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error(e); await notify({ message: t("admin.actionFailed"), variant: "error" }); }
     finally { setRunning(false); }
   };
 

@@ -9,6 +9,7 @@ import { LanguageProvider } from "../contexts/LanguageContext";
 import { DialogProvider } from "../contexts/DialogContext";
 import MaintenanceOverlay from "../components/MaintenanceOverlay";
 import Footer from "../components/Footer";
+import { cookies } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,16 +18,20 @@ export const metadata: Metadata = {
   description: "Play awesome web games directly in your browser",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get("NEXT_LOCALE")?.value as "en" | "vi" | undefined;
+  const initialLocale = localeCookie === "vi" ? "vi" : "en";
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={initialLocale} suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <LanguageProvider>
+          <LanguageProvider initialLocale={initialLocale}>
             <DialogProvider>
             <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors selection:bg-blue-500/30">
               {/* Navigation Bar */}

@@ -112,7 +112,7 @@ export default function AdminPublishedGamesPage() {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) { const data = await res.json(); await notify({ message: data.message, variant: "success" }); }
+      if (res.ok) { await res.json(); await notify({ message: t("admin.vectorSyncSuccess"), variant: "success" }); }
       else await notify({ message: t("admin.actionFailed"), variant: "error" });
     } catch (e) {}
   };
