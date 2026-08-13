@@ -70,6 +70,69 @@ class UserController {
       res.status(500).json({ error: 'Failed to update follow status' });
     }
   }
+
+  async getPublicProfile(req, res) {
+    try {
+      const targetUserId = Number(req.params.id);
+      if (!Number.isInteger(targetUserId)) {
+        return res.status(400).json({ error: 'Invalid user ID' });
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { id: targetUserId },
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+          bio: true,
+          level: true,
+          xp: true,
+          createdAt: true,
+          _count: {
+            select: {
+              games: { where: { status: 'published' } },
+              followers: true
+            }
+          }
+        }
+      });
+
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      let isFollowing = false;
+      let friendshipStatus = null;
+
+      if (req.user) {
+        const follow = await prisma.creatorFollow.findUnique({
+          where: { followerId_creatorId: { followerId: req.user.userId, creatorId: targetUserId } }
+        });
+        isFollowing = Boolean(follow);
+
+        const friendship = await prisma.friendship.findFirst({
+          where: {
+            OR: [
+              { userId: req.user.userId, friendId: targetUserId },
+              { userId: targetUserId, friendId: req.user.userId }
+            ]
+          }
+        });
+        if (friendship) {
+          friendshipStatus = friendship.status;
+        }
+      }
+
+      res.json({
+        ...user,
+        isFollowing,
+        friendshipStatus
+      });
+    } catch (error) {
+      console.error('getPublicProfile error:', error);
+      res.status(500).json({ error: 'Failed to fetch public profile' });
+    }
+  }
 }
 
 module.exports = new UserController();

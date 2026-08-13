@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { ArrowLeft, Maximize2, Share2, Eye, Loader2, Flag, ShieldAlert, Bookmark, UserPlus, UserCheck, ChevronDown, Folder } from "lucide-react";
 import GameComments from "../../../components/GameComments";
 import GameRating from "../../../components/GameRating";
+import CreatorProfileModal from "../../../components/CreatorProfileModal";
 import { useLanguage } from "../../../contexts/LanguageContext";
 import { useAppDialog } from "../../../contexts/DialogContext";
 import Cookies from "js-cookie";
@@ -23,6 +24,7 @@ function GamePlayerContent() {
   const [reporting, setReporting] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [followingCreator, setFollowingCreator] = useState(false);
+  const [showCreatorModal, setShowCreatorModal] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [leaderboardFilter, setLeaderboardFilter] = useState<'global' | 'friends'>('global');
@@ -342,6 +344,27 @@ function GamePlayerContent() {
 
           <div>
             <h1 className="text-3xl font-bold mb-2">{game.title}</h1>
+            
+            {/* Creator Box */}
+            {game.uploader && (
+              <div 
+                onClick={() => setShowCreatorModal(true)}
+                className="flex items-center gap-3 mb-4 p-2 -ml-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl cursor-pointer transition-colors w-fit group"
+              >
+                {game.uploader.avatarUrl ? (
+                  <img src={game.uploader.avatarUrl} alt={game.uploader.username} className="w-10 h-10 rounded-full object-cover" />
+                ) : (
+                  <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center text-lg font-bold text-zinc-500">
+                    {game.uploader.username?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <div>
+                  <div className="font-semibold text-zinc-900 dark:text-white group-hover:text-blue-500 transition-colors">{game.uploader.username}</div>
+                  <div className="text-xs text-zinc-500">Creator</div>
+                </div>
+              </div>
+            )}
+
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 text-sm text-zinc-600 dark:text-zinc-400 mb-6 border-b border-zinc-200/50 dark:border-zinc-800/50 pb-6">
               <div className="flex flex-wrap items-center gap-4">
                 <span>{t("game.publishedOn")} {new Date(game.createdAt).toLocaleDateString()}</span>
@@ -545,6 +568,16 @@ function GamePlayerContent() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Creator Profile Modal */}
+      {game?.uploader && (
+        <CreatorProfileModal
+          creatorId={game.uploader.id}
+          isOpen={showCreatorModal}
+          onClose={() => setShowCreatorModal(false)}
+          onFollowChange={(isFollowing) => setFollowingCreator(isFollowing)}
+        />
       )}
     </div>
   );

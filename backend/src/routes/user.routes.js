@@ -1,9 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/user.controller');
-const { requireAuth } = require('../middleware/auth.middleware');
+const { requireAuth, optionalAuth } = require('../middleware/auth.middleware');
 
-// All routes require authentication
+// Public or optional auth routes
+router.get('/:id/profile', optionalAuth, userController.getPublicProfile);
+
+// All routes below require authentication
 router.use(requireAuth);
 
 // Profile routes
