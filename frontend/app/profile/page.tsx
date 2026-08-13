@@ -501,33 +501,44 @@ export default function ProfilePage() {
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Profile Header */}
         <div className="relative mb-12 rounded-[2rem] overflow-hidden bg-white/80 dark:bg-zinc-900/80 border border-white/60 dark:border-zinc-800 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] backdrop-blur-2xl">
-          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-blue-400/30 via-purple-400/30 to-pink-400/30 dark:from-blue-900/40 dark:via-purple-900/40 dark:to-blue-900/40" />
-          <div className="relative z-10 px-8 pb-8 pt-20 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-zinc-900 bg-zinc-100 dark:bg-zinc-800 shadow-xl shrink-0">
-              <img src={profile?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.username}`} alt="Avatar" className="w-full h-full object-cover" />
-            </div>
-            <div className="flex-1">
-              <h1 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight mb-1">{profile?.username || "Player"}</h1>
-              <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-3 flex items-center justify-center md:justify-start gap-2">
-                <ShieldAlert className="w-4 h-4" /> {t("profile.role")}: <span className="text-zinc-900 dark:text-white capitalize">{profile?.role}</span>
-              </p>
-              <p className="text-zinc-700 dark:text-zinc-300 max-w-xl">{profile?.bio || t("profile.noBio")}</p>
-            </div>
-            <div className="flex flex-wrap justify-center md:justify-start gap-4">
-              <div className="text-center px-4 py-2 bg-zinc-100 dark:bg-black/40 rounded-xl border border-zinc-200 dark:border-white/5">
-                <p className="text-2xl font-bold text-zinc-900 dark:text-white">{gameHistory.length}</p>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 font-medium uppercase tracking-wider">{t("profile.gamesPlayed")}</p>
+          <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-r from-blue-400/80 via-purple-400/80 to-pink-400/80 dark:from-blue-600/80 dark:via-purple-600/80 dark:to-pink-600/80 animate-gradient-x" />
+          <div className="absolute top-0 left-0 w-full h-40 bg-black/10 dark:bg-black/20" />
+          
+          <div className="relative z-10 px-8 pb-8 pt-24 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
+            <div className="w-32 h-32 rounded-full p-1 bg-white/30 dark:bg-zinc-900/50 backdrop-blur-md shadow-xl shrink-0 -mt-16 md:mt-0">
+              <div className="w-full h-full rounded-full border-[4px] border-white dark:border-zinc-900 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                <img src={profile?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.username}`} alt="Avatar" className="w-full h-full object-cover" />
               </div>
-              <div className="text-center px-4 py-2 bg-zinc-100 dark:bg-black/40 rounded-xl border border-zinc-200 dark:border-white/5">
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{uploadedGames.length}</p>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 font-medium uppercase tracking-wider">{t("profile.myUploads")}</p>
+            </div>
+            
+            <div className="flex-1 mt-4 md:mt-0">
+              <h1 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight mb-2 flex flex-wrap justify-center md:justify-start items-center gap-3">
+                {profile?.username || "Player"}
+                <span className="px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs rounded-full font-black shadow-sm uppercase tracking-wider">
+                  Lv. {profile?.level || 1}
+                </span>
+              </h1>
+              <p className="text-zinc-600 dark:text-zinc-400 text-sm mb-4 flex items-center justify-center md:justify-start gap-2 font-medium">
+                <ShieldAlert className="w-4 h-4 text-blue-500" /> {t("profile.role")}: <span className="text-zinc-900 dark:text-white capitalize">{profile?.role}</span>
+              </p>
+              <p className="text-zinc-700 dark:text-zinc-300 max-w-xl text-sm leading-relaxed">{profile?.bio || t("profile.noBio")}</p>
+            </div>
+            
+            <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-6 md:mt-0">
+              <div className="text-center px-5 py-3 bg-white/50 dark:bg-zinc-800/50 rounded-2xl border border-white/60 dark:border-zinc-700/50 backdrop-blur-md shadow-sm transition-transform hover:scale-[1.02]">
+                <p className="text-2xl font-black text-zinc-900 dark:text-white mb-0.5">{gameHistory.length}</p>
+                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">{t("profile.gamesPlayed")}</p>
+              </div>
+              <div className="text-center px-5 py-3 bg-white/50 dark:bg-zinc-800/50 rounded-2xl border border-white/60 dark:border-zinc-700/50 backdrop-blur-md shadow-sm transition-transform hover:scale-[1.02]">
+                <p className="text-2xl font-black text-blue-600 dark:text-blue-400 mb-0.5">{uploadedGames.length}</p>
+                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">{t("profile.myUploads")}</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex overflow-x-auto hide-scrollbar gap-1 sm:gap-2 mb-8 bg-white/50 dark:bg-zinc-900/50 p-1.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 w-full sm:w-fit mx-auto">
+        <div className="flex overflow-x-auto hide-scrollbar gap-1 sm:gap-2 mb-8 bg-white/60 dark:bg-zinc-900/60 p-2 rounded-2xl border border-white/40 dark:border-zinc-800/80 w-full sm:w-fit mx-auto backdrop-blur-xl shadow-sm relative z-20">
           {[
             { id: 'settings', icon: Settings, label: t("profile.tabSettings") },
             { id: 'history', icon: History, label: t("profile.tabHistory") },
@@ -535,19 +546,31 @@ export default function ProfilePage() {
             { id: 'following', icon: Users, label: t("profile.tabFollowing") || "Following" },
             { id: 'friends', icon: UserMinus, label: "Bạn bè" },
             { id: 'uploads', icon: UploadCloud, label: t("profile.myUploads") }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
-                activeTab === tab.id 
-                  ? 'bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-md' 
-                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white hover:bg-zinc-100/50 dark:bg-zinc-800/50'
-              }`}
-            >
-              <tab.icon className="w-4 h-4" /> {tab.label}
-            </button>
-          ))}
+          ].map(tab => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`relative flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-colors whitespace-nowrap ${
+                  isActive 
+                    ? 'text-blue-600 dark:text-white' 
+                    : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                }`}
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute inset-0 bg-white dark:bg-zinc-800 rounded-xl shadow-sm border border-zinc-200/50 dark:border-zinc-700/50"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                <span className="relative z-10 flex items-center gap-2">
+                  <tab.icon className="w-4 h-4" /> {tab.label}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Tab Content */}

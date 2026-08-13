@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, UserPlus, UserCheck, Loader2, Calendar, Gamepad2, Users } from "lucide-react";
+import { X, UserPlus, UserCheck, Loader2, Calendar, Gamepad2, Users, Star, Sparkles } from "lucide-react";
 import Cookies from "js-cookie";
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAppDialog } from "../contexts/DialogContext";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
 interface CreatorProfileModalProps {
   creatorId: number;
@@ -129,153 +131,184 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
-      <div 
-        className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl relative"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button 
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" 
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 rounded-full transition-colors z-10"
         >
-          <X className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
-        </button>
+          <motion.div 
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl border border-white/40 dark:border-zinc-800/80 rounded-[2rem] w-full max-w-sm overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={onClose}
+              className="absolute top-4 right-4 p-2 bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 rounded-full transition-colors z-20 backdrop-blur-md"
+            >
+              <X className="w-4 h-4 text-zinc-900 dark:text-white" />
+            </button>
 
-        {loading ? (
-          <div className="h-64 flex items-center justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-          </div>
-        ) : profile ? (
-          <div className="flex flex-col">
-            {/* Header / Cover */}
-            <div className="h-24 bg-gradient-to-r from-blue-500 to-purple-600 relative">
-              <div className="absolute -bottom-10 left-6">
-                <div className="w-20 h-20 rounded-full border-4 border-white dark:border-zinc-900 overflow-hidden bg-zinc-200 dark:bg-zinc-800">
-                  {profile.avatarUrl ? (
-                    <img src={profile.avatarUrl} alt={profile.username} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-zinc-500">
-                      {profile.username?.charAt(0).toUpperCase()}
+            {loading ? (
+              <div className="h-[400px] flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+              </div>
+            ) : profile ? (
+              <div className="flex flex-col">
+                {/* Header / Cover */}
+                <div className="h-32 relative overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/80 via-purple-400/80 to-pink-400/80 dark:from-blue-600/80 dark:via-purple-600/80 dark:to-pink-600/80 animate-gradient-x" />
+                  <div className="absolute inset-0 bg-black/10 dark:bg-black/20" />
+                  
+                  {/* Avatar overlapping */}
+                  <div className="absolute -bottom-10 left-6 z-10">
+                    <div className="w-24 h-24 rounded-full p-1 bg-white/30 dark:bg-zinc-900/50 backdrop-blur-sm shadow-xl">
+                      <div className="w-full h-full rounded-full border-[3px] border-white dark:border-zinc-900 overflow-hidden bg-zinc-200 dark:bg-zinc-800 relative group">
+                        {profile.avatarUrl ? (
+                          <img src={profile.avatarUrl} alt={profile.username} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-3xl font-black text-zinc-500 bg-zinc-100 dark:bg-zinc-800">
+                            {profile.username?.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="px-6 pt-14 pb-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-2xl font-black text-zinc-900 dark:text-white flex items-center gap-2">
+                        {profile.username}
+                        <span className="px-2.5 py-0.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] rounded-full font-black shadow-sm uppercase tracking-wider">
+                          Lv.{profile.level}
+                        </span>
+                      </h3>
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1 flex items-center gap-1.5 font-medium">
+                        <Calendar className="w-3.5 h-3.5" />
+                        Joined {new Date(profile.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  {profile.bio && (
+                    <p className="text-sm text-zinc-700 dark:text-zinc-300 mb-6 line-clamp-3 leading-relaxed">
+                      {profile.bio}
+                    </p>
+                  )}
+
+                  {/* Stats Glassmorphism Blocks */}
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    <div className="bg-white/50 dark:bg-zinc-800/50 border border-white/60 dark:border-zinc-700/50 rounded-2xl p-3 text-center backdrop-blur-md shadow-sm transition-transform hover:scale-[1.02]">
+                      <div className="flex justify-center mb-1"><Gamepad2 className="w-4 h-4 text-blue-500" /></div>
+                      <div className="text-xl font-black text-zinc-900 dark:text-white">
+                        {profile._count?.games || 0}
+                      </div>
+                      <div className="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Games</div>
+                    </div>
+                    <div className="bg-white/50 dark:bg-zinc-800/50 border border-white/60 dark:border-zinc-700/50 rounded-2xl p-3 text-center backdrop-blur-md shadow-sm transition-transform hover:scale-[1.02]">
+                      <div className="flex justify-center mb-1"><Users className="w-4 h-4 text-purple-500" /></div>
+                      <div className="text-xl font-black text-zinc-900 dark:text-white">
+                        {profile._count?.followers || 0}
+                      </div>
+                      <div className="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Followers</div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button 
+                      onClick={handleFollow}
+                      disabled={followLoading}
+                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-50 relative overflow-hidden group ${
+                        profile.isFollowing 
+                          ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700" 
+                          : "text-white shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] hover:-translate-y-0.5"
+                      }`}
+                    >
+                      {!profile.isFollowing && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:from-blue-400 group-hover:to-purple-500 transition-colors" />
+                      )}
+                      <div className="relative flex items-center gap-2 z-10">
+                        {profile.isFollowing ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />} 
+                        {profile.isFollowing ? "Đang theo dõi" : "Theo dõi"}
+                      </div>
+                    </button>
+                    
+                    <button
+                      onClick={handleAddFriend}
+                      disabled={friendLoading || profile.friendshipStatus === 'accepted' || profile.friendshipStatus === 'pending'}
+                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-50 ${
+                        profile.friendshipStatus === 'accepted'
+                          ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20"
+                          : profile.friendshipStatus === 'pending'
+                          ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 border border-zinc-200 dark:border-zinc-700"
+                          : "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-700 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-zinc-300 dark:hover:border-zinc-600"
+                      }`}
+                    >
+                      <UserPlus className="w-4 h-4" />
+                      {profile.friendshipStatus === 'accepted' 
+                        ? "Bạn bè" 
+                        : profile.friendshipStatus === 'pending' 
+                        ? "Đã gửi Yêu cầu" 
+                        : "Kết bạn"}
+                    </button>
+                  </div>
+
+                  {/* Games List */}
+                  {profile.games && profile.games.length > 0 && (
+                    <div className="mt-8">
+                      <h4 className="text-sm font-bold mb-4 text-zinc-900 dark:text-white flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-yellow-500" />
+                        Game Nổi Bật
+                      </h4>
+                      <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar -mx-2 px-2">
+                        {profile.games.map((game: any) => (
+                          <Link 
+                            key={game.id} 
+                            href={`/game/play?id=${game.id}`}
+                            className="min-w-[120px] max-w-[120px] flex-shrink-0 snap-start group relative block"
+                          >
+                            <div className="aspect-[4/5] bg-zinc-100 dark:bg-zinc-800 rounded-2xl mb-3 overflow-hidden relative shadow-sm border border-zinc-200/50 dark:border-zinc-700/50 group-hover:shadow-xl group-hover:border-blue-500/50 transition-all duration-300 group-hover:-translate-y-1">
+                              {game.coverImageUrl ? (
+                                <img src={game.coverImageUrl} alt={game.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-zinc-400 text-3xl font-black bg-zinc-200 dark:bg-zinc-800">
+                                  {game.title.charAt(0)}
+                                </div>
+                              )}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
+                                <span className="text-[10px] font-bold flex items-center gap-1 bg-black/40 backdrop-blur-md px-1.5 py-0.5 rounded-md"><Star className="w-3 h-3 fill-yellow-500 text-yellow-500" /> {game.averageRating || 'New'}</span>
+                              </div>
+                            </div>
+                            <div className="text-sm font-bold text-zinc-900 dark:text-white truncate group-hover:text-blue-500 transition-colors">{game.title}</div>
+                            <div className="text-[11px] font-medium text-zinc-500 mt-0.5 flex items-center gap-1">
+                              <Gamepad2 className="w-3 h-3" /> {game.playCount.toLocaleString()} plays
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
               </div>
-            </div>
-
-            <div className="px-6 pt-12 pb-6">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
-                    {profile.username}
-                    <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 text-xs rounded-full font-medium">
-                      Lv.{profile.level}
-                    </span>
-                  </h3>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1 flex items-center gap-1">
-                    <Calendar className="w-3 h-3" />
-                    Tham gia {new Date(profile.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
+            ) : (
+              <div className="h-[400px] flex flex-col items-center justify-center text-center p-6">
+                <p className="text-zinc-500 font-medium">Profile not found</p>
               </div>
-
-              {profile.bio && (
-                <p className="text-sm text-zinc-700 dark:text-zinc-300 mb-6 line-clamp-3">
-                  {profile.bio}
-                </p>
-              )}
-
-              <div className="flex justify-between p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl mb-6">
-                <div className="text-center flex-1">
-                  <div className="text-lg font-bold text-zinc-900 dark:text-white">
-                    {profile._count?.games || 0}
-                  </div>
-                  <div className="text-xs text-zinc-500 flex items-center justify-center gap-1">
-                    <Gamepad2 className="w-3 h-3" /> Games
-                  </div>
-                </div>
-                <div className="w-px bg-zinc-200 dark:bg-zinc-700"></div>
-                <div className="text-center flex-1">
-                  <div className="text-lg font-bold text-zinc-900 dark:text-white">
-                    {profile._count?.followers || 0}
-                  </div>
-                  <div className="text-xs text-zinc-500 flex items-center justify-center gap-1">
-                    <Users className="w-3 h-3" /> Followers
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                <button 
-                  onClick={handleFollow}
-                  disabled={followLoading}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
-                    profile.isFollowing 
-                      ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700" 
-                      : "bg-blue-600 hover:bg-blue-500 text-white shadow-sm hover:shadow"
-                  }`}
-                >
-                  {profile.isFollowing ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />} 
-                  {profile.isFollowing ? "Đang theo dõi" : "Theo dõi"}
-                </button>
-                
-                <button
-                  onClick={handleAddFriend}
-                  disabled={friendLoading || profile.friendshipStatus === 'accepted' || profile.friendshipStatus === 'pending'}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2.5 border border-zinc-200 dark:border-zinc-700 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${
-                    profile.friendshipStatus === 'accepted'
-                      ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border-transparent"
-                      : profile.friendshipStatus === 'pending'
-                      ? "bg-zinc-50 dark:bg-zinc-800 text-zinc-500 border-transparent"
-                      : "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-50 dark:hover:bg-zinc-800"
-                  }`}
-                >
-                  <UserPlus className="w-4 h-4" />
-                  {profile.friendshipStatus === 'accepted' 
-                    ? "Bạn bè" 
-                    : profile.friendshipStatus === 'pending' 
-                    ? "Đã gửi Yêu cầu" 
-                    : "Kết bạn"}
-                </button>
-              </div>
-
-              {/* Games List */}
-              {profile.games && profile.games.length > 0 && (
-                <div className="mt-6 border-t border-zinc-200 dark:border-zinc-800 pt-4">
-                  <h4 className="text-sm font-semibold mb-3 text-zinc-900 dark:text-white">Game Đã Đăng</h4>
-                  <div className="flex gap-3 overflow-x-auto pb-2 snap-x" style={{ scrollbarWidth: 'none' }}>
-                    {profile.games.map((game: any) => (
-                      <a 
-                        key={game.id} 
-                        href={`/game/play?id=${game.id}`}
-                        className="min-w-[100px] max-w-[100px] flex-shrink-0 snap-start group"
-                      >
-                        <div className="aspect-square bg-zinc-200 dark:bg-zinc-800 rounded-lg mb-2 overflow-hidden relative">
-                          {game.coverImageUrl ? (
-                            <img src={game.coverImageUrl} alt={game.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-zinc-500 text-2xl font-bold bg-zinc-300 dark:bg-zinc-700">
-                              {game.title.charAt(0)}
-                            </div>
-                          )}
-                        </div>
-                        <div className="text-xs font-medium text-zinc-900 dark:text-white truncate group-hover:text-blue-500 transition-colors">{game.title}</div>
-                        <div className="text-[10px] text-zinc-500">{game.playCount.toLocaleString()} lượt chơi</div>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="h-64 flex flex-col items-center justify-center text-center p-6">
-            <p className="text-zinc-500">Profile not found</p>
-          </div>
-        )}
-      </div>
-    </div>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
