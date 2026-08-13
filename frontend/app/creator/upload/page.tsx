@@ -57,7 +57,7 @@ export default function UploadGamePage() {
     }
     
     if (selectedCategories.length === 0) {
-      setError("Vui lòng chọn ít nhất một thể loại.");
+      setError(t("upload.errorNoCategory") || "Vui lòng chọn ít nhất một thể loại.");
       return;
     }
 
@@ -178,7 +178,7 @@ export default function UploadGamePage() {
               ))}
             </div>
             {selectedCategories.length === 0 && (
-              <p className="text-red-400 text-xs mt-2">Vui lòng chọn ít nhất một thể loại.</p>
+              <p className="text-red-400 text-xs mt-2">{t("upload.errorNoCategory") || "Vui lòng chọn ít nhất một thể loại."}</p>
             )}
           </div>
 
@@ -349,10 +349,10 @@ export default function UploadGamePage() {
               </div>
               <div className="flex-1">
                 <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 block">
-                  Tôi cam kết sở hữu bản quyền hoặc có quyền hợp pháp để đăng tải tựa game này.
+                  {t("upload.agreeCopyright") || "Tôi cam kết sở hữu bản quyền hoặc có quyền hợp pháp để đăng tải tựa game này."}
                 </span>
                 <span className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 block">
-                  Mọi hành vi vi phạm bản quyền sẽ dẫn đến việc trò chơi bị gỡ bỏ và tài khoản có thể bị khóa vĩnh viễn theo <Link href="/terms" className="text-blue-500 hover:underline">Điều khoản Dịch vụ</Link>.
+                  {t("upload.copyrightWarning") || "Mọi hành vi vi phạm bản quyền sẽ dẫn đến việc trò chơi bị gỡ bỏ và tài khoản có thể bị khóa vĩnh viễn theo Điều khoản Dịch vụ."}
                 </span>
               </div>
             </label>

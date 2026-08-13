@@ -389,9 +389,9 @@ function GamePlayerContent() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden">
             <div className="p-6">
-              <h3 className="text-xl font-bold mb-4">Báo cáo Trò chơi (Report/DMCA)</h3>
+              <h3 className="text-xl font-bold mb-4">{t("game.reportTitle") || "Báo cáo Trò chơi"}</h3>
               <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-4">
-                Vui lòng mô tả vấn đề (ví dụ: lỗi game, nội dung độc hại, hoặc <b>vi phạm bản quyền/DMCA</b>). Chúng tôi sẽ xem xét và gỡ bỏ nếu có vi phạm.
+                {t("game.reportDesc") || "Vui lòng mô tả vấn đề..."}
               </p>
               
               <form onSubmit={handleReport}>
@@ -409,14 +409,14 @@ function GamePlayerContent() {
                     onClick={() => setReportModalOpen(false)}
                     className="flex-1 py-2.5 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:bg-zinc-700 rounded-lg font-medium transition-colors"
                   >
-                    Cancel
+                    {t("dialog.cancel") || "Cancel"}
                   </button>
                   <button
                     type="submit"
                     disabled={!reportReason.trim() || reporting}
                     className="flex-1 py-2.5 bg-red-600 hover:bg-red-500 text-zinc-900 dark:text-white rounded-lg font-medium transition-colors disabled:opacity-50"
                   >
-                    {reporting ? "Submitting..." : "Submit Report"}
+                    {reporting ? (t("common.loading") || "Submitting...") : (t("dialog.confirm") || "Submit Report")}
                   </button>
                 </div>
               </form>

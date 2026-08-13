@@ -76,7 +76,7 @@ export default function EditGamePage() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedCategories.length === 0) {
-      setError("Vui lòng chọn ít nhất một thể loại.");
+      setError(t("upload.errorNoCategory") || "Vui lòng chọn ít nhất một thể loại.");
       return;
     }
     
@@ -200,7 +200,7 @@ export default function EditGamePage() {
               ))}
             </div>
             {selectedCategories.length === 0 && (
-              <p className="text-red-400 text-xs mt-2">Vui lòng chọn ít nhất một thể loại.</p>
+              <p className="text-red-400 text-xs mt-2">{t("upload.errorNoCategory") || "Vui lòng chọn ít nhất một thể loại."}</p>
             )}
           </div>
 

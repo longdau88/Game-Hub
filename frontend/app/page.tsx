@@ -552,11 +552,11 @@ export default function Home() {
                       {allGamesLoading && (
                         <div className="flex items-center gap-3 text-zinc-500">
                           <Loader2 className="w-5 h-5 animate-spin" />
-                          <span className="text-sm">Đang tải thêm game...</span>
+                          <span className="text-sm">{t("home.loadingMore") || "Đang tải thêm game..."}</span>
                         </div>
                       )}
                       {!allGamesHasMore && allGames.length > 0 && (
-                        <p className="text-zinc-400 text-sm">Bạn đã xem hết tất cả game 🎮</p>
+                        <p className="text-zinc-400 text-sm">{t("home.allLoaded") || "Bạn đã xem hết tất cả game 🎮"}</p>
                       )}
                     </div>
                   </section>

@@ -72,7 +72,7 @@ export default function TrendingGamesPage() {
           </div>
           <div>
             <h1 className="text-3xl md:text-4xl font-black">{t("home.trendingNow") || "Đang Thịnh Hành"}</h1>
-            <p className="text-zinc-500 mt-1">{games.length} game đang hot nhất</p>
+            <p className="text-zinc-500 mt-1">{t("home.trendingDesc")?.replace("{count}", games.length.toString()) || `${games.length} game đang hot nhất`}</p>
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@ export default function TrendingGamesPage() {
       ) : games.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32 text-zinc-500">
           <Gamepad2 className="w-16 h-16 mb-4 opacity-20" />
-          <p className="text-lg font-medium">Chưa có game nào</p>
+          <p className="text-lg font-medium">{t("home.noGames") || "Chưa có game nào"}</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
