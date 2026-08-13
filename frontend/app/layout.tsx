@@ -18,6 +18,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Game Hub",
   description: "Play awesome web games directly in your browser",
+  other: {
+    "google-adsense-account": "ca-pub-7121527745227718"
+  }
 };
 
 import Script from "next/script";
@@ -38,7 +41,7 @@ export default async function RootLayout({
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7121527745227718"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
+          strategy="beforeInteractive"
         />
       </head>
       <body className={`${inter.className} overflow-x-hidden`}>
