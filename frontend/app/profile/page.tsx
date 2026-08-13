@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
-import { User, Settings, Gamepad2, Play, Save, History, Bookmark, UploadCloud, ShieldAlert, Star } from "lucide-react";
+import { User, Settings, Gamepad2, Play, Save, History, Bookmark, UploadCloud, ShieldAlert, Star, Users, UserMinus, Folder, FolderPlus, Trash2 } from "lucide-react";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useAppDialog } from "../../contexts/DialogContext";
 import Link from "next/link";
@@ -20,6 +20,11 @@ export default function ProfilePage() {
   const [uploadedGames, setUploadedGames] = useState<any[]>([]);
   const [gameHistory, setGameHistory] = useState<any[]>([]);
   const [bookmarkedGames, setBookmarkedGames] = useState<any[]>([]);
+  const [collections, setCollections] = useState<any[]>([]);
+  const [selectedCollectionId, setSelectedCollectionId] = useState<number | 'all'>('all');
+  const [isCreatingCollection, setIsCreatingCollection] = useState(false);
+  const [newCollectionName, setNewCollectionName] = useState("");
+  const [followingCreators, setFollowingCreators] = useState<any[]>([]);
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -42,6 +47,8 @@ export default function ProfilePage() {
     fetchUploadedGames();
     fetchGameHistory();
     fetchBookmarkedGames();
+    fetchCollections();
+    fetchFollowingCreators();
   }, []);
 
   const getAuthHeaders = () => {
@@ -119,6 +126,92 @@ export default function ProfilePage() {
       }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const fetchCollections = async () => {
+    if (!Cookies.get("token")) return;
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/collections`, { headers: getAuthHeaders() });
+      if (res.ok) {
+        const data = await res.json();
+        setCollections(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCreateCollection = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCollectionName.trim()) return;
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/collections`, {
+        method: "POST",
+        headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newCollectionName })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setCollections([...collections, data]);
+        setNewCollectionName("");
+        setIsCreatingCollection(false);
+        await notify({ message: "Collection created", variant: "success" });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleDeleteCollection = async (collectionId: number) => {
+    if (!await confirm({ message: "Are you sure you want to delete this folder? Games will be moved to Uncategorized.", variant: "warning" })) return;
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/collections/${collectionId}`, {
+        method: "DELETE",
+        headers: getAuthHeaders()
+      });
+      if (res.ok) {
+        setCollections(collections.filter(c => c.id !== collectionId));
+        if (selectedCollectionId === collectionId) setSelectedCollectionId('all');
+        await notify({ message: "Collection deleted", variant: "success" });
+        fetchBookmarkedGames();
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchFollowingCreators = async () => {
+    if (!Cookies.get("token")) return;
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/users/following`, { headers: getAuthHeaders() });
+      if (res.ok) {
+        const data = await res.json();
+        setFollowingCreators(data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleUnfollow = async (creatorId: number) => {
+    if (!await confirm({ message: t("profile.confirmUnfollow") || "Are you sure you want to unfollow this creator?", variant: "warning" })) return;
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/users/${creatorId}/follow`, {
+        method: "POST",
+        headers: getAuthHeaders()
+      });
+      if (res.ok) {
+        setFollowingCreators(followingCreators.filter(c => c.id !== creatorId));
+        await notify({ message: t("profile.unfollowSuccess") || "Unfollowed successfully", variant: "success" });
+      }
+    } catch (error) {
+      await notify({ message: t("dialog.genericError"), variant: "error" });
     }
   };
 
@@ -290,6 +383,7 @@ export default function ProfilePage() {
             { id: 'settings', icon: Settings, label: t("profile.tabSettings") },
             { id: 'history', icon: History, label: t("profile.tabHistory") },
             { id: 'bookmarks', icon: Bookmark, label: t("profile.tabBookmarks") },
+            { id: 'following', icon: Users, label: t("profile.tabFollowing") || "Following" },
             { id: 'uploads', icon: UploadCloud, label: t("profile.myUploads") }
           ].map(tab => (
             <button
@@ -418,15 +512,107 @@ export default function ProfilePage() {
 
               {activeTab === 'bookmarks' && (
                 <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
-                  <h2 className="text-2xl font-bold mb-6">{t("profile.savedGames")}</h2>
-                  {bookmarkedGames.length === 0 ? (
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <h2 className="text-2xl font-bold">{t("profile.savedGames")}</h2>
+                    
+                    {/* Folder Navigation */}
+                    <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar w-full md:w-auto pb-2 md:pb-0">
+                      <button 
+                        onClick={() => setSelectedCollectionId('all')}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${selectedCollectionId === 'all' ? 'bg-blue-500/10 text-blue-500' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}
+                      >
+                        All
+                      </button>
+                      <button 
+                        onClick={() => setSelectedCollectionId(null as any)}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${selectedCollectionId === null ? 'bg-blue-500/10 text-blue-500' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}
+                      >
+                        Uncategorized
+                      </button>
+                      {collections.map(c => (
+                        <div key={c.id} className="flex items-center gap-1">
+                          <button 
+                            onClick={() => setSelectedCollectionId(c.id)}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${selectedCollectionId === c.id ? 'bg-purple-500/10 text-purple-500' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}
+                          >
+                            <Folder className="w-3.5 h-3.5" /> {c.name}
+                          </button>
+                          {selectedCollectionId === c.id && (
+                            <button onClick={() => handleDeleteCollection(c.id)} className="p-1.5 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                      
+                      {!isCreatingCollection ? (
+                        <button onClick={() => setIsCreatingCollection(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors border border-dashed border-zinc-300 dark:border-zinc-600">
+                          <FolderPlus className="w-3.5 h-3.5" /> New
+                        </button>
+                      ) : (
+                        <form onSubmit={handleCreateCollection} className="flex items-center gap-2">
+                          <input type="text" autoFocus value={newCollectionName} onChange={e => setNewCollectionName(e.target.value)} placeholder="Folder name..." className="px-3 py-1.5 text-sm bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg outline-none focus:border-blue-500 w-32" />
+                          <button type="submit" className="px-2 py-1.5 text-sm font-medium bg-blue-500 text-white rounded-lg">Save</button>
+                          <button type="button" onClick={() => setIsCreatingCollection(false)} className="px-2 py-1.5 text-sm font-medium bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 rounded-lg">Cancel</button>
+                        </form>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {(() => {
+                    const filteredGames = selectedCollectionId === 'all' 
+                      ? bookmarkedGames 
+                      : bookmarkedGames.filter(g => g.collectionId === selectedCollectionId || (selectedCollectionId === null && !g.collectionId));
+                      
+                    if (filteredGames.length === 0) {
+                      return (
+                        <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
+                          <Bookmark className="w-16 h-16 mb-4 opacity-20" />
+                          <p>{t("profile.noBookmarks")}</p>
+                        </div>
+                      );
+                    }
+                    return (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {filteredGames.map(game => <GameListCard key={game.id} game={game} type="bookmark" />)}
+                      </div>
+                    );
+                  })()}
+                </div>
+              )}
+
+              {activeTab === 'following' && (
+                <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
+                  <h2 className="text-2xl font-bold mb-6">{t("profile.tabFollowing") || "Following Creators"}</h2>
+                  {followingCreators.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
-                      <Bookmark className="w-16 h-16 mb-4 opacity-20" />
-                      <p>{t("profile.noBookmarks")}</p>
+                      <Users className="w-16 h-16 mb-4 opacity-20" />
+                      <p>{t("profile.noFollowing") || "You are not following anyone yet."}</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {bookmarkedGames.map(game => <GameListCard key={game.id} game={game} type="bookmark" />)}
+                      {followingCreators.map(creator => (
+                        <div key={creator.id} className="group relative flex items-center gap-4 bg-white/50 dark:bg-zinc-900/50 hover:bg-zinc-100/80 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl transition-all duration-300">
+                          <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 border border-zinc-200 dark:border-zinc-700">
+                            <img src={creator.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${creator.username}`} alt={creator.username} className="w-full h-full object-cover" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-bold text-zinc-900 dark:text-white text-lg truncate">{creator.username}</h3>
+                            <p className="text-xs text-zinc-500 line-clamp-1 mb-2">{creator.bio || t("profile.noBio")}</p>
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-medium text-blue-500 bg-blue-500/10 px-2 py-1 rounded">
+                                {creator.publishedGamesCount} {t("profile.publishedGames") || "Games"}
+                              </span>
+                              <button 
+                                onClick={() => handleUnfollow(creator.id)}
+                                className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-red-500 transition-colors"
+                              >
+                                <UserMinus className="w-3 h-3" /> {t("creator.unfollow") || "Unfollow"}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

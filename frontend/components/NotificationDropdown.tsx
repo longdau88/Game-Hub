@@ -132,6 +132,10 @@ export default function NotificationDropdown() {
         return gameTitle ? t("notif.newComment").replace("{username}", username).replace("{title}", gameTitle) : notif.message;
       case 'GAME_DELETED':
         return gameTitle ? t("notif.gameDeleted").replace("{title}", gameTitle) : notif.message;
+      case 'CREATOR_GAME_PUBLISHED':
+        return gameTitle ? t("notif.creatorGamePublished").replace("{title}", gameTitle) : notif.message;
+      case 'CREATOR_GAME_UPDATED':
+        return gameTitle ? t("notif.creatorGameUpdated").replace("{title}", gameTitle) : notif.message;
       default:
         return notif.message;
     }

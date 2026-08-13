@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ArrowLeft, Maximize2, Share2, Eye, Loader2, Flag, ShieldAlert, Bookmark } from "lucide-react";
+import { ArrowLeft, Maximize2, Share2, Eye, Loader2, Flag, ShieldAlert, Bookmark, UserPlus, UserCheck, ChevronDown, Folder } from "lucide-react";
 import GameComments from "../../../components/GameComments";
 import GameRating from "../../../components/GameRating";
 import { useLanguage } from "../../../contexts/LanguageContext";
@@ -22,7 +22,12 @@ function GamePlayerContent() {
   const [reportReason, setReportReason] = useState("");
   const [reporting, setReporting] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [followingCreator, setFollowingCreator] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [collections, setCollections] = useState<any[]>([]);
+  const [showCollections, setShowCollections] = useState(false);
+  const [currentCollectionId, setCurrentCollectionId] = useState<number | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const sessionLogged = useRef<boolean>(false);
   
@@ -156,7 +161,7 @@ function GamePlayerContent() {
     fetch(`${apiUrl}/api/games/${gameId}`, { headers })
       .then(res => res.json())
       .then(data => {
-        if (!data.error) setGame(data);
+        if (!data.error) { setGame(data); setFollowingCreator(Boolean(data.followingCreator)); }
         setLoading(false);
       })
       .catch(err => {
@@ -182,15 +187,29 @@ function GamePlayerContent() {
       })
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data) && data.some(g => g.id === gameId)) {
-          setIsBookmarked(true);
+        if (Array.isArray(data)) {
+          const bGame = data.find(g => g.id === gameId);
+          if (bGame) {
+            setIsBookmarked(true);
+            setCurrentCollectionId(bGame.collectionId || null);
+          }
         }
+      })
+      .catch(console.error);
+
+      // Fetch collections
+      fetch(`${apiUrl}/api/collections`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setCollections(data);
       })
       .catch(console.error);
     }
   }, [gameId]);
 
-  const handleBookmark = async () => {
+  const handleBookmark = async (collectionId?: number | null) => {
     const token = Cookies.get("token");
     if (!token) {
       await notify({ message: t("dialog.loginRequired"), variant: "info" });
@@ -199,22 +218,50 @@ function GamePlayerContent() {
     
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const bodyPayload = collectionId !== undefined ? { collectionId } : {};
+      
       const res = await fetch(`${apiUrl}/api/games/${gameId}/bookmark`, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(bodyPayload)
       });
       
       if (res.ok) {
-        setIsBookmarked(!isBookmarked);
+        const data = await res.json();
+        setIsBookmarked(data.bookmarked);
+        if (data.bookmarked) {
+          setCurrentCollectionId(data.collectionId || null);
+        } else {
+          setCurrentCollectionId(null);
+        }
+        setShowCollections(false);
         // Optimistically update the save count
-        setGame((prev: any) => ({
-          ...prev,
-          saveCount: isBookmarked ? Math.max(0, (prev.saveCount || 0) - 1) : (prev.saveCount || 0) + 1
-        }));
+        if (data.message === 'Bookmark added') {
+          setGame((prev: any) => ({ ...prev, saveCount: (prev.saveCount || 0) + 1 }));
+        } else if (data.message === 'Bookmark removed') {
+          setGame((prev: any) => ({ ...prev, saveCount: Math.max(0, (prev.saveCount || 0) - 1) }));
+        }
       }
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleFollowCreator = async () => {
+    const token = Cookies.get("token");
+    if (!token) { await notify({ message: t("dialog.loginRequired"), variant: "info" }); return; }
+    if (!game?.uploader?.id) return;
+    setFollowLoading(true);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const response = await fetch(`${apiUrl}/api/users/${game.uploader.id}/follow`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+      const result = await response.json();
+      if (response.ok) {
+        setFollowingCreator(result.following);
+        await notify({ message: result.following ? t("creator.followSuccess") : t("creator.unfollowSuccess"), variant: "success" });
+      } else await notify({ message: t("dialog.genericError"), variant: "error" });
+    } catch (error) { console.error(error); await notify({ message: t("dialog.genericError"), variant: "error" }); }
+    finally { setFollowLoading(false); }
   };
 
   if (loading) {
@@ -287,15 +334,51 @@ function GamePlayerContent() {
                 </span>
               </div>
               <div className="flex flex-wrap gap-3">
-                <button 
-                  onClick={handleBookmark}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    isBookmarked ? 'bg-blue-600 text-zinc-900 dark:text-white hover:bg-blue-500' : 'bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-white'
-                  }`}
-                >
-                  <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} /> 
-                  {isBookmarked ? (t("game.saved") || "Đã lưu") : (t("game.save") || "Lưu game")}
-                </button>
+                {game.uploader && <button onClick={handleFollowCreator} disabled={followLoading} className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${followingCreator ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/25" : "bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700"}`}>
+                  {followingCreator ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />} {followingCreator ? t("creator.following") : t("creator.follow")}
+                </button>}
+                <div className="relative">
+                  <button 
+                    onClick={() => handleBookmark(currentCollectionId)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      isBookmarked ? 'bg-blue-600 text-zinc-900 dark:text-white hover:bg-blue-500' : 'bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-white'
+                    }`}
+                  >
+                    <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} /> 
+                    {isBookmarked ? (t("game.saved") || "Đã lưu") : (t("game.save") || "Lưu game")}
+                    {isBookmarked && (
+                      <div 
+                        className="ml-1 pl-2 border-l border-black/10 dark:border-white/20 hover:text-white"
+                        onClick={(e) => { e.stopPropagation(); setShowCollections(!showCollections); }}
+                      >
+                        <ChevronDown className="w-4 h-4" />
+                      </div>
+                    )}
+                  </button>
+                  
+                  {showCollections && (
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl z-50 overflow-hidden">
+                      <div className="p-2">
+                        <p className="text-xs font-semibold text-zinc-500 mb-2 px-2">Lưu vào thư mục</p>
+                        <button 
+                          onClick={() => handleBookmark(null)}
+                          className={`w-full text-left px-3 py-2 text-sm rounded-lg flex items-center justify-between ${currentCollectionId === null ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300'}`}
+                        >
+                          <span className="flex items-center gap-2"><Folder className="w-4 h-4" /> Mặc định</span>
+                        </button>
+                        {collections.map(c => (
+                          <button 
+                            key={c.id}
+                            onClick={() => handleBookmark(c.id)}
+                            className={`w-full text-left px-3 py-2 text-sm rounded-lg flex items-center justify-between mt-1 ${currentCollectionId === c.id ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300'}`}
+                          >
+                            <span className="flex items-center gap-2 truncate"><Folder className="w-4 h-4" /> {c.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <button onClick={() => setReportModalOpen(true)} className="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-lg text-sm font-medium transition-colors">
                   <Flag className="w-4 h-4" /> Báo cáo
                 </button>

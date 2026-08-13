@@ -10,5 +10,8 @@ router.use(requireAuth);
 router.get('/me', userController.getMe);
 router.put('/me', userController.updateMe);
 router.put('/me/password', userController.changePassword);
+router.get('/following', userController.getFollowing);
+router.get('/:id/follow-status', userController.getFollowStatus);
+router.post('/:id/follow', userController.toggleFollow);
 
 module.exports = router;

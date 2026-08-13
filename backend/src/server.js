@@ -10,6 +10,7 @@ const settingRoutes = require('./routes/setting.routes');
 const userRoutes = require('./routes/user.routes');
 const socialRoutes = require('./routes/social.routes');
 const gamificationRoutes = require('./routes/gamification.routes');
+const collectionRoutes = require('./routes/collection.routes');
 const prisma = require('./config/db');
 const bcrypt = require('bcryptjs');
 const path = require('path');
@@ -142,6 +143,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/social', socialRoutes);
 app.use('/api/gamification', gamificationRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/collections', collectionRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -17,18 +17,18 @@ const upload = multer({ dest: os.tmpdir() });
 router.get('/', cacheMiddleware(60), getPublishedGames);
 router.get('/search', gameController.semanticSearch);
 router.get('/featured', cacheMiddleware(60), gameController.getFeaturedGames);
-router.get('/:id', cacheMiddleware(30), getGameDetails);
-router.post('/:id/play', gameController.incrementPlayCount); // Called when iframe loads
-router.post('/:id/session', optionalAuth, logSession);
-router.post('/:id/crash', logCrash);
-
-// Protected routes
 router.post('/upload', requireAuth, upload.fields([{ name: 'gameFile', maxCount: 1 }, { name: 'coverImage', maxCount: 1 }]), uploadGame);
 router.get('/creator/games', requireAuth, getMyGames);
-router.put('/:id', requireAuth, upload.fields([{ name: 'coverImage', maxCount: 1 }]), gameController.updateGame);
-router.delete('/:id', requireAuth, gameController.deleteGame);
 router.get('/user/bookmarked', requireAuth, gameController.getBookmarkedGames);
 router.get('/user/history', requireAuth, gameController.getGameHistory);
+
+// Parameterized routes must be registered after fixed paths.
+router.get('/:id', optionalAuth, getGameDetails);
+router.post('/:id/play', gameController.incrementPlayCount);
+router.post('/:id/session', optionalAuth, logSession);
+router.post('/:id/crash', logCrash);
+router.put('/:id', requireAuth, upload.fields([{ name: 'coverImage', maxCount: 1 }]), gameController.updateGame);
+router.delete('/:id', requireAuth, gameController.deleteGame);
 router.post('/:id/bookmark', requireAuth, gameController.toggleBookmark);
 
 module.exports = router;

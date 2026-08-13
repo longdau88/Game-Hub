@@ -34,6 +34,9 @@ model User {
   badges       UserBadge[]
   leaderboardEntries Leaderboard[]
   notifications Notification[]
+  following     CreatorFollow[] @relation("Follower")
+  followers     CreatorFollow[] @relation("Creator")
+  libraryCollections LibraryCollection[]
 
   @@map("users")
 }
@@ -93,14 +96,40 @@ model Game {
 }
 
 model UserLibrary {
-  userId  Int      @map("user_id")
-  gameId  String   @map("game_id") @db.Uuid
-  addedAt DateTime @default(now()) @map("added_at")
-  user    User     @relation(fields: [userId], references: [id])
-  game    Game     @relation(fields: [gameId], references: [id])
+  userId       Int      @map("user_id")
+  gameId       String   @map("game_id") @db.Uuid
+  collectionId Int?     @map("collection_id")
+  addedAt      DateTime @default(now()) @map("added_at")
+  user         User     @relation(fields: [userId], references: [id])
+  game         Game     @relation(fields: [gameId], references: [id])
+  collection   LibraryCollection? @relation(fields: [collectionId], references: [id], onDelete: SetNull)
 
   @@id([userId, gameId])
   @@map("user_library")
+}
+
+model LibraryCollection {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  name      String   @db.VarChar(100)
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     UserLibrary[]
+
+  @@unique([userId, name])
+  @@map("library_collections")
+}
+
+model CreatorFollow {
+  followerId Int      @map("follower_id")
+  creatorId  Int      @map("creator_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  follower   User     @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  creator    User     @relation("Creator", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, creatorId])
+  @@index([creatorId])
+  @@map("creator_follows")
 }
 
 model Category {

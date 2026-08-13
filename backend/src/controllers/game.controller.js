@@ -477,11 +477,15 @@ exports.getGameDetails = async (req, res) => {
       _count: { score: true }
     });
 
+    const followingCreator = req.user && game.uploaderId
+      ? await prisma.creatorFollow.findUnique({ where: { followerId_creatorId: { followerId: req.user.userId, creatorId: game.uploaderId } } })
+      : null;
     res.json({
       ...game,
       saveCount: game._count?.libraryEntries || 0,
       averageRating: aggregations._avg.score ? Number(aggregations._avg.score.toFixed(1)) : 0,
-      totalRatings: aggregations._count.score
+      totalRatings: aggregations._count.score,
+      followingCreator: Boolean(followingCreator)
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch game details' });
@@ -520,31 +524,33 @@ exports.toggleBookmark = async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.userId;
+    const { collectionId } = req.body || {};
+    const cId = collectionId ? parseInt(collectionId) : null;
 
     const existingBookmark = await prisma.userLibrary.findUnique({
-      where: {
-        userId_gameId: {
-          userId,
-          gameId: id
-        }
-      }
+      where: { userId_gameId: { userId, gameId: id } }
     });
 
     if (existingBookmark) {
-      await prisma.userLibrary.delete({
-        where: {
-          userId_gameId: { userId, gameId: id }
-        }
-      });
-      return res.json({ message: 'Bookmark removed', bookmarked: false });
+      if (existingBookmark.collectionId !== cId) {
+        // Move to new collection
+        await prisma.userLibrary.update({
+          where: { userId_gameId: { userId, gameId: id } },
+          data: { collectionId: cId }
+        });
+        return res.json({ message: 'Bookmark moved', bookmarked: true, collectionId: cId });
+      } else {
+        // Same collection, so toggle means delete
+        await prisma.userLibrary.delete({
+          where: { userId_gameId: { userId, gameId: id } }
+        });
+        return res.json({ message: 'Bookmark removed', bookmarked: false });
+      }
     } else {
       await prisma.userLibrary.create({
-        data: {
-          userId,
-          gameId: id
-        }
+        data: { userId, gameId: id, collectionId: cId }
       });
-      return res.json({ message: 'Bookmark added', bookmarked: true });
+      return res.json({ message: 'Bookmark added', bookmarked: true, collectionId: cId });
     }
   } catch (error) {
     res.status(500).json({ error: 'Failed to toggle bookmark' });
@@ -566,8 +572,8 @@ exports.getBookmarkedGames = async (req, res) => {
       orderBy: { addedAt: 'desc' }
     });
     
-    // Map to just return games array
-    const games = library.map(item => item.game);
+    // Map to just return games array but include collectionId
+    const games = library.map(item => ({ ...item.game, collectionId: item.collectionId }));
     res.json(games);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch bookmarked games' });
@@ -682,6 +688,28 @@ exports.updateGame = async (req, res) => {
         })
       }
     });
+
+    if (updatedGame.status === 'published') {
+      const notifiedUsers = new Set();
+      
+      if (updatedGame.uploaderId) {
+        const followers = await prisma.creatorFollow.findMany({ where: { creatorId: updatedGame.uploaderId }, select: { followerId: true } });
+        await Promise.all(followers.map(async ({ followerId }) => {
+          notifiedUsers.add(followerId);
+          const notification = await prisma.notification.create({ data: { userId: followerId, type: 'CREATOR_GAME_UPDATED', title: 'Game Updated', message: `A creator you follow updated "${updatedGame.title}".`, link: `/game/play?id=${updatedGame.id}` } });
+          pushToUser(followerId, notification);
+        }));
+      }
+
+      const bookmarkedUsers = await prisma.userLibrary.findMany({ where: { gameId: id }, select: { userId: true } });
+      await Promise.all(bookmarkedUsers.map(async ({ userId }) => {
+        if (!notifiedUsers.has(userId)) {
+          notifiedUsers.add(userId);
+          const notification = await prisma.notification.create({ data: { userId, type: 'WISHLIST_GAME_UPDATED', title: 'Wishlist Update', message: `A game in your wishlist "${updatedGame.title}" has been updated.`, link: `/game/play?id=${updatedGame.id}` } });
+          pushToUser(userId, notification);
+        }
+      }));
+    }
 
     res.json({ message: 'Game updated successfully', game: updatedGame });
   } catch (error) {
@@ -803,6 +831,12 @@ exports.approveGame = async (req, res) => {
       });
       pushToUser(updatedGame.uploader.id, notif);
     }
+
+    const followers = await prisma.creatorFollow.findMany({ where: { creatorId: updatedGame.uploaderId }, select: { followerId: true } });
+    await Promise.all(followers.map(async ({ followerId }) => {
+      const notification = await prisma.notification.create({ data: { userId: followerId, type: 'CREATOR_GAME_PUBLISHED', title: 'New Game', message: `A creator you follow published "${updatedGame.title}".`, link: `/game/play?id=${updatedGame.id}` } });
+      pushToUser(followerId, notification);
+    }));
 
     // Audit log
     try {
