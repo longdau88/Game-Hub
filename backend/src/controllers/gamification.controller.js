@@ -42,9 +42,27 @@ exports.getLeaderboard = async (req, res) => {
   try {
     const { gameId } = req.params;
     const limit = parseInt(req.query.limit) || 10;
+    const filter = req.query.filter; // 'friends'
+
+    let whereClause = { gameId };
+
+    if (filter === 'friends' && req.user) {
+      const userId = req.user.userId;
+      const friendships = await prisma.friendship.findMany({
+        where: {
+          status: 'accepted',
+          OR: [{ userId }, { friendId: userId }]
+        }
+      });
+      
+      const friendIds = friendships.map(f => f.userId === userId ? f.friendId : f.userId);
+      friendIds.push(userId); // Include self
+
+      whereClause.userId = { in: friendIds };
+    }
 
     const topScores = await prisma.leaderboard.findMany({
-      where: { gameId },
+      where: whereClause,
       orderBy: { score: 'desc' },
       take: limit,
       include: {

@@ -25,6 +25,7 @@ function GamePlayerContent() {
   const [followingCreator, setFollowingCreator] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
+  const [leaderboardFilter, setLeaderboardFilter] = useState<'global' | 'friends'>('global');
   const [collections, setCollections] = useState<any[]>([]);
   const [showCollections, setShowCollections] = useState(false);
   const [currentCollectionId, setCurrentCollectionId] = useState<number | null>(null);
@@ -169,13 +170,8 @@ function GamePlayerContent() {
         setLoading(false);
       });
       
-    // Fetch Leaderboard
-    fetch(`${apiUrl}/api/gamification/leaderboard/${gameId}`, { headers })
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data)) setLeaderboard(data);
-      })
-      .catch(console.error);
+    // Initial Fetch Leaderboard
+    fetchLeaderboard('global', headers);
 
     // Increment play count
     fetch(`${apiUrl}/api/games/${gameId}/play`, { method: "POST", headers }).catch(console.error);
@@ -208,6 +204,33 @@ function GamePlayerContent() {
       .catch(console.error);
     }
   }, [gameId]);
+
+  const fetchLeaderboard = (filter: 'global' | 'friends', specificHeaders?: HeadersInit) => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    let headers = specificHeaders;
+    if (!headers) {
+      headers = { "Content-Type": "application/json" };
+      const token = Cookies.get("token");
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+    }
+    
+    const filterParam = filter === 'friends' ? '?filter=friends' : '';
+    fetch(`${apiUrl}/api/gamification/leaderboard/${gameId}${filterParam}`, { headers })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setLeaderboard(data);
+      })
+      .catch(console.error);
+  };
+
+  const handleLeaderboardFilterChange = (newFilter: 'global' | 'friends') => {
+    if (newFilter === 'friends' && !Cookies.get('token')) {
+      notify({ message: t("dialog.loginRequired"), variant: "info" });
+      return;
+    }
+    setLeaderboardFilter(newFilter);
+    fetchLeaderboard(newFilter);
+  };
 
   const handleBookmark = async (collectionId?: number | null) => {
     const token = Cookies.get("token");
@@ -442,7 +465,23 @@ function GamePlayerContent() {
           </div>
 
           <div className="bg-gradient-to-b from-yellow-900/20 to-zinc-900/50 border border-yellow-900/30 rounded-xl p-6 relative overflow-hidden">
-            <h3 className="font-medium text-lg mb-4 text-zinc-900 dark:text-white flex items-center gap-2"><span className="text-yellow-500">🏆</span> {t("game.leaderboard")}</h3>
+            <div className="flex flex-col gap-3 mb-4">
+              <h3 className="font-medium text-lg text-zinc-900 dark:text-white flex items-center gap-2"><span className="text-yellow-500">🏆</span> {t("game.leaderboard")}</h3>
+              <div className="flex bg-zinc-200 dark:bg-zinc-800 p-1 rounded-lg">
+                <button
+                  onClick={() => handleLeaderboardFilterChange('global')}
+                  className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${leaderboardFilter === 'global' ? 'bg-white dark:bg-zinc-700 shadow text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'}`}
+                >
+                  Toàn cầu
+                </button>
+                <button
+                  onClick={() => handleLeaderboardFilterChange('friends')}
+                  className={`flex-1 py-1.5 text-xs font-medium rounded-md transition-colors ${leaderboardFilter === 'friends' ? 'bg-white dark:bg-zinc-700 shadow text-zinc-900 dark:text-white' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'}`}
+                >
+                  Bạn bè
+                </button>
+              </div>
+            </div>
             <div className="space-y-3">
               {leaderboard.length === 0 ? (
                 <p className="text-sm text-zinc-500 italic">{t("game.noScores")}</p>

@@ -43,6 +43,8 @@ model User {
   followers     CreatorFollow[] @relation("Creator")
   libraryCollections LibraryCollection[]
   questProgress UserQuestProgress[]
+  friendshipsSent Friendship[] @relation("UserFriendships")
+  friendshipsReceived Friendship[] @relation("FriendUsers")
 
   @@map("users")
 }
@@ -353,4 +355,18 @@ model UserQuestProgress {
 
   @@id([userId, questId, date])
   @@map("user_quest_progress")
+}
+
+model Friendship {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  friendId    Int      @map("friend_id")
+  status      String   @default("pending") @db.VarChar(20) // pending, accepted
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user        User     @relation("UserFriendships", fields: [userId], references: [id], onDelete: Cascade)
+  friend      User     @relation("FriendUsers", fields: [friendId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, friendId])
+  @@map("friendships")
 }
