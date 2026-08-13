@@ -420,15 +420,15 @@ export default function Home() {
                 <div className="relative z-10 flex flex-col lg:flex-row gap-8 items-center bg-white/40 dark:bg-zinc-900/30 border border-white/50 dark:border-white/5 p-4 md:p-6 rounded-[2.5rem] backdrop-blur-2xl shadow-[0_8px_40px_rgb(0,0,0,0.04)] dark:shadow-none">
                   {/* Main Featured Game */}
                   <div className="w-full lg:w-2/3">
-                    <Link href={`/game/play?id=${featuredGames[0].id}`} className="group relative block rounded-3xl overflow-hidden aspect-[4/3] sm:aspect-video shadow-2xl">
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 sm:via-black/20 to-transparent z-10" />
+                    <Link href={`/game/play?id=${featuredGames[0].id}`} className="group relative block rounded-3xl overflow-hidden min-h-[400px] sm:aspect-video shadow-2xl flex flex-col justify-end">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 sm:via-black/20 to-transparent z-10" />
                       <img 
                         src={featuredGames[0].coverImageUrl || '/placeholder.png'} 
                         alt={featuredGames[0].title} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" 
                       />
                       
-                      <div className="absolute bottom-0 left-0 p-5 sm:p-8 md:p-12 z-20 w-full max-w-3xl">
+                      <div className="relative p-5 sm:p-8 md:p-12 z-20 w-full max-w-3xl mt-auto">
                         <div className="flex gap-2 mb-4">
                           <span className="px-3 py-1 bg-gradient-to-r from-pink-600 to-purple-600 rounded-full text-xs font-bold uppercase tracking-wider text-white shadow-lg flex items-center gap-1.5">
                             <Flame className="w-3.5 h-3.5" /> Featured
