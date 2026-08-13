@@ -1,4 +1,5 @@
 const prisma = require('../config/db');
+const auditLogService = require('../services/audit.service');
 
 exports.createReport = async (req, res) => {
   try {
@@ -46,6 +47,9 @@ exports.resolveReport = async (req, res) => {
     const report = await prisma.report.update({
       where: { id: parseInt(id) },
       data: { status: 'resolved' }
+    });
+    await auditLogService.log(req.user.userId, 'RESOLVE_REPORT', 'Report', {
+      reportId: report.id, gameId: report.gameId, reporterId: report.userId
     });
     res.json({ message: 'Report resolved successfully', report });
   } catch (error) {

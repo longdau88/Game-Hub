@@ -783,7 +783,7 @@ exports.getPendingGames = async (req, res) => {
 
 exports.approveGame = async (req, res) => {
   try {
-    const adminId = req.user?.id;
+    const adminId = req.user?.userId;
     const { id } = req.params;
     const updatedGame = await prisma.game.update({
       where: { id },

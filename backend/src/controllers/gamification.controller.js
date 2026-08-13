@@ -1,4 +1,5 @@
 const prisma = require('../config/db');
+const auditLogService = require('../services/audit.service');
 
 exports.submitScore = async (req, res) => {
   try {
@@ -76,6 +77,9 @@ exports.createBadge = async (req, res) => {
     const badge = await prisma.badge.create({
       data: { name, nameTranslations, description, descriptionTranslations, iconUrl }
     });
+    await auditLogService.log(req.user.userId, 'CREATE_BADGE', 'Badge', {
+      badgeId: badge.id, name: badge.name
+    });
     res.status(201).json(badge);
   } catch (error) {
     if (error.code === 'P2002') return res.status(400).json({ error: 'Badge name already exists' });
@@ -86,7 +90,10 @@ exports.createBadge = async (req, res) => {
 exports.deleteBadge = async (req, res) => {
   try {
     const { id } = req.params;
-    await prisma.badge.delete({ where: { id: parseInt(id) } });
+    const badge = await prisma.badge.delete({ where: { id: parseInt(id) } });
+    await auditLogService.log(req.user.userId, 'DELETE_BADGE', 'Badge', {
+      badgeId: badge.id, name: badge.name
+    });
     res.status(204).send();
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete badge' });
@@ -102,6 +109,9 @@ exports.grantBadge = async (req, res) => {
         userId: parseInt(userId),
         badgeId: parseInt(badgeId)
       }
+    });
+    await auditLogService.log(req.user.userId, 'GRANT_BADGE', 'UserBadge', {
+      targetUserId: userBadge.userId, badgeId: userBadge.badgeId
     });
     res.status(201).json({ message: 'Badge granted', userBadge });
   } catch (error) {

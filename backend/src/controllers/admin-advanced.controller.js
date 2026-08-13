@@ -1,6 +1,7 @@
 const prisma = require('../config/db');
 const path = require('path');
 const fs = require('fs');
+const auditLogService = require('../services/audit.service');
 
 // 1. Storage & Bandwidth
 exports.getStorageStats = async (req, res) => {
@@ -63,7 +64,7 @@ exports.runGarbageCollection = async (req, res) => {
 // 2. AI & Recommendations
 exports.updateHiddenTags = async (req, res) => {
   try {
-    const adminId = req.user?.id;
+    const adminId = req.user?.userId;
     const { id } = req.params;
     const { tags } = req.body;
 
@@ -104,6 +105,10 @@ exports.syncVectorDB = async (req, res) => {
         data: { vectorSynced: true }
       });
     }
+
+    await auditLogService.log(req.user.userId, 'SYNC_VECTOR_DATABASE', 'Game', {
+      syncedGames: games.length
+    });
 
     res.json({
       success: true,
@@ -318,6 +323,9 @@ exports.createEmailTemplate = async (req, res) => {
     const template = await prisma.emailTemplate.create({
       data: { name, subject, body }
     });
+    await auditLogService.log(req.user.userId, 'CREATE_EMAIL_TEMPLATE', 'EmailTemplate', {
+      templateId: template.id, name: template.name, subject: template.subject
+    });
     res.json({ success: true, data: template });
   } catch (error) {
     res.status(500).json({ success: false, error: 'Internal server error' });
@@ -328,7 +336,7 @@ const { sendEmail } = require('../utils/email');
 
 exports.sendEmailCampaign = async (req, res) => {
   try {
-    const adminId = req.user?.id;
+    const adminId = req.user?.userId;
     const { subject, content, target } = req.body;
     const targetGroup = target || 'all';
     
@@ -436,7 +444,7 @@ exports.getGameVersions = async (req, res) => {
 
 exports.rollbackGame = async (req, res) => {
   try {
-    const adminId = req.user?.id;
+    const adminId = req.user?.userId;
     const { id, versionId } = req.params;
 
     await prisma.gameVersion.updateMany({

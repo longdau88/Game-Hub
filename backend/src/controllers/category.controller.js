@@ -12,7 +12,7 @@ class CategoryController {
 
   async createCategory(req, res) {
     try {
-      const adminId = req.user?.id;
+      const adminId = req.user?.userId;
       const category = await categoryService.createCategory(adminId, req.body);
       res.status(201).json(category);
     } catch (error) {
@@ -22,7 +22,7 @@ class CategoryController {
 
   async updateCategory(req, res) {
     try {
-      const adminId = req.user?.id;
+      const adminId = req.user?.userId;
       const { id } = req.params;
       const category = await categoryService.updateCategory(adminId, id, req.body);
       res.json(category);
@@ -33,7 +33,7 @@ class CategoryController {
 
   async deleteCategory(req, res) {
     try {
-      const adminId = req.user?.id;
+      const adminId = req.user?.userId;
       const { id } = req.params;
       await categoryService.deleteCategory(adminId, id);
       res.json({ message: 'Category deleted successfully' });

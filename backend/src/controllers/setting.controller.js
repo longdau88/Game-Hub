@@ -1,5 +1,6 @@
 const prisma = require('../config/db');
 const { clearSettingsCache } = require('../middleware/maintenance.middleware');
+const auditLogService = require('../services/audit.service');
 
 exports.getSettings = async (req, res) => {
   try {
@@ -36,6 +37,9 @@ exports.updateSettings = async (req, res) => {
     }
     
     clearSettingsCache(); // Clear the cache so changes take effect immediately
+    await auditLogService.log(req.user.userId, 'UPDATE_SYSTEM_SETTINGS', 'SystemSetting', {
+      updatedKeys: Object.keys(settings)
+    });
     
     res.json({ message: 'Settings updated successfully' });
   } catch (error) {

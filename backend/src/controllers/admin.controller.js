@@ -97,7 +97,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.toggleBanUser = async (req, res) => {
   try {
-    const adminId = req.user.id;
+    const adminId = req.user.userId;
     const { id } = req.params;
     const { isBanned } = req.body;
     
@@ -120,7 +120,7 @@ exports.toggleBanUser = async (req, res) => {
 
 exports.changeUserRole = async (req, res) => {
   try {
-    const adminId = req.user.id;
+    const adminId = req.user.userId;
     const { id } = req.params;
     const { role } = req.body;
     
@@ -149,7 +149,7 @@ const { sendEmail } = require('../utils/email');
 
 exports.rejectGame = async (req, res) => {
   try {
-    const adminId = req.user.id;
+    const adminId = req.user.userId;
     const { id } = req.params;
     const { rejectReason } = req.body;
     
@@ -201,7 +201,7 @@ exports.rejectGame = async (req, res) => {
 
 exports.deleteGame = async (req, res) => {
   try {
-    const adminId = req.user.id;
+    const adminId = req.user.userId;
     const { id } = req.params;
     
     const game = await prisma.game.findUnique({ where: { id } });
@@ -257,7 +257,7 @@ exports.deleteGame = async (req, res) => {
 
 exports.toggleFeaturedGame = async (req, res) => {
   try {
-    const adminId = req.user.id;
+    const adminId = req.user.userId;
     const { id } = req.params;
     const { isFeatured } = req.body;
     
@@ -305,7 +305,7 @@ exports.getStorageStats = async (req, res) => {
 
 exports.garbageCollect = async (req, res) => {
   try {
-    const adminId = req.user?.id;
+    const adminId = req.user?.userId;
     const tmpDir = os.tmpdir();
     let deletedFiles = 0;
     let deletedDirs = 0;
