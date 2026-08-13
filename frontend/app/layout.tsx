@@ -30,26 +30,26 @@ export default async function RootLayout({
   return (
     <html lang={initialLocale} suppressHydrationWarning>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           <LanguageProvider initialLocale={initialLocale}>
             <DialogProvider>
             <div className="min-h-screen flex flex-col bg-background text-foreground transition-colors selection:bg-blue-500/30">
               {/* Navigation Bar */}
-              <nav className="sticky top-0 z-50 bg-white dark:bg-[#050505] shadow-sm">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex items-center justify-between h-16">
-                <div className="flex items-center gap-8">
-                  <Link href="/" className="flex items-center gap-2 group">
-                    <div className="p-2 bg-blue-600 rounded-lg group-hover:bg-blue-500 transition-colors">
-                      <Gamepad2 className="w-5 h-5 text-zinc-900 dark:text-white" />
+              <nav className="sticky top-4 z-50 mx-4 sm:mx-6 lg:mx-8 mb-4">
+                <div className="bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl border border-white/20 dark:border-zinc-800/50 shadow-lg shadow-blue-500/5 rounded-2xl px-4 sm:px-6">
+                  <div className="flex items-center justify-between h-16">
+                    <div className="flex items-center gap-8">
+                      <Link href="/" className="flex items-center gap-3 group">
+                        <div className="p-2.5 bg-gradient-to-br from-blue-500 to-violet-600 rounded-xl group-hover:shadow-lg group-hover:shadow-blue-500/30 transition-all duration-300 group-hover:scale-105">
+                          <Gamepad2 className="w-5 h-5 text-white" />
+                        </div>
+                        <span className="font-extrabold text-xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-zinc-900 to-zinc-600 dark:from-white dark:to-zinc-400">Game Hub</span>
+                      </Link>
                     </div>
-                    <span className="font-bold text-xl tracking-tight">Game Hub</span>
-                  </Link>
+                    <ClientNavbar />
+                  </div>
                 </div>
-                <ClientNavbar />
-              </div>
-            </div>
-          </nav>
+              </nav>
 
               <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col w-full">
                 <MaintenanceOverlay>

@@ -438,7 +438,7 @@ function GamePlayerContent() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6">
+          <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none backdrop-blur-xl">
             <h3 className="font-medium text-lg mb-4 text-zinc-900 dark:text-white">{t("game.controls")}</h3>
             <div className="space-y-3 text-sm text-zinc-600 dark:text-zinc-400">
               {game.controls && game.controls.length > 0 ? (
@@ -464,7 +464,7 @@ function GamePlayerContent() {
             <p className="text-xs text-zinc-500 mt-4 italic">{t("game.controlsVary")}</p>
           </div>
 
-          <div className="bg-gradient-to-b from-yellow-900/20 to-zinc-900/50 border border-yellow-900/30 rounded-xl p-6 relative overflow-hidden">
+          <div className="bg-white/70 dark:bg-zinc-900/50 border border-yellow-500/20 dark:border-yellow-900/30 rounded-2xl p-6 relative overflow-hidden shadow-[0_8px_30px_rgb(234,179,8,0.08)] dark:shadow-none backdrop-blur-xl">
             <div className="flex flex-col gap-3 mb-4">
               <h3 className="font-medium text-lg text-zinc-900 dark:text-white flex items-center gap-2"><span className="text-yellow-500">🏆</span> {t("game.leaderboard")}</h3>
               <div className="flex bg-zinc-200 dark:bg-zinc-800 p-1 rounded-lg">
@@ -557,3 +557,4 @@ export default function GamePlayer() {
     </Suspense>
   );
 }
+

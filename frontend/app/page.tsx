@@ -242,7 +242,7 @@ export default function Home() {
     <motion.div 
       whileHover={{ y: -8, scale: 1.02 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="group relative flex flex-col h-full bg-white/40 dark:bg-zinc-900/40 backdrop-blur-sm border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl overflow-hidden hover:border-blue-500/50 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all duration-300"
+      className="group relative flex flex-col h-full bg-white/70 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/40 dark:border-zinc-800/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none rounded-[1.5rem] overflow-hidden hover:border-blue-400/50 hover:shadow-[0_12px_40px_rgba(59,130,246,0.15)] transition-all duration-300"
     >
       <Link href={`/game/play?id=${game.id}`} className="aspect-[4/3] bg-zinc-100 dark:bg-zinc-950 relative overflow-hidden flex items-center justify-center block cursor-pointer">
         {game.coverImageUrl ? (
@@ -398,11 +398,11 @@ export default function Home() {
             {/* Hero Section - Featured Games Carousel */}
             {featuredGames.length > 0 && (
               <section className="mb-20 relative">
-                {/* Background glow effects */}
-                <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[100px] pointer-events-none" />
-                <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[400px] h-[400px] bg-blue-600/20 rounded-full blur-[100px] pointer-events-none" />
+                {/* Vibrant Background glow effects */}
+                <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-purple-400/40 to-pink-400/40 dark:from-purple-600/20 dark:to-pink-600/20 rounded-full blur-[120px] pointer-events-none" />
+                <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[400px] h-[400px] bg-gradient-to-l from-blue-400/40 to-cyan-400/40 dark:from-blue-600/20 dark:to-cyan-600/20 rounded-full blur-[120px] pointer-events-none" />
                 
-                <div className="relative z-10 flex flex-col lg:flex-row gap-8 items-center bg-white/30 dark:bg-zinc-900/30 border border-black/5 dark:border-white/5 p-4 rounded-[2rem] backdrop-blur-md">
+                <div className="relative z-10 flex flex-col lg:flex-row gap-8 items-center bg-white/40 dark:bg-zinc-900/30 border border-white/50 dark:border-white/5 p-4 md:p-6 rounded-[2.5rem] backdrop-blur-2xl shadow-[0_8px_40px_rgb(0,0,0,0.04)] dark:shadow-none">
                   {/* Main Featured Game */}
                   <div className="w-full lg:w-2/3">
                     <Link href={`/game/play?id=${featuredGames[0].id}`} className="group relative block rounded-3xl overflow-hidden aspect-video shadow-2xl">
@@ -443,7 +443,7 @@ export default function Home() {
                   {/* Sidebar Featured Games */}
                   <div className="w-full lg:w-1/3 flex flex-col gap-4 h-full">
                     {featuredGames.slice(1, 4).map((game, idx) => (
-                      <Link href={`/game/play?id=${game.id}`} key={`side-${game.id}`} className="group flex-1 flex items-center gap-4 bg-white/80 dark:bg-black/40 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 border border-black/5 dark:border-white/5 hover:border-black/10 dark:hover:border-white/10 p-3 rounded-2xl transition-all duration-300">
+                      <Link href={`/game/play?id=${game.id}`} key={`side-${game.id}`} className="group flex-1 flex items-center gap-4 bg-white/80 dark:bg-black/40 hover:bg-white dark:hover:bg-zinc-800/80 border border-white/60 dark:border-white/5 hover:border-blue-200 dark:hover:border-white/10 p-3 rounded-3xl transition-all duration-300 shadow-sm hover:shadow-md">
                         <div className="w-24 h-24 md:w-32 md:h-full aspect-square md:aspect-auto rounded-xl overflow-hidden relative shrink-0">
                           <img src={game.coverImageUrl || '/placeholder.png'} alt={game.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                         </div>

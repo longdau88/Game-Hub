@@ -500,8 +500,8 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-transparent py-12">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Profile Header */}
-        <div className="relative mb-12 rounded-[2rem] overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl">
-          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-blue-900/40 via-purple-900/40 to-blue-900/40" />
+        <div className="relative mb-12 rounded-[2rem] overflow-hidden bg-white/80 dark:bg-zinc-900/80 border border-white/60 dark:border-zinc-800 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] backdrop-blur-2xl">
+          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-blue-400/30 via-purple-400/30 to-pink-400/30 dark:from-blue-900/40 dark:via-purple-900/40 dark:to-blue-900/40" />
           <div className="relative z-10 px-8 pb-8 pt-20 flex flex-col md:flex-row items-center md:items-end gap-6 text-center md:text-left">
             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-zinc-900 bg-zinc-100 dark:bg-zinc-800 shadow-xl shrink-0">
               <img src={profile?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?.username}`} alt="Avatar" className="w-full h-full object-cover" />
@@ -563,7 +563,7 @@ export default function ProfilePage() {
               {activeTab === 'settings' && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <div className="md:col-span-2 space-y-6">
-                    <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl">
+                    <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none">
                       <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                         <User className="w-5 h-5 text-blue-400" /> {t("profile.publicProfile")}
                       </h2>
@@ -613,7 +613,7 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="space-y-6">
-                    <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl">
+                    <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none">
                       <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                         <ShieldAlert className="w-5 h-5 text-purple-400" /> Security
                       </h2>
@@ -674,7 +674,7 @@ export default function ProfilePage() {
               )}
 
               {activeTab === 'history' && (
-                <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
+                <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
                   <h2 className="text-2xl font-bold mb-6">{t("profile.recentlyPlayed")}</h2>
                   {gameHistory.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
@@ -691,7 +691,7 @@ export default function ProfilePage() {
               )}
 
               {activeTab === 'bookmarks' && (
-                <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
+                <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <h2 className="text-2xl font-bold">{t("profile.savedGames")}</h2>
                     
@@ -762,7 +762,7 @@ export default function ProfilePage() {
               )}
 
               {activeTab === 'quests' && (
-                <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
+                <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
                   <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><Target className="w-6 h-6 text-purple-500" /> Nhiệm vụ hàng ngày</h2>
                   {quests.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
@@ -814,7 +814,7 @@ export default function ProfilePage() {
               )}
 
               {activeTab === 'following' && (
-                <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
+                <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
                   <h2 className="text-2xl font-bold mb-6">{t("profile.tabFollowing") || "Following Creators"}</h2>
                   {followingCreators.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
@@ -851,7 +851,7 @@ export default function ProfilePage() {
               )}
 
               {activeTab === 'friends' && (
-                <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
+                <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
                   <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><UserMinus className="w-6 h-6 text-blue-500" /> Bạn bè & Xã hội</h2>
                   
                   {/* Friend Search */}
@@ -968,7 +968,7 @@ export default function ProfilePage() {
               )}
 
               {activeTab === 'uploads' && (
-                <div className="bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl min-h-[400px]">
+                <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
                     <h2 className="text-2xl font-bold">{t("profile.myUploads")}</h2>
                     <Link href="/creator/upload" className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-colors flex items-center gap-2">
@@ -1030,3 +1030,4 @@ export default function ProfilePage() {
     </div>
   );
 }
+
