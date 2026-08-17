@@ -57,53 +57,9 @@ export default function ClientNavbar() {
 
   return (
     <div className="flex items-center relative" ref={menuRef}>
-      
-      {/* Desktop Navigation */}
-      <div className="hidden md:flex items-center gap-4">
-        <LanguageSwitcher />
-        <ThemeSwitcher />
-        
-        {!token ? (
-          <button
-            onClick={openLoginModal}
-            className="flex items-center gap-2 px-4 py-2 rounded-md bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium transition-colors"
-          >
-            {t("nav.login")}
-          </button>
-        ) : (
-          <>
-            <NotificationDropdown />
-            
-            {role === "admin" && (
-              <Link href="/admin" className="flex items-center gap-2 px-4 py-2 rounded-md bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white text-sm font-medium transition-colors">
-                <Settings className="w-4 h-4" /> {t("nav.admin")}
-              </Link>
-            )}
-            <Link href="/creator/upload" className="flex items-center gap-2 px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors">
-              <UploadCloud className="w-4 h-4" /> {t("nav.uploadGame")}
-            </Link>
-            {profile && (
-              <div className="flex items-center gap-2 mr-2 bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-full border border-zinc-200 dark:border-zinc-700" title={`XP: ${profile.xp || 0}`}>
-                <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                <span className="text-xs font-bold text-zinc-900 dark:text-white">Lvl {profile.level || 1}</span>
-                <div className="w-16 h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden ml-1">
-                  <div className="h-full bg-yellow-500" style={{ width: `${((profile.xp || 0) % 100)}%` }} />
-                </div>
-              </div>
-            )}
-            <Link href="/profile" className="flex items-center gap-2 px-4 py-2 rounded-md bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-900 dark:text-white text-sm font-medium transition-colors">
-              <User className="w-4 h-4" /> {t("nav.profile")}
-            </Link>
-            <a href="#" onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 rounded-md border border-border hover:bg-zinc-200 dark:hover:bg-zinc-800 text-sm font-medium transition-colors cursor-pointer">
-              <LogOut className="w-4 h-4" /> {t("nav.logout")}
-            </a>
-          </>
-        )}
-      </div>
-
       {/* Mobile Menu Toggle (Always visible on mobile) */}
       <button 
-        className="md:hidden p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors ml-2"
+        className="p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors ml-2"
         onClick={() => setMenuOpen(!menuOpen)}
       >
         {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -111,16 +67,16 @@ export default function ClientNavbar() {
 
       {/* Mobile Navigation Dropdown */}
       {menuOpen && (
-        <div className="absolute top-full right-0 mt-4 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl flex flex-col md:hidden z-50 pb-2">
+        <div className="absolute top-full right-0 mt-4 w-64 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl flex flex-col z-50 pb-2">
           
           <div className="px-4 py-2 border-b border-zinc-100 dark:border-zinc-800 flex flex-col gap-3 pt-4 pb-4">
-            <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-1">Settings</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 mb-1">{t("nav.settings")}</span>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Theme</span>
+              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("nav.theme")}</span>
               <ThemeSwitcher />
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Language</span>
+              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("nav.language")}</span>
               <LanguageSwitcher />
             </div>
           </div>
@@ -132,7 +88,7 @@ export default function ClientNavbar() {
           ) : (
             <>
               <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-100 dark:border-zinc-800">
-                <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Notifications</span>
+                <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("nav.notifications")}</span>
                 <NotificationDropdown />
               </div>
 
