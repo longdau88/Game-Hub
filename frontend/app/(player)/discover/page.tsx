@@ -25,7 +25,8 @@ export default function DiscoverPage() {
           fetchAPI('/games').catch(() => ({ data: [] })),
           fetchAPI('/categories').catch(() => ({ data: [] }))
         ]);
-        const mappedGames = (gamesData.data || []).map((g: any) => ({
+        const gamesArray = Array.isArray(gamesData) ? gamesData : (gamesData.data || []);
+        const mappedGames = gamesArray.map((g: any) => ({
           id: g.id,
           title: g.title,
           creator: g.creator?.username || "Unknown",
@@ -36,7 +37,8 @@ export default function DiscoverPage() {
         }));
         setGames(mappedGames);
 
-        const mappedCats = (catsData.data || []).map((c: any) => ({ name: c.name, active: false }));
+        const catsArray = Array.isArray(catsData) ? catsData : (catsData.data || []);
+        const mappedCats = catsArray.map((c: any) => ({ name: c.name, active: false }));
         setCategories([{ name: t("category.all") || "All", active: true }, ...mappedCats]);
       } catch (err) {
         console.error("Failed to load data:", err);

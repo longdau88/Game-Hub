@@ -31,5 +31,9 @@ export async function fetchAPI(endpoint: string, options: RequestInit = {}) {
     throw new Error(errorMessage);
   }
 
-  return response.json();
+  const data = await response.json();
+  if (Array.isArray(data)) {
+    return { data };
+  }
+  return data;
 }

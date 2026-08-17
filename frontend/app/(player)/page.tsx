@@ -26,7 +26,8 @@ export default function PlayerHome() {
       try {
         const data = await fetchAPI('/games');
         // Adapt backend data to frontend Game interface
-        const mappedGames = (data.data || []).map((g: any) => ({
+        const gamesArray = Array.isArray(data) ? data : (data.data || []);
+        const mappedGames = gamesArray.map((g: any) => ({
           id: g.id,
           title: g.title,
           creator: g.creator?.username || "Unknown",
