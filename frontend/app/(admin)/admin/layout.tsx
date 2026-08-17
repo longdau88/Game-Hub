@@ -12,13 +12,13 @@ import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const NAVIGATION = [
-  { name: "Overview", href: "/admin/dashboard", icon: LayoutDashboard },
-  { name: "User Management", href: "/admin/users", icon: Users },
-  { name: "Games & Content", href: "/admin/games", icon: Gamepad2 },
-  { name: "Moderation", href: "/admin/moderation", icon: ShieldAlert },
-  { name: "System Metrics", href: "/admin/metrics", icon: LineChart },
-  { name: "Infrastructure", href: "/admin/infrastructure", icon: Server },
-  { name: "Settings", href: "/admin/settings", icon: Settings },
+  { nameKey: "admin.tabDashboard", defaultName: "Overview", href: "/admin/dashboard", icon: LayoutDashboard },
+  { nameKey: "admin.tabUsers", defaultName: "User Management", href: "/admin/users", icon: Users },
+  { nameKey: "admin.tabGames", defaultName: "Games & Content", href: "/admin/games", icon: Gamepad2 },
+  { nameKey: "admin.tabReports", defaultName: "Moderation", href: "/admin/moderation", icon: ShieldAlert },
+  { nameKey: "admin.tabAnalytics", defaultName: "System Metrics", href: "/admin/metrics", icon: LineChart },
+  { nameKey: "admin.tabStorage", defaultName: "Infrastructure", href: "/admin/infrastructure", icon: Server },
+  { nameKey: "admin.tabSettings", defaultName: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -66,7 +66,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               const isActive = pathname.startsWith(item.href);
               return (
                 <Link
-                  key={item.name}
+                  key={item.nameKey}
                   href={item.href}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group",
@@ -76,7 +76,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   )}
                 >
                   <item.icon className={cn("w-5 h-5", isActive ? "text-error" : "text-muted-foreground group-hover:text-foreground")} />
-                  {item.name}
+                  {t(item.nameKey) || item.defaultName}
                 </Link>
               );
             })}
@@ -100,7 +100,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Desktop Topbar */}
         <header className="hidden lg:flex items-center justify-between h-20 px-8 border-b border-border bg-background/95 backdrop-blur sticky top-0 z-30">
           <h1 className="text-xl font-bold">
-            {t(NAVIGATION.find(n => pathname.startsWith(n.href))?.name?.toLowerCase().replace(/ /g, '_') || "dashboard") || NAVIGATION.find(n => pathname.startsWith(n.href))?.name || "Dashboard"}
+            {t(NAVIGATION.find(n => pathname.startsWith(n.href))?.nameKey || "") || NAVIGATION.find(n => pathname.startsWith(n.href))?.defaultName || "Dashboard"}
           </h1>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 bg-success/10 px-4 py-1.5 rounded-full border border-success/20">

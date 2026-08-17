@@ -12,11 +12,10 @@ import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const NAVIGATION = [
-  { name: "Dashboard", href: "/creator/dashboard", icon: LayoutDashboard },
-  { name: "My Games", href: "/creator/games", icon: Gamepad2 },
-  { name: "Analytics", href: "/creator/analytics", icon: LineChart },
-  { name: "Monetization", href: "/creator/monetization", icon: Wallet },
-  { name: "Settings", href: "/creator/settings", icon: Settings },
+  { nameKey: "admin.tabDashboard", defaultName: "Dashboard", href: "/creator/dashboard", icon: LayoutDashboard },
+  { nameKey: "profile.uploadedGames", defaultName: "My Games", href: "/creator/games", icon: Gamepad2 },
+  { nameKey: "admin.tabAnalytics", defaultName: "Analytics", href: "/creator/analytics", icon: LineChart },
+  { nameKey: "nav.settings", defaultName: "Settings", href: "/creator/settings", icon: Settings },
 ];
 
 export default function CreatorLayout({ children }: { children: React.ReactNode }) {
@@ -64,7 +63,7 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
               const isActive = pathname.startsWith(item.href);
               return (
                 <Link
-                  key={item.name}
+                  key={item.nameKey}
                   href={item.href}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group",
@@ -74,7 +73,7 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
                   )}
                 >
                   <item.icon className={cn("w-5 h-5", isActive ? "text-indigo-400" : "text-muted-foreground group-hover:text-foreground")} />
-                  {item.name}
+                  {t(item.nameKey) || item.defaultName}
                 </Link>
               );
             })}
@@ -105,7 +104,7 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
         {/* Desktop Topbar */}
         <header className="hidden lg:flex items-center justify-between h-20 px-8 border-b border-border bg-background/95 backdrop-blur sticky top-0 z-30">
           <h1 className="text-xl font-bold">
-            {t(NAVIGATION.find(n => pathname.startsWith(n.href))?.name?.toLowerCase().replace(/ /g, '_') || "dashboard") || NAVIGATION.find(n => pathname.startsWith(n.href))?.name || "Dashboard"}
+            {t(NAVIGATION.find(n => pathname.startsWith(n.href))?.nameKey || "") || NAVIGATION.find(n => pathname.startsWith(n.href))?.defaultName || "Dashboard"}
           </h1>
           <div className="flex items-center gap-4">
             
