@@ -32,8 +32,23 @@ export function LanguageProvider({
     const savedLocale = Cookies.get("NEXT_LOCALE") as Locale;
     if (savedLocale && (savedLocale === "en" || savedLocale === "vi")) {
       setLocaleState(savedLocale);
+    } else {
+      // If no saved locale, detect via IP
+      fetch("https://ipapi.co/json/")
+        .then(res => res.json())
+        .then(data => {
+          if (data.country_code === "VN") {
+            setLocale("vi");
+          } else {
+            setLocale("en");
+          }
+        })
+        .catch(() => {
+          // Fallback to initialLocale on error
+          setLocaleState(initialLocale);
+        });
     }
-  }, []);
+  }, [initialLocale]);
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);
@@ -41,7 +56,7 @@ export function LanguageProvider({
   };
 
   const t = (key: string): string => {
-    return translations[locale]?.[key] || key;
+    return translations[locale]?.[key] || "";
   };
 
   return (
