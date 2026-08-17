@@ -26,7 +26,7 @@ export default function LibraryPage() {
        const mapGame = (g: any) => ({
           id: g.id,
           title: g.title,
-          creator: g.creator?.username || "Unknown",
+          creator: g.uploader?.username || "Unknown",
           rating: g.averageRating || 0,
           playCount: g.playCount || 0,
           thumbnail: g.coverImageUrl || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80",
