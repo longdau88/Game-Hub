@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, Gamepad2, ShieldAlert, LineChart, Settings, Bell, Menu, X, Server, ArrowLeft } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
@@ -24,7 +24,18 @@ const NAVIGATION = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const { t } = useLanguage();
+
+  useEffect(() => {
+    import("@/lib/api").then(({ fetchAPI }) => {
+      fetchAPI('/auth/me')
+        .then(res => {
+          if (res.user) setUser(res.user);
+        })
+        .catch(() => {});
+    });
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row w-full bg-background">
@@ -86,10 +97,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Profile Area */}
         <div className="p-4 border-t border-border bg-surface/50">
           <div className="flex items-center gap-3 p-2 rounded-xl">
-            <Avatar size="sm" fallback="SA" />
+            <Avatar size="sm" fallback={user?.username?.[0]?.toUpperCase() || "SA"} />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground truncate">Super Admin</p>
-              <p className="text-xs text-error font-bold">System Role</p>
+              <p className="text-sm font-semibold text-foreground truncate">{user?.username || "Super Admin"}</p>
+              <p className="text-xs text-error font-bold">{user?.role === 'ADMIN' ? 'System Admin' : 'Admin Role'}</p>
             </div>
           </div>
         </div>

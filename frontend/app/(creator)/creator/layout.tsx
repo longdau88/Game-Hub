@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Gamepad2, LineChart, Wallet, Settings, Bell, Upload, HelpCircle, ChevronRight, Menu, X, ArrowLeft } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
@@ -21,7 +21,18 @@ const NAVIGATION = [
 export default function CreatorLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
   const { t } = useLanguage();
+
+  useEffect(() => {
+    import("@/lib/api").then(({ fetchAPI }) => {
+      fetchAPI('/auth/me')
+        .then(res => {
+          if (res.user) setUser(res.user);
+        })
+        .catch(() => {});
+    });
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row w-full bg-background">
@@ -89,10 +100,10 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
             </div>
             
             <div className="flex items-center gap-3 p-2 rounded-xl border border-border bg-background">
-              <Avatar size="sm" fallback="NS" />
+              <Avatar size="sm" fallback={user?.username?.[0]?.toUpperCase() || "U"} />
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground truncate">NeonStudios</p>
-                <p className="text-xs text-muted-foreground">Pro Creator</p>
+                <p className="text-sm font-semibold text-foreground truncate">{user?.username || t("nav.guest") || "Guest"}</p>
+                <p className="text-xs text-muted-foreground">{user?.role === 'CREATOR' ? 'Creator' : 'Pro Creator'}</p>
               </div>
             </div>
           </div>
