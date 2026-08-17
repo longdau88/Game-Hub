@@ -329,10 +329,10 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-transparent text-zinc-900 dark:text-zinc-100 selection:bg-blue-500/30">
       {/* Sticky Header with Search and Categories */}
-      <div className="sticky top-[80px] z-40 border-b border-zinc-200/50 dark:border-zinc-800/50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl pb-4 pt-2 shadow-sm">
-        <div className="container mx-auto px-4 space-y-2">
+      <div className="sticky top-[80px] z-40 border-b border-zinc-200/50 dark:border-zinc-800/50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl pb-4 pt-2 shadow-sm -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+        <div className="w-full space-y-3">
           {/* Row 1: Search bar */}
-          <form onSubmit={handleSearch} className="relative group max-w-2xl w-full">
+          <form onSubmit={handleSearch} className="relative group w-full">
             <input
               type="text"
               placeholder={t("home.search") || "Search games..."}
@@ -344,7 +344,7 @@ export default function Home() {
             <button type="submit" className="hidden">Search</button>
           </form>
           {/* Row 2: Category filter - horizontally scrollable on mobile */}
-          <div className="flex overflow-x-auto gap-2 pb-2 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-300 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-thumb]:rounded-full">
+          <div className="flex overflow-x-auto gap-2 pb-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-300 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-thumb]:rounded-full">
             <button
               onClick={() => handleCategorySelect("")}
               className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-all duration-300 shrink-0 whitespace-nowrap ${
