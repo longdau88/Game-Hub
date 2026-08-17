@@ -344,7 +344,7 @@ export default function Home() {
             <button type="submit" className="hidden">Search</button>
           </form>
           {/* Row 2: Category filter - horizontally scrollable on mobile */}
-          <div className="flex overflow-x-auto gap-2 pb-1 [&::-webkit-scrollbar]:hidden">
+          <div className="flex overflow-x-auto gap-2 pb-2 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-300 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-thumb]:rounded-full">
             <button
               onClick={() => handleCategorySelect("")}
               className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-all duration-300 shrink-0 whitespace-nowrap ${
