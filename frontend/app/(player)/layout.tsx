@@ -63,7 +63,7 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
 
       {/* Sidebar */}
       <aside className={cn(
-        "fixed inset-y-0 left-0 z-40 w-64 flex-col bg-surface border-r border-border transition-transform duration-300 ease-in-out lg:static lg:flex lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-40 w-64 flex-col bg-surface border-r border-border transition-transform duration-300 ease-in-out lg:sticky lg:top-0 lg:h-screen lg:flex lg:translate-x-0",
         isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="hidden lg:flex items-center gap-3 p-6 pb-2">
@@ -127,14 +127,22 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
 
         {/* User Profile Area */}
         <div className="p-4 border-t border-border bg-surface/50">
-          <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-secondary cursor-pointer transition-colors">
-            <Avatar size="md" fallback={user?.username?.[0]?.toUpperCase() || "U"} />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground truncate">{user?.username || t("nav.guest") || "Guest"}</p>
-              <p className="text-xs text-primary font-medium">{t("nav.level") || "Level"} {user?.level || 1}</p>
+          {user ? (
+            <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-secondary cursor-pointer transition-colors">
+              <Avatar size="md" fallback={user?.username?.[0]?.toUpperCase() || "U"} />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground truncate">{user?.username}</p>
+                <p className="text-xs text-primary font-medium">{t("nav.level") || "Level"} {user?.level || 1}</p>
+              </div>
+              <Settings className="w-4 h-4 text-muted-foreground" />
             </div>
-            <Settings className="w-4 h-4 text-muted-foreground" />
-          </div>
+          ) : (
+            <Link href="/login" className="block w-full">
+              <Button className="w-full">
+                {t("nav.login") || "Đăng nhập"}
+              </Button>
+            </Link>
+          )}
         </div>
       </aside>
 
