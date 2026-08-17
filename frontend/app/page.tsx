@@ -329,8 +329,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-transparent text-zinc-900 dark:text-zinc-100 selection:bg-blue-500/30">
       {/* Sticky Header with Search and Categories */}
-      <div className="sticky top-[80px] z-40 border-b border-zinc-200/50 dark:border-zinc-800/50 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl pb-4 pt-2 shadow-sm -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
-        <div className="w-full space-y-3">
+      <div className="sticky top-[80px] z-40 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl border border-white/20 dark:border-zinc-800/50 shadow-lg shadow-blue-500/5 rounded-2xl p-4 sm:p-6 mb-6">
+        <div className="w-full space-y-4">
           {/* Row 1: Search bar */}
           <form onSubmit={handleSearch} className="relative group w-full">
             <input
@@ -338,19 +338,19 @@ export default function Home() {
               placeholder={t("home.search") || "Search games..."}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 focus:border-blue-500/50 focus:bg-white dark:bg-zinc-900 rounded-2xl pl-12 pr-4 py-3 text-zinc-900 dark:text-white outline-none transition-all shadow-inner"
+              className="w-full bg-white/50 dark:bg-zinc-950/50 border border-zinc-200 dark:border-zinc-800 focus:border-blue-500/50 focus:bg-white dark:bg-zinc-900 rounded-2xl pl-12 pr-4 py-3 text-zinc-900 dark:text-white outline-none transition-all shadow-inner"
             />
             <Search className="w-5 h-5 text-zinc-500 absolute left-4 top-1/2 -translate-y-1/2 group-focus-within:text-blue-400 transition-colors" />
             <button type="submit" className="hidden">Search</button>
           </form>
-          {/* Row 2: Category filter - horizontally scrollable on mobile */}
-          <div className="flex overflow-x-auto gap-2 pb-2 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-300 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-thumb]:rounded-full">
+          {/* Row 2: Category filter - horizontally scrollable */}
+          <div className="flex overflow-x-auto gap-2 pb-2 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-300 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-700 [&::-webkit-scrollbar-thumb]:rounded-full">
             <button
               onClick={() => handleCategorySelect("")}
               className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-all duration-300 shrink-0 whitespace-nowrap ${
                 selectedCategory === ""
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 border border-transparent'
-                  : 'bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800'
+                  : 'bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'
               }`}
             >
               {t("home.filterAll")}
@@ -362,7 +362,7 @@ export default function Home() {
                 className={`px-4 py-1.5 rounded-xl text-sm font-medium transition-all duration-300 shrink-0 whitespace-nowrap ${
                   selectedCategory === cat.slug
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 border border-transparent'
-                    : 'bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800'
+                    : 'bg-zinc-100 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700/50 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700'
                 }`}
               >
                 {cat.nameTranslations?.[language] || cat.name}
