@@ -12,12 +12,12 @@ export const metadata: Metadata = {
 export const revalidate = 300; 
 
 export default async function Home() {
-  let featuredGames = [];
-  let mostPlayedGames = [];
-  let mostLikedGames = [];
-  let newReleases = [];
-  let allGames = [];
-  let categories = [];
+  let featuredGames: any[] = [];
+  let mostPlayedGames: any[] = [];
+  let mostLikedGames: any[] = [];
+  let newReleases: any[] = [];
+  let allGames: any[] = [];
+  let categories: any[] = [];
 
   try {
     const [
