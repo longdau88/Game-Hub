@@ -49,12 +49,13 @@ export default function GameCard({ game, isBookmarked, onToggleBookmark }: GameC
         </div>
 
         {/* Bookmark Button */}
-        <button 
+        <div 
+          role="button"
           onClick={(e) => onToggleBookmark(e, game.id)}
           className="absolute top-3 right-3 p-2 rounded-full bg-black/40 backdrop-blur-md hover:bg-black/80 transition-colors group/btn z-10 border border-black/10 dark:border-white/10"
         >
           <Heart className={`w-4 h-4 transition-colors ${isBookmarked ? 'fill-pink-500 text-pink-500' : 'text-white group-hover/btn:text-pink-400'}`} />
-        </button>
+        </div>
       </Link>
       
       <div className="p-5 flex-1 flex flex-col relative z-10 bg-gradient-to-b from-transparent to-white/90 dark:to-zinc-900/90">
@@ -67,7 +68,7 @@ export default function GameCard({ game, isBookmarked, onToggleBookmark }: GameC
             {game.averageRating > 0 ? game.averageRating : "New"}
           </div>
         </div>
-        <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3 flex items-center gap-2">
+        <div className="text-xs text-zinc-600 dark:text-zinc-400 mb-3 flex items-center gap-2">
           {game.uploader?.avatarUrl ? (
             <img src={game.uploader.avatarUrl} alt="avatar" className="w-5 h-5 rounded-full object-cover" />
           ) : (
@@ -76,7 +77,7 @@ export default function GameCard({ game, isBookmarked, onToggleBookmark }: GameC
             </div>
           )}
           <span className="font-medium text-zinc-700 dark:text-zinc-300">{game.uploader?.username || "Admin"}</span>
-        </p>
+        </div>
         <p className="text-zinc-500 text-sm mb-4 line-clamp-2 leading-relaxed">{game.descriptionTranslations?.[language] || game.description}</p>
         
         <div className="mt-auto flex items-center justify-between text-xs text-zinc-500 pt-3 border-t border-zinc-200/50 dark:border-zinc-800/50">

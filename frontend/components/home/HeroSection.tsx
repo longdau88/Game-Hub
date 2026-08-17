@@ -57,15 +57,16 @@ export default function HeroSection({ featuredGames, bookmarkedGames, onToggleBo
               </p>
               
               <div className="flex gap-2 sm:gap-4">
-                <button className="px-4 py-2.5 sm:px-8 sm:py-4 bg-white text-black hover:bg-zinc-200 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-lg flex items-center gap-2 sm:gap-3 transition-transform hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+                <div role="button" onClick={(e) => { e.preventDefault(); /* Add play action */ }} className="px-4 py-2.5 sm:px-8 sm:py-4 bg-white text-black hover:bg-zinc-200 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-lg flex items-center gap-2 sm:gap-3 transition-transform hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(255,255,255,0.3)]">
                   <Play className="w-4 h-4 sm:w-6 sm:h-6 fill-current" /> Play Now
-                </button>
-                <button 
+                </div>
+                <div 
+                  role="button"
                   onClick={(e) => { e.preventDefault(); onToggleBookmark(e, featuredGames[0].id); }}
                   className="px-3 py-2.5 sm:px-6 sm:py-4 bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/20 text-white rounded-xl sm:rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 group"
                 >
                   <Heart className={`w-4 h-4 sm:w-6 sm:h-6 transition-colors ${bookmarkedGames.has(featuredGames[0].id) ? 'fill-red-500 text-red-500' : 'group-hover:text-pink-400'}`} />
-                </button>
+                </div>
               </div>
             </div>
           </Link>
