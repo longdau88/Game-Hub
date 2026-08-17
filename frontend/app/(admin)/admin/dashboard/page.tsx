@@ -30,10 +30,10 @@ export default function AdminDashboard() {
         console.error("Failed to load admin stats:", err);
         // Fallback to empty if unauthorized or missing
         setStats([
-          { label: t("total_users") || "Total Users", value: "0", trend: "-", isPositive: true, icon: Users, color: "text-blue-500" },
-          { label: t("active_games") || "Active Games", value: "0", trend: "-", isPositive: true, icon: Gamepad2, color: "text-indigo-500" },
-          { label: t("pending_moderation") || "Pending Moderation", value: "0", trend: "-", isPositive: true, icon: ShieldAlert, color: "text-warning" },
-          { label: t("server_load") || "Server Load", value: "N/A", trend: "-", isPositive: false, icon: Server, color: "text-error" },
+          { label: t("total_users") || "Total Users", value: "0", trend: "0%", isPositive: true, icon: Users, color: "text-blue-500" },
+          { label: t("active_games") || "Active Games", value: "0", trend: "0%", isPositive: true, icon: Gamepad2, color: "text-indigo-500" },
+          { label: t("pending_moderation") || "Pending Moderation", value: "0", trend: "0", isPositive: true, icon: ShieldAlert, color: "text-warning" },
+          { label: t("server_load") || "Server Load", value: "N/A", trend: "0%", isPositive: false, icon: Server, color: "text-error" },
         ]);
       } finally {
         setLoading(false);
@@ -90,27 +90,12 @@ export default function AdminDashboard() {
             </CardTitle>
             <CardDescription>Latest system and moderation events</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {[
-              { time: "2 mins ago", msg: "User @neon_rider was reported for abusive language.", type: "warning" },
-              { time: "15 mins ago", msg: "New game 'Cyber Strike' submitted for review.", type: "info" },
-              { time: "1 hour ago", msg: "Automated backup completed successfully.", type: "success" },
-              { time: "3 hours ago", msg: "Spike in server latency detected (Region: US-East).", type: "error" },
-            ].map((event, i) => (
-              <div key={i} className="flex gap-4 items-start p-3 rounded-xl bg-background border border-border">
-                <div className="shrink-0 mt-0.5">
-                  <div className={`w-2.5 h-2.5 rounded-full ${
-                    event.type === 'warning' ? 'bg-warning' :
-                    event.type === 'info' ? 'bg-info' :
-                    event.type === 'success' ? 'bg-success' : 'bg-error'
-                  }`} />
-                </div>
-                <div>
-                  <p className="text-sm text-foreground">{event.msg}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{event.time}</p>
-                </div>
-              </div>
-            ))}
+          <CardContent className="space-y-4 pt-6">
+            <div className="text-center py-6">
+              <Activity className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+              <p className="text-muted-foreground font-semibold">{t("not_available") || "Chưa có dữ liệu"}</p>
+              <p className="text-sm text-muted-foreground/70">{t("no_recent_activity") || "No recent activity recorded."}</p>
+            </div>
           </CardContent>
         </Card>
 
@@ -122,29 +107,11 @@ export default function AdminDashboard() {
             </CardTitle>
             <CardDescription>Items requiring immediate admin action</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 rounded-xl border border-error/20 bg-error/5">
-              <div>
-                <p className="font-bold">Reported Games</p>
-                <p className="text-sm text-muted-foreground">12 pending reviews</p>
-              </div>
-              <Badge variant="destructive">High Priority</Badge>
-            </div>
-            
-            <div className="flex items-center justify-between p-4 rounded-xl border border-warning/20 bg-warning/5">
-              <div>
-                <p className="font-bold">User Reports</p>
-                <p className="text-sm text-muted-foreground">28 pending reviews</p>
-              </div>
-              <Badge variant="outline" className="text-warning border-warning/50">Medium Priority</Badge>
-            </div>
-
-            <div className="flex items-center justify-between p-4 rounded-xl border border-border bg-background">
-              <div>
-                <p className="font-bold">Creator Applications</p>
-                <p className="text-sm text-muted-foreground">5 pending approvals</p>
-              </div>
-              <Badge variant="secondary">Low Priority</Badge>
+          <CardContent className="space-y-4 pt-6">
+            <div className="text-center py-6">
+              <ShieldAlert className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+              <p className="text-muted-foreground font-semibold">{t("not_available") || "Chưa có dữ liệu"}</p>
+              <p className="text-sm text-muted-foreground/70">{t("no_moderation_queue") || "Moderation queue is empty."}</p>
             </div>
           </CardContent>
         </Card>

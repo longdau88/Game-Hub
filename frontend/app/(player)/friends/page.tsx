@@ -5,16 +5,23 @@ import { Users, Search, UserPlus, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/ui/avatar";
-
-const MOCK_FRIENDS = [
-  { id: "1", name: "Alex Chen", handle: "@alexc", status: "Online", playing: "Neon District: Zero", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" },
-  { id: "2", name: "Sarah Connor", handle: "@sarahc", status: "Offline", playing: null, avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" },
-  { id: "3", name: "Mike Ross", handle: "@miker", status: "In Game", playing: "Cyber Racer 3D", avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mike" },
-];
+import { fetchAPI } from "@/lib/api";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function FriendsPage() {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const [friends, setFriends] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { t } = useLanguage();
+
+  useEffect(() => {
+    setMounted(true);
+    fetchAPI('/friends')
+      .then(res => setFriends(res.data || []))
+      .catch(() => setFriends([]))
+      .finally(() => setLoading(false));
+  }, []);
+
   if (!mounted) return null;
 
   return (
@@ -35,30 +42,40 @@ export default function FriendsPage() {
       </div>
 
       <div className="bg-surface border border-border rounded-2xl overflow-hidden">
-        {MOCK_FRIENDS.map((friend, idx) => (
-          <div key={friend.id} className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors hover:bg-secondary/50 ${idx !== MOCK_FRIENDS.length - 1 ? 'border-b border-border' : ''}`}>
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <Avatar size="lg" src={friend.avatar} fallback={friend.name.charAt(0)} />
-                <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-surface ${
-                  friend.status === 'Online' ? 'bg-success' : 
-                  friend.status === 'In Game' ? 'bg-primary' : 'bg-muted-foreground'
-                }`} />
+        {loading ? (
+           <div className="p-8 text-center text-muted-foreground">{t("loading") || "Loading..."}</div>
+        ) : friends.length > 0 ? (
+          friends.map((friend, idx) => (
+            <div key={friend.id} className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors hover:bg-secondary/50 ${idx !== friends.length - 1 ? 'border-b border-border' : ''}`}>
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <Avatar size="lg" src={friend.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${friend.name}`} fallback={friend.name?.charAt(0) || "F"} />
+                  <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-surface ${
+                    friend.status === 'Online' ? 'bg-success' : 
+                    friend.status === 'In Game' ? 'bg-primary' : 'bg-muted-foreground'
+                  }`} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg leading-tight">{friend.name}</h3>
+                  <p className="text-sm text-muted-foreground">{friend.handle}</p>
+                  {friend.playing && (
+                    <p className="text-xs font-medium text-primary mt-1">Playing: {friend.playing}</p>
+                  )}
+                </div>
               </div>
-              <div>
-                <h3 className="font-bold text-lg leading-tight">{friend.name}</h3>
-                <p className="text-sm text-muted-foreground">{friend.handle}</p>
-                {friend.playing && (
-                  <p className="text-xs font-medium text-primary mt-1">Playing: {friend.playing}</p>
-                )}
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm"><MessageSquare className="w-4 h-4 mr-2" /> Message</Button>
+                <Button variant="ghost" size="sm">Profile</Button>
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm"><MessageSquare className="w-4 h-4 mr-2" /> Message</Button>
-              <Button variant="ghost" size="sm">Profile</Button>
-            </div>
+          ))
+        ) : (
+          <div className="p-12 text-center">
+            <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+            <p className="text-muted-foreground font-semibold text-lg">{t("not_available") || "Chưa có"}</p>
+            <p className="text-sm text-muted-foreground/70 mt-2">{t("no_friends_found") || "You don't have any friends yet."}</p>
           </div>
-        ))}
+        )}
       </div>
 
     </div>

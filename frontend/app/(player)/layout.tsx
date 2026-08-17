@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Gamepad2, Home, Compass, Library, FolderHeart, Users, Trophy, Bell, Settings, LogOut, ChevronRight, Menu, X, CheckSquare } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
@@ -28,6 +28,17 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    import("@/lib/api").then(({ fetchAPI }) => {
+      fetchAPI('/auth/me')
+        .then(res => {
+          if (res.user) setUser(res.user);
+        })
+        .catch(() => {});
+    });
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row w-full bg-background">
@@ -117,10 +128,10 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
         {/* User Profile Area */}
         <div className="p-4 border-t border-border bg-surface/50">
           <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-secondary cursor-pointer transition-colors">
-            <Avatar size="md" fallback="JD" />
+            <Avatar size="md" fallback={user?.username?.[0]?.toUpperCase() || "U"} />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground truncate">John Doe</p>
-              <p className="text-xs text-primary font-medium">{t("nav.level") || "Level"} 42</p>
+              <p className="text-sm font-semibold text-foreground truncate">{user?.username || t("nav.guest") || "Guest"}</p>
+              <p className="text-xs text-primary font-medium">{t("nav.level") || "Level"} {user?.level || 1}</p>
             </div>
             <Settings className="w-4 h-4 text-muted-foreground" />
           </div>

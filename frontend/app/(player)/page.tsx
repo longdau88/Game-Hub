@@ -6,13 +6,7 @@ import { XPProgress } from "@/components/shared/XPProgress";
 import { Button } from "@/components/ui/button";
 import { Search, Flame, Trophy, Star, ChevronRight } from "lucide-react";
 
-// Mock data to scaffold the UI quickly
-const MOCK_GAMES: Game[] = [
-  { id: "1", title: "Cyber Racer 3D", creator: "NeonStudios", rating: 4.8, playCount: 15420, thumbnail: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&q=80", category: "Racing", isNew: true },
-  { id: "2", title: "Fantasy Brawl", creator: "EpicGames", rating: 4.5, playCount: 8930, thumbnail: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=800&q=80", category: "Action" },
-  { id: "3", title: "Puzzle Blocks", creator: "BrainTease", rating: 4.2, playCount: 3200, thumbnail: "https://images.unsplash.com/photo-1614294149010-950b698f72c0?w=800&q=80", category: "Puzzle" },
-  { id: "4", title: "Space Explorer", creator: "CosmicDev", rating: 4.9, playCount: 42100, thumbnail: "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=800&q=80", category: "Adventure", isNew: true },
-];
+
 
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -68,34 +62,36 @@ export default function PlayerHome() {
       </section>
 
       {/* Featured Game Hero */}
-      <section className="relative rounded-3xl overflow-hidden aspect-[21/9] min-h-[300px] md:min-h-[400px] border border-border group cursor-pointer">
-        <img 
-          src="https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=1600&q=80" 
-          alt="Featured Game"
-          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
-        
-        <div className="absolute bottom-0 left-0 p-6 md:p-12 max-w-2xl w-full">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="px-3 py-1 bg-error text-white text-xs font-bold uppercase rounded-full flex items-center gap-1">
-              <Flame className="w-3.5 h-3.5" /> {t("featured.badge") || "Editor's Choice"}
-            </span>
+      {!loading && games.length > 0 && (
+        <section className="relative rounded-3xl overflow-hidden aspect-[21/9] min-h-[300px] md:min-h-[400px] border border-border group cursor-pointer">
+          <img 
+            src={games[0].thumbnail || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=1600&q=80"} 
+            alt="Featured Game"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent" />
+          
+          <div className="absolute bottom-0 left-0 p-6 md:p-12 max-w-2xl w-full">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="px-3 py-1 bg-error text-white text-xs font-bold uppercase rounded-full flex items-center gap-1">
+                <Flame className="w-3.5 h-3.5" /> {t("featured.badge") || "Editor's Choice"}
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black text-white mb-4">{games[0].title}</h2>
+            <p className="text-zinc-300 text-sm md:text-base mb-6 line-clamp-2">
+              {t("featured.desc") || "Dive into the neon-lit streets of the future. An action-packed cyberpunk platformer with stunning visuals and intense boss fights."}
+            </p>
+            <div className="flex gap-4">
+              <Button size="lg" className="rounded-full shadow-lg shadow-primary/30">
+                {t("featured.playNow") || "Play Now"}
+              </Button>
+              <Button size="lg" variant="glass" className="rounded-full">
+                {t("featured.viewDetails") || "View Details"}
+              </Button>
+            </div>
           </div>
-          <h2 className="text-3xl md:text-5xl font-black text-white mb-4">{t("featured.title") || "Neon District: Zero"}</h2>
-          <p className="text-zinc-300 text-sm md:text-base mb-6 line-clamp-2">
-            {t("featured.desc") || "Dive into the neon-lit streets of the future. An action-packed cyberpunk platformer with stunning visuals and intense boss fights."}
-          </p>
-          <div className="flex gap-4">
-            <Button size="lg" className="rounded-full shadow-lg shadow-primary/30">
-              {t("featured.playNow") || "Play Now"}
-            </Button>
-            <Button size="lg" variant="glass" className="rounded-full">
-              {t("featured.viewDetails") || "View Details"}
-            </Button>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Trending Games */}
       <section>

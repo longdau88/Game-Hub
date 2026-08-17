@@ -45,10 +45,10 @@ export default function CreatorDashboard() {
       } catch (err) {
         console.error("Failed to load creator data:", err);
         setStats([
-          { label: t("total_plays") || "Total Plays", value: "0", trend: "-", isPositive: true, icon: MousePointerClick, color: "text-blue-500" },
-          { label: t("total_games") || "Total Games", value: "0", trend: "-", isPositive: true, icon: Gamepad2, color: "text-indigo-500" },
-          { label: t("estimated_revenue") || "Estimated Revenue", value: "$0", trend: "-", isPositive: true, icon: DollarSign, color: "text-emerald-500" },
-          { label: t("avg_rating") || "Average Rating", value: "0.0", trend: "-", isPositive: false, icon: BarChart3, color: "text-amber-500" },
+          { label: t("total_plays") || "Total Plays", value: "0", trend: "0%", isPositive: true, icon: MousePointerClick, color: "text-blue-500" },
+          { label: t("total_games") || "Total Games", value: "0", trend: "0%", isPositive: true, icon: Gamepad2, color: "text-indigo-500" },
+          { label: t("estimated_revenue") || "Estimated Revenue", value: "$0", trend: "0%", isPositive: true, icon: DollarSign, color: "text-emerald-500" },
+          { label: t("avg_rating") || "Average Rating", value: "0.0", trend: "0", isPositive: false, icon: BarChart3, color: "text-amber-500" },
         ]);
       } finally {
         setLoading(false);
@@ -108,33 +108,11 @@ export default function CreatorDashboard() {
             <CardDescription>Performance metrics across all your published games.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px] w-full flex items-end justify-between gap-2 pt-4 px-2">
-              {/* Mock Chart Bars */}
-              {[...Array(30)].map((_, i) => (
-                <div key={i} className="w-full flex flex-col justify-end gap-1 group relative">
-                  {/* Tooltip mock */}
-                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black/80 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10 whitespace-nowrap">
-                    Day {i + 1}
-                  </div>
-                  {/* Revenue Bar */}
-                  <div 
-                    className="w-full bg-emerald-500/80 rounded-t-sm hover:bg-emerald-400 transition-colors" 
-                    style={{ height: `${20 + Math.random() * 40}%` }} 
-                  />
-                  {/* Plays Bar */}
-                  <div 
-                    className="w-full bg-indigo-500/80 rounded-t-sm hover:bg-indigo-400 transition-colors" 
-                    style={{ height: `${30 + Math.random() * 60}%` }} 
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-border">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="w-3 h-3 rounded-full bg-emerald-500" /> Revenue
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <div className="w-3 h-3 rounded-full bg-indigo-500" /> Plays
+            <div className="h-[300px] w-full flex items-center justify-center pt-4 px-2">
+              <div className="text-center">
+                <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                <p className="text-muted-foreground font-semibold">{t("not_available") || "Chưa có dữ liệu"}</p>
+                <p className="text-sm text-muted-foreground/70">{t("no_chart_data") || "Not enough data to display chart."}</p>
               </div>
             </div>
           </CardContent>

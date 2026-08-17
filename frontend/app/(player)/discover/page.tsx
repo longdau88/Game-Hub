@@ -8,32 +8,24 @@ import { Search, SlidersHorizontal, Gamepad2 } from "lucide-react";
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-const CATEGORIES = [
-  { name: "All", active: true },
-  { name: "Action", active: false },
-  { name: "Adventure", active: false },
-  { name: "Arcade", active: false },
-  { name: "Puzzle", active: false },
-  { name: "Strategy", active: false },
-  { name: "Casual", active: false },
-  { name: "Racing", active: false },
-  { name: "Simulation", active: false },
-  { name: "Multiplayer", active: false }
-];
 
 export default function DiscoverPage() {
   const [mounted, setMounted] = useState(false);
   const [search, setSearch] = useState("");
   const [games, setGames] = useState<Game[]>([]);
+  const [categories, setCategories] = useState<{name: string, active: boolean}[]>([{ name: "All", active: true }]);
   const [loading, setLoading] = useState(true);
   const { t } = useLanguage();
 
   useEffect(() => {
     setMounted(true);
-    const loadGames = async () => {
+    const loadData = async () => {
       try {
-        const data = await fetchAPI('/games');
-        const mappedGames = (data.data || []).map((g: any) => ({
+        const [gamesData, catsData] = await Promise.all([
+          fetchAPI('/games').catch(() => ({ data: [] })),
+          fetchAPI('/categories').catch(() => ({ data: [] }))
+        ]);
+        const mappedGames = (gamesData.data || []).map((g: any) => ({
           id: g.id,
           title: g.title,
           creator: g.creator?.username || "Unknown",
@@ -43,13 +35,16 @@ export default function DiscoverPage() {
           category: g.categories?.[0]?.category?.name || "Uncategorized"
         }));
         setGames(mappedGames);
+
+        const mappedCats = (catsData.data || []).map((c: any) => ({ name: c.name, active: false }));
+        setCategories([{ name: t("category.all") || "All", active: true }, ...mappedCats]);
       } catch (err) {
-        console.error("Failed to load games:", err);
+        console.error("Failed to load data:", err);
       } finally {
         setLoading(false);
       }
     };
-    loadGames();
+    loadData();
   }, []);
 
   if (!mounted) return null;
@@ -82,7 +77,7 @@ export default function DiscoverPage() {
 
       {/* Categories */}
       <div className="flex items-center gap-2 overflow-x-auto pb-4 hide-scrollbar">
-        {CATEGORIES.map(category => (
+        {categories.map(category => (
           <Button 
             key={category.name} 
             variant="outline" 

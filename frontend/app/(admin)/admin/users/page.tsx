@@ -9,30 +9,43 @@ import { Avatar } from "@/components/ui/avatar";
 import { Search, MoreHorizontal, UserX, Shield, Mail } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const MOCK_USERS = [
-  { id: "USR-001", name: "John Doe", email: "john@example.com", role: "Player", status: "Active", joinedAt: "Oct 24, 2023" },
-  { id: "USR-002", name: "Jane Smith", email: "jane@example.com", role: "Creator", status: "Active", joinedAt: "Sep 12, 2023" },
-  { id: "USR-003", name: "NeonStudios", email: "contact@neonstudios.com", role: "Creator", status: "Active", joinedAt: "Jan 05, 2023" },
-  { id: "USR-004", name: "TrollMaster99", email: "troll@example.com", role: "Player", status: "Suspended", joinedAt: "Nov 01, 2023" },
-  { id: "USR-005", name: "Sarah Connor", email: "sarah@example.com", role: "Admin", status: "Active", joinedAt: "Dec 15, 2022" },
-];
+import { fetchAPI } from "@/lib/api";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function UserManagementPage() {
   const [mounted, setMounted] = useState(false);
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const { t } = useLanguage();
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    fetchAPI('/admin/users')
+      .then(res => setUsers(res.data || []))
+      .catch(err => {
+        console.error("Failed to fetch users", err);
+        setUsers([]);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
   if (!mounted) return null;
+
+  const filteredUsers = users.filter(user => 
+    (user.username?.toLowerCase() || '').includes(search.toLowerCase()) ||
+    (user.email?.toLowerCase() || '').includes(search.toLowerCase())
+  );
 
   return (
     <div className="space-y-8 pb-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
-          <p className="text-muted-foreground mt-1">View and manage platform users, roles, and statuses.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t("user_management") || "User Management"}</h1>
+          <p className="text-muted-foreground mt-1">{t("user_management_desc") || "View and manage platform users, roles, and statuses."}</p>
         </div>
         <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md">
-          Invite User
+          {t("invite_user") || "Invite User"}
         </Button>
       </div>
 
@@ -53,58 +66,67 @@ export default function UserManagementPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {MOCK_USERS.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-3">
-                      <Avatar size="sm" fallback={user.name.charAt(0)} />
-                      <div>
-                        <div className="text-foreground">{user.name}</div>
-                        <div className="text-xs text-muted-foreground">{user.email}</div>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={user.role === 'Admin' ? 'default' : user.role === 'Creator' ? 'secondary' : 'outline'}>
-                      {user.role}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={user.status === 'Active' ? 'success' : 'destructive'} className={user.status === 'Suspended' ? 'bg-error/10 text-error border-error/20' : ''}>
-                      {user.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">{user.joinedAt}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                        <Mail className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                        <Shield className="h-4 w-4" />
-                      </Button>
-                      {user.status !== 'Admin' && (
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-error hover:text-error hover:bg-error/10">
-                          <UserX className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
+          {loading ? (
+             <div className="p-12 text-center text-muted-foreground">{t("loading") || "Loading..."}</div>
+          ) : filteredUsers.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>User</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Joined</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredUsers.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-3">
+                        <Avatar size="sm" src={user.profileImageUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`} fallback={user.username?.charAt(0) || "U"} />
+                        <div>
+                          <div className="text-foreground">{user.username}</div>
+                          <div className="text-xs text-muted-foreground">{user.email}</div>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={user.role === 'ADMIN' ? 'default' : user.role === 'CREATOR' ? 'secondary' : 'outline'}>
+                        {user.role}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={user.isBanned ? 'destructive' : 'success'} className={user.isBanned ? 'bg-error/10 text-error border-error/20' : ''}>
+                        {user.isBanned ? 'Suspended' : 'Active'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">{new Date(user.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                          <Mail className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                          <Shield className="h-4 w-4" />
+                        </Button>
+                        {user.role !== 'ADMIN' && (
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-error hover:text-error hover:bg-error/10">
+                            <UserX className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="p-12 text-center border border-dashed border-border rounded-xl">
+               <p className="text-muted-foreground font-semibold">{t("not_available") || "Chưa có dữ liệu"}</p>
+               <p className="text-sm text-muted-foreground/70">{t("no_users") || "No users found."}</p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
