@@ -82,7 +82,7 @@ export default function GameCard({ game, isBookmarked, onToggleBookmark }: GameC
         
         <div className="mt-auto flex items-center justify-between text-xs text-zinc-500 pt-3 border-t border-zinc-200/50 dark:border-zinc-800/50">
           <span className="flex items-center gap-1.5"><Play className="w-3.5 h-3.5" /> {game.playCount || 0} {t("game.plays") ? t("game.plays").toLowerCase() : "plays"}</span>
-          <span>{new Date(game.createdAt).toLocaleDateString()}</span>
+          <span suppressHydrationWarning>{new Date(game.createdAt).toLocaleDateString()}</span>
         </div>
       </div>
     </motion.div>
