@@ -144,8 +144,10 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
         <header className="hidden lg:flex items-center justify-end h-20 px-8 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30">
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-2 bg-secondary/50 px-4 py-1.5 rounded-full border border-border">
-              <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-              <span className="text-xs font-medium text-muted-foreground">{t("nav.streak") || "3 Day Streak!"}</span>
+              {user?.streak > 0 && <div className="w-2 h-2 rounded-full bg-success animate-pulse" />}
+              <span className="text-xs font-medium text-muted-foreground">
+                {user?.streak ? `${user.streak} ${t("nav.streak_days") || "Day Streak!"}` : t("nav.no_streak") || "No Active Streak"}
+              </span>
             </div>
             
             <div className="flex items-center gap-1 border-r border-border pr-4 mr-2">

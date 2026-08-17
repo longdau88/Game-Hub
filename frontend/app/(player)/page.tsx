@@ -15,6 +15,7 @@ export default function PlayerHome() {
   const [mounted, setMounted] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -41,8 +42,16 @@ export default function PlayerHome() {
         setLoading(false);
       }
     };
+
+    const loadUser = async () => {
+      try {
+        const res = await fetchAPI('/auth/me');
+        if (res.user) setUser(res.user);
+      } catch (err) {}
+    };
     
     loadGames();
+    loadUser();
   }, []);
 
   if (!mounted) return null;
@@ -53,12 +62,20 @@ export default function PlayerHome() {
       {/* Welcome & Gamification Banner */}
       <section className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-6 rounded-2xl bg-gradient-to-r from-primary/10 via-accent/10 to-transparent border border-border">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t("welcome_back") || "Welcome back"} 🎮</h1>
-          <p className="text-muted-foreground mt-1">{t("xp_away") || "You're 240 XP away from Level 43. Keep playing!"}</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t("welcome_back") || "Welcome back"}{user?.username ? `, ${user.username}` : ''} 🎮</h1>
+          <p className="text-muted-foreground mt-1">
+            {user ? (
+              `${t("xp_away") || "You're"} ${(user.nextLevelXP || 1000) - (user.xp || 0)} ${t("xp_from_level") || "XP away from Level"} ${(user.level || 1) + 1}. ${t("keep_playing") || "Keep playing!"}`
+            ) : (
+              t("login_to_track") || "Log in to track your progress and level up!"
+            )}
+          </p>
         </div>
-        <div className="w-full md:w-64 bg-surface/50 p-4 rounded-xl border border-border">
-          <XPProgress level={42} currentXP={760} nextLevelXP={1000} />
-        </div>
+        {user && (
+          <div className="w-full md:w-64 bg-surface/50 p-4 rounded-xl border border-border">
+            <XPProgress level={user.level || 1} currentXP={user.xp || 0} nextLevelXP={user.nextLevelXP || 1000} />
+          </div>
+        )}
       </section>
 
       {/* Featured Game Hero */}
