@@ -79,19 +79,19 @@ export default function PlayerHome() {
         <div className="absolute bottom-0 left-0 p-6 md:p-12 max-w-2xl w-full">
           <div className="flex items-center gap-2 mb-4">
             <span className="px-3 py-1 bg-error text-white text-xs font-bold uppercase rounded-full flex items-center gap-1">
-              <Flame className="w-3.5 h-3.5" /> Editor's Choice
+              <Flame className="w-3.5 h-3.5" /> {t("featured.badge") || "Editor's Choice"}
             </span>
           </div>
-          <h2 className="text-3xl md:text-5xl font-black text-white mb-4">Neon District: Zero</h2>
+          <h2 className="text-3xl md:text-5xl font-black text-white mb-4">{t("featured.title") || "Neon District: Zero"}</h2>
           <p className="text-zinc-300 text-sm md:text-base mb-6 line-clamp-2">
-            Dive into the neon-lit streets of the future. An action-packed cyberpunk platformer with stunning visuals and intense boss fights.
+            {t("featured.desc") || "Dive into the neon-lit streets of the future. An action-packed cyberpunk platformer with stunning visuals and intense boss fights."}
           </p>
           <div className="flex gap-4">
             <Button size="lg" className="rounded-full shadow-lg shadow-primary/30">
-              Play Now
+              {t("featured.playNow") || "Play Now"}
             </Button>
             <Button size="lg" variant="glass" className="rounded-full">
-              View Details
+              {t("featured.viewDetails") || "View Details"}
             </Button>
           </div>
         </div>
