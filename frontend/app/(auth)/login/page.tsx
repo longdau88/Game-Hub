@@ -37,7 +37,7 @@ export default function LoginPage() {
         Cookies.set("token", data.token, { expires: 7 });
         Cookies.set("role", data.user.role, { expires: 7 });
         
-        if (data.user.role === "admin") {
+        if (data.user.role === "admin" || data.user.role === "ADMIN") {
           router.push("/admin");
         } else {
           router.push("/");
