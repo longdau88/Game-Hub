@@ -118,7 +118,7 @@ export default function PlayerHome() {
             <Trophy className="w-6 h-6 text-warning" />
             <h2 className="text-2xl font-bold">{t("trending_now") || "Trending Now"}</h2>
           </div>
-          <Link href="/games/trending">
+          <Link href="/discover">
             <Button variant="ghost" className="text-muted-foreground">
               {t("view_all") || "View All"} <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
@@ -148,7 +148,7 @@ export default function PlayerHome() {
             <Star className="w-6 h-6 text-primary" />
             <h2 className="text-2xl font-bold">{t("new_releases") || "New Releases"}</h2>
           </div>
-          <Link href="/games/new">
+          <Link href="/discover">
             <Button variant="ghost" className="text-muted-foreground">
               {t("view_all") || "View All"} <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
