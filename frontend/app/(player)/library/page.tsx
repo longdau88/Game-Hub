@@ -66,19 +66,19 @@ export default function LibraryPage() {
       setCollections([...collections, data]);
       setNewCollectionName("");
       setIsCreatingCollection(false);
-      await notify({ message: "Collection created", variant: "success" });
+      await notify({ message: t("library.collection_created") || "Collection created successfully", variant: "success" });
     } catch (error) {
       console.error(error);
     }
   };
 
   const handleDeleteCollection = async (collectionId: number) => {
-    if (!await confirm({ message: "Are you sure you want to delete this folder? Games will be moved to Uncategorized.", variant: "warning" })) return;
+    if (!await confirm({ message: t("library.confirm_delete") || "Are you sure you want to delete this folder? Games will be moved to Uncategorized.", variant: "warning" })) return;
     try {
       await fetchAPI(`/collections/${collectionId}`, { method: "DELETE" });
       setCollections(collections.filter(c => c.id !== collectionId));
       if (selectedCollectionId === collectionId) setSelectedCollectionId('all');
-      await notify({ message: "Collection deleted", variant: "success" });
+      await notify({ message: t("library.collection_deleted") || "Collection deleted", variant: "success" });
       
       // Update saved games locally (move deleted collection games to uncategorized)
       setSavedGames(prev => prev.map(g => g.collectionId === collectionId ? { ...g, collectionId: null } : g));
@@ -97,7 +97,7 @@ export default function LibraryPage() {
       });
       setCollections(collections.map(c => c.id === collectionId ? { ...c, name: data.name } : c));
       setEditingCollectionId(null);
-      await notify({ message: "Collection renamed", variant: "success" });
+      await notify({ message: t("library.collection_renamed") || "Collection renamed", variant: "success" });
     } catch (error) {
       console.error(error);
     }
