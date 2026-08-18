@@ -104,12 +104,13 @@ export default function InfrastructurePage() {
 
   if (!mounted) return null;
 
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
+  const formatBytes = (bytes: number | null | undefined) => {
+    if (bytes === null || bytes === undefined || isNaN(bytes) || bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    if (i < 0) return '0 Bytes';
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + (sizes[i] || 'Bytes');
   };
 
   return (
@@ -189,7 +190,7 @@ export default function InfrastructurePage() {
                     <span className="font-medium text-foreground">{formatBytes(storageStats.totalBytesUsed)} / {formatBytes(storageStats.limitBytes)}</span>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-3">
-                    <div className="bg-emerald-500 h-3 rounded-full" style={{ width: `${Math.min(100, storageStats.percentUsed)}%` }} />
+                    <div className="bg-emerald-500 h-3 rounded-full" style={{ width: `${Math.min(100, storageStats.percentUsed || 0)}%` }} />
                   </div>
                 </div>
 

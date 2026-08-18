@@ -15,7 +15,10 @@ exports.getStorageStats = async (req, res) => {
     let totalBytes = 0;
     games.forEach(g => {
       if (g.sizeBytes) {
-        totalBytes += Number(g.sizeBytes);
+        const val = Number(g.sizeBytes);
+        if (!isNaN(val)) {
+          totalBytes += val;
+        }
       }
     });
 
