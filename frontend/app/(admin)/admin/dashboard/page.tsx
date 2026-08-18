@@ -86,9 +86,9 @@ export default function AdminDashboard() {
         <Card className="border-border bg-surface/30">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5 text-primary" /> Recent Activity
+              <Activity className="w-5 h-5 text-primary" /> {t("admin.recentActivity") || "Recent Activity"}
             </CardTitle>
-            <CardDescription>Latest system and moderation events</CardDescription>
+            <CardDescription>{t("admin.recentActivityDesc") || "Latest system and moderation events"}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-6">
             <div className="text-center py-6">
@@ -103,9 +103,9 @@ export default function AdminDashboard() {
         <Card className="border-border bg-surface/30">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <ShieldAlert className="w-5 h-5 text-error" /> Moderation Queue
+              <ShieldAlert className="w-5 h-5 text-error" /> {t("admin.moderationQueue") || "Moderation Queue"}
             </CardTitle>
-            <CardDescription>Items requiring immediate admin action</CardDescription>
+            <CardDescription>{t("admin.moderationQueueDesc") || "Items requiring immediate admin action"}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 pt-6">
             <div className="text-center py-6">

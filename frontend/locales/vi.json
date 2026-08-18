@@ -563,5 +563,9 @@
   "quests.rate_game": "Đánh giá Game",
   "quests.daily_login": "Đăng nhập Hàng ngày",
   "quests.completed": "Hoàn thành",
-  "quests.reward_claimed": "Phần thưởng đã được nhận!"
+  "quests.reward_claimed": "Phần thưởng đã được nhận!",
+  "admin.recentActivity": "Hoạt động gần đây",
+  "admin.recentActivityDesc": "Các sự kiện kiểm duyệt và hệ thống mới nhất",
+  "admin.moderationQueue": "Hàng đợi kiểm duyệt",
+  "admin.moderationQueueDesc": "Các mục cần admin xử lý ngay"
 }
