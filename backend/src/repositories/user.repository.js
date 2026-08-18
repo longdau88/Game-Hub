@@ -11,6 +11,10 @@ class UserRepository {
           email: true,
           role: true,
           avatarUrl: true,
+          bio: true,
+          xp: true,
+          level: true,
+          loginStreak: true,
           createdAt: true,
           badges: {
             include: {
@@ -53,6 +57,10 @@ class UserRepository {
         email: true,
         role: true,
         avatarUrl: true,
+        bio: true,
+        xp: true,
+        level: true,
+        loginStreak: true,
       }
     });
   }
