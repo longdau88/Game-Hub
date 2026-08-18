@@ -677,5 +677,8 @@
   "admin.saveSettingsError": "Lưu cấu hình thất bại.",
   "admin.underConstruction": "Tính năng này đang được xây dựng.",
   "admin.settingsPlaceholder": "Cấu hình hệ thống sẽ được thực hiện tại đây.",
-  "admin.settingsDesc": "Thiết lập các cấu hình hệ thống chung."
+  "admin.settingsDesc": "Thiết lập các cấu hình hệ thống chung.",
+  "admin.bulkEmail": "Gửi Email Hàng loạt",
+  "admin.targetAll": "Tất cả Người dùng",
+  "admin.targetActive": "Người dùng hoạt động (30 ngày)"
 }

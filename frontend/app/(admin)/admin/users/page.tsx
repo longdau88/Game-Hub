@@ -22,7 +22,7 @@ export default function UserManagementPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [formData, setFormData] = useState({ username: '', email: '', password: '', role: 'user' });
   const [saving, setSaving] = useState(false);
-  const [emailComposer, setEmailComposer] = useState<{ isOpen: boolean; user: any; subject: string; body: string; sending: boolean }>({ isOpen: false, user: null, subject: '', body: '', sending: false });
+  const [emailComposer, setEmailComposer] = useState<{ isOpen: boolean; isBulk: boolean; user: any; target: string; subject: string; body: string; sending: boolean }>({ isOpen: false, isBulk: false, user: null, target: 'all', subject: '', body: '', sending: false });
   const { t } = useLanguage();
   const { notify } = useAppDialog();
 
@@ -107,12 +107,19 @@ export default function UserManagementPage() {
     
     setEmailComposer({ ...emailComposer, sending: true });
     try {
-      await fetchAPI(`/admin/users/${emailComposer.user.id}/email`, {
-        method: 'POST',
-        body: JSON.stringify({ subject: emailComposer.subject, body: emailComposer.body })
-      });
+      if (emailComposer.isBulk) {
+        await fetchAPI(`/admin/mail/campaigns`, {
+          method: 'POST',
+          body: JSON.stringify({ subject: emailComposer.subject, content: emailComposer.body, target: emailComposer.target })
+        });
+      } else {
+        await fetchAPI(`/admin/users/${emailComposer.user.id}/email`, {
+          method: 'POST',
+          body: JSON.stringify({ subject: emailComposer.subject, body: emailComposer.body })
+        });
+      }
       notify({ message: t("admin.emailSentSuccess") || "Email sent successfully!", variant: "success" });
-      setEmailComposer({ isOpen: false, user: null, subject: '', body: '', sending: false });
+      setEmailComposer({ isOpen: false, isBulk: false, user: null, target: 'all', subject: '', body: '', sending: false });
     } catch (err) {
       console.error("Failed to send email", err);
       notify({ message: t("game.loadError") || "Failed to send email", variant: "error" });
@@ -134,9 +141,15 @@ export default function UserManagementPage() {
           <h1 className="text-3xl font-bold tracking-tight">{t("admin.userManagement") || "User Management"}</h1>
           <p className="text-muted-foreground mt-1">{t("admin.userManagementDesc") || "View and manage platform users, roles, and statuses."}</p>
         </div>
-        <Button onClick={openCreateModal} className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md">
-          {t("admin.inviteUser") || "Invite User"}
-        </Button>
+        <div className="flex flex-col sm:flex-row items-center gap-3 mt-4 sm:mt-0">
+          <Button variant="outline" onClick={() => setEmailComposer({ isOpen: true, isBulk: true, user: null, target: 'all', subject: '', body: '', sending: false })} className="border-border w-full sm:w-auto">
+            <Mail className="w-4 h-4 mr-2" />
+            {t("admin.bulkEmail") || "Bulk Email"}
+          </Button>
+          <Button onClick={openCreateModal} className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md w-full sm:w-auto">
+            {t("admin.inviteUser") || "Invite User"}
+          </Button>
+        </div>
       </div>
 
       <Card className="border-border bg-surface/30">
@@ -207,7 +220,7 @@ export default function UserManagementPage() {
                           variant="ghost" 
                           size="icon" 
                           title={t("admin.sendEmail") || "Send Email"}
-                          onClick={() => setEmailComposer({ isOpen: true, user: user, subject: '', body: '', sending: false })}
+                          onClick={() => setEmailComposer({ isOpen: true, isBulk: false, user: user, target: 'all', subject: '', body: '', sending: false })}
                           className="h-8 w-8 text-muted-foreground hover:text-foreground"
                         >
                           <Mail className="h-4 w-4" />
@@ -311,9 +324,23 @@ export default function UserManagementPage() {
             </Button>
           </div>
           <div className="p-4 flex flex-col gap-3">
-            <div className="text-sm text-muted-foreground border-b border-border pb-2 flex items-center gap-2">
-              <span className="font-medium text-foreground">To:</span> {emailComposer.user?.email}
-            </div>
+            {emailComposer.isBulk ? (
+              <div className="text-sm text-muted-foreground border-b border-border pb-2 flex items-center gap-2">
+                <span className="font-medium text-foreground">To:</span> 
+                <select 
+                  className="bg-transparent border-0 text-sm focus:ring-0 p-0 text-foreground cursor-pointer outline-none"
+                  value={emailComposer.target}
+                  onChange={e => setEmailComposer({...emailComposer, target: e.target.value})}
+                >
+                  <option value="all">{t("admin.targetAll") || "All Users"}</option>
+                  <option value="active">{t("admin.targetActive") || "Active Users (Last 30 days)"}</option>
+                </select>
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground border-b border-border pb-2 flex items-center gap-2">
+                <span className="font-medium text-foreground">To:</span> {emailComposer.user?.email}
+              </div>
+            )}
             <Input 
               placeholder={t("admin.emailSubject") || "Subject"} 
               value={emailComposer.subject} 
