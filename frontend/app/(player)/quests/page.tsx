@@ -14,6 +14,13 @@ export default function QuestsPage() {
   const [loading, setLoading] = useState(true);
   const { t } = useLanguage();
 
+  const translateQuestTitle = (title: string) => {
+    if (title === 'Play a Game') return t("quests.play_game") || title;
+    if (title === 'Rate a Game') return t("quests.rate_game") || title;
+    if (title === 'Daily Login') return t("quests.daily_login") || title;
+    return title;
+  };
+
   useEffect(() => {
     setMounted(true);
     fetchAPI('/gamification/quests/daily')
@@ -85,9 +92,9 @@ export default function QuestsPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${quest.type === 'Daily' ? 'bg-blue-500/20 text-blue-500' : 'bg-purple-500/20 text-purple-500'}`}>
-                        {quest.type}
+                        {quest.type === 'Daily' ? (t("quests.daily") || "Daily") : quest.type}
                       </span>
-                      <h3 className="font-bold text-foreground">{quest.title}</h3>
+                      <h3 className="font-bold text-foreground">{translateQuestTitle(quest.title)}</h3>
                     </div>
                     <p className="text-sm text-muted-foreground">{quest.desc}</p>
                   </div>

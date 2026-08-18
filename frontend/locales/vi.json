@@ -552,5 +552,14 @@
   "featured.viewDetails": "Xem Chi Tiết",
   "quests.weekly_chest": "Rương Tuần",
   "quests.weekly_chest_desc": "Hoàn thành 5 nhiệm vụ hàng ngày để mở khóa.",
-  "quests.quests_count": "Nhiệm Vụ"
+  "quests.quests_count": "Nhiệm Vụ",
+  "quests_rewards": "Nhiệm Vụ & Phần Thưởng",
+  "quests_subtitle": "Hoàn thành các thử thách để nhận XP và thăng cấp hồ sơ của bạn.",
+  "active_quests": "Nhiệm Vụ Đang Kích Hoạt",
+  "claim": "Nhận Thưởng",
+  "play_now": "Chơi Ngay",
+  "quests.daily": "Hàng Ngày",
+  "quests.play_game": "Chơi một Game",
+  "quests.rate_game": "Đánh giá Game",
+  "quests.daily_login": "Đăng nhập Hàng ngày"
 }
