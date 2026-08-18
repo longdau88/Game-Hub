@@ -51,7 +51,7 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
           <span className="font-bold text-lg tracking-tight">GameHub</span>
         </Link>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" onClick={() => alert(t("notif.noNotifications") || "No notifications")}>
             <Bell className="w-5 h-5" />
           </Button>
           <Avatar size="sm" fallback="U" className="cursor-pointer" />
@@ -163,13 +163,15 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
               <LanguageSwitcher />
             </div>
 
-            <Button variant="ghost" size="icon" className="relative">
+            <Button variant="ghost" size="icon" className="relative" onClick={() => alert(t("notif.noNotifications") || "No notifications")}>
               <Bell className="w-5 h-5" />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full" />
             </Button>
-            <Button variant="outline" className="hidden sm:flex">
-              {t("nav.submitGame") || "Submit Game"}
-            </Button>
+            <Link href="/creator/games/new" className="hidden sm:flex">
+              <Button variant="outline" className="w-full">
+                {t("nav.submitGame") || "Submit Game"}
+              </Button>
+            </Link>
           </div>
         </header>
 

@@ -66,7 +66,7 @@ export default function PlayerHome() {
           <h1 className="text-3xl font-bold tracking-tight">{t("welcome_back") || "Welcome back"}{user?.username ? `, ${user.username}` : ''} 🎮</h1>
           <p className="text-muted-foreground mt-1">
             {user ? (
-              `${t("xp_away") || "You're"} ${(user.nextLevelXP || 1000) - (user.xp || 0)} ${t("xp_from_level") || "XP away from Level"} ${(user.level || 1) + 1}. ${t("keep_playing") || "Keep playing!"}`
+              `${t("xp_away_1") || "You're"} ${(user.nextLevelXP || 1000) - (user.xp || 0)} ${t("xp_away_2") || "XP away from Level"} ${(user.level || 1) + 1}. ${t("keep_playing") || "Keep playing!"}`
             ) : (
               t("login_to_track") || "Log in to track your progress and level up!"
             )}

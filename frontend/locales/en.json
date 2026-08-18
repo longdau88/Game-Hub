@@ -456,5 +456,12 @@
   "admin.analytics.noTrendData": "No data available in the selected time range.",
   "admin.analytics.secondsShort": "s",
   "admin.analytics.noMatchingGames": "No games match the filter.",
-  "admin.analytics.noData": "No data available."
+  "admin.analytics.noData": "No data available.",
+  "nav.no_streak": "No Active Streak",
+  "nav.streak_days": "Day Streak!",
+  "nav.submitGame": "Submit Game",
+  "xp_away_1": "You're",
+  "xp_away_2": "XP away from Level",
+  "keep_playing": "Keep playing!",
+  "login_to_track": "Log in to track your progress and level up!"
 }
