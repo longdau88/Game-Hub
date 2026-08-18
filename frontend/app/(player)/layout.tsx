@@ -96,7 +96,7 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
         </Link>
         <div className="flex items-center gap-2">
           <NotificationBell />
-          <Avatar size="sm" fallback="U" className="cursor-pointer" />
+          <Avatar size="sm" src={user?.avatarUrl} fallback={user?.username?.[0]?.toUpperCase() || "U"} className="cursor-pointer" />
           <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </Button>
@@ -190,7 +190,7 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
           {user ? (
             <Link href="/profile" className="block">
               <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-secondary cursor-pointer transition-colors">
-                <Avatar size="md" fallback={user?.username?.[0]?.toUpperCase() || "U"} />
+                <Avatar size="md" src={user?.avatarUrl} fallback={user?.username?.[0]?.toUpperCase() || "U"} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-foreground truncate">{user?.username}</p>
                   <p className="text-xs text-primary font-medium">{t("nav.level") || "Level"} {user?.level || 1}</p>
