@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { GameCard, Game } from "@/components/shared/GameCard";
-import { Search, Library as LibraryIcon, PlayCircle, Heart, Clock, Folder, FolderPlus, Trash2 } from "lucide-react";
+import { Search, Library as LibraryIcon, PlayCircle, Heart, Clock, Folder, FolderPlus, Trash2, Edit2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 import { fetchAPI } from "@/lib/api";
@@ -21,6 +21,8 @@ export default function LibraryPage() {
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | 'all'>('all');
   const [isCreatingCollection, setIsCreatingCollection] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
+  const [editingCollectionId, setEditingCollectionId] = useState<number | null>(null);
+  const [editCollectionName, setEditCollectionName] = useState("");
   
   const { locale: language, t } = useLanguage();
   const { confirm, notify } = useAppDialog();
@@ -80,6 +82,22 @@ export default function LibraryPage() {
       
       // Update saved games locally (move deleted collection games to uncategorized)
       setSavedGames(prev => prev.map(g => g.collectionId === collectionId ? { ...g, collectionId: null } : g));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleRenameCollection = async (e: React.FormEvent, collectionId: number) => {
+    e.preventDefault();
+    if (!editCollectionName.trim()) return;
+    try {
+      const data = await fetchAPI(`/collections/${collectionId}`, {
+        method: "PUT",
+        body: JSON.stringify({ name: editCollectionName })
+      });
+      setCollections(collections.map(c => c.id === collectionId ? { ...c, name: data.name } : c));
+      setEditingCollectionId(null);
+      await notify({ message: "Collection renamed", variant: "success" });
     } catch (error) {
       console.error(error);
     }
@@ -163,16 +181,37 @@ export default function LibraryPage() {
             </button>
             {collections.map(c => (
               <div key={c.id} className="flex items-center gap-1">
-                <button 
-                  onClick={() => setSelectedCollectionId(c.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${selectedCollectionId === c.id ? 'bg-primary/10 text-primary' : 'bg-surface text-muted-foreground hover:bg-secondary'}`}
-                >
-                  <Folder className="w-3.5 h-3.5" /> {c.name}
-                </button>
-                {selectedCollectionId === c.id && (
-                  <button onClick={() => handleDeleteCollection(c.id)} className="p-1.5 text-muted-foreground hover:text-error hover:bg-error/10 rounded-lg transition-colors">
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+                {editingCollectionId === c.id ? (
+                  <form onSubmit={(e) => handleRenameCollection(e, c.id)} className="flex items-center gap-1">
+                    <input type="text" autoFocus value={editCollectionName} onChange={e => setEditCollectionName(e.target.value)} className="px-2 py-1 text-sm bg-background border border-border rounded-lg outline-none focus:border-primary w-24" />
+                    <button type="submit" className="px-2 py-1 text-xs font-medium bg-primary text-primary-foreground rounded-lg">{t("library.save") || "Save"}</button>
+                    <button type="button" onClick={() => setEditingCollectionId(null)} className="px-2 py-1 text-xs font-medium bg-surface text-muted-foreground rounded-lg">{t("dialog.cancel") || "Cancel"}</button>
+                  </form>
+                ) : (
+                  <>
+                    <button 
+                      onClick={() => setSelectedCollectionId(c.id)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${selectedCollectionId === c.id ? 'bg-primary/10 text-primary' : 'bg-surface text-muted-foreground hover:bg-secondary'}`}
+                    >
+                      <Folder className="w-3.5 h-3.5" /> {c.name}
+                    </button>
+                    {selectedCollectionId === c.id && (
+                      <>
+                        <button 
+                          onClick={() => {
+                            setEditingCollectionId(c.id);
+                            setEditCollectionName(c.name);
+                          }} 
+                          className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button onClick={() => handleDeleteCollection(c.id)} className="p-1.5 text-muted-foreground hover:text-error hover:bg-error/10 rounded-lg transition-colors">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </>
+                    )}
+                  </>
                 )}
               </div>
             ))}
