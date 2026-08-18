@@ -101,12 +101,16 @@ export default function PlayerHome() {
               {t("featured.desc") || "Dive into the neon-lit streets of the future. An action-packed cyberpunk platformer with stunning visuals and intense boss fights."}
             </p>
             <div className="flex gap-4">
-              <Button size="lg" className="rounded-full shadow-lg shadow-primary/30">
-                {t("featured.playNow") || "Play Now"}
-              </Button>
-              <Button size="lg" variant="glass" className="rounded-full">
-                {t("featured.viewDetails") || "View Details"}
-              </Button>
+              <Link href={`/game/play?id=${games[0].id}`}>
+                <Button size="lg" className="rounded-full shadow-lg shadow-primary/30">
+                  {t("featured.playNow") || "Play Now"}
+                </Button>
+              </Link>
+              <Link href={`/game/${games[0].id}`}>
+                <Button size="lg" variant="glass" className="rounded-full">
+                  {t("featured.viewDetails") || "View Details"}
+                </Button>
+              </Link>
             </div>
           </div>
         </section>
