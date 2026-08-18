@@ -486,6 +486,8 @@
   "friends.subtitle": "Connect with players and see what they're playing.",
   "friends.find": "Find friends...",
   "friends.add": "Add Friend",
+  "friends.my_friends": "My Friends",
+  "friends.find_users": "Find Users",
   "friends.playing": "Playing: ",
   "friends.message": "Message",
   "friends.no_friends": "You don't have any friends yet.",

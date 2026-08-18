@@ -14,6 +14,7 @@ export default function FriendsPage() {
   const [friends, setFriends] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'friends' | 'global'>('friends');
   const [isSearching, setIsSearching] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
@@ -29,7 +30,7 @@ export default function FriendsPage() {
   }, []);
 
   useEffect(() => {
-    if (!searchQuery.trim() || searchQuery.trim().length < 2) {
+    if (activeTab !== 'global' || !searchQuery.trim() || searchQuery.trim().length < 2) {
       setSearchResults([]);
       setIsSearching(false);
       return;
@@ -46,7 +47,7 @@ export default function FriendsPage() {
     }, 500);
     
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, activeTab]);
 
   if (!mounted) return null;
 
@@ -71,11 +72,36 @@ export default function FriendsPage() {
         </div>
       </div>
 
+      <div className="flex border-b border-border mb-6 gap-2">
+        <button
+          className={`pb-3 px-4 font-bold text-sm transition-colors border-b-2 ${
+            activeTab === 'friends' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+          onClick={() => setActiveTab('friends')}
+        >
+          {t("friends.my_friends") || "My Friends"}
+        </button>
+        <button
+          className={`pb-3 px-4 font-bold text-sm transition-colors border-b-2 ${
+            activeTab === 'global' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+          onClick={() => setActiveTab('global')}
+        >
+          {t("friends.find_users") || "Find Users"}
+        </button>
+      </div>
+
       <div className="bg-surface border border-border rounded-2xl overflow-hidden">
-        {loading || isSearching ? (
+        {loading || (isSearching && activeTab === 'global') ? (
            <div className="p-8 text-center text-muted-foreground">{t("loading") || "Loading..."}</div>
         ) : (() => {
-          const displayList = searchQuery.trim().length >= 2 ? searchResults : friends;
+          const displayList = activeTab === 'global' 
+            ? searchResults 
+            : friends.filter(friend => 
+                friend.username?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                friend.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                friend.handle?.toLowerCase().includes(searchQuery.toLowerCase())
+              );
           
           return displayList.length > 0 ? (
             displayList.map((user, idx) => (
