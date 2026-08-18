@@ -106,8 +106,6 @@ export default function ProfilePage() {
     }
   };
 
-  };
-
   const fetchFollowingCreators = async () => {
     if (!Cookies.get("token")) return;
     try {
