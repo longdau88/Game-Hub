@@ -4,8 +4,8 @@ import { useState, useEffect, use } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Cookies from "js-cookie";
 import { Save, FileType2, Loader2, ArrowLeft } from "lucide-react";
-import { useLanguage } from "../../../../contexts/LanguageContext";
-import { useAppDialog } from "../../../../contexts/DialogContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useAppDialog } from "@/contexts/DialogContext";
 import Link from "next/link";
 
 export default function EditGamePage() {
