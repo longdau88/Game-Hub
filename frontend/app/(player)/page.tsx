@@ -35,7 +35,7 @@ export default function PlayerHome() {
           rating: g.averageRating || 0,
           playCount: g.playCount || 0,
           thumbnail: g.coverImageUrl || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80",
-          category: g.categories?.[0]?.category?.name || "Uncategorized"
+          category: g.categories?.[0]?.name || "Uncategorized"
         }));
         setGames(mappedGames);
       } catch (err) {
