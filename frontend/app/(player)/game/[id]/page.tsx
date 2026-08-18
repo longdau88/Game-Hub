@@ -9,6 +9,8 @@ import { Avatar } from "@/components/ui/avatar";
 import { Play, Heart, BookmarkPlus, Flag, Star, Users, Calendar, Monitor, Smartphone, Keyboard, MessageSquare, Loader2 } from "lucide-react";
 import { GameService } from "@/services/GameService";
 import Link from "next/link";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { cn } from "@/lib/utils";
 
 export default function GameDetailPage() {
   const params = useParams();
@@ -16,6 +18,9 @@ export default function GameDetailPage() {
   const [game, setGame] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const { t } = useLanguage();
   
   useEffect(() => {
     setMounted(true);
@@ -44,10 +49,10 @@ export default function GameDetailPage() {
   }
   
   if (error || !game) {
-    return <div className="text-center py-20 text-error">{error || "Game not found"}</div>;
+    return <div className="text-center py-20 text-error">{error || t("game.notFound") || "Game not found"}</div>;
   }
 
-  const creatorName = game.uploader?.username || "Unknown";
+  const creatorName = game.uploader?.username || t("game.unknown") || "Unknown";
   const displayRating = (game.averageRating || game.rating || 0).toFixed(1);
   const displayPlays = (game.playCount || 0).toLocaleString();
 
@@ -74,11 +79,11 @@ export default function GameDetailPage() {
                 {game.categories?.length ? (
                   game.categories.map((c: any, idx: number) => (
                     <Badge key={idx} variant={idx === 0 ? "success" : "secondary"} className={idx === 0 ? "bg-success/20 text-success border-success/30" : ""}>
-                      {c.category?.name || c.name || "Category"}
+                      {c.category?.name || c.name || t("game.uncategorized") || "Uncategorized"}
                     </Badge>
                   ))
                 ) : (
-                  <Badge variant="secondary">Uncategorized</Badge>
+                  <Badge variant="secondary">{t("game.uncategorized") || "Uncategorized"}</Badge>
                 )}
               </div>
               <h1 className="text-4xl md:text-6xl font-black text-foreground drop-shadow-lg">{game.title}</h1>
@@ -92,7 +97,7 @@ export default function GameDetailPage() {
                   <Star className="w-4 h-4 fill-amber-500" /> {displayRating}
                 </div>
                 <span>•</span>
-                <span className="flex items-center gap-1"><Users className="w-4 h-4" /> {displayPlays} Plays</span>
+                <span className="flex items-center gap-1"><Users className="w-4 h-4" /> {displayPlays} {t("game.plays")?.toLowerCase() || "plays"}</span>
               </div>
             </div>
           </div>
@@ -100,15 +105,15 @@ export default function GameDetailPage() {
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0">
             <Link href={`/game/play?id=${game.id}`} className="w-full sm:w-auto">
               <Button size="lg" className="w-full h-14 px-8 text-lg rounded-2xl shadow-lg shadow-primary/30">
-                <Play className="w-6 h-6 mr-2 fill-current" /> Play Game
+                <Play className="w-6 h-6 mr-2 fill-current" /> {t("game.playGame") || "Play Game"}
               </Button>
             </Link>
             <div className="flex gap-3 w-full sm:w-auto">
-              <Button size="icon" variant="glass" className="h-14 w-14 rounded-2xl">
-                <Heart className="w-6 h-6" />
+              <Button size="icon" variant="glass" className="h-14 w-14 rounded-2xl" onClick={() => setIsLiked(!isLiked)}>
+                <Heart className={cn("w-6 h-6", isLiked && "fill-error text-error")} />
               </Button>
-              <Button size="icon" variant="glass" className="h-14 w-14 rounded-2xl">
-                <BookmarkPlus className="w-6 h-6" />
+              <Button size="icon" variant="glass" className="h-14 w-14 rounded-2xl" onClick={() => setIsSaved(!isSaved)}>
+                <BookmarkPlus className={cn("w-6 h-6", isSaved && "fill-primary text-primary")} />
               </Button>
             </div>
           </div>
@@ -120,9 +125,9 @@ export default function GameDetailPage() {
         <div className="lg:col-span-2 space-y-12">
           
           <section className="space-y-4">
-            <h2 className="text-2xl font-bold">About This Game</h2>
+            <h2 className="text-2xl font-bold">{t("game.about") || "About This Game"}</h2>
             <div className="prose prose-zinc dark:prose-invert max-w-none text-muted-foreground leading-relaxed whitespace-pre-wrap">
-              {game.description || "No description provided for this game."}
+              {game.description || t("game.noDescription") || "No description provided for this game."}
             </div>
           </section>
         </div>
@@ -130,29 +135,29 @@ export default function GameDetailPage() {
         {/* Sidebar Info (Right) */}
         <div className="space-y-8">
           <div className="p-6 rounded-2xl bg-surface border border-border space-y-6">
-            <h3 className="font-bold text-lg border-b border-border pb-2">Game Details</h3>
+            <h3 className="font-bold text-lg border-b border-border pb-2">{t("game.details") || "Game Details"}</h3>
             
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <Monitor className="w-5 h-5 text-primary mt-0.5" />
                 <div>
-                  <p className="font-semibold">Platforms</p>
+                  <p className="font-semibold">{t("game.platforms") || "Platforms"}</p>
                   <p className="text-sm text-muted-foreground">Desktop, Mobile Web</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Keyboard className="w-5 h-5 text-primary mt-0.5" />
                 <div>
-                  <p className="font-semibold">Controls</p>
+                  <p className="font-semibold">{t("game.controls") || "Controls"}</p>
                   <p className="text-sm text-muted-foreground">Keyboard & Mouse, Touch</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Calendar className="w-5 h-5 text-primary mt-0.5" />
                 <div>
-                  <p className="font-semibold">Updated</p>
+                  <p className="font-semibold">{t("game.updated") || "Updated"}</p>
                   <p className="text-sm text-muted-foreground">
-                    {game.createdAt ? new Date(game.createdAt).toLocaleDateString() : "Unknown"}
+                    {game.createdAt ? new Date(game.createdAt).toLocaleDateString() : t("game.unknown") || "Unknown"}
                   </p>
                 </div>
               </div>
@@ -160,7 +165,7 @@ export default function GameDetailPage() {
 
             <div className="pt-4 border-t border-border flex justify-between gap-2">
               <Button variant="outline" className="flex-1 text-muted-foreground">
-                <Flag className="w-4 h-4 mr-2" /> Report
+                <Flag className="w-4 h-4 mr-2" /> {t("game.report") || "Report"}
               </Button>
             </div>
           </div>
@@ -169,12 +174,12 @@ export default function GameDetailPage() {
             <div className="flex items-center gap-4">
               <Avatar size="lg" fallback={creatorName[0]} src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${creatorName}`} />
               <div>
-                <p className="text-sm text-muted-foreground">Creator</p>
+                <p className="text-sm text-muted-foreground">{t("game.creator") || "Creator"}</p>
                 <p className="font-bold text-lg">{creatorName}</p>
               </div>
             </div>
             <div className="flex gap-2">
-              <Button className="w-full" variant="secondary">Follow</Button>
+              <Button className="w-full" variant="secondary">{t("game.follow") || "Follow"}</Button>
             </div>
           </div>
         </div>

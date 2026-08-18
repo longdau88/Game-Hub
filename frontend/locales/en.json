@@ -466,5 +466,17 @@
   "login_to_track": "Log in to track your progress and level up!",
   "game.uncategorized": "Uncategorized",
   "game.by": "By",
-  "game.new": "New"
+  "game.new": "New",
+  "game.playGame": "Play Game",
+  "game.about": "About This Game",
+  "game.details": "Game Details",
+  "game.platforms": "Platforms",
+  "game.controls": "Controls",
+  "game.updated": "Updated",
+  "game.unknown": "Unknown",
+  "game.report": "Report",
+  "game.creator": "Creator",
+  "game.follow": "Follow",
+  "game.noDescription": "No description provided for this game.",
+  "game.notFound": "Game not found"
 }
