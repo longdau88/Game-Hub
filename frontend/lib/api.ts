@@ -4,7 +4,7 @@ const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const API_BASE_URL = rawApiUrl.endsWith('/api') ? rawApiUrl : `${rawApiUrl}/api`;
 
 export async function fetchAPI(endpoint: string, options: RequestInit = {}) {
-  const token = Cookies.get("auth_token");
+  const token = Cookies.get("token");
   
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
