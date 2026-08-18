@@ -49,9 +49,8 @@ export default function ModerationPage() {
   const handleResolve = async (id: number) => {
     const isConfirmed = await confirm({
       title: t("admin.resolveReport") || "Resolve Report",
-      description: t("admin.resolveConfirm") || "Are you sure you want to mark this report as resolved?",
-      confirmText: t("admin.resolveReport") || "Resolve",
-      cancelText: t("admin.cancel") || "Cancel",
+      message: t("admin.resolveConfirm") || "Are you sure you want to mark this report as resolved?",
+      confirmLabel: t("admin.resolveReport") || "Resolve",
       variant: "info"
     });
     
