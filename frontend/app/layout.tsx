@@ -5,6 +5,7 @@ import { ThemeProvider } from "../components/ThemeProvider";
 import { LanguageProvider } from "../contexts/LanguageContext";
 import { DialogProvider } from "../contexts/DialogContext";
 import { AuthProvider } from "../contexts/AuthContext";
+import LoginModal from "../components/LoginModal";
 import { cookies } from "next/headers";
 import Script from "next/script";
 
@@ -40,6 +41,7 @@ export default async function RootLayout({
             <AuthProvider>
               <DialogProvider>
                 {children}
+                <LoginModal />
               </DialogProvider>
             </AuthProvider>
           </LanguageProvider>
