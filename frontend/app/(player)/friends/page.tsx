@@ -29,15 +29,15 @@ export default function FriendsPage() {
       
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-black tracking-tight">Friends</h1>
-          <p className="text-muted-foreground mt-1">Connect with players and see what they're playing.</p>
+          <h1 className="text-4xl font-black tracking-tight">{t("nav.friends") || "Friends"}</h1>
+          <p className="text-muted-foreground mt-1">{t("friends.subtitle") || "Connect with players and see what they're playing."}</p>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input className="w-full pl-9 bg-surface border-border" placeholder="Find friends..." />
+            <Input className="w-full pl-9 bg-surface border-border" placeholder={t("friends.find") || "Find friends..."} />
           </div>
-          <Button className="shrink-0"><UserPlus className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">Add Friend</span></Button>
+          <Button className="shrink-0"><UserPlus className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">{t("friends.add") || "Add Friend"}</span></Button>
         </div>
       </div>
 
@@ -59,13 +59,13 @@ export default function FriendsPage() {
                   <h3 className="font-bold text-lg leading-tight">{friend.name}</h3>
                   <p className="text-sm text-muted-foreground">{friend.handle}</p>
                   {friend.playing && (
-                    <p className="text-xs font-medium text-primary mt-1">Playing: {friend.playing}</p>
+                    <p className="text-xs font-medium text-primary mt-1">{t("friends.playing") || "Playing: "}{friend.playing}</p>
                   )}
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm"><MessageSquare className="w-4 h-4 mr-2" /> Message</Button>
-                <Button variant="ghost" size="sm">Profile</Button>
+                <Button variant="outline" size="sm"><MessageSquare className="w-4 h-4 mr-2" /> {t("friends.message") || "Message"}</Button>
+                <Button variant="ghost" size="sm">{t("nav.profile") || "Profile"}</Button>
               </div>
             </div>
           ))
@@ -73,7 +73,7 @@ export default function FriendsPage() {
           <div className="p-12 text-center">
             <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
             <p className="text-muted-foreground font-semibold text-lg">{t("not_available") || "Chưa có"}</p>
-            <p className="text-sm text-muted-foreground/70 mt-2">{t("no_friends_found") || "You don't have any friends yet."}</p>
+            <p className="text-sm text-muted-foreground/70 mt-2">{t("friends.no_friends") || "You don't have any friends yet."}</p>
           </div>
         )}
       </div>
