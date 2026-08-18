@@ -119,11 +119,11 @@ export default function PlayerHome() {
             <Trophy className="w-6 h-6 text-warning" />
             <h2 className="text-2xl font-bold">{t("trending_now") || "Trending Now"}</h2>
           </div>
-          <Button variant="ghost" className="text-muted-foreground" asChild>
-            <Link href="/games/trending">
+          <Link href="/games/trending">
+            <Button variant="ghost" className="text-muted-foreground">
               {t("view_all") || "View All"} <ChevronRight className="w-4 h-4 ml-1" />
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -149,11 +149,11 @@ export default function PlayerHome() {
             <Star className="w-6 h-6 text-primary" />
             <h2 className="text-2xl font-bold">{t("new_releases") || "New Releases"}</h2>
           </div>
-          <Button variant="ghost" className="text-muted-foreground" asChild>
-            <Link href="/games/new">
+          <Link href="/games/new">
+            <Button variant="ghost" className="text-muted-foreground">
               {t("view_all") || "View All"} <ChevronRight className="w-4 h-4 ml-1" />
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
