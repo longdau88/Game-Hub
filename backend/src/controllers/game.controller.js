@@ -307,7 +307,10 @@ exports.getPublishedGames = async (req, res) => {
     const whereClause = { status: 'published' };
     
     if (search) {
-      whereClause.title = { contains: search, mode: 'insensitive' };
+      whereClause.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { uploader: { username: { contains: search, mode: 'insensitive' } } }
+      ];
     }
     
     if (category) {
