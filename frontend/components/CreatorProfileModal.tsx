@@ -47,7 +47,7 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
       })
       .catch(err => {
         console.error(err);
-        notify({ message: "Failed to load profile", variant: "error" });
+        notify({ message: t("creator.load_failed") || "Failed to load profile", variant: "error" });
       })
       .finally(() => {
         setLoading(false);
@@ -82,7 +82,7 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
       }
     } catch (error) {
       console.error(error);
-      notify({ message: "Lỗi kết nối", variant: "error" });
+      notify({ message: t("creator.connection_error") || "Lỗi kết nối", variant: "error" });
     } finally {
       setFollowLoading(false);
     }
@@ -92,7 +92,7 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
     if (!requireAuth()) return;
 
     if (profile?.friendshipStatus === 'pending') {
-      notify({ message: "Đã gửi yêu cầu kết bạn trước đó", variant: "info" });
+      notify({ message: t("creator.friend_request_exists") || "Đã gửi yêu cầu kết bạn trước đó", variant: "info" });
       return;
     }
 
@@ -111,13 +111,13 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
       const result = await response.json();
       if (response.ok) {
         setProfile((prev: any) => ({ ...prev, friendshipStatus: 'pending' }));
-        notify({ message: "Đã gửi yêu cầu kết bạn", variant: "success" });
+        notify({ message: t("creator.friend_request_sent") || "Đã gửi yêu cầu kết bạn", variant: "success" });
       } else {
-        notify({ message: result.error || "Lỗi gửi yêu cầu kết bạn", variant: "error" });
+        notify({ message: result.error || (t("creator.friend_request_error") || "Lỗi gửi yêu cầu kết bạn"), variant: "error" });
       }
     } catch (error) {
       console.error(error);
-      notify({ message: "Lỗi kết nối", variant: "error" });
+      notify({ message: t("creator.connection_error") || "Lỗi kết nối", variant: "error" });
     } finally {
       setFriendLoading(false);
     }
@@ -185,7 +185,7 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
                       </h3>
                       <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1 flex items-center gap-1.5 font-medium">
                         <Calendar className="w-3.5 h-3.5" />
-                        Joined {new Date(profile.createdAt).toLocaleDateString()}
+                        {t("creator.joined") || "Joined"} {new Date(profile.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
@@ -203,14 +203,14 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
                       <div className="text-xl font-black text-zinc-900 dark:text-white">
                         {profile._count?.games || 0}
                       </div>
-                      <div className="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Games</div>
+                      <div className="text-[10px] uppercase tracking-wider font-bold text-zinc-500">{t("creator.games") || "Games"}</div>
                     </div>
                     <div className="bg-white/50 dark:bg-zinc-800/50 border border-white/60 dark:border-zinc-700/50 rounded-2xl p-3 text-center backdrop-blur-md shadow-sm transition-transform hover:scale-[1.02]">
                       <div className="flex justify-center mb-1"><Users className="w-4 h-4 text-purple-500" /></div>
                       <div className="text-xl font-black text-zinc-900 dark:text-white">
                         {profile._count?.followers || 0}
                       </div>
-                      <div className="text-[10px] uppercase tracking-wider font-bold text-zinc-500">Followers</div>
+                      <div className="text-[10px] uppercase tracking-wider font-bold text-zinc-500">{t("creator.followers") || "Followers"}</div>
                     </div>
                   </div>
 
@@ -229,7 +229,7 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
                       )}
                       <div className="relative flex items-center gap-2 z-10">
                         {profile.isFollowing ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />} 
-                        {profile.isFollowing ? "Đang theo dõi" : "Theo dõi"}
+                        {profile.isFollowing ? (t("creator.following") || "Đang theo dõi") : (t("creator.follow") || "Theo dõi")}
                       </div>
                     </button>
                     
@@ -246,10 +246,10 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
                     >
                       <UserPlus className="w-4 h-4" />
                       {profile.friendshipStatus === 'accepted' 
-                        ? "Bạn bè" 
+                        ? (t("creator.friend") || "Bạn bè") 
                         : profile.friendshipStatus === 'pending' 
-                        ? "Đã gửi Yêu cầu" 
-                        : "Kết bạn"}
+                        ? (t("creator.friend_pending") || "Đã gửi Yêu cầu") 
+                        : (t("creator.add_friend") || "Kết bạn")}
                     </button>
                   </div>
 
@@ -258,7 +258,7 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
                     <div className="mt-8">
                       <h4 className="text-sm font-bold mb-4 text-zinc-900 dark:text-white flex items-center gap-2">
                         <Sparkles className="w-4 h-4 text-yellow-500" />
-                        Game Nổi Bật
+                        {t("creator.featured_games") || "Game Nổi Bật"}
                       </h4>
                       <div className="flex gap-4 overflow-x-auto pb-4 snap-x hide-scrollbar -mx-2 px-2">
                         {profile.games.map((game: any) => (
@@ -282,7 +282,7 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
                             </div>
                             <div className="text-sm font-bold text-zinc-900 dark:text-white truncate group-hover:text-blue-500 transition-colors">{game.title}</div>
                             <div className="text-[11px] font-medium text-zinc-500 mt-0.5 flex items-center gap-1">
-                              <Gamepad2 className="w-3 h-3" /> {game.playCount.toLocaleString()} plays
+                              <Gamepad2 className="w-3 h-3" /> {game.playCount.toLocaleString()} {t("creator.plays") || "plays"}
                             </div>
                           </Link>
                         ))}
@@ -293,7 +293,7 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
               </div>
             ) : (
               <div className="h-[400px] flex flex-col items-center justify-center text-center p-6">
-                <p className="text-zinc-500 font-medium">Profile not found</p>
+                <p className="text-zinc-500 font-medium">{t("creator.not_found") || "Profile not found"}</p>
               </div>
             )}
           </motion.div>
