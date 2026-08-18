@@ -11,6 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function FriendsPage() {
   const [mounted, setMounted] = useState(false);
   const [friends, setFriends] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const { t } = useLanguage();
 
@@ -35,7 +36,12 @@ export default function FriendsPage() {
         <div className="flex gap-3 w-full md:w-auto">
           <div className="relative flex-1 md:w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input className="w-full pl-9 bg-surface border-border" placeholder={t("friends.find") || "Find friends..."} />
+            <Input 
+              className="w-full pl-9 bg-surface border-border" 
+              placeholder={t("friends.find") || "Find friends..."} 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
           <Button className="shrink-0"><UserPlus className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">{t("friends.add") || "Add Friend"}</span></Button>
         </div>
@@ -44,8 +50,14 @@ export default function FriendsPage() {
       <div className="bg-surface border border-border rounded-2xl overflow-hidden">
         {loading ? (
            <div className="p-8 text-center text-muted-foreground">{t("loading") || "Loading..."}</div>
-        ) : friends.length > 0 ? (
-          friends.map((friend, idx) => (
+        ) : (() => {
+          const filteredFriends = friends.filter(friend => 
+            friend.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+            friend.handle?.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+          
+          return filteredFriends.length > 0 ? (
+            filteredFriends.map((friend, idx) => (
             <div key={friend.id} className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors hover:bg-secondary/50 ${idx !== friends.length - 1 ? 'border-b border-border' : ''}`}>
               <div className="flex items-center gap-4">
                 <div className="relative">
@@ -75,7 +87,8 @@ export default function FriendsPage() {
             <p className="text-muted-foreground font-semibold text-lg">{t("not_available") || "Chưa có"}</p>
             <p className="text-sm text-muted-foreground/70 mt-2">{t("friends.no_friends") || "You don't have any friends yet."}</p>
           </div>
-        )}
+        );
+        })()}
       </div>
 
     </div>
