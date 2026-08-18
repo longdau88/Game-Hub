@@ -118,9 +118,9 @@ export default function FriendsPage() {
                 </div>
                 <div>
                   <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors">{user.username || user.name}</h3>
-                  {(user.handle || user.level) && (
+                  {(user.handle || user.level !== undefined) && (
                      <p className="text-sm text-muted-foreground">
-                        {user.handle ? user.handle : `Level ${user.level}`}
+                        {user.handle ? user.handle : `${t("nav.level") || "Level"} ${user.level}`}
                      </p>
                   )}
                   {user.playing && (
