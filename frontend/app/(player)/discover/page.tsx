@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { GameCard, Game } from "@/components/shared/GameCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, SlidersHorizontal, Gamepad2 } from "lucide-react";
+import { Search, SlidersHorizontal, Gamepad2, ChevronDown, Check } from "lucide-react";
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -15,6 +15,8 @@ export default function DiscoverPage() {
   const [games, setGames] = useState<Game[]>([]);
   const [categories, setCategories] = useState<{name: string, active: boolean}[]>([{ name: "All", active: true }]);
   const [loading, setLoading] = useState(true);
+  const [sort, setSort] = useState("mostPlayed");
+  const [isSortOpen, setIsSortOpen] = useState(false);
   const { locale: language, t } = useLanguage();
 
   useEffect(() => {
@@ -56,8 +58,11 @@ export default function DiscoverPage() {
     const delayDebounceFn = setTimeout(async () => {
       setLoading(true);
       try {
-        const query = search ? `?search=${encodeURIComponent(search)}` : '';
-        const gamesData = await fetchAPI(`/games${query}`).catch(() => ({ data: [] }));
+        const queryParams = new URLSearchParams();
+        if (search) queryParams.append('search', search);
+        queryParams.append('sort', sort);
+        
+        const gamesData = await fetchAPI(`/games?${queryParams.toString()}`).catch(() => ({ data: [] }));
         const gamesArray = Array.isArray(gamesData) ? gamesData : (gamesData.data || []);
         const mappedGames = gamesArray.map((g: any) => ({
           id: g.id,
@@ -77,7 +82,18 @@ export default function DiscoverPage() {
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [search, language]);
+  }, [search, sort, language]);
+
+  // Click outside to close sort dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!(e.target as Element).closest('.sort-dropdown')) {
+        setIsSortOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   if (!mounted) return null;
 
@@ -105,31 +121,72 @@ export default function DiscoverPage() {
       </div>
 
       {/* Categories */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-4 hide-scrollbar flex-nowrap w-full">
-        {categories.map(category => (
-          <Button 
-            key={category.name} 
-            variant="outline" 
-            className={`rounded-full shrink-0 ${category.active ? 'bg-primary text-primary-foreground border-primary' : 'bg-surface hover:bg-secondary'}`}
-          >
-            {category.name}
-          </Button>
-        ))}
+      <div className="relative w-full">
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 hide-scrollbar flex-nowrap w-full pr-8">
+          {categories.map(category => (
+            <Button 
+              key={category.name} 
+              variant="outline" 
+              className={`rounded-full shrink-0 transition-colors ${category.active ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90' : 'bg-surface hover:bg-secondary'}`}
+            >
+              {category.name}
+            </Button>
+          ))}
+        </div>
+        {/* Gradient fade on the right to indicate scrolling */}
+        <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none" />
       </div>
 
       {/* Grid */}
       <div>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 relative z-10">
           <h2 className="text-xl font-bold flex items-center gap-2">
             <Gamepad2 className="w-5 h-5 text-primary" /> {t("all_games") || "All Games"}
           </h2>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            {t("sort_by") || "Sort by:"} 
-            <select className="bg-transparent font-medium text-foreground outline-none cursor-pointer">
-              <option>{t("popular") || "Most Popular"}</option>
-              <option>{t("newest") || "Newest"}</option>
-              <option>{t("highest_rated") || "Highest Rated"}</option>
-            </select>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground relative sort-dropdown">
+            {t("sort.title") || "Sort by:"} 
+            
+            <button 
+              onClick={() => setIsSortOpen(!isSortOpen)}
+              className="flex items-center gap-1.5 font-medium text-foreground outline-none cursor-pointer hover:text-primary transition-colors bg-surface border border-border px-3 py-1.5 rounded-lg"
+            >
+              {sort === 'mostPlayed' ? (t("sort.popular") || "Most Popular") : 
+               sort === 'mostLiked' ? (t("sort.most_saved") || "Most Saved") : 
+               (t("sort.newest") || "Newest")}
+              <ChevronDown className="w-4 h-4 opacity-50" />
+            </button>
+
+            {isSortOpen && (
+              <div className="absolute top-full right-0 mt-2 w-48 bg-surface border border-border rounded-xl shadow-xl overflow-hidden py-1 z-50">
+                <button 
+                  onClick={() => { setSort('mostPlayed'); setIsSortOpen(false); }}
+                  className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary flex items-center justify-between transition-colors"
+                >
+                  <span className={sort === 'mostPlayed' ? 'text-primary font-medium' : 'text-foreground'}>
+                    {t("sort.popular") || "Most Popular"}
+                  </span>
+                  {sort === 'mostPlayed' && <Check className="w-4 h-4 text-primary" />}
+                </button>
+                <button 
+                  onClick={() => { setSort('mostLiked'); setIsSortOpen(false); }}
+                  className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary flex items-center justify-between transition-colors"
+                >
+                  <span className={sort === 'mostLiked' ? 'text-primary font-medium' : 'text-foreground'}>
+                    {t("sort.most_saved") || "Most Saved"}
+                  </span>
+                  {sort === 'mostLiked' && <Check className="w-4 h-4 text-primary" />}
+                </button>
+                <button 
+                  onClick={() => { setSort('newest'); setIsSortOpen(false); }}
+                  className="w-full text-left px-4 py-2.5 text-sm hover:bg-secondary flex items-center justify-between transition-colors"
+                >
+                  <span className={sort === 'newest' ? 'text-primary font-medium' : 'text-foreground'}>
+                    {t("sort.newest") || "Newest"}
+                  </span>
+                  {sort === 'newest' && <Check className="w-4 h-4 text-primary" />}
+                </button>
+              </div>
+            )}
           </div>
         </div>
         
