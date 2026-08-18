@@ -320,10 +320,8 @@ exports.getPublishedGames = async (req, res) => {
     let orderByClause = { createdAt: 'desc' };
     if (sort === 'mostPlayed') {
       orderByClause = { playCount: 'desc' };
-      whereClause.playCount = { gt: 0 };
     } else if (sort === 'mostLiked') {
       orderByClause = { libraryEntries: { _count: 'desc' } };
-      whereClause.libraryEntries = { some: {} };
     }
 
     const games = await prisma.game.findMany({
