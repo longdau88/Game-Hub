@@ -109,7 +109,7 @@ export default function QuestsPage() {
                     <div className="text-right">
                       <div className="text-xs font-bold text-primary mb-1">+{quest.xp || 0} XP</div>
                       {quest.completed ? (
-                        <span className="text-sm font-bold text-success flex items-center"><CheckSquare className="w-4 h-4 mr-1" /> {t("completed") || "Completed"}</span>
+                        <span className="text-sm font-bold text-success flex items-center"><CheckSquare className="w-4 h-4 mr-1" /> {t("quests.completed") || "Completed"}</span>
                       ) : (
                         <span className="text-sm font-medium text-muted-foreground">{quest.progress || 0} / {quest.total || 1}</span>
                       )}
@@ -120,7 +120,7 @@ export default function QuestsPage() {
                       </Button>
                     )}
                     {quest.completed && (
-                      <Button className="bg-success text-white" size="sm" disabled>{t("completed") || "Completed"}</Button>
+                      <Button className="bg-success text-white" size="sm" disabled>{t("quests.completed") || "Completed"}</Button>
                     )}
                   </div>
                 </div>
