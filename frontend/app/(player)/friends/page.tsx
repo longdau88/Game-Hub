@@ -113,19 +113,19 @@ export default function FriendsPage() {
         </button>
         <button
           className={`pb-3 px-4 font-bold text-sm transition-colors border-b-2 ${
-            activeTab === 'global' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
-          }`}
-          onClick={() => setActiveTab('global')}
-        >
-          {t("friends.find_users") || "Find Users"}
-        </button>
-        <button
-          className={`pb-3 px-4 font-bold text-sm transition-colors border-b-2 ${
             activeTab === 'following' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
           }`}
           onClick={() => setActiveTab('following')}
         >
           {t("profile.tabFollowing") || "Đang theo dõi"}
+        </button>
+        <button
+          className={`pb-3 px-4 font-bold text-sm transition-colors border-b-2 ${
+            activeTab === 'global' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+          onClick={() => setActiveTab('global')}
+        >
+          {t("friends.find_users") || "Find Users"}
         </button>
       </div>
 
