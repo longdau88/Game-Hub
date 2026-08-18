@@ -674,5 +674,7 @@
   "admin.cleanupSuccess": "Dọn rác máy chủ thành công.",
   "admin.cleanupError": "Dọn rác máy chủ thất bại.",
   "admin.loadDataError": "Lỗi khi tải dữ liệu cấu hình.",
-  "admin.saveSettingsError": "Lưu cấu hình thất bại."
+  "admin.saveSettingsError": "Lưu cấu hình thất bại.",
+  "admin.underConstruction": "Tính năng này đang được xây dựng.",
+  "admin.settingsPlaceholder": "Cấu hình hệ thống sẽ được thực hiện tại đây."
 }

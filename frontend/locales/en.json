@@ -458,6 +458,8 @@
   "admin.cleanupError": "Failed to run server cleanup.",
   "admin.loadDataError": "Failed to load infrastructure data.",
   "admin.saveSettingsError": "Failed to save settings.",
+  "admin.underConstruction": "This module is under construction.",
+  "admin.settingsPlaceholder": "Settings configuration will be implemented here.",
   "admin.reviewMode": "Review Mode",
   "game.backToStore": "Back to Store",
   "game.loadError": "Failed to load game.",
