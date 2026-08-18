@@ -624,5 +624,14 @@
   "admin.editGameTitle": "Sửa thông tin Game",
   "admin.gameTitle": "Tên Game",
   "admin.gameDescription": "Mô tả",
-  "admin.coverImage": "Ảnh bìa (Tùy chọn)"
+  "admin.coverImage": "Ảnh bìa (Tùy chọn)",
+  "admin.moderation": "Kiểm duyệt",
+  "admin.moderationDesc": "Quản lý và xử lý các báo cáo vi phạm.",
+  "admin.colReportReason": "Lý do báo cáo",
+  "admin.colReporter": "Người báo cáo",
+  "admin.resolveReport": "Đánh dấu đã xử lý",
+  "admin.resolveConfirm": "Bạn có chắc chắn muốn đánh dấu báo cáo này là đã xử lý?",
+  "admin.openReports": "Chưa xử lý",
+  "admin.resolvedReports": "Đã xử lý",
+  "admin.noReportsFound": "Không có báo cáo nào."
 }
