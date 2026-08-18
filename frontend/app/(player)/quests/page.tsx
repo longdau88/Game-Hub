@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useAppDialog } from "@/contexts/AppDialogContext";
+import { useAppDialog } from "@/contexts/DialogContext";
 
 export default function QuestsPage() {
   const [mounted, setMounted] = useState(false);
