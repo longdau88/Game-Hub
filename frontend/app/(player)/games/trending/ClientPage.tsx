@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { TrendingUp, ArrowLeft, Play, Heart, Star, Gamepad2 } from "lucide-react";
-import { useLanguage } from "../../../contexts/LanguageContext";
-import { useAppDialog } from "../../../contexts/DialogContext";
-import { useAuth } from "../../../contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useAppDialog } from "@/contexts/DialogContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
 
 export default function TrendingGamesPage() {
