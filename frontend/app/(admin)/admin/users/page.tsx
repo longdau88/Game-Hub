@@ -174,7 +174,7 @@ export default function UserManagementPage() {
             className="border-border w-full sm:w-auto"
           >
             <Mail className="w-4 h-4 mr-2" />
-            {selectedUsers.length > 0 ? (t("admin.emailSelected") || `Email ${selectedUsers.length} Users`) : (t("admin.bulkEmail") || "Bulk Email")}
+            {selectedUsers.length > 0 ? ((t("admin.emailSelected") || `Email {count} Selected Users`).replace('{count}', selectedUsers.length.toString())) : (t("admin.bulkEmail") || "Bulk Email")}
           </Button>
           <Button onClick={openCreateModal} className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md w-full sm:w-auto">
             {t("admin.inviteUser") || "Invite User"}
