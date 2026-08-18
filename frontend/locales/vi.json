@@ -567,5 +567,7 @@
   "admin.recentActivity": "Hoạt động gần đây",
   "admin.recentActivityDesc": "Các sự kiện kiểm duyệt và hệ thống mới nhất",
   "admin.moderationQueue": "Hàng đợi kiểm duyệt",
-  "admin.moderationQueueDesc": "Các mục cần admin xử lý ngay"
+  "admin.moderationQueueDesc": "Các mục cần admin xử lý ngay",
+  "no_recent_activity": "Chưa có hoạt động nào gần đây.",
+  "no_moderation_queue": "Hàng đợi kiểm duyệt đang trống."
 }

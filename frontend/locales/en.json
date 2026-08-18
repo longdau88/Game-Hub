@@ -351,6 +351,8 @@
   "admin.recentActivityDesc": "Latest system and moderation events",
   "admin.moderationQueue": "Moderation Queue",
   "admin.moderationQueueDesc": "Items requiring immediate admin action",
+  "no_recent_activity": "No recent activity recorded.",
+  "no_moderation_queue": "Moderation queue is empty.",
   "admin.reviewMode": "Review Mode",
   "game.backToStore": "Back to Store",
   "game.loadError": "Failed to load game.",

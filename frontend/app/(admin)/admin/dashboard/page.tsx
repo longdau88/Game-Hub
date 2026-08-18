@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Users, Gamepad2, ShieldAlert, Server, Activity, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -20,20 +21,20 @@ export default function AdminDashboard() {
         const data = await fetchAPI('/admin/stats');
         // Adapt backend data to frontend stats format
         const fetchedStats = [
-          { label: t("total_users") || "Total Users", value: data.totalUsers?.toString() || "0", trend: "+0", isPositive: true, icon: Users, color: "text-blue-500" },
-          { label: t("active_games") || "Active Games", value: data.totalGames?.toString() || "0", trend: "+0", isPositive: true, icon: Gamepad2, color: "text-indigo-500" },
-          { label: t("pending_moderation") || "Pending Moderation", value: data.pendingGames?.toString() || "0", trend: "0", isPositive: true, icon: ShieldAlert, color: "text-warning" },
-          { label: t("server_load") || "Server Load", value: data.serverLoad || "Stable", trend: "", isPositive: true, icon: Server, color: "text-success" },
+          { label: t("total_users") || "Total Users", value: data.totalUsers?.toString() || "0", trend: "+0", isPositive: true, icon: Users, color: "text-blue-500", href: "/admin/users" },
+          { label: t("active_games") || "Active Games", value: data.totalGames?.toString() || "0", trend: "+0", isPositive: true, icon: Gamepad2, color: "text-indigo-500", href: "/admin/games" },
+          { label: t("pending_moderation") || "Pending Moderation", value: data.pendingGames?.toString() || "0", trend: "0", isPositive: true, icon: ShieldAlert, color: "text-warning", href: "/admin/moderation" },
+          { label: t("server_load") || "Server Load", value: data.serverLoad || "Stable", trend: "", isPositive: true, icon: Server, color: "text-success", href: "/admin/infrastructure" },
         ];
         setStats(fetchedStats);
       } catch (err) {
         console.error("Failed to load admin stats:", err);
         // Fallback to empty if unauthorized or missing
         setStats([
-          { label: t("total_users") || "Total Users", value: "0", trend: "0%", isPositive: true, icon: Users, color: "text-blue-500" },
-          { label: t("active_games") || "Active Games", value: "0", trend: "0%", isPositive: true, icon: Gamepad2, color: "text-indigo-500" },
-          { label: t("pending_moderation") || "Pending Moderation", value: "0", trend: "0", isPositive: true, icon: ShieldAlert, color: "text-warning" },
-          { label: t("server_load") || "Server Load", value: "N/A", trend: "0%", isPositive: false, icon: Server, color: "text-error" },
+          { label: t("total_users") || "Total Users", value: "0", trend: "0%", isPositive: true, icon: Users, color: "text-blue-500", href: "/admin/users" },
+          { label: t("active_games") || "Active Games", value: "0", trend: "0%", isPositive: true, icon: Gamepad2, color: "text-indigo-500", href: "/admin/games" },
+          { label: t("pending_moderation") || "Pending Moderation", value: "0", trend: "0", isPositive: true, icon: ShieldAlert, color: "text-warning", href: "/admin/moderation" },
+          { label: t("server_load") || "Server Load", value: "N/A", trend: "0%", isPositive: false, icon: Server, color: "text-error", href: "/admin/infrastructure" },
         ]);
       } finally {
         setLoading(false);
@@ -60,23 +61,25 @@ export default function AdminDashboard() {
           <div className="col-span-full py-10 text-center text-muted-foreground">{t("loading") || "Loading..."}</div>
         ) : (
           stats.map((stat, idx) => (
-            <Card key={idx} className="bg-surface/50 border-border">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`p-3 rounded-xl bg-surface border border-border ${stat.color} bg-opacity-10`}>
-                    <stat.icon className={`w-5 h-5 ${stat.color}`} />
+            <Link key={idx} href={stat.href} className="block transition-transform hover:scale-[1.02]">
+              <Card className="bg-surface/50 border-border hover:border-primary/50 transition-colors cursor-pointer h-full">
+                <CardContent className="p-6 h-full flex flex-col justify-between">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`p-3 rounded-xl bg-surface border border-border ${stat.color} bg-opacity-10`}>
+                      <stat.icon className={`w-5 h-5 ${stat.color}`} />
+                    </div>
+                    <div className={`flex items-center text-sm font-medium ${stat.isPositive ? 'text-success' : 'text-error'}`}>
+                      {stat.isPositive ? <ArrowUpRight className="w-4 h-4 mr-1" /> : <ArrowDownRight className="w-4 h-4 mr-1" />}
+                      {stat.trend}
+                    </div>
                   </div>
-                  <div className={`flex items-center text-sm font-medium ${stat.isPositive ? 'text-success' : 'text-error'}`}>
-                    {stat.isPositive ? <ArrowUpRight className="w-4 h-4 mr-1" /> : <ArrowDownRight className="w-4 h-4 mr-1" />}
-                    {stat.trend}
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                    <h3 className="text-3xl font-black mt-1">{stat.value}</h3>
                   </div>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                  <h3 className="text-3xl font-black mt-1">{stat.value}</h3>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </Link>
           ))
         )}
       </div>
