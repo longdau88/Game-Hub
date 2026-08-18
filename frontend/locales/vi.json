@@ -549,5 +549,8 @@
   "leaderboards.score": "ĐIỂM (XP)",
   "no_leaderboard": "Bảng xếp hạng hiện đang trống.",
   "featured.playNow": "Chơi Ngay",
-  "featured.viewDetails": "Xem Chi Tiết"
+  "featured.viewDetails": "Xem Chi Tiết",
+  "quests.weekly_chest": "Rương Tuần",
+  "quests.weekly_chest_desc": "Hoàn thành 5 nhiệm vụ hàng ngày để mở khóa.",
+  "quests.quests_count": "Nhiệm Vụ"
 }

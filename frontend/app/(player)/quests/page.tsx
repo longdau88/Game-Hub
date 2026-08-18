@@ -16,11 +16,37 @@ export default function QuestsPage() {
 
   useEffect(() => {
     setMounted(true);
-    fetchAPI('/quests')
-      .then(res => setQuests(res.data || []))
+    fetchAPI('/gamification/quests/daily')
+      .then(res => {
+         const data = Array.isArray(res) ? res : (res.data || []);
+         setQuests(data.map((q: any) => ({
+           id: q.id,
+           type: 'Daily',
+           title: q.title,
+           desc: q.description || '',
+           xp: q.rewardXp,
+           completed: q.progress?.isCompleted || false,
+           progress: q.progress?.currentVal || 0,
+           total: q.targetValue
+         })));
+      })
       .catch(() => setQuests([]))
       .finally(() => setLoading(false));
   }, []);
+
+  const handleClaim = async (questId: number) => {
+    try {
+      const res = await fetchAPI('/gamification/quests/claim', {
+        method: 'POST',
+        body: JSON.stringify({ questId })
+      });
+      if (!res.error) {
+        setQuests(quests.map(q => q.id === questId ? { ...q, completed: true, progress: q.total } : q));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
   
   if (!mounted) return null;
 
@@ -36,12 +62,12 @@ export default function QuestsPage() {
         <Card className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white border-0 shadow-lg">
           <CardContent className="p-6">
             <Gift className="w-8 h-8 mb-4 text-white/80" />
-            <h3 className="text-xl font-bold mb-1">Weekly Chest</h3>
-            <p className="text-indigo-100 text-sm mb-4">Complete 5 daily quests to unlock.</p>
+            <h3 className="text-xl font-bold mb-1">{t("quests.weekly_chest") || "Weekly Chest"}</h3>
+            <p className="text-indigo-100 text-sm mb-4">{t("quests.weekly_chest_desc") || "Complete 5 daily quests to unlock."}</p>
             <div className="w-full bg-black/20 rounded-full h-2 mb-2">
               <div className="bg-white h-2 rounded-full w-3/5" />
             </div>
-            <p className="text-xs text-indigo-100 text-right">3/5 Quests</p>
+            <p className="text-xs text-indigo-100 text-right">3/5 {t("quests.quests_count") || "Quests"}</p>
           </CardContent>
         </Card>
         
@@ -76,10 +102,12 @@ export default function QuestsPage() {
                       )}
                     </div>
                     {!quest.completed && (
-                      <Button variant="outline" size="sm">{t("play_now") || "Play Now"}</Button>
+                      <Button variant="outline" size="sm" disabled={quest.progress < quest.total} onClick={() => quest.progress >= quest.total && handleClaim(quest.id)}>
+                        {quest.progress >= quest.total ? (t("claim") || "Claim") : (t("play_now") || "Play Now")}
+                      </Button>
                     )}
                     {quest.completed && (
-                      <Button className="bg-success hover:bg-success/90 text-white" size="sm">{t("claim") || "Claim"}</Button>
+                      <Button className="bg-success text-white" size="sm" disabled>{t("completed") || "Completed"}</Button>
                     )}
                   </div>
                 </div>
