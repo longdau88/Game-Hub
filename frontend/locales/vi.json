@@ -576,5 +576,10 @@
   "admin.allUsers": "Tất Cả Người Dùng",
   "admin.colUser": "Người Dùng",
   "admin.colJoined": "Ngày Tham Gia",
-  "admin.noUsers": "Không tìm thấy người dùng nào."
+  "admin.noUsers": "Không tìm thấy người dùng nào.",
+  "admin.sendEmail": "Gửi Email",
+  "admin.makeUser": "Hạ Quyền User",
+  "admin.makeAdmin": "Cấp Quyền Admin",
+  "admin.ban": "Khóa",
+  "admin.unban": "Mở Khóa"
 }

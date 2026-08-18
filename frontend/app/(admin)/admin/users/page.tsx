@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
-import { Search, MoreHorizontal, UserX, Shield, Mail } from "lucide-react";
+import { Search, MoreHorizontal, UserX, UserCheck, Shield, ShieldAlert, Mail } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { fetchAPI } from "@/lib/api";
@@ -29,6 +29,30 @@ export default function UserManagementPage() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  const handleRoleChange = async (userId: number, newRole: string) => {
+    try {
+      await fetchAPI(`/admin/users/${userId}/role`, {
+        method: 'PUT',
+        body: JSON.stringify({ role: newRole })
+      });
+      setUsers(users.map(u => u.id === userId ? { ...u, role: newRole === 'admin' ? 'ADMIN' : 'user' } : u));
+    } catch (err) {
+      console.error("Failed to update user role", err);
+    }
+  };
+
+  const handleBanToggle = async (userId: number, isBanned: boolean) => {
+    try {
+      await fetchAPI(`/admin/users/${userId}/ban`, {
+        method: 'PUT',
+        body: JSON.stringify({ isBanned })
+      });
+      setUsers(users.map(u => u.id === userId ? { ...u, isBanned } : u));
+    } catch (err) {
+      console.error("Failed to toggle ban status", err);
+    }
+  };
 
   if (!mounted) return null;
 
@@ -104,15 +128,33 @@ export default function UserManagementPage() {
                     <TableCell className="text-muted-foreground">{new Date(user.createdAt).toLocaleDateString()}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          title={t("admin.sendEmail") || "Send Email"}
+                          onClick={() => window.location.href = `mailto:${user.email}`}
+                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                        >
                           <Mail className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                          <Shield className="h-4 w-4" />
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          title={(user.role === 'ADMIN' || user.role === 'admin') ? (t("admin.makeUser") || "Demote to User") : (t("admin.makeAdmin") || "Promote to Admin")}
+                          onClick={() => handleRoleChange(user.id, (user.role === 'ADMIN' || user.role === 'admin') ? 'user' : 'admin')}
+                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                        >
+                          {(user.role === 'ADMIN' || user.role === 'admin') ? <ShieldAlert className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
                         </Button>
                         {user.role !== 'ADMIN' && (
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-error hover:text-error hover:bg-error/10">
-                            <UserX className="h-4 w-4" />
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            title={user.isBanned ? (t("admin.unban") || "Unban") : (t("admin.ban") || "Ban")}
+                            onClick={() => handleBanToggle(user.id, !user.isBanned)}
+                            className={`h-8 w-8 ${user.isBanned ? 'text-success hover:text-success hover:bg-success/10' : 'text-error hover:text-error hover:bg-error/10'}`}
+                          >
+                            {user.isBanned ? <UserCheck className="h-4 w-4" /> : <UserX className="h-4 w-4" />}
                           </Button>
                         )}
                       </div>
