@@ -226,6 +226,46 @@ exports.updateUser = async (req, res) => {
   }
 };
 
+exports.sendEmailToUser = async (req, res) => {
+  try {
+    const adminId = req.user.userId;
+    const { id } = req.params;
+    const { subject, body } = req.body;
+    
+    if (!subject || !body) {
+      return res.status(400).json({ error: 'Subject and body are required' });
+    }
+    
+    const targetUser = await prisma.user.findUnique({
+      where: { id: parseInt(id) }
+    });
+    
+    if (!targetUser || !targetUser.email) {
+      return res.status(404).json({ error: 'User or email not found' });
+    }
+    
+    const result = await sendEmail({
+      to: targetUser.email,
+      subject,
+      html: body
+    });
+    
+    if (!result.success) {
+      return res.status(500).json({ error: 'Failed to send email' });
+    }
+    
+    await logAudit(adminId, 'SEND_EMAIL_USER', 'User', {
+      targetUserId: targetUser.id,
+      targetEmail: targetUser.email,
+      subject
+    });
+    
+    res.json({ message: 'Email sent successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to process email request' });
+  }
+};
+
 const { sendEmail } = require('../utils/email');
 
 exports.rejectGame = async (req, res) => {

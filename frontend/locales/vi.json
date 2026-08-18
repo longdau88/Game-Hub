@@ -592,5 +592,11 @@
   "admin.roleUser": "Người dùng thường",
   "admin.roleAdmin": "Quản trị viên",
   "admin.save": "Lưu",
-  "admin.cancel": "Hủy"
+  "admin.cancel": "Hủy",
+  "admin.composeEmail": "Soạn tin nhắn",
+  "admin.emailSubject": "Chủ đề",
+  "admin.emailBody": "Viết tin nhắn của bạn...",
+  "admin.send": "Gửi",
+  "admin.sending": "Đang gửi...",
+  "admin.emailSentSuccess": "Gửi email thành công!"
 }

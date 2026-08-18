@@ -21,6 +21,7 @@ export default function UserManagementPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [formData, setFormData] = useState({ username: '', email: '', password: '', role: 'user' });
   const [saving, setSaving] = useState(false);
+  const [emailComposer, setEmailComposer] = useState<{ isOpen: boolean; user: any; subject: string; body: string; sending: boolean }>({ isOpen: false, user: null, subject: '', body: '', sending: false });
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -93,6 +94,27 @@ export default function UserManagementPage() {
       alert(t("game.loadError") || "Failed to save user");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSendEmail = async () => {
+    if (!emailComposer.subject || !emailComposer.body) {
+      alert("Please enter subject and message.");
+      return;
+    }
+    
+    setEmailComposer({ ...emailComposer, sending: true });
+    try {
+      await fetchAPI(`/admin/users/${emailComposer.user.id}/email`, {
+        method: 'POST',
+        body: JSON.stringify({ subject: emailComposer.subject, body: emailComposer.body })
+      });
+      alert(t("admin.emailSentSuccess") || "Email sent successfully!");
+      setEmailComposer({ isOpen: false, user: null, subject: '', body: '', sending: false });
+    } catch (err) {
+      console.error("Failed to send email", err);
+      alert(t("game.loadError") || "Failed to send email");
+      setEmailComposer({ ...emailComposer, sending: false });
     }
   };
 
@@ -183,7 +205,7 @@ export default function UserManagementPage() {
                           variant="ghost" 
                           size="icon" 
                           title={t("admin.sendEmail") || "Send Email"}
-                          onClick={() => window.location.href = `mailto:${user.email}`}
+                          onClick={() => setEmailComposer({ isOpen: true, user: user, subject: '', body: '', sending: false })}
                           className="h-8 w-8 text-muted-foreground hover:text-foreground"
                         >
                           <Mail className="h-4 w-4" />
@@ -273,6 +295,40 @@ export default function UserManagementPage() {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Email Composer Popup (Gmail style) */}
+      {emailComposer.isOpen && (
+        <div className="fixed bottom-0 right-10 z-50 w-[400px] bg-surface border border-border rounded-t-xl shadow-2xl flex flex-col overflow-hidden">
+          <div className="bg-primary px-4 py-3 flex items-center justify-between text-primary-foreground">
+            <span className="font-semibold text-sm">{t("admin.composeEmail") || "New Message"}</span>
+            <Button variant="ghost" size="icon" className="h-6 w-6 text-primary-foreground hover:bg-primary/80" onClick={() => setEmailComposer({...emailComposer, isOpen: false})}>
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+          <div className="p-4 flex flex-col gap-3">
+            <div className="text-sm text-muted-foreground border-b border-border pb-2 flex items-center gap-2">
+              <span className="font-medium text-foreground">To:</span> {emailComposer.user?.email}
+            </div>
+            <Input 
+              placeholder={t("admin.emailSubject") || "Subject"} 
+              value={emailComposer.subject} 
+              onChange={e => setEmailComposer({...emailComposer, subject: e.target.value})} 
+              className="border-0 px-0 rounded-none border-b border-border shadow-none focus-visible:ring-0 bg-transparent text-sm" 
+            />
+            <textarea 
+              placeholder={t("admin.emailBody") || "Write your message..."} 
+              value={emailComposer.body} 
+              onChange={e => setEmailComposer({...emailComposer, body: e.target.value})} 
+              className="w-full min-h-[200px] resize-none bg-transparent border-0 px-0 py-2 focus:outline-none text-sm" 
+            />
+          </div>
+          <div className="p-3 border-t border-border flex items-center justify-between bg-surface/50">
+            <Button onClick={handleSendEmail} disabled={emailComposer.sending} className="bg-primary hover:bg-primary/90 text-primary-foreground px-6">
+              {emailComposer.sending ? (t("admin.sending") || "Sending...") : (t("admin.send") || "Send")}
+            </Button>
           </div>
         </div>
       )}
