@@ -82,7 +82,7 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
-  const { profile: user, openLoginModal } = useAuth();
+  const { profile: user, role, openLoginModal } = useAuth();
 
   return (
     <div className="flex h-[100dvh] flex-col lg:flex-row w-full bg-background overflow-hidden">
@@ -165,6 +165,24 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
               })}
             </nav>
           </div>
+
+          {/* Admin Nav */}
+          {(role === 'admin' || role === 'ADMIN') && (
+            <div>
+              <h3 className="px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                Admin
+              </h3>
+              <nav className="space-y-1">
+                <Link
+                  href="/admin"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group text-muted-foreground hover:bg-secondary hover:text-foreground"
+                >
+                  <Settings className="w-5 h-5 text-muted-foreground group-hover:text-foreground" />
+                  Admin Dashboard
+                </Link>
+              </nav>
+            </div>
+          )}
         </div>
 
         {/* User Profile Area */}
