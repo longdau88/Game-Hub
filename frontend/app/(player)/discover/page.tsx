@@ -15,7 +15,7 @@ export default function DiscoverPage() {
   const [games, setGames] = useState<Game[]>([]);
   const [categories, setCategories] = useState<{name: string, active: boolean}[]>([{ name: "All", active: true }]);
   const [loading, setLoading] = useState(true);
-  const { t } = useLanguage();
+  const { locale: language, t } = useLanguage();
 
   useEffect(() => {
     setMounted(true);
@@ -38,7 +38,7 @@ export default function DiscoverPage() {
         setGames(mappedGames);
 
         const catsArray = Array.isArray(catsData) ? catsData : (catsData.data || []);
-        const mappedCats = catsArray.map((c: any) => ({ name: c.name, active: false }));
+        const mappedCats = catsArray.map((c: any) => ({ name: c.nameTranslations?.[language] || c.name, active: false }));
         setCategories([{ name: t("category.all") || "All", active: true }, ...mappedCats]);
       } catch (err) {
         console.error("Failed to load data:", err);
@@ -47,7 +47,37 @@ export default function DiscoverPage() {
       }
     };
     loadData();
-  }, []);
+  }, [language, t]);
+
+  // Debounced Search Effect
+  useEffect(() => {
+    if (!mounted) return;
+    
+    const delayDebounceFn = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const query = search ? `?search=${encodeURIComponent(search)}` : '';
+        const gamesData = await fetchAPI(`/games${query}`).catch(() => ({ data: [] }));
+        const gamesArray = Array.isArray(gamesData) ? gamesData : (gamesData.data || []);
+        const mappedGames = gamesArray.map((g: any) => ({
+          id: g.id,
+          title: g.title,
+          creator: g.uploader?.username || "Unknown",
+          rating: g.averageRating || 0,
+          playCount: g.playCount || 0,
+          thumbnail: g.coverImageUrl || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80",
+          category: g.categories?.[0]?.nameTranslations?.[language] || g.categories?.[0]?.name || "Uncategorized"
+        }));
+        setGames(mappedGames);
+      } catch (error) {
+        console.error("Search failed:", error);
+      } finally {
+        setLoading(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [search, language]);
 
   if (!mounted) return null;
 
@@ -71,14 +101,11 @@ export default function DiscoverPage() {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <Button size="icon" className="h-12 w-12 rounded-2xl shrink-0 border border-border">
-            <SlidersHorizontal className="w-5 h-5 text-muted-foreground" />
-          </Button>
         </div>
       </div>
 
       {/* Categories */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-4 hide-scrollbar">
+      <div className="flex items-center gap-2 overflow-x-auto pb-4 hide-scrollbar flex-nowrap w-full">
         {categories.map(category => (
           <Button 
             key={category.name} 
