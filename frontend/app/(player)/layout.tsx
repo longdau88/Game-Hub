@@ -41,7 +41,7 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row w-full bg-background">
+    <div className="flex h-[100dvh] flex-col lg:flex-row w-full bg-background overflow-hidden">
       {/* Mobile Topbar */}
       <div className="lg:hidden flex items-center justify-between p-4 border-b border-border bg-surface sticky top-0 z-50">
         <Link href="/" className="flex items-center gap-2">
