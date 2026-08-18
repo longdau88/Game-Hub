@@ -651,5 +651,22 @@
   "admin.retentionRates": "Tỷ lệ quay lại D1, D7, D30",
   "admin.d1Retention": "Giữ chân D1",
   "admin.d7Retention": "Giữ chân D7",
-  "admin.d30Retention": "Giữ chân D30"
+  "admin.d30Retention": "Giữ chân D30",
+  "admin.infrastructure": "Hệ thống & Cấu hình",
+  "admin.infrastructureDesc": "Quản lý hệ thống, lưu trữ và cấu hình máy chủ.",
+  "admin.systemSettings": "Cấu hình hệ thống",
+  "admin.maintenanceMode": "Chế độ bảo trì",
+  "admin.maintenanceModeDesc": "Khóa người dùng truy cập. Chỉ Admin mới có thể vào.",
+  "admin.registrationEnabled": "Mở đăng ký",
+  "admin.registrationEnabledDesc": "Cho phép người dùng mới tạo tài khoản.",
+  "admin.maxUploadSize": "Dung lượng upload tối đa (MB)",
+  "admin.saveSettings": "Lưu cấu hình",
+  "admin.storageManager": "Quản lý lưu trữ",
+  "admin.runCleanup": "Dọn rác máy chủ",
+  "admin.aiSync": "Đồng bộ Vector DB",
+  "admin.aiSyncDesc": "Cập nhật dữ liệu game lên Vector DB cho AI gợi ý.",
+  "admin.runSync": "Bắt đầu đồng bộ",
+  "admin.usedSpace": "Đã sử dụng",
+  "admin.limitSpace": "Giới hạn",
+  "admin.settingsSaved": "Lưu cấu hình thành công."
 }
