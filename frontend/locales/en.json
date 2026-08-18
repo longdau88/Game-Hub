@@ -407,6 +407,7 @@
   "admin.editGameTitle": "Edit Game Information",
   "admin.gameTitle": "Game Title",
   "admin.gameDescription": "Description",
+  "admin.coverImage": "Cover Image (Optional)",
   "admin.reviewMode": "Review Mode",
   "game.backToStore": "Back to Store",
   "game.loadError": "Failed to load game.",

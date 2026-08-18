@@ -17,6 +17,7 @@ export default function GameManagementPage() {
   const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<'pending' | 'published'>('pending');
   const [games, setGames] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   
@@ -29,6 +30,7 @@ export default function GameManagementPage() {
 
   useEffect(() => {
     setMounted(true);
+    fetchAPI('/categories').then(res => setCategories(Array.isArray(res) ? res : res.data || [])).catch(() => {});
   }, []);
 
   const fetchGames = async (tab: 'pending' | 'published') => {
@@ -100,7 +102,10 @@ export default function GameManagementPage() {
   };
 
   const handleEditClick = (game: any) => {
-    setEditingGame(game);
+    setEditingGame({
+      ...game,
+      categoryIds: game.categories?.map((c: any) => c.id) || []
+    });
     setEditModalOpen(true);
   };
 
@@ -114,6 +119,12 @@ export default function GameManagementPage() {
       const formData = new FormData();
       formData.append("title", editingGame.title);
       formData.append("description", editingGame.description);
+      if (editingGame.categoryIds) {
+        formData.append("categoryIds", editingGame.categoryIds.join(','));
+      }
+      if (editingGame.newCoverFile) {
+        formData.append("coverImage", editingGame.newCoverFile);
+      }
 
       await fetchAPI(`/games/${editingGame.id}`, { 
         method: 'PUT', 
@@ -329,21 +340,58 @@ export default function GameManagementPage() {
       {/* Edit Game Modal */}
       {editModalOpen && editingGame && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-4 border-b border-border pb-4">
+          <div className="w-full max-w-2xl rounded-2xl border border-border bg-surface p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4 border-b border-border pb-4 sticky top-0 bg-surface z-10">
               <h2 className="text-xl font-bold text-foreground">{t("admin.editGameTitle") || "Edit Game Information"}</h2>
               <Button variant="ghost" size="icon" onClick={() => setEditModalOpen(false)}>
                 <X className="w-5 h-5 text-muted-foreground" />
               </Button>
             </div>
             <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t("admin.gameTitle") || "Game Title"}</label>
+                  <Input 
+                    value={editingGame.title || ''} 
+                    onChange={e => setEditingGame({...editingGame, title: e.target.value})}
+                    className="bg-background"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t("admin.coverImage") || "Cover Image (Optional)"}</label>
+                  <Input 
+                    type="file"
+                    accept="image/*"
+                    onChange={e => {
+                      if (e.target.files && e.target.files[0]) {
+                        setEditingGame({...editingGame, newCoverFile: e.target.files[0]});
+                      }
+                    }}
+                    className="bg-background cursor-pointer"
+                  />
+                </div>
+              </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t("admin.gameTitle") || "Game Title"}</label>
-                <Input 
-                  value={editingGame.title || ''} 
-                  onChange={e => setEditingGame({...editingGame, title: e.target.value})}
-                  className="bg-background"
-                />
+                <label className="text-sm font-medium">{t("admin.colCategories") || "Categories"}</label>
+                <div className="flex flex-wrap gap-3 p-3 rounded-md border border-border bg-background max-h-[120px] overflow-y-auto">
+                  {categories.map(cat => (
+                    <label key={cat.id} className="flex items-center gap-1.5 cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        checked={editingGame.categoryIds?.includes(cat.id)}
+                        onChange={(e) => {
+                          const newIds = e.target.checked 
+                            ? [...(editingGame.categoryIds || []), cat.id] 
+                            : (editingGame.categoryIds || []).filter((id: number) => id !== cat.id);
+                          setEditingGame({...editingGame, categoryIds: newIds});
+                        }}
+                        className="rounded border-border text-primary focus:ring-primary w-4 h-4"
+                      />
+                      <span className="text-sm text-muted-foreground">{cat.name}</span>
+                    </label>
+                  ))}
+                  {categories.length === 0 && <span className="text-sm text-muted-foreground">No categories available.</span>}
+                </div>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">{t("admin.gameDescription") || "Description"}</label>
@@ -354,7 +402,7 @@ export default function GameManagementPage() {
                 />
               </div>
             </div>
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-border">
               <Button variant="outline" onClick={() => setEditModalOpen(false)} disabled={saving}>
                 {t("admin.cancel") || "Cancel"}
               </Button>

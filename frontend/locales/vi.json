@@ -623,5 +623,6 @@
   "admin.editGame": "Chỉnh sửa Game",
   "admin.editGameTitle": "Sửa thông tin Game",
   "admin.gameTitle": "Tên Game",
-  "admin.gameDescription": "Mô tả"
+  "admin.gameDescription": "Mô tả",
+  "admin.coverImage": "Ảnh bìa (Tùy chọn)"
 }
