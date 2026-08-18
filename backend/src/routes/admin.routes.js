@@ -1,6 +1,6 @@
 const express = require('express');
 const { requireAuth, requireAdmin } = require('../middleware/auth.middleware');
-const { getDashboardStats, getAllUsers, toggleBanUser, changeUserRole, rejectGame, deleteGame, toggleFeaturedGame, getStorageStats, garbageCollect } = require('../controllers/admin.controller');
+const { getDashboardStats, getAllUsers, toggleBanUser, changeUserRole, createUser, updateUser, rejectGame, deleteGame, toggleFeaturedGame, getStorageStats, garbageCollect } = require('../controllers/admin.controller');
 const { getPendingGames, getPublishedGames, approveGame } = require('../controllers/game.controller');
 const { 
   runGarbageCollection, 
@@ -22,6 +22,8 @@ router.get('/stats', cacheMiddleware(10), getDashboardStats);
 
 // Users
 router.get('/users', cacheMiddleware(10), getAllUsers);
+router.post('/users', createUser);
+router.put('/users/:id', updateUser);
 router.put('/users/:id/ban', toggleBanUser);
 router.put('/users/:id/role', changeUserRole);
 

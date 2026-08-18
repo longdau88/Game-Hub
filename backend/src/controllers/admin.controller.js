@@ -2,6 +2,7 @@ const prisma = require('../config/db');
 const r2Client = require('../config/r2');
 const { ListObjectsV2Command, DeleteObjectsCommand } = require('@aws-sdk/client-s3');
 const { pushToUser } = require('./notification.controller');
+const bcrypt = require('bcryptjs');
 
 // Helper to delete folder in R2
 const deleteR2Folder = async (folderPath) => {
@@ -142,6 +143,86 @@ exports.changeUserRole = async (req, res) => {
     res.json({ message: 'User role updated successfully', user });
   } catch (error) {
     res.status(500).json({ error: 'Failed to update role' });
+  }
+};
+
+exports.createUser = async (req, res) => {
+  try {
+    const adminId = req.user.userId;
+    const { username, email, password, role } = req.body;
+    
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'Username, email and password are required' });
+    }
+    
+    // Check if user exists
+    const existing = await prisma.user.findFirst({
+      where: {
+        OR: [{ email }, { username }]
+      }
+    });
+    
+    if (existing) {
+      return res.status(400).json({ error: 'User with email or username already exists' });
+    }
+    
+    const passwordHash = await bcrypt.hash(password, 10);
+    
+    const user = await prisma.user.create({
+      data: {
+        username,
+        email,
+        passwordHash,
+        role: role || 'user',
+        isVerified: true
+      }
+    });
+    
+    await logAudit(adminId, 'CREATE_USER', 'User', {
+      targetUserId: user.id,
+      targetUsername: user.username
+    });
+    
+    // Omit password hash in response
+    delete user.passwordHash;
+    res.status(201).json({ message: 'User created successfully', user });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create user' });
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  try {
+    const adminId = req.user.userId;
+    const { id } = req.params;
+    const { username, email, password, role } = req.body;
+    
+    const dataToUpdate = {};
+    if (username) dataToUpdate.username = username;
+    if (email) dataToUpdate.email = email;
+    if (role) dataToUpdate.role = role;
+    if (password) {
+      dataToUpdate.passwordHash = await bcrypt.hash(password, 10);
+    }
+    
+    const user = await prisma.user.update({
+      where: { id: parseInt(id) },
+      data: dataToUpdate
+    });
+    
+    await logAudit(adminId, 'UPDATE_USER', 'User', {
+      targetUserId: user.id,
+      targetUsername: user.username,
+      updatedFields: Object.keys(dataToUpdate).filter(k => k !== 'passwordHash')
+    });
+    
+    delete user.passwordHash;
+    res.json({ message: 'User updated successfully', user });
+  } catch (error) {
+    if (error.code === 'P2002') {
+      return res.status(400).json({ error: 'Email or username already in use' });
+    }
+    res.status(500).json({ error: 'Failed to update user' });
   }
 };
 

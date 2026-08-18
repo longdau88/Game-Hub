@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
-import { Search, MoreHorizontal, UserX, UserCheck, Shield, ShieldAlert, Mail } from "lucide-react";
+import { Search, MoreHorizontal, UserX, UserCheck, Shield, ShieldAlert, Mail, Pencil, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { fetchAPI } from "@/lib/api";
@@ -17,6 +17,10 @@ export default function UserManagementPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [formData, setFormData] = useState({ username: '', email: '', password: '', role: 'user' });
+  const [saving, setSaving] = useState(false);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -54,6 +58,44 @@ export default function UserManagementPage() {
     }
   };
 
+  const openCreateModal = () => {
+    setCurrentUser(null);
+    setFormData({ username: '', email: '', password: '', role: 'user' });
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (user: any) => {
+    setCurrentUser(user);
+    setFormData({ username: user.username || '', email: user.email || '', password: '', role: user.role === 'ADMIN' ? 'ADMIN' : 'user' });
+    setIsModalOpen(true);
+  };
+
+  const handleSaveUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      if (currentUser) {
+        const res = await fetchAPI(`/admin/users/${currentUser.id}`, {
+          method: 'PUT',
+          body: JSON.stringify(formData)
+        });
+        setUsers(users.map(u => u.id === currentUser.id ? { ...u, ...res.user } : u));
+      } else {
+        const res = await fetchAPI('/admin/users', {
+          method: 'POST',
+          body: JSON.stringify(formData)
+        });
+        setUsers([res.user, ...users]);
+      }
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Failed to save user", err);
+      alert(t("game.loadError") || "Failed to save user");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (!mounted) return null;
 
   const filteredUsers = users.filter(user => 
@@ -68,7 +110,7 @@ export default function UserManagementPage() {
           <h1 className="text-3xl font-bold tracking-tight">{t("admin.userManagement") || "User Management"}</h1>
           <p className="text-muted-foreground mt-1">{t("admin.userManagementDesc") || "View and manage platform users, roles, and statuses."}</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md">
+        <Button onClick={openCreateModal} className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md">
           {t("admin.inviteUser") || "Invite User"}
         </Button>
       </div>
@@ -131,6 +173,15 @@ export default function UserManagementPage() {
                         <Button 
                           variant="ghost" 
                           size="icon" 
+                          title={t("admin.editUser") || "Edit User"}
+                          onClick={() => openEditModal(user)}
+                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
                           title={t("admin.sendEmail") || "Send Email"}
                           onClick={() => window.location.href = `mailto:${user.email}`}
                           className="h-8 w-8 text-muted-foreground hover:text-foreground"
@@ -171,6 +222,60 @@ export default function UserManagementPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Add/Edit User Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+          <div className="w-full max-w-md bg-surface border border-border rounded-xl shadow-xl overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-border">
+              <h2 className="text-xl font-bold">{currentUser ? (t("admin.editUser") || "Edit User") : (t("admin.inviteUser") || "Invite User")}</h2>
+              <Button variant="ghost" size="icon" onClick={() => setIsModalOpen(false)} className="h-8 w-8">
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <form onSubmit={handleSaveUser} className="p-6 space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t("admin.username") || "Username"}</label>
+                <Input required value={formData.username} onChange={e => setFormData({...formData, username: e.target.value})} className="bg-background" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t("admin.email") || "Email"}</label>
+                <Input type="email" required value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="bg-background" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t("admin.password") || "Password"}</label>
+                <Input 
+                  type="password" 
+                  required={!currentUser} 
+                  placeholder={currentUser ? (t("admin.passwordPlaceholderEdit") || "Leave blank to keep unchanged") : (t("admin.passwordPlaceholderCreate") || "Enter password...")}
+                  value={formData.password} 
+                  onChange={e => setFormData({...formData, password: e.target.value})} 
+                  className="bg-background" 
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t("admin.role") || "Role"}</label>
+                <select 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={formData.role}
+                  onChange={e => setFormData({...formData, role: e.target.value})}
+                >
+                  <option value="user">{t("admin.roleUser") || "Standard User"}</option>
+                  <option value="ADMIN">{t("admin.roleAdmin") || "Administrator"}</option>
+                </select>
+              </div>
+              <div className="pt-4 flex items-center justify-end gap-3">
+                <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)}>
+                  {t("admin.cancel") || "Cancel"}
+                </Button>
+                <Button type="submit" disabled={saving} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                  {saving ? (t("loading") || "Loading...") : (t("admin.save") || "Save")}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

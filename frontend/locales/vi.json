@@ -581,5 +581,16 @@
   "admin.makeUser": "Hạ Quyền User",
   "admin.makeAdmin": "Cấp Quyền Admin",
   "admin.ban": "Khóa",
-  "admin.unban": "Mở Khóa"
+  "admin.unban": "Mở Khóa",
+  "admin.editUser": "Sửa Người Dùng",
+  "admin.username": "Tên đăng nhập",
+  "admin.email": "Email",
+  "admin.password": "Mật khẩu",
+  "admin.passwordPlaceholderCreate": "Nhập mật khẩu...",
+  "admin.passwordPlaceholderEdit": "Để trống nếu không muốn đổi",
+  "admin.role": "Vai trò",
+  "admin.roleUser": "Người dùng thường",
+  "admin.roleAdmin": "Quản trị viên",
+  "admin.save": "Lưu",
+  "admin.cancel": "Hủy"
 }
