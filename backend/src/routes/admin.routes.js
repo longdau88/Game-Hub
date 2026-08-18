@@ -1,13 +1,14 @@
 const express = require('express');
 const { requireAuth, requireAdmin } = require('../middleware/auth.middleware');
-const { getDashboardStats, getAllUsers, toggleBanUser, changeUserRole, createUser, updateUser, sendEmailToUser, rejectGame, deleteGame, toggleFeaturedGame, getStorageStats, garbageCollect } = require('../controllers/admin.controller');
+const { getDashboardStats, getAllUsers, toggleBanUser, changeUserRole, createUser, updateUser, sendEmailToUser, rejectGame, deleteGame, toggleFeaturedGame, garbageCollect } = require('../controllers/admin.controller');
 const { getPendingGames, getPublishedGames, approveGame } = require('../controllers/game.controller');
 const { 
   runGarbageCollection, 
   updateHiddenTags, syncVectorDB, 
   getAnalyticsOverview, getSessionStats, getCrashLogs,
   getEmailTemplates, createEmailTemplate, sendEmailCampaign, getEmailCampaigns,
-  getGameVersions, rollbackGame 
+  getGameVersions, rollbackGame,
+  getStorageStats
 } = require('../controllers/admin-advanced.controller');
 const { cacheMiddleware } = require('../middleware/cache.middleware');
 
