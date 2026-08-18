@@ -19,12 +19,6 @@ export default function ProfilePage() {
   
   const [profile, setProfile] = useState<any>(null);
   const [uploadedGames, setUploadedGames] = useState<any[]>([]);
-  const [gameHistory, setGameHistory] = useState<any[]>([]);
-  const [bookmarkedGames, setBookmarkedGames] = useState<any[]>([]);
-  const [collections, setCollections] = useState<any[]>([]);
-  const [selectedCollectionId, setSelectedCollectionId] = useState<number | 'all'>('all');
-  const [isCreatingCollection, setIsCreatingCollection] = useState(false);
-  const [newCollectionName, setNewCollectionName] = useState("");
   const [followingCreators, setFollowingCreators] = useState<any[]>([]);
   const [quests, setQuests] = useState<any[]>([]);
   const [friends, setFriends] = useState<any[]>([]);
@@ -55,9 +49,7 @@ export default function ProfilePage() {
   useEffect(() => {
     fetchProfile();
     fetchUploadedGames();
-    fetchGameHistory();
-    fetchBookmarkedGames();
-    fetchCollections();
+    fetchUploadedGames();
     fetchFollowingCreators();
     fetchQuests();
     fetchFriends();
@@ -114,87 +106,6 @@ export default function ProfilePage() {
     }
   };
 
-  const fetchGameHistory = async () => {
-    if (!Cookies.get("token")) return;
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/games/user/history`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const data = await res.json();
-        setGameHistory(data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchBookmarkedGames = async () => {
-    if (!Cookies.get("token")) return;
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/games/user/bookmarked`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const data = await res.json();
-        setBookmarkedGames(data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchCollections = async () => {
-    if (!Cookies.get("token")) return;
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/collections`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const data = await res.json();
-        setCollections(data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleCreateCollection = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newCollectionName.trim()) return;
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/collections`, {
-        method: "POST",
-        headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
-        body: JSON.stringify({ name: newCollectionName })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setCollections([...collections, data]);
-        setNewCollectionName("");
-        setIsCreatingCollection(false);
-        await notify({ message: "Collection created", variant: "success" });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleDeleteCollection = async (collectionId: number) => {
-    if (!await confirm({ message: "Are you sure you want to delete this folder? Games will be moved to Uncategorized.", variant: "warning" })) return;
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/collections/${collectionId}`, {
-        method: "DELETE",
-        headers: getAuthHeaders()
-      });
-      if (res.ok) {
-        setCollections(collections.filter(c => c.id !== collectionId));
-        if (selectedCollectionId === collectionId) setSelectedCollectionId('all');
-        await notify({ message: "Collection deleted", variant: "success" });
-        fetchBookmarkedGames();
-      }
-    } catch (error) {
-      console.error(error);
-    }
   };
 
   const fetchFollowingCreators = async () => {
@@ -539,10 +450,6 @@ export default function ProfilePage() {
             
             <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-6 md:mt-0">
               <div className="text-center px-5 py-3 bg-white/50 dark:bg-zinc-800/50 rounded-2xl border border-white/60 dark:border-zinc-700/50 backdrop-blur-md shadow-sm transition-transform hover:scale-[1.02]">
-                <p className="text-2xl font-black text-zinc-900 dark:text-white mb-0.5">{gameHistory.length}</p>
-                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">{t("profile.gamesPlayed")}</p>
-              </div>
-              <div className="text-center px-5 py-3 bg-white/50 dark:bg-zinc-800/50 rounded-2xl border border-white/60 dark:border-zinc-700/50 backdrop-blur-md shadow-sm transition-transform hover:scale-[1.02]">
                 <p className="text-2xl font-black text-blue-600 dark:text-blue-400 mb-0.5">{uploadedGames.length}</p>
                 <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">{t("profile.myUploads")}</p>
               </div>
@@ -554,8 +461,6 @@ export default function ProfilePage() {
         <div className="flex overflow-x-auto hide-scrollbar gap-1 sm:gap-2 mb-8 bg-white/60 dark:bg-zinc-900/60 p-2 rounded-2xl border border-white/40 dark:border-zinc-800/80 w-full sm:w-fit mx-auto backdrop-blur-xl shadow-sm relative z-20">
           {[
             { id: 'settings', icon: Settings, label: t("profile.tabSettings") },
-            { id: 'history', icon: History, label: t("profile.tabHistory") },
-            { id: 'bookmarks', icon: Bookmark, label: t("profile.tabBookmarks") },
             { id: 'following', icon: Users, label: t("profile.tabFollowing") || "Following" },
             { id: 'friends', icon: UserMinus, label: "Bạn bè" },
             { id: 'uploads', icon: UploadCloud, label: t("profile.myUploads") }
@@ -706,94 +611,6 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
-                </div>
-              )}
-
-              {activeTab === 'history' && (
-                <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
-                  <h2 className="text-2xl font-bold mb-6">{t("profile.recentlyPlayed")}</h2>
-                  {gameHistory.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
-                      <History className="w-16 h-16 mb-4 opacity-20" />
-                      <p>{t("profile.noHistory")}</p>
-                      <Link href="/" className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-500 text-zinc-900 dark:text-white rounded-full font-medium transition-colors">{t("profile.playGames")}</Link>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {gameHistory.map(game => <GameListCard key={game.id} game={game} type="history" />)}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {activeTab === 'bookmarks' && (
-                <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <h2 className="text-2xl font-bold">{t("profile.savedGames")}</h2>
-                    
-                    {/* Folder Navigation */}
-                    <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar w-full md:w-auto pb-2 md:pb-0">
-                      <button 
-                        onClick={() => setSelectedCollectionId('all')}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${selectedCollectionId === 'all' ? 'bg-blue-500/10 text-blue-500' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}
-                      >
-                        All
-                      </button>
-                      <button 
-                        onClick={() => setSelectedCollectionId(null as any)}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${selectedCollectionId === null ? 'bg-blue-500/10 text-blue-500' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}
-                      >
-                        Uncategorized
-                      </button>
-                      {collections.map(c => (
-                        <div key={c.id} className="flex items-center gap-1">
-                          <button 
-                            onClick={() => setSelectedCollectionId(c.id)}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${selectedCollectionId === c.id ? 'bg-purple-500/10 text-purple-500' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'}`}
-                          >
-                            <Folder className="w-3.5 h-3.5" /> {c.name}
-                          </button>
-                          {selectedCollectionId === c.id && (
-                            <button onClick={() => handleDeleteCollection(c.id)} className="p-1.5 text-zinc-400 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                        </div>
-                      ))}
-                      
-                      {!isCreatingCollection ? (
-                        <button onClick={() => setIsCreatingCollection(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors border border-dashed border-zinc-300 dark:border-zinc-600">
-                          <FolderPlus className="w-3.5 h-3.5" /> New
-                        </button>
-                      ) : (
-                        <form onSubmit={handleCreateCollection} className="flex items-center gap-2">
-                          <input type="text" autoFocus value={newCollectionName} onChange={e => setNewCollectionName(e.target.value)} placeholder="Folder name..." className="px-3 py-1.5 text-sm bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg outline-none focus:border-blue-500 w-32" />
-                          <button type="submit" className="px-2 py-1.5 text-sm font-medium bg-blue-500 text-white rounded-lg">Save</button>
-                          <button type="button" onClick={() => setIsCreatingCollection(false)} className="px-2 py-1.5 text-sm font-medium bg-zinc-200 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 rounded-lg">Cancel</button>
-                        </form>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {(() => {
-                    const filteredGames = selectedCollectionId === 'all' 
-                      ? bookmarkedGames 
-                      : bookmarkedGames.filter(g => g.collectionId === selectedCollectionId || (selectedCollectionId === null && !g.collectionId));
-                      
-                    if (filteredGames.length === 0) {
-                      return (
-                        <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
-                          <Bookmark className="w-16 h-16 mb-4 opacity-20" />
-                          <p>{t("profile.noBookmarks")}</p>
-                        </div>
-                      );
-                    }
-                    return (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {filteredGames.map(game => <GameListCard key={game.id} game={game} type="bookmark" />)}
-                      </div>
-                    );
-                  })()}
                 </div>
               )}
 
