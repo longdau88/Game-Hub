@@ -41,23 +41,23 @@ export default function UserManagementPage() {
     <div className="space-y-8 pb-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{t("user_management") || "User Management"}</h1>
-          <p className="text-muted-foreground mt-1">{t("user_management_desc") || "View and manage platform users, roles, and statuses."}</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t("admin.userManagement") || "User Management"}</h1>
+          <p className="text-muted-foreground mt-1">{t("admin.userManagementDesc") || "View and manage platform users, roles, and statuses."}</p>
         </div>
         <Button className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md">
-          {t("invite_user") || "Invite User"}
+          {t("admin.inviteUser") || "Invite User"}
         </Button>
       </div>
 
       <Card className="border-border bg-surface/30">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle>All Users</CardTitle>
+            <CardTitle>{t("admin.allUsers") || "All Users"}</CardTitle>
             <div className="relative w-64">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search users..."
+                placeholder={t("admin.searchUsersPlaceholder") || "Search users..."}
                 className="pl-8 bg-background border-border"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -72,11 +72,11 @@ export default function UserManagementPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Joined</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>{t("admin.colUser") || "User"}</TableHead>
+                  <TableHead>{t("admin.colRole") || "Role"}</TableHead>
+                  <TableHead>{t("admin.colStatus") || "Status"}</TableHead>
+                  <TableHead>{t("admin.colJoined") || "Joined"}</TableHead>
+                  <TableHead className="text-right">{t("admin.colActions") || "Actions"}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -98,7 +98,7 @@ export default function UserManagementPage() {
                     </TableCell>
                     <TableCell>
                       <Badge variant={user.isBanned ? 'destructive' : 'success'} className={user.isBanned ? 'bg-error/10 text-error border-error/20' : ''}>
-                        {user.isBanned ? 'Suspended' : 'Active'}
+                        {user.isBanned ? (t("admin.banned") || 'Suspended') : (t("admin.active") || 'Active')}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-muted-foreground">{new Date(user.createdAt).toLocaleDateString()}</TableCell>
@@ -124,7 +124,7 @@ export default function UserManagementPage() {
           ) : (
             <div className="p-12 text-center border border-dashed border-border rounded-xl">
                <p className="text-muted-foreground font-semibold">{t("not_available") || "Chưa có dữ liệu"}</p>
-               <p className="text-sm text-muted-foreground/70">{t("no_users") || "No users found."}</p>
+               <p className="text-sm text-muted-foreground/70">{t("admin.noUsers") || "No users found."}</p>
             </div>
           )}
         </CardContent>
