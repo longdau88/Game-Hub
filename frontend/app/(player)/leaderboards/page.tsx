@@ -78,19 +78,24 @@ export default function LeaderboardsPage() {
           )}
         </div>
         
-        {/* Current User Rank */}
-        {user && (
-          <div className="bg-primary/10 border-t border-primary/20 p-4 flex items-center">
-            <div className="w-16 text-center text-lg font-bold text-primary">#-</div>
-            <div className="flex-1 flex items-center gap-4 px-4">
-              <Avatar fallback={user.username?.[0]?.toUpperCase() || "U"} className="border-2 border-primary" />
-              <span className="text-lg font-bold text-primary">{t("you") || "You"} ({user.username})</span>
+        {user && (() => {
+          const myRankIndex = leaderboard.findIndex(p => p.id === user.id);
+          const myRank = myRankIndex >= 0 ? myRankIndex + 1 : '-';
+          const myScore = myRankIndex >= 0 ? leaderboard[myRankIndex].score : (user.xp || 0);
+
+          return (
+            <div className="bg-primary/10 border-t border-primary/20 p-4 flex items-center">
+              <div className="w-16 text-center text-lg font-bold text-primary">#{myRank}</div>
+              <div className="flex-1 flex items-center gap-4 px-4">
+                <Avatar src={user.avatarUrl} fallback={user.username?.[0]?.toUpperCase() || "U"} className="border-2 border-primary" />
+                <span className="text-lg font-bold text-primary">{t("you") || "You"} ({user.username})</span>
+              </div>
+              <div className="w-32 text-right">
+                <span className="font-mono text-lg font-bold text-primary">{myScore?.toLocaleString() || 0}</span>
+              </div>
             </div>
-            <div className="w-32 text-right">
-              <span className="font-mono text-lg font-bold text-primary">0</span>
-            </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
 
     </div>
