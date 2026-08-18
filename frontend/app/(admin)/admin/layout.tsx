@@ -30,7 +30,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const { t } = useLanguage();
 
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row w-full bg-background">
+    <div className="flex h-screen overflow-hidden flex-col lg:flex-row w-full bg-background">
       {/* Mobile Topbar */}
       <div className="lg:hidden flex items-center justify-between p-4 border-b border-border bg-surface sticky top-0 z-50">
         <Link href="/" className="flex items-center gap-2">
@@ -101,7 +101,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-background">
         {/* Desktop Topbar */}
-        <header className="hidden lg:flex items-center justify-between h-20 px-8 border-b border-border bg-background/95 backdrop-blur sticky top-0 z-30">
+        <header className="hidden lg:flex items-center justify-between h-20 px-8 border-b border-border bg-background/95 backdrop-blur z-30 flex-shrink-0">
           <h1 className="text-xl font-bold">
             {t(NAVIGATION.find(n => pathname.startsWith(n.href))?.nameKey || "") || NAVIGATION.find(n => pathname.startsWith(n.href))?.defaultName || "Dashboard"}
           </h1>
@@ -121,7 +121,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
 
         {/* Page Content */}
-        <div className="flex-1 overflow-auto p-4 md:p-8">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="mx-auto max-w-7xl">
             {children}
           </div>
