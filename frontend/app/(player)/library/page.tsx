@@ -153,13 +153,13 @@ export default function LibraryPage() {
               onClick={() => setSelectedCollectionId('all')}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${selectedCollectionId === 'all' ? 'bg-primary/10 text-primary' : 'bg-surface text-muted-foreground hover:bg-secondary'}`}
             >
-              All
+              {t("library.folder_all") || "All"}
             </button>
             <button 
               onClick={() => setSelectedCollectionId(null as any)}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${selectedCollectionId === null ? 'bg-primary/10 text-primary' : 'bg-surface text-muted-foreground hover:bg-secondary'}`}
             >
-              Uncategorized
+              {t("library.folder_uncategorized") || "Uncategorized"}
             </button>
             {collections.map(c => (
               <div key={c.id} className="flex items-center gap-1">
@@ -179,13 +179,13 @@ export default function LibraryPage() {
             
             {!isCreatingCollection ? (
               <button onClick={() => setIsCreatingCollection(true)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap bg-surface text-muted-foreground hover:bg-secondary transition-colors border border-dashed border-border">
-                <FolderPlus className="w-3.5 h-3.5" /> New
+                <FolderPlus className="w-3.5 h-3.5" /> {t("library.folder_new") || "New"}
               </button>
             ) : (
               <form onSubmit={handleCreateCollection} className="flex items-center gap-2">
-                <input type="text" autoFocus value={newCollectionName} onChange={e => setNewCollectionName(e.target.value)} placeholder="Folder name..." className="px-3 py-1.5 text-sm bg-background border border-border rounded-lg outline-none focus:border-primary w-32" />
-                <button type="submit" className="px-2 py-1.5 text-sm font-medium bg-primary text-primary-foreground rounded-lg">Save</button>
-                <button type="button" onClick={() => setIsCreatingCollection(false)} className="px-2 py-1.5 text-sm font-medium bg-surface text-muted-foreground rounded-lg">Cancel</button>
+                <input type="text" autoFocus value={newCollectionName} onChange={e => setNewCollectionName(e.target.value)} placeholder={t("library.folder_name_placeholder") || "Folder name..."} className="px-3 py-1.5 text-sm bg-background border border-border rounded-lg outline-none focus:border-primary w-32" />
+                <button type="submit" className="px-2 py-1.5 text-sm font-medium bg-primary text-primary-foreground rounded-lg">{t("library.save") || "Save"}</button>
+                <button type="button" onClick={() => setIsCreatingCollection(false)} className="px-2 py-1.5 text-sm font-medium bg-surface text-muted-foreground rounded-lg">{t("dialog.cancel") || "Cancel"}</button>
               </form>
             )}
           </div>
