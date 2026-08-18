@@ -6,31 +6,45 @@ const auditLogService = require('../services/audit.service');
 // 1. Storage & Bandwidth
 exports.getStorageStats = async (req, res) => {
   try {
-    // In a real scenario, this might call Cloudflare R2 API
-    // For now, we estimate based on game sizeBytes
+    // 1. Database Size
+    let dbBytes = 0;
+    try {
+      const result = await prisma.$queryRaw`SELECT pg_database_size(current_database())::text as size`;
+      dbBytes = Number(result[0].size) || 0;
+    } catch(e) {
+      console.error("Failed to get DB size:", e);
+    }
+    const dbLimit = 1 * 1024 * 1024 * 1024; // 1GB limit for DB
+
+    // 2. Server Storage (R2/S3)
     const games = await prisma.game.findMany({
       select: { sizeBytes: true }
     });
     
-    let totalBytes = 0;
+    let serverBytes = 0;
     games.forEach(g => {
       if (g.sizeBytes) {
         const val = Number(g.sizeBytes);
         if (!isNaN(val)) {
-          totalBytes += val;
+          serverBytes += val;
         }
       }
     });
+    const serverLimit = 10 * 1024 * 1024 * 1024; // 10GB limit for Server Storage
 
-    // Assume 10GB limit
-    const limitBytes = 10 * 1024 * 1024 * 1024;
-    
     res.json({
       success: true,
       data: {
-        totalBytesUsed: totalBytes,
-        limitBytes: limitBytes,
-        percentUsed: (totalBytes / limitBytes) * 100
+        db: {
+          used: dbBytes,
+          limit: dbLimit,
+          percent: (dbBytes / dbLimit) * 100
+        },
+        server: {
+          used: serverBytes,
+          limit: serverLimit,
+          percent: (serverBytes / serverLimit) * 100
+        }
       }
     });
   } catch (error) {

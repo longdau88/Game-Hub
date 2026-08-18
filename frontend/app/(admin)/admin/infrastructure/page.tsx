@@ -25,9 +25,8 @@ export default function InfrastructurePage() {
   });
 
   const [storageStats, setStorageStats] = useState({
-    totalBytesUsed: 0,
-    limitBytes: 10 * 1024 * 1024 * 1024,
-    percentUsed: 0
+    db: { used: 0, limit: 1 * 1024 * 1024 * 1024, percent: 0 },
+    server: { used: 0, limit: 10 * 1024 * 1024 * 1024, percent: 0 }
   });
 
   const loadData = async () => {
@@ -186,11 +185,21 @@ export default function InfrastructurePage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{t("admin.usedSpace") || "Used Space"}</span>
-                    <span className="font-medium text-foreground">{formatBytes(storageStats.totalBytesUsed)} / {formatBytes(storageStats.limitBytes)}</span>
+                    <span className="text-muted-foreground">{t("admin.dbStorage") || "Database (DB)"}</span>
+                    <span className="font-medium text-foreground">{formatBytes(storageStats.db?.used)} / {formatBytes(storageStats.db?.limit)}</span>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-3">
-                    <div className="bg-emerald-500 h-3 rounded-full" style={{ width: `${Math.min(100, storageStats.percentUsed || 0)}%` }} />
+                    <div className="bg-blue-500 h-3 rounded-full" style={{ width: `${Math.min(100, storageStats.db?.percent || 0)}%` }} />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">{t("admin.serverStorage") || "Storage Server (R2)"}</span>
+                    <span className="font-medium text-foreground">{formatBytes(storageStats.server?.used)} / {formatBytes(storageStats.server?.limit)}</span>
+                  </div>
+                  <div className="w-full bg-secondary rounded-full h-3">
+                    <div className="bg-emerald-500 h-3 rounded-full" style={{ width: `${Math.min(100, storageStats.server?.percent || 0)}%` }} />
                   </div>
                 </div>
 
