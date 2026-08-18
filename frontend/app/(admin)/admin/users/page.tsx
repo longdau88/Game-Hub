@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAppDialog } from "@/contexts/DialogContext";
 
 export default function UserManagementPage() {
   const [mounted, setMounted] = useState(false);
@@ -23,6 +24,7 @@ export default function UserManagementPage() {
   const [saving, setSaving] = useState(false);
   const [emailComposer, setEmailComposer] = useState<{ isOpen: boolean; user: any; subject: string; body: string; sending: boolean }>({ isOpen: false, user: null, subject: '', body: '', sending: false });
   const { t } = useLanguage();
+  const { notify } = useAppDialog();
 
   useEffect(() => {
     setMounted(true);
@@ -91,7 +93,7 @@ export default function UserManagementPage() {
       setIsModalOpen(false);
     } catch (err) {
       console.error("Failed to save user", err);
-      alert(t("game.loadError") || "Failed to save user");
+      notify({ message: t("game.loadError") || "Failed to save user", variant: "error" });
     } finally {
       setSaving(false);
     }
@@ -99,7 +101,7 @@ export default function UserManagementPage() {
 
   const handleSendEmail = async () => {
     if (!emailComposer.subject || !emailComposer.body) {
-      alert("Please enter subject and message.");
+      notify({ message: "Please enter subject and message.", variant: "warning" });
       return;
     }
     
@@ -109,11 +111,11 @@ export default function UserManagementPage() {
         method: 'POST',
         body: JSON.stringify({ subject: emailComposer.subject, body: emailComposer.body })
       });
-      alert(t("admin.emailSentSuccess") || "Email sent successfully!");
+      notify({ message: t("admin.emailSentSuccess") || "Email sent successfully!", variant: "success" });
       setEmailComposer({ isOpen: false, user: null, subject: '', body: '', sending: false });
     } catch (err) {
       console.error("Failed to send email", err);
-      alert(t("game.loadError") || "Failed to send email");
+      notify({ message: t("game.loadError") || "Failed to send email", variant: "error" });
       setEmailComposer({ ...emailComposer, sending: false });
     }
   };
