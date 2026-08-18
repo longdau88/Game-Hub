@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Search, Check, X, Star, Trash2, Clock, Play } from "lucide-react";
+import { Search, Check, X, Star, Trash2, Clock, Play, Pencil } from "lucide-react";
 
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -19,6 +19,11 @@ export default function GameManagementPage() {
   const [games, setGames] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingGame, setEditingGame] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+  
   const { t } = useLanguage();
   const { notify, confirm } = useAppDialog();
 
@@ -94,6 +99,37 @@ export default function GameManagementPage() {
     }
   };
 
+  const handleEditClick = (game: any) => {
+    setEditingGame(game);
+    setEditModalOpen(true);
+  };
+
+  const handleEditSave = async () => {
+    if (!editingGame?.title || !editingGame?.description) {
+      notify({ message: "Title and description are required.", variant: "warning" });
+      return;
+    }
+    setSaving(true);
+    try {
+      const formData = new FormData();
+      formData.append("title", editingGame.title);
+      formData.append("description", editingGame.description);
+
+      await fetchAPI(`/games/${editingGame.id}`, { 
+        method: 'PUT', 
+        body: formData 
+      });
+      notify({ message: "Game updated successfully!", variant: "success" });
+      setEditModalOpen(false);
+      fetchGames(activeTab);
+    } catch (err) {
+      console.error("Failed to update game", err);
+      notify({ message: t("game.loadError") || "Failed to update game", variant: "error" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (!mounted) return null;
 
   const filteredGames = games.filter(game => 
@@ -130,7 +166,7 @@ export default function GameManagementPage() {
           <div className="relative w-full sm:w-72">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by title or uploader..."
+              placeholder={t("admin.searchGame") || "Search by title or uploader..."}
               className="pl-9 bg-surface/50 border-border"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -147,7 +183,7 @@ export default function GameManagementPage() {
                   {activeTab === 'pending' && <TableHead>{t("admin.colCategories") || "Categories"}</TableHead>}
                   {activeTab === 'published' && <TableHead>{t("admin.gamePlays") || "Plays"}</TableHead>}
                   <TableHead>{t("admin.colDate") || "Date"}</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="text-right">{t("admin.actions") || "Actions"}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -163,7 +199,7 @@ export default function GameManagementPage() {
                 ) : filteredGames.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="h-32 text-center text-muted-foreground">
-                      No games found.
+                      {t("admin.noGamesFound") || "No games found."}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -253,6 +289,15 @@ export default function GameManagementPage() {
                               <Button 
                                 variant="ghost" 
                                 size="icon" 
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                onClick={() => handleEditClick(game)}
+                                title={t("admin.editGame") || "Edit Game"}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
                                 className={`h-8 w-8 ${game.isFeatured ? 'text-amber-500 hover:text-amber-600' : 'text-muted-foreground hover:text-foreground'}`}
                                 onClick={() => handleFeature(game.id)}
                                 title={t("admin.featureGame") || "Toggle Feature"}
@@ -280,6 +325,52 @@ export default function GameManagementPage() {
           </div>
         </CardContent>
       </Card>
+      
+      {/* Edit Game Modal */}
+      {editModalOpen && editingGame && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-4 border-b border-border pb-4">
+              <h2 className="text-xl font-bold text-foreground">{t("admin.editGameTitle") || "Edit Game Information"}</h2>
+              <Button variant="ghost" size="icon" onClick={() => setEditModalOpen(false)}>
+                <X className="w-5 h-5 text-muted-foreground" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t("admin.gameTitle") || "Game Title"}</label>
+                <Input 
+                  value={editingGame.title || ''} 
+                  onChange={e => setEditingGame({...editingGame, title: e.target.value})}
+                  className="bg-background"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">{t("admin.gameDescription") || "Description"}</label>
+                <textarea 
+                  value={editingGame.description || ''} 
+                  onChange={e => setEditingGame({...editingGame, description: e.target.value})}
+                  className="w-full min-h-[120px] rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setEditModalOpen(false)} disabled={saving}>
+                {t("admin.cancel") || "Cancel"}
+              </Button>
+              <Button onClick={handleEditSave} disabled={saving} className="bg-primary text-primary-foreground min-w-[100px]">
+                {saving ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin" />
+                  </div>
+                ) : (
+                  t("admin.save") || "Save"
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

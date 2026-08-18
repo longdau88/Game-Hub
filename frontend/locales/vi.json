@@ -616,5 +616,12 @@
   "admin.gameStatus": "Trạng thái",
   "admin.gamePlays": "Lượt chơi",
   "admin.approveConfirm": "Bạn có chắc chắn muốn duyệt game này không?",
-  "admin.deleteConfirm": "Bạn có chắc chắn muốn xóa game này không? Hành động này không thể hoàn tác."
+  "admin.deleteConfirm": "Bạn có chắc chắn muốn xóa game này không? Hành động này không thể hoàn tác.",
+  "admin.searchGame": "Tìm kiếm theo tên hoặc người đăng...",
+  "admin.actions": "Hành động",
+  "admin.noGamesFound": "Không tìm thấy game nào.",
+  "admin.editGame": "Chỉnh sửa Game",
+  "admin.editGameTitle": "Sửa thông tin Game",
+  "admin.gameTitle": "Tên Game",
+  "admin.gameDescription": "Mô tả"
 }

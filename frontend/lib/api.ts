@@ -7,9 +7,13 @@ export async function fetchAPI(endpoint: string, options: RequestInit = {}) {
   const token = Cookies.get("token");
   
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
     ...((options.headers as Record<string, string>) || {}),
   };
+  
+  // Set default Content-Type to JSON if not FormData and not explicitly set
+  if (!(options.body instanceof FormData) && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
 
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
