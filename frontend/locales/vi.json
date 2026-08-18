@@ -633,5 +633,19 @@
   "admin.resolveConfirm": "Bạn có chắc chắn muốn đánh dấu báo cáo này là đã xử lý?",
   "admin.openReports": "Chưa xử lý",
   "admin.resolvedReports": "Đã xử lý",
-  "admin.noReportsFound": "Không có báo cáo nào."
+  "admin.noReportsFound": "Không có báo cáo nào.",
+  "admin.metrics": "Chỉ số & Phân tích",
+  "admin.metricsDesc": "Theo dõi hoạt động người chơi và hiệu suất game.",
+  "admin.totalSessions": "Tổng lượt chơi",
+  "admin.uniquePlayers": "Người chơi Unique",
+  "admin.playTime": "Tổng thời gian chơi",
+  "admin.crashRate": "Tỷ lệ lỗi (Crash)",
+  "admin.activityTrend": "Xu hướng hoạt động",
+  "admin.topGamesBySessions": "Top Game (Theo lượt chơi)",
+  "admin.retention": "Tỷ lệ giữ chân",
+  "admin.last30Days": "30 Ngày qua",
+  "admin.last7Days": "7 Ngày qua",
+  "admin.last90Days": "90 Ngày qua",
+  "admin.sessions": "Lượt chơi",
+  "admin.players": "Người chơi"
 }
