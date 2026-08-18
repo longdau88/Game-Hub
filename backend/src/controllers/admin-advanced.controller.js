@@ -140,9 +140,10 @@ exports.syncVectorDB = async (req, res) => {
       syncedGames: games.length
     });
 
-    res.json({
-      success: true,
-      message: `Successfully synced ${games.length} games to Vector DB.`
+    res.json({ 
+      success: true, 
+      message: `Successfully synced ${games.length} games to Vector DB.`,
+      data: { syncedCount: games.length }
     });
   } catch (error) {
     console.error('syncVectorDB error:', error);

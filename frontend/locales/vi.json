@@ -668,5 +668,11 @@
   "admin.runSync": "Bắt đầu đồng bộ",
   "admin.dbStorage": "Cơ sở dữ liệu (Database)",
   "admin.serverStorage": "Lưu trữ máy chủ (R2)",
-  "admin.settingsSaved": "Lưu cấu hình thành công."
+  "admin.settingsSaved": "Lưu cấu hình thành công.",
+  "admin.syncSuccess": "Đã đồng bộ thành công {count} game lên Vector DB.",
+  "admin.syncError": "Đồng bộ Vector DB thất bại.",
+  "admin.cleanupSuccess": "Dọn rác máy chủ thành công.",
+  "admin.cleanupError": "Dọn rác máy chủ thất bại.",
+  "admin.loadDataError": "Lỗi khi tải dữ liệu cấu hình.",
+  "admin.saveSettingsError": "Lưu cấu hình thất bại."
 }

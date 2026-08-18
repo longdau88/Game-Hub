@@ -53,7 +53,7 @@ export default function InfrastructurePage() {
       }
     } catch (err) {
       console.error(err);
-      notify({ message: "Failed to load infrastructure data.", variant: "error" });
+      notify({ message: t("admin.loadDataError") || "Failed to load infrastructure data.", variant: "error" });
     } finally {
       setLoading(false);
     }
@@ -73,7 +73,7 @@ export default function InfrastructurePage() {
       });
       notify({ message: t("admin.settingsSaved") || "Settings saved successfully.", variant: "success" });
     } catch (err) {
-      notify({ message: "Failed to save settings.", variant: "error" });
+      notify({ message: t("admin.saveSettingsError") || "Failed to save settings.", variant: "error" });
     } finally {
       setSavingSettings(false);
     }
@@ -83,10 +83,10 @@ export default function InfrastructurePage() {
     setCleaning(true);
     try {
       const res = await fetchAPI('/admin/storage/cleanup', { method: 'POST' });
-      notify({ message: res.message || "Cleanup successful.", variant: "success" });
+      notify({ message: t("admin.cleanupSuccess") || "Cleanup successful.", variant: "success" });
       await loadData();
     } catch (err) {
-      notify({ message: "Failed to run cleanup.", variant: "error" });
+      notify({ message: t("admin.cleanupError") || "Failed to run cleanup.", variant: "error" });
     } finally {
       setCleaning(false);
     }
@@ -96,9 +96,10 @@ export default function InfrastructurePage() {
     setSyncing(true);
     try {
       const res = await fetchAPI('/admin/ai/sync', { method: 'POST' });
-      notify({ message: res.message || "Sync successful.", variant: "success" });
+      const msgTemplate = t("admin.syncSuccess") || "Successfully synced {count} games to Vector DB.";
+      notify({ message: msgTemplate.replace("{count}", res.data?.syncedCount || 0), variant: "success" });
     } catch (err) {
-      notify({ message: "Failed to sync Vector DB.", variant: "error" });
+      notify({ message: t("admin.syncError") || "Failed to sync Vector DB.", variant: "error" });
     } finally {
       setSyncing(false);
     }
