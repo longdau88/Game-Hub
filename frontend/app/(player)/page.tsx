@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { GameCard, Game } from "@/components/shared/GameCard";
 import { XPProgress } from "@/components/shared/XPProgress";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { Search, Flame, Trophy, Star, ChevronRight } from "lucide-react";
 
 
@@ -118,8 +119,10 @@ export default function PlayerHome() {
             <Trophy className="w-6 h-6 text-warning" />
             <h2 className="text-2xl font-bold">{t("trending_now") || "Trending Now"}</h2>
           </div>
-          <Button variant="ghost" className="text-muted-foreground">
-            {t("view_all") || "View All"} <ChevronRight className="w-4 h-4 ml-1" />
+          <Button variant="ghost" className="text-muted-foreground" asChild>
+            <Link href="/games/trending">
+              {t("view_all") || "View All"} <ChevronRight className="w-4 h-4 ml-1" />
+            </Link>
           </Button>
         </div>
         
@@ -146,8 +149,10 @@ export default function PlayerHome() {
             <Star className="w-6 h-6 text-primary" />
             <h2 className="text-2xl font-bold">{t("new_releases") || "New Releases"}</h2>
           </div>
-          <Button variant="ghost" className="text-muted-foreground">
-            {t("view_all") || "View All"} <ChevronRight className="w-4 h-4 ml-1" />
+          <Button variant="ghost" className="text-muted-foreground" asChild>
+            <Link href="/games/new">
+              {t("view_all") || "View All"} <ChevronRight className="w-4 h-4 ml-1" />
+            </Link>
           </Button>
         </div>
         
