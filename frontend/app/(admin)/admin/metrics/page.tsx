@@ -128,12 +128,12 @@ export default function MetricsPage() {
             <Card className="col-span-1 bg-surface border-border">
               <CardHeader>
                 <CardTitle className="text-foreground">{t("admin.retention") || "Player Retention"}</CardTitle>
-                <CardDescription>D1, D7, D30 Return Rates</CardDescription>
+                <CardDescription>{t("admin.retentionRates") || "D1, D7, D30 Return Rates"}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-foreground">D1 Retention</span>
+                    <span className="font-semibold text-foreground">{t("admin.d1Retention") || "D1 Retention"}</span>
                     <span className="font-bold text-indigo-500">{metrics.retention.d1 || 0}%</span>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2">
@@ -142,7 +142,7 @@ export default function MetricsPage() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-foreground">D7 Retention</span>
+                    <span className="font-semibold text-foreground">{t("admin.d7Retention") || "D7 Retention"}</span>
                     <span className="font-bold text-emerald-500">{metrics.retention.d7 || 0}%</span>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2">
@@ -151,7 +151,7 @@ export default function MetricsPage() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-foreground">D30 Retention</span>
+                    <span className="font-semibold text-foreground">{t("admin.d30Retention") || "D30 Retention"}</span>
                     <span className="font-bold text-amber-500">{metrics.retention.d30 || 0}%</span>
                   </div>
                   <div className="w-full bg-secondary rounded-full h-2">

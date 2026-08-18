@@ -647,5 +647,9 @@
   "admin.last7Days": "7 Ngày qua",
   "admin.last90Days": "90 Ngày qua",
   "admin.sessions": "Lượt chơi",
-  "admin.players": "Người chơi"
+  "admin.players": "Người chơi",
+  "admin.retentionRates": "Tỷ lệ quay lại D1, D7, D30",
+  "admin.d1Retention": "Giữ chân D1",
+  "admin.d7Retention": "Giữ chân D7",
+  "admin.d30Retention": "Giữ chân D30"
 }
