@@ -14,15 +14,8 @@ export default function InfrastructurePage() {
   const { notify } = useAppDialog();
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [savingSettings, setSavingSettings] = useState(false);
   const [cleaning, setCleaning] = useState(false);
   const [syncing, setSyncing] = useState(false);
-
-  const [settings, setSettings] = useState({
-    maintenanceMode: "false",
-    registrationEnabled: "true",
-    maxUploadSizeMB: "100"
-  });
 
   const [storageStats, setStorageStats] = useState({
     db: { used: 0, limit: 1 * 1024 * 1024 * 1024, percent: 0 },
@@ -32,18 +25,7 @@ export default function InfrastructurePage() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [settingsRes, storageRes] = await Promise.all([
-        fetchAPI('/settings'),
-        fetchAPI('/admin/storage/stats')
-      ]);
-
-      if (settingsRes) {
-        setSettings({
-          maintenanceMode: settingsRes.maintenanceMode || "false",
-          registrationEnabled: settingsRes.registrationEnabled || "true",
-          maxUploadSizeMB: settingsRes.maxUploadSizeMB || "100"
-        });
-      }
+      const storageRes = await fetchAPI('/admin/storage/stats');
 
       if (storageRes?.data) {
         setStorageStats({
@@ -64,20 +46,7 @@ export default function InfrastructurePage() {
     loadData();
   }, []);
 
-  const handleSaveSettings = async () => {
-    setSavingSettings(true);
-    try {
-      await fetchAPI('/settings', {
-        method: 'PUT',
-        body: JSON.stringify(settings)
-      });
-      notify({ message: t("admin.settingsSaved") || "Settings saved successfully.", variant: "success" });
-    } catch (err) {
-      notify({ message: t("admin.saveSettingsError") || "Failed to save settings.", variant: "error" });
-    } finally {
-      setSavingSettings(false);
-    }
-  };
+
 
   const handleCleanup = async () => {
     setCleaning(true);
@@ -129,53 +98,7 @@ export default function InfrastructurePage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* System Settings */}
-          <Card className="bg-surface border-border">
-            <CardHeader>
-              <CardTitle className="text-foreground flex items-center gap-2">
-                <Server className="w-5 h-5 text-indigo-500" />
-                {t("admin.systemSettings") || "System Settings"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium text-foreground">{t("admin.maintenanceMode") || "Maintenance Mode"}</div>
-                  <div className="text-sm text-muted-foreground">{t("admin.maintenanceModeDesc") || "Lock user access."}</div>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" checked={settings.maintenanceMode === "true"} onChange={e => setSettings({...settings, maintenanceMode: e.target.checked ? "true" : "false"})} />
-                  <div className="w-11 h-6 bg-secondary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                </label>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="font-medium text-foreground">{t("admin.registrationEnabled") || "Enable Registration"}</div>
-                  <div className="text-sm text-muted-foreground">{t("admin.registrationEnabledDesc") || "Allow new users to register."}</div>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" checked={settings.registrationEnabled === "true"} onChange={e => setSettings({...settings, registrationEnabled: e.target.checked ? "true" : "false"})} />
-                  <div className="w-11 h-6 bg-secondary rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                </label>
-              </div>
 
-              <div className="space-y-2">
-                <label className="font-medium text-foreground block">{t("admin.maxUploadSize") || "Max Upload Size (MB)"}</label>
-                <Input 
-                  type="number"
-                  className="bg-background border-border max-w-[200px]"
-                  value={settings.maxUploadSizeMB}
-                  onChange={e => setSettings({...settings, maxUploadSizeMB: e.target.value})}
-                />
-              </div>
-
-              <Button onClick={handleSaveSettings} disabled={savingSettings} className="w-full sm:w-auto">
-                {savingSettings ? <RefreshCcw className="w-4 h-4 mr-2 animate-spin" /> : <CheckCircle className="w-4 h-4 mr-2" />}
-                {t("admin.saveSettings") || "Save Settings"}
-              </Button>
-            </CardContent>
-          </Card>
 
           <div className="space-y-6">
             {/* Storage Manager */}

@@ -676,5 +676,6 @@
   "admin.loadDataError": "Lỗi khi tải dữ liệu cấu hình.",
   "admin.saveSettingsError": "Lưu cấu hình thất bại.",
   "admin.underConstruction": "Tính năng này đang được xây dựng.",
-  "admin.settingsPlaceholder": "Cấu hình hệ thống sẽ được thực hiện tại đây."
+  "admin.settingsPlaceholder": "Cấu hình hệ thống sẽ được thực hiện tại đây.",
+  "admin.settingsDesc": "Thiết lập các cấu hình hệ thống chung."
 }
