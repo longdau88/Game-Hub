@@ -46,7 +46,10 @@ export default function InfrastructurePage() {
       }
 
       if (storageRes?.data) {
-        setStorageStats(storageRes.data);
+        setStorageStats({
+          db: storageRes.data.db || { used: 0, limit: 1 * 1024 * 1024 * 1024, percent: 0 },
+          server: storageRes.data.server || { used: 0, limit: 10 * 1024 * 1024 * 1024, percent: 0 }
+        });
       }
     } catch (err) {
       console.error(err);

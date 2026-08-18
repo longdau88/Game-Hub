@@ -17,19 +17,32 @@ exports.getStorageStats = async (req, res) => {
     const dbLimit = 1 * 1024 * 1024 * 1024; // 1GB limit for DB
 
     // 2. Server Storage (R2/S3)
-    const games = await prisma.game.findMany({
-      select: { sizeBytes: true }
-    });
-    
     let serverBytes = 0;
-    games.forEach(g => {
-      if (g.sizeBytes) {
-        const val = Number(g.sizeBytes);
-        if (!isNaN(val)) {
-          serverBytes += val;
+    try {
+      const { ListObjectsV2Command } = require('@aws-sdk/client-s3');
+      const r2Client = require('../config/r2');
+      let isTruncated = true;
+      let continuationToken = undefined;
+
+      while (isTruncated) {
+        const command = new ListObjectsV2Command({
+          Bucket: process.env.R2_BUCKET_NAME || 'webgame-assets',
+          ContinuationToken: continuationToken
+        });
+        
+        const response = await r2Client.send(command);
+        if (response.Contents) {
+          response.Contents.forEach(item => {
+            serverBytes += item.Size || 0;
+          });
         }
+        
+        isTruncated = response.IsTruncated;
+        continuationToken = response.NextContinuationToken;
       }
-    });
+    } catch(e) {
+      console.error("Failed to fetch R2 size:", e);
+    }
     const serverLimit = 10 * 1024 * 1024 * 1024; // 10GB limit for Server Storage
 
     res.json({
