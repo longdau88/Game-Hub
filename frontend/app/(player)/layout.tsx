@@ -177,7 +177,6 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
                   <p className="text-sm font-semibold text-foreground truncate">{user?.username}</p>
                   <p className="text-xs text-primary font-medium">{t("nav.level") || "Level"} {user?.level || 1}</p>
                 </div>
-                <Settings className="w-4 h-4 text-muted-foreground" />
               </div>
             </Link>
           ) : (
