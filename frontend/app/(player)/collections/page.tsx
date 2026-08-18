@@ -54,7 +54,7 @@ export default function CollectionsPage() {
                 <div className="absolute bottom-4 left-4 right-4">
                   <h3 className="text-lg font-bold text-white line-clamp-1">{collection.title}</h3>
                   <p className="text-sm text-zinc-300 flex items-center gap-1.5 mt-1">
-                    <FolderHeart className="w-3.5 h-3.5" /> {collection.count || 0} Games
+                    <FolderHeart className="w-3.5 h-3.5" /> {collection.count || 0} {t("game_count") || "Games"}
                   </p>
                 </div>
               </div>
