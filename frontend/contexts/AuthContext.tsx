@@ -13,6 +13,7 @@ type AuthContextType = {
   requireAuth: (action?: () => void) => boolean;
   login: (token: string, role: string, userProfile?: any) => void;
   logout: () => void;
+  updateProfile: (profileData: any) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -71,11 +72,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     window.location.href = "/"; // redirect to home on logout
   }, []);
 
+  const updateProfile = useCallback((profileData: any) => {
+    setProfile((prev: any) => ({ ...prev, ...profileData }));
+  }, []);
+
   return (
     <AuthContext.Provider value={{
       token, role, profile, isLoginModalOpen,
       openLoginModal, closeLoginModal, requireAuth,
-      login, logout
+      login, logout, updateProfile
     }}>
       {children}
     </AuthContext.Provider>
