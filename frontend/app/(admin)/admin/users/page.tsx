@@ -208,7 +208,7 @@ export default function UserManagementPage() {
                   <TableHead className="w-[40px]">
                     <Checkbox 
                       checked={filteredUsers.length > 0 && selectedUsers.length === filteredUsers.length}
-                      onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+                      onCheckedChange={(checked: any) => handleSelectAll(checked as boolean)}
                       aria-label="Select all"
                     />
                   </TableHead>
@@ -225,7 +225,7 @@ export default function UserManagementPage() {
                     <TableCell>
                       <Checkbox 
                         checked={selectedUsers.includes(user.id)}
-                        onCheckedChange={(checked) => handleSelectUser(user.id, checked as boolean)}
+                        onCheckedChange={(checked: any) => handleSelectUser(user.id, checked as boolean)}
                         aria-label={`Select ${user.username}`}
                       />
                     </TableCell>
