@@ -19,7 +19,6 @@ export default function ProfilePage() {
   
   const [profile, setProfile] = useState<any>(null);
   const [uploadedGames, setUploadedGames] = useState<any[]>([]);
-  const [followingCreators, setFollowingCreators] = useState<any[]>([]);
 
   const [selectedCreatorId, setSelectedCreatorId] = useState<number | null>(null);
   const [isCreatorProfileOpen, setIsCreatorProfileOpen] = useState(false);
@@ -43,7 +42,6 @@ export default function ProfilePage() {
   useEffect(() => {
     fetchProfile();
     fetchUploadedGames();
-    fetchFollowingCreators();
   }, []);
 
   const getAuthHeaders = () => {
@@ -93,37 +91,6 @@ export default function ProfilePage() {
       }
     } catch (error) {
       console.error(error);
-    }
-  };
-
-  const fetchFollowingCreators = async () => {
-    if (!Cookies.get("token")) return;
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/users/following`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const data = await res.json();
-        setFollowingCreators(data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleUnfollow = async (creatorId: number) => {
-    if (!await confirm({ message: t("profile.confirmUnfollow") || "Are you sure you want to unfollow this creator?", variant: "warning" })) return;
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/users/${creatorId}/follow`, {
-        method: "POST",
-        headers: getAuthHeaders()
-      });
-      if (res.ok) {
-        setFollowingCreators(followingCreators.filter(c => c.id !== creatorId));
-        await notify({ message: t("profile.unfollowSuccess") || "Unfollowed successfully", variant: "success" });
-      }
-    } catch (error) {
-      await notify({ message: t("dialog.genericError"), variant: "error" });
     }
   };
 
@@ -300,7 +267,6 @@ export default function ProfilePage() {
         <div className="flex overflow-x-auto hide-scrollbar gap-1 sm:gap-2 mb-8 bg-white/60 dark:bg-zinc-900/60 p-2 rounded-2xl border border-white/40 dark:border-zinc-800/80 w-full sm:w-fit mx-auto backdrop-blur-xl shadow-sm relative z-20">
           {[
             { id: 'settings', icon: Settings, label: t("profile.tabSettings") },
-            { id: 'following', icon: Users, label: t("profile.tabFollowing") || "Following" },
             { id: 'uploads', icon: UploadCloud, label: t("profile.myUploads") }
           ].map(tab => {
             const isActive = activeTab === tab.id;
@@ -449,43 +415,6 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
-                </div>
-              )}
-
-              {activeTab === 'following' && (
-                <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
-                  <h2 className="text-2xl font-bold mb-6">{t("profile.tabFollowing") || "Following Creators"}</h2>
-                  {followingCreators.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
-                      <Users className="w-16 h-16 mb-4 opacity-20" />
-                      <p>{t("profile.noFollowing") || "You are not following any creators yet."}</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {followingCreators.map(creator => (
-                        <div key={creator.id} className="group relative flex items-center gap-4 bg-white/50 dark:bg-zinc-900/50 hover:bg-zinc-100/80 dark:bg-zinc-800/80 border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl transition-all duration-300">
-                          <div className="w-16 h-16 rounded-full overflow-hidden shrink-0 border border-zinc-200 dark:border-zinc-700">
-                            <img src={creator.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub`} alt={creator.username} className="w-full h-full object-cover" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-zinc-900 dark:text-white text-lg truncate">{creator.username}</h3>
-                            <p className="text-xs text-zinc-500 line-clamp-1 mb-2">{creator.bio || t("profile.noBio")}</p>
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs font-medium text-blue-500 bg-blue-500/10 px-2 py-1 rounded">
-                                {creator.publishedGamesCount} {t("profile.publishedGames") || "Games"}
-                              </span>
-                              <button 
-                                onClick={() => handleUnfollow(creator.id)}
-                                className="flex items-center gap-1 text-xs font-medium text-zinc-500 hover:text-red-500 transition-colors"
-                              >
-                                <UserMinus className="w-3 h-3" /> {t("creator.unfollow") || "Unfollow"}
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               )}
 

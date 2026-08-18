@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Search, UserPlus, MessageSquare } from "lucide-react";
+import { Users, Search, UserPlus, MessageSquare, UserMinus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/ui/avatar";
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAppDialog } from "@/contexts/DialogContext";
+import Cookies from "js-cookie";
 import CreatorProfileModal from "@/components/CreatorProfileModal";
 
 export default function FriendsPage() {
@@ -14,12 +16,19 @@ export default function FriendsPage() {
   const [friends, setFriends] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<'friends' | 'global'>('friends');
+  const [activeTab, setActiveTab] = useState<'friends' | 'global' | 'following'>('friends');
   const [isSearching, setIsSearching] = useState(false);
   const [loading, setLoading] = useState(true);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [following, setFollowing] = useState<any[]>([]);
   const { t } = useLanguage();
+  const { confirm, notify } = useAppDialog();
+
+  const getAuthHeaders = () => {
+    const token = Cookies.get("token");
+    return { "Authorization": `Bearer ${token}` };
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -27,7 +36,28 @@ export default function FriendsPage() {
       .then(res => setFriends(res.data || res || []))
       .catch(() => setFriends([]))
       .finally(() => setLoading(false));
+      
+    fetchAPI('/users/following')
+      .then(res => setFollowing(res.data || res || []))
+      .catch(() => setFollowing([]));
   }, []);
+
+  const handleUnfollow = async (creatorId: number) => {
+    if (!await confirm({ message: t("profile.confirmUnfollow") || "Are you sure you want to unfollow this creator?", variant: "warning" })) return;
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/users/${creatorId}/follow`, {
+        method: "POST",
+        headers: getAuthHeaders()
+      });
+      if (res.ok) {
+        setFollowing(following.filter(c => c.id !== creatorId));
+        await notify({ message: t("profile.unfollowSuccess") || "Unfollowed successfully", variant: "success" });
+      }
+    } catch (error) {
+      await notify({ message: t("dialog.genericError"), variant: "error" });
+    }
+  };
 
   useEffect(() => {
     if (activeTab !== 'global' || !searchQuery.trim() || searchQuery.trim().length < 2) {
@@ -89,11 +119,59 @@ export default function FriendsPage() {
         >
           {t("friends.find_users") || "Find Users"}
         </button>
+        <button
+          className={`pb-3 px-4 font-bold text-sm transition-colors border-b-2 ${
+            activeTab === 'following' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+          onClick={() => setActiveTab('following')}
+        >
+          {t("profile.tabFollowing") || "Đang theo dõi"}
+        </button>
       </div>
 
       <div className="bg-surface border border-border rounded-2xl overflow-hidden">
         {loading || (isSearching && activeTab === 'global') ? (
            <div className="p-8 text-center text-muted-foreground">{t("loading") || "Loading..."}</div>
+        ) : activeTab === 'following' ? (
+          <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {following.filter(creator => creator.username?.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 ? (
+              <div className="col-span-1 md:col-span-2 p-12 text-center">
+                <Users className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                <p className="text-muted-foreground font-semibold text-lg">{t("profile.noFollowing") || "You are not following any creators yet."}</p>
+              </div>
+            ) : (
+              following.filter(creator => creator.username?.toLowerCase().includes(searchQuery.toLowerCase())).map(creator => (
+                <div key={creator.id} className="group relative flex items-center gap-4 bg-surface hover:bg-secondary/50 border border-border p-4 rounded-2xl transition-all duration-300">
+                  <div 
+                    className="w-16 h-16 rounded-full overflow-hidden shrink-0 border border-border cursor-pointer"
+                    onClick={() => { setSelectedUserId(creator.id); setIsProfileOpen(true); }}
+                  >
+                    <img src={creator.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${creator.username}`} alt={creator.username} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 
+                      className="font-bold text-foreground text-lg truncate cursor-pointer group-hover:text-primary transition-colors"
+                      onClick={() => { setSelectedUserId(creator.id); setIsProfileOpen(true); }}
+                    >
+                      {creator.username}
+                    </h3>
+                    <p className="text-xs text-muted-foreground line-clamp-1 mb-2">{creator.bio || t("profile.noBio")}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">
+                        {creator.publishedGamesCount} {t("profile.publishedGames") || "Games"}
+                      </span>
+                      <button 
+                        onClick={() => handleUnfollow(creator.id)}
+                        className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-error transition-colors"
+                      >
+                        <UserMinus className="w-3 h-3" /> {t("creator.unfollow") || "Unfollow"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         ) : (() => {
           const displayList = activeTab === 'global' 
             ? searchResults 
