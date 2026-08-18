@@ -7,12 +7,14 @@ import { Card, CardContent } from "@/components/ui/card";
 
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAppDialog } from "@/contexts/AppDialogContext";
 
 export default function QuestsPage() {
   const [mounted, setMounted] = useState(false);
   const [quests, setQuests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { t } = useLanguage();
+  const { notify } = useAppDialog();
 
   const translateQuestTitle = (title: string) => {
     if (title === 'Play a Game') return t("quests.play_game") || title;
@@ -49,9 +51,13 @@ export default function QuestsPage() {
       });
       if (!res.error) {
         setQuests(quests.map(q => q.id === questId ? { ...q, completed: true, progress: q.total } : q));
+        notify({ message: `+${res.reward} XP! ${t("quests.reward_claimed") || "Phần thưởng đã được nhận!"}`, variant: "success" });
+      } else {
+        notify({ message: res.error, variant: "error" });
       }
     } catch (e) {
       console.error(e);
+      notify({ message: t("error") || "Lỗi", variant: "error" });
     }
   };
   

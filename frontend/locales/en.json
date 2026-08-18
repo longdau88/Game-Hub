@@ -345,6 +345,8 @@
   "quests.play_game": "Play a Game",
   "quests.rate_game": "Rate a Game",
   "quests.daily_login": "Daily Login",
+  "completed": "Completed",
+  "quests.reward_claimed": "Reward claimed!",
   "admin.reviewMode": "Review Mode",
   "game.backToStore": "Back to Store",
   "game.loadError": "Failed to load game.",
