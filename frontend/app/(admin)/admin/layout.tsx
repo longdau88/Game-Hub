@@ -11,6 +11,7 @@ import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
+import NotificationDropdown from "@/components/NotificationDropdown";
 
 const NAVIGATION = [
   { nameKey: "admin.tabDashboard", defaultName: "Overview", href: "/admin/dashboard", icon: LayoutDashboard },
@@ -115,10 +116,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <LanguageSwitcher />
             </div>
 
-            <Button variant="ghost" size="icon" className="relative text-muted-foreground">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full" />
-            </Button>
+            <NotificationDropdown />
           </div>
         </header>
 
