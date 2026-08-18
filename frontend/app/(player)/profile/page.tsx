@@ -450,6 +450,8 @@ export default function ProfilePage() {
                   </div>
 
                 </div>
+              )}
+
               {activeTab === 'following' && (
                 <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
                   <h2 className="text-2xl font-bold mb-6">{t("profile.tabFollowing") || "Following Creators"}</h2>
