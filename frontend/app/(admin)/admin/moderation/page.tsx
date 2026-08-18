@@ -5,7 +5,7 @@ import { fetchAPI } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, CheckCircle, Clock } from "lucide-react";
-import { useAppDialog } from "@/components/ui/dialogs";
+import { useAppDialog } from "@/contexts/DialogContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function ModerationPage() {
