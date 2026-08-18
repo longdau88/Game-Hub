@@ -82,7 +82,7 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
-  const { profile: user, role, openLoginModal } = useAuth();
+  const { profile: user, role, openLoginModal, logout } = useAuth();
 
   return (
     <div className="flex h-[100dvh] flex-col lg:flex-row w-full bg-background overflow-hidden">
@@ -188,15 +188,18 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
         {/* User Profile Area */}
         <div className="p-4 border-t border-border bg-surface/50">
           {user ? (
-            <Link href="/profile" className="block">
-              <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-secondary cursor-pointer transition-colors">
+            <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-secondary transition-colors">
+              <Link href="/profile" className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer">
                 <Avatar size="md" src={user?.avatarUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub"} fallback={user?.username?.[0]?.toUpperCase() || "U"} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-foreground truncate">{user?.username}</p>
                   <p className="text-xs text-primary font-medium">{t("nav.level") || "Level"} {user?.level || 1}</p>
                 </div>
-              </div>
-            </Link>
+              </Link>
+              <Button variant="ghost" size="icon" onClick={logout} className="text-muted-foreground hover:text-error hover:bg-error/10 shrink-0" title={t("nav.logout") || "Logout"}>
+                <LogOut className="w-4 h-4" />
+              </Button>
+            </div>
           ) : (
             <Button onClick={openLoginModal} className="w-full">
               {t("nav.login") || "Đăng nhập"}
