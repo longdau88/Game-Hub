@@ -106,11 +106,6 @@ export default function PlayerHome() {
                   {t("featured.playNow") || "Play Now"}
                 </Button>
               </Link>
-              <Link href={`/game/${games[0].id}`}>
-                <Button size="lg" variant="glass" className="rounded-full">
-                  {t("featured.viewDetails") || "View Details"}
-                </Button>
-              </Link>
             </div>
           </div>
         </section>
