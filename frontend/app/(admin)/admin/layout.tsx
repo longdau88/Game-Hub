@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Gamepad2, ShieldAlert, LineChart, Settings, Bell, Menu, X, Server, ArrowLeft } from "lucide-react";
+import { LayoutDashboard, Users, Gamepad2, ShieldAlert, LineChart, Settings, Bell, Menu, X, Server, ArrowLeft, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,7 @@ const NAVIGATION = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { profile: user } = useAuth();
+  const { profile: user, logout } = useAuth();
   const { t } = useLanguage();
 
   return (
@@ -94,6 +94,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <p className="text-sm font-semibold text-foreground truncate">{user?.username || "Admin"}</p>
               <p className="text-xs text-error font-bold">{(user?.role === 'ADMIN' || user?.role === 'admin') ? 'System Admin' : 'Admin Role'}</p>
             </div>
+            <Button variant="ghost" size="icon" onClick={logout} className="text-muted-foreground hover:text-error hover:bg-error/10 shrink-0" title={t("admin.logout") || "Logout"}>
+              <LogOut className="w-4 h-4" />
+            </Button>
           </div>
         </div>
       </aside>
