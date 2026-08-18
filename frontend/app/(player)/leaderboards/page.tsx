@@ -40,9 +40,9 @@ export default function LeaderboardsPage() {
 
       <div className="bg-surface border border-border rounded-3xl overflow-hidden shadow-xl">
         <div className="bg-secondary/50 p-4 border-b border-border flex text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-          <div className="w-16 text-center">Rank</div>
-          <div className="flex-1 px-4">Player</div>
-          <div className="w-32 text-right">Score (XP)</div>
+          <div className="w-16 text-center">{t("leaderboards.rank") || "Rank"}</div>
+          <div className="flex-1 px-4">{t("leaderboards.player") || "Player"}</div>
+          <div className="w-32 text-right">{t("leaderboards.score") || "Score (XP)"}</div>
         </div>
         
         <div className="flex flex-col divide-y divide-border">

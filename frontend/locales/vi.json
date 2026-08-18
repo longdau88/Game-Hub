@@ -542,6 +542,12 @@
   "featured.badge": "Lựa chọn của BTV",
   "featured.title": "Neon District: Zero",
   "featured.desc": "Đắm mình vào những con phố ngập tràn ánh đèn neon của tương lai. Một tựa game platformer hành động phong cách cyberpunk với hình ảnh tuyệt đẹp và những trận đấu trùm căng thẳng.",
+  "global_leaderboards": "Bảng Xếp Hạng Toàn Cầu",
+  "leaderboards_subtitle": "Những người chơi xuất sắc nhất trên toàn hệ thống GameHub.",
+  "leaderboards.rank": "HẠNG",
+  "leaderboards.player": "NGƯỜI CHƠI",
+  "leaderboards.score": "ĐIỂM (XP)",
+  "no_leaderboard": "Bảng xếp hạng hiện đang trống.",
   "featured.playNow": "Chơi Ngay",
   "featured.viewDetails": "Xem Chi Tiết"
 }
