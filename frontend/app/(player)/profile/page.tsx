@@ -20,12 +20,6 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<any>(null);
   const [uploadedGames, setUploadedGames] = useState<any[]>([]);
   const [followingCreators, setFollowingCreators] = useState<any[]>([]);
-  const [quests, setQuests] = useState<any[]>([]);
-  const [friends, setFriends] = useState<any[]>([]);
-  const [friendRequests, setFriendRequests] = useState<any[]>([]);
-  const [searchFriendQuery, setSearchFriendQuery] = useState("");
-  const [isSearchingFriends, setIsSearchingFriends] = useState(false);
-  const [searchFriendResults, setSearchFriendResults] = useState<any[]>([]);
 
   const [selectedCreatorId, setSelectedCreatorId] = useState<number | null>(null);
   const [isCreatorProfileOpen, setIsCreatorProfileOpen] = useState(false);
@@ -49,11 +43,7 @@ export default function ProfilePage() {
   useEffect(() => {
     fetchProfile();
     fetchUploadedGames();
-    fetchUploadedGames();
     fetchFollowingCreators();
-    fetchQuests();
-    fetchFriends();
-    fetchFriendRequests();
   }, []);
 
   const getAuthHeaders = () => {
@@ -117,155 +107,6 @@ export default function ProfilePage() {
       }
     } catch (error) {
       console.error(error);
-    }
-  };
-
-  const fetchQuests = async () => {
-    if (!Cookies.get("token")) return;
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/gamification/quests/daily`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const data = await res.json();
-        setQuests(data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch quests", error);
-    }
-  };
-
-  const fetchFriends = async () => {
-    if (!Cookies.get("token")) return;
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/friends`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const data = await res.json();
-        setFriends(data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch friends", error);
-    }
-  };
-
-  const fetchFriendRequests = async () => {
-    if (!Cookies.get("token")) return;
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/friends/pending`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const data = await res.json();
-        setFriendRequests(data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch friend requests", error);
-    }
-  };
-
-  useEffect(() => {
-    if (searchFriendQuery.trim().length >= 2) {
-      const delayDebounceFn = setTimeout(() => {
-        fetchFriendSearch(searchFriendQuery);
-      }, 50);
-      return () => clearTimeout(delayDebounceFn);
-    } else {
-      setSearchFriendResults([]);
-    }
-  }, [searchFriendQuery]);
-
-  const fetchFriendSearch = async (query: string) => {
-    setIsSearchingFriends(true);
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/friends/search?q=${encodeURIComponent(query)}`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const data = await res.json();
-        setSearchFriendResults(data);
-      }
-    } catch (error) {
-      console.error("Failed to search friends", error);
-    } finally {
-      setIsSearchingFriends(false);
-    }
-  };
-
-  const handleSendFriendRequest = async (username: string) => {
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/friends/request`, {
-        method: "POST",
-        headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
-        body: JSON.stringify({ username })
-      });
-      if (res.ok) {
-        await notify({ message: "Đã gửi lời mời kết bạn!", variant: "success" });
-        // Cập nhật lại kết quả search
-        setSearchFriendResults(prev => prev.map(u => u.username === username ? { ...u, friendshipStatus: 'pending', isSender: true } : u));
-      } else {
-        const data = await res.json();
-        await notify({ message: data.error || "Không thể gửi lời mời", variant: "error" });
-      }
-    } catch (error) {
-      await notify({ message: "Lỗi kết nối", variant: "error" });
-    }
-  };
-
-  const handleAcceptFriendRequest = async (friendshipId: number) => {
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/friends/accept/${friendshipId}`, {
-        method: "POST",
-        headers: getAuthHeaders()
-      });
-      if (res.ok) {
-        await notify({ message: "Đã chấp nhận kết bạn!", variant: "success" });
-        fetchFriends();
-        fetchFriendRequests();
-      }
-    } catch (error) {
-      await notify({ message: "Lỗi kết nối", variant: "error" });
-    }
-  };
-
-  const handleRemoveFriend = async (friendshipId: number, isCancel = false) => {
-    if (!await confirm({ message: isCancel ? "Hủy lời mời kết bạn?" : "Xóa bạn bè?", variant: "warning" })) return;
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/friends/${friendshipId}`, {
-        method: "DELETE",
-        headers: getAuthHeaders()
-      });
-      if (res.ok) {
-        await notify({ message: isCancel ? "Đã hủy lời mời" : "Đã xóa bạn bè", variant: "success" });
-        fetchFriends();
-        fetchFriendRequests();
-        setSearchFriendResults(prev => prev.map(u => u.friendshipId === friendshipId ? { ...u, friendshipStatus: null, friendshipId: null } : u));
-      }
-    } catch (error) {
-      await notify({ message: "Lỗi kết nối", variant: "error" });
-    }
-  };
-
-  const handleClaimQuest = async (questId: number) => {
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/gamification/quests/claim`, {
-        method: "POST",
-        headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
-        body: JSON.stringify({ questId })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        await notify({ message: `Claimed ${data.reward} XP!`, variant: "success" });
-        fetchQuests();
-        fetchProfile(); // To update XP in profile UI if needed
-      } else {
-        const err = await res.json();
-        await notify({ message: err.error || "Failed to claim reward", variant: "error" });
-      }
-    } catch (error) {
-      console.error(error);
-      await notify({ message: t("dialog.genericError"), variant: "error" });
     }
   };
 
@@ -460,7 +301,6 @@ export default function ProfilePage() {
           {[
             { id: 'settings', icon: Settings, label: t("profile.tabSettings") },
             { id: 'following', icon: Users, label: t("profile.tabFollowing") || "Following" },
-            { id: 'friends', icon: UserMinus, label: "Bạn bè" },
             { id: 'uploads', icon: UploadCloud, label: t("profile.myUploads") }
           ].map(tab => {
             const isActive = activeTab === tab.id;
@@ -610,60 +450,6 @@ export default function ProfilePage() {
                   </div>
 
                 </div>
-              )}
-
-              {activeTab === 'quests' && (
-                <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><Target className="w-6 h-6 text-purple-500" /> Nhiệm vụ hàng ngày</h2>
-                  {quests.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
-                      <Target className="w-16 h-16 mb-4 opacity-20" />
-                      <p>Hiện không có nhiệm vụ nào.</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {quests.map(quest => {
-                        const progress = quest.progress;
-                        const isCompleted = progress?.isCompleted;
-                        const canClaim = !isCompleted && progress?.currentVal >= quest.targetValue;
-                        const percent = Math.min(100, Math.round(((progress?.currentVal || 0) / quest.targetValue) * 100));
-                        
-                        return (
-                          <div key={quest.id} className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div className="flex-1">
-                              <h3 className="font-bold text-lg">{quest.title}</h3>
-                              <p className="text-sm text-zinc-500 mb-2">Phần thưởng: <span className="font-bold text-yellow-500">{quest.rewardXp} XP</span></p>
-                              
-                              <div className="flex items-center gap-3">
-                                <div className="flex-1 h-2 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden">
-                                  <div className={`h-full transition-all duration-500 ${isCompleted ? 'bg-green-500' : 'bg-blue-500'}`} style={{ width: `${percent}%` }} />
-                                </div>
-                                <span className="text-xs font-medium text-zinc-500 min-w-[40px]">{progress?.currentVal || 0} / {quest.targetValue}</span>
-                              </div>
-                            </div>
-                            <div className="flex-shrink-0">
-                              {isCompleted ? (
-                                <button disabled className="px-4 py-2 bg-green-500/10 text-green-500 rounded-xl font-bold flex items-center gap-2 text-sm cursor-not-allowed">
-                                  <CheckCircle2 className="w-4 h-4" /> Đã nhận
-                                </button>
-                              ) : (
-                                <button 
-                                  onClick={() => handleClaimQuest(quest.id)}
-                                  disabled={!canClaim}
-                                  className={`px-6 py-2 rounded-xl font-bold transition-all text-sm ${canClaim ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed'}`}
-                                >
-                                  Nhận thưởng
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              )}
-
               {activeTab === 'following' && (
                 <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
                   <h2 className="text-2xl font-bold mb-6">{t("profile.tabFollowing") || "Following Creators"}</h2>
@@ -698,148 +484,6 @@ export default function ProfilePage() {
                       ))}
                     </div>
                   )}
-                </div>
-              )}
-
-              {activeTab === 'friends' && (
-                <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
-                  <h2 className="text-2xl font-bold mb-6 flex items-center gap-2"><UserMinus className="w-6 h-6 text-blue-500" /> Bạn bè & Xã hội</h2>
-                  
-                  {/* Friend Search */}
-                  <div className="mb-8 relative">
-                    <div className="relative">
-                      <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" />
-                      <input 
-                        type="text" 
-                        value={searchFriendQuery} 
-                        onChange={e => setSearchFriendQuery(e.target.value)}
-                        placeholder="Tìm kiếm người chơi bằng tên..." 
-                        className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 focus:border-blue-500 rounded-2xl pl-12 pr-4 py-4 text-zinc-900 dark:text-white outline-none transition-colors"
-                      />
-                      {isSearchingFriends && (
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                        </div>
-                      )}
-                    </div>
-
-                    {searchFriendResults.length > 0 && (
-                      <div className="absolute top-full left-0 w-full mt-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xl z-50 overflow-hidden max-h-80 overflow-y-auto p-2">
-                        <div className="flex justify-between items-center mb-2 px-3 py-1 border-b border-zinc-200 dark:border-zinc-800">
-                          <span className="text-xs font-bold text-zinc-500 uppercase">Kết quả tìm kiếm</span>
-                          <button type="button" onClick={() => setSearchFriendResults([])} className="text-xs text-red-500 hover:underline">Đóng</button>
-                        </div>
-                        {searchFriendResults.map(user => (
-                          <div 
-                            key={user.id} 
-                            onClick={() => {
-                              setSelectedCreatorId(user.id);
-                              setIsCreatorProfileOpen(true);
-                            }}
-                            className="flex items-center justify-between p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 rounded-xl transition-colors cursor-pointer"
-                          >
-                            <div className="flex items-center gap-3">
-                              <img src={user.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub`} alt={user.username} className="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-700" />
-                              <div>
-                                <h4 className="font-bold text-sm text-zinc-900 dark:text-white group-hover:text-blue-500 transition-colors">{user.username}</h4>
-                                <span className="text-xs text-yellow-500 font-medium">Lv. {user.level}</span>
-                              </div>
-                            </div>
-                            <div onClick={e => e.stopPropagation()}>
-                              {user.friendshipStatus === 'accepted' ? (
-                                <span className="text-xs font-medium text-green-500 flex items-center gap-1"><CheckCircle2 className="w-4 h-4" /> Bạn bè</span>
-                              ) : user.friendshipStatus === 'pending' ? (
-                                <span className="text-xs font-medium text-orange-500">
-                                  {user.isSender ? "Đã gửi lời mời" : "Đang chờ bạn nhận"}
-                                </span>
-                              ) : (
-                                <button onClick={() => handleSendFriendRequest(user.username)} className="px-3 py-1.5 bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white rounded-lg text-xs font-bold transition-colors">
-                                  Kết bạn
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Friend Requests */}
-                  {friendRequests.length > 0 && (
-                    <div className="mb-8">
-                      <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-wider mb-4">Lời mời kết bạn ({friendRequests.length})</h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {friendRequests.map(req => (
-                          <div 
-                            key={req.friendshipId} 
-                            onClick={() => {
-                              setSelectedCreatorId(req.sender.id);
-                              setIsCreatorProfileOpen(true);
-                            }}
-                            className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl flex items-center justify-between gap-4 hover:border-blue-500/50 cursor-pointer transition-colors"
-                          >
-                            <div className="flex items-center gap-3">
-                              <img src={req.sender.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub`} alt={req.sender.username} className="w-12 h-12 rounded-full border border-zinc-200 dark:border-zinc-700" />
-                              <div>
-                                <h4 className="font-bold text-zinc-900 dark:text-white group-hover:text-blue-500 transition-colors">{req.sender.username}</h4>
-                                <span className="text-xs text-yellow-500 font-medium">Lv. {req.sender.level}</span>
-                              </div>
-                            </div>
-                            <div className="flex gap-2" onClick={e => e.stopPropagation()}>
-                              <button onClick={() => handleAcceptFriendRequest(req.friendshipId)} className="px-3 py-1.5 bg-green-500 text-white rounded-lg text-xs font-bold transition-colors shadow-lg shadow-green-500/20">
-                                Chấp nhận
-                              </button>
-                              <button onClick={() => handleRemoveFriend(req.friendshipId, true)} className="px-3 py-1.5 bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 rounded-lg text-xs font-bold hover:bg-red-500 hover:text-white transition-colors">
-                                Từ chối
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Friends List */}
-                  <div>
-                    <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-wider mb-4">Bạn bè của tôi ({friends.length})</h3>
-                    {friends.length === 0 ? (
-                      <div className="text-center py-10 bg-zinc-100 dark:bg-zinc-800/30 rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700">
-                        <UserMinus className="w-10 h-10 mx-auto text-zinc-400 mb-2" />
-                        <p className="text-sm text-zinc-500">Bạn chưa có người bạn nào. Hãy tìm kiếm để kết bạn nhé!</p>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {friends.map(friend => (
-                          <div 
-                            key={friend.friendshipId} 
-                            onClick={() => {
-                              setSelectedCreatorId(friend.id);
-                              setIsCreatorProfileOpen(true);
-                            }}
-                            className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-4 rounded-2xl flex items-center justify-between gap-4 hover:border-blue-500/50 cursor-pointer transition-colors"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="relative">
-                                <img src={friend.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub`} alt={friend.username} className="w-14 h-14 rounded-full border-2 border-zinc-100 dark:border-zinc-800" />
-                                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center border-2 border-white dark:border-zinc-900 text-[10px] font-bold text-white shadow-sm">
-                                  {friend.level}
-                                </div>
-                              </div>
-                              <div>
-                                <h4 className="font-bold text-zinc-900 dark:text-white text-lg">{friend.username}</h4>
-                                <p className="text-xs text-zinc-500 font-medium">{friend.xp} XP</p>
-                              </div>
-                            </div>
-                            <div onClick={e => e.stopPropagation()}>
-                              <button onClick={() => handleRemoveFriend(friend.friendshipId)} className="px-3 py-1.5 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-lg text-xs font-bold transition-all">
-                                Xóa bạn
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
                 </div>
               )}
 
