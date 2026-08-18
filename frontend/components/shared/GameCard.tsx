@@ -3,6 +3,7 @@ import { Star, Play, Bookmark } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export interface Game {
   id: string;
@@ -16,6 +17,8 @@ export interface Game {
 }
 
 export function GameCard({ game }: { game: Game }) {
+  const { t } = useLanguage();
+
   return (
     <Link href={`/game/play?id=${game.id}`} className="block h-full">
       <Card className="group relative flex flex-col h-full overflow-hidden bg-surface transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 border-transparent hover:border-border cursor-pointer">
@@ -29,8 +32,10 @@ export function GameCard({ game }: { game: Game }) {
           
           {/* Top Badges */}
           <div className="absolute left-3 top-3 flex gap-2">
-            {game.isNew && <Badge variant="success">New</Badge>}
-            <Badge className="bg-black/50 backdrop-blur-md text-white border-white/10 hover:bg-black/60">{game.category}</Badge>
+            {game.isNew && <Badge variant="success">{t("game.new") || "New"}</Badge>}
+            <Badge className="bg-black/50 backdrop-blur-md text-white border-white/10 hover:bg-black/60">
+              {game.category === "Uncategorized" ? t("game.uncategorized") || "Uncategorized" : game.category}
+            </Badge>
           </div>
 
           {/* Hover Overlay Play Button */}
@@ -46,7 +51,7 @@ export function GameCard({ game }: { game: Game }) {
             {game.title}
           </h3>
           <p className="line-clamp-1 text-sm text-muted-foreground mt-1">
-            By <span className="hover:underline">{game.creator}</span>
+            {t("game.by") || "By"} <span className="hover:underline">{game.creator}</span>
           </p>
         </CardContent>
 
@@ -56,7 +61,7 @@ export function GameCard({ game }: { game: Game }) {
             <span>{game.rating.toFixed(1)}</span>
           </div>
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
-            <span>{game.playCount.toLocaleString()} plays</span>
+            <span>{game.playCount.toLocaleString()} {(t("game.plays") || "plays").toLowerCase()}</span>
             <button 
               className="text-muted-foreground hover:text-primary transition-colors p-1 rounded-full hover:bg-primary/10 relative z-10"
               onClick={(e) => {

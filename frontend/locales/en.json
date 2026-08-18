@@ -463,5 +463,8 @@
   "xp_away_1": "You're",
   "xp_away_2": "XP away from Level",
   "keep_playing": "Keep playing!",
-  "login_to_track": "Log in to track your progress and level up!"
+  "login_to_track": "Log in to track your progress and level up!",
+  "game.uncategorized": "Uncategorized",
+  "game.by": "By",
+  "game.new": "New"
 }
