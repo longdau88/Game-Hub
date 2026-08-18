@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Gamepad2, Home, Compass, Library, FolderHeart, Users, Trophy, Bell, Settings, LogOut, ChevronRight, Menu, X, CheckSquare } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
@@ -23,6 +23,59 @@ const SOCIAL = [
   { nameKey: "nav.leaderboards", defaultName: "Leaderboards", href: "/leaderboards", icon: Trophy },
   { nameKey: "nav.quests", defaultName: "Quests", href: "/quests", icon: CheckSquare },
 ];
+
+function NotificationBell() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]); // Empty array means no notifications = no red dot
+  const { t } = useLanguage();
+  const bellRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (bellRef.current && !bellRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={bellRef}>
+      <Button variant="ghost" size="icon" onClick={() => setIsOpen(!isOpen)} className="relative">
+        <Bell className="w-5 h-5" />
+        {notifications.length > 0 && (
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full" />
+        )}
+      </Button>
+      
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-80 bg-surface border border-border rounded-xl shadow-2xl z-50 overflow-hidden">
+          <div className="flex items-center justify-between p-4 border-b border-border bg-muted/30">
+            <h3 className="font-semibold">{t("notif.title") || "Notifications"}</h3>
+            {notifications.length > 0 && (
+              <button className="text-xs text-primary hover:underline">
+                {t("notif.markAllRead") || "Mark all read"}
+              </button>
+            )}
+          </div>
+          <div className="p-4 max-h-[300px] overflow-y-auto">
+            {notifications.length === 0 ? (
+              <div className="py-6 text-center text-muted-foreground flex flex-col items-center gap-2">
+                <Bell className="w-8 h-8 opacity-20 mx-auto" />
+                <p className="text-sm">{t("notif.noNotifications") || "No notifications"}</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Real notifications would map here */}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function PlayerLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -51,9 +104,7 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
           <span className="font-bold text-lg tracking-tight">GameHub</span>
         </Link>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={() => alert(t("notif.noNotifications") || "No notifications")}>
-            <Bell className="w-5 h-5" />
-          </Button>
+          <NotificationBell />
           <Avatar size="sm" fallback="U" className="cursor-pointer" />
           <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -163,10 +214,7 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
               <LanguageSwitcher />
             </div>
 
-            <Button variant="ghost" size="icon" className="relative" onClick={() => alert(t("notif.noNotifications") || "No notifications")}>
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full" />
-            </Button>
+            <NotificationBell />
             <Link href="/creator/games/new" className="hidden sm:flex">
               <Button variant="outline" className="w-full">
                 {t("nav.submitGame") || "Submit Game"}
