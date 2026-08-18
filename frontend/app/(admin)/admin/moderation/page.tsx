@@ -52,7 +52,7 @@ export default function ModerationPage() {
       description: t("admin.resolveConfirm") || "Are you sure you want to mark this report as resolved?",
       confirmText: t("admin.resolveReport") || "Resolve",
       cancelText: t("admin.cancel") || "Cancel",
-      variant: "default"
+      variant: "info"
     });
     
     if (!isConfirmed) return;
