@@ -462,6 +462,7 @@
   "admin.settingsPlaceholder": "Settings configuration will be implemented here.",
   "admin.settingsDesc": "System-wide settings and configurations.",
   "admin.bulkEmail": "Bulk Email",
+  "admin.emailSelected": "Email {count} Selected Users",
   "admin.targetAll": "All Users",
   "admin.targetActive": "Active Users (Last 30 days)",
   "admin.reviewMode": "Review Mode",

@@ -679,6 +679,7 @@
   "admin.settingsPlaceholder": "Cấu hình hệ thống sẽ được thực hiện tại đây.",
   "admin.settingsDesc": "Thiết lập các cấu hình hệ thống chung.",
   "admin.bulkEmail": "Gửi Email Hàng loạt",
+  "admin.emailSelected": "Gửi cho {count} người đã chọn",
   "admin.targetAll": "Tất cả Người dùng",
   "admin.targetActive": "Người dùng hoạt động (30 ngày)"
 }

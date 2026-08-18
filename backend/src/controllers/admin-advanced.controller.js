@@ -369,12 +369,18 @@ exports.sendEmailCampaign = async (req, res) => {
   try {
     const adminId = req.user?.userId;
     const { subject, content, target } = req.body;
-    const targetGroup = target || 'all';
+    let targetGroup = target || 'all';
+    let whereClause = {};
+
+    if (targetGroup === 'active') {
+      whereClause = { isBanned: false, lastLoginAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } };
+    } else if (Array.isArray(target) && target.length > 0) {
+      whereClause = { id: { in: target.map(id => parseInt(id)) } };
+      targetGroup = 'selected';
+    }
     
     const users = await prisma.user.findMany({
-      where: targetGroup === 'active'
-        ? { isBanned: false, lastLoginAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } }
-        : {}
+      where: whereClause
     });
 
     let sentCount = 0;

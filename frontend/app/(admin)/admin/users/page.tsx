@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Search, MoreHorizontal, UserX, UserCheck, Shield, ShieldAlert, Mail, Pencil, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -22,7 +23,8 @@ export default function UserManagementPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [formData, setFormData] = useState({ username: '', email: '', password: '', role: 'user' });
   const [saving, setSaving] = useState(false);
-  const [emailComposer, setEmailComposer] = useState<{ isOpen: boolean; isBulk: boolean; user: any; target: string; subject: string; body: string; sending: boolean }>({ isOpen: false, isBulk: false, user: null, target: 'all', subject: '', body: '', sending: false });
+  const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
+  const [emailComposer, setEmailComposer] = useState<{ isOpen: boolean; isBulk: boolean; user: any; target: string | number[]; subject: string; body: string; sending: boolean }>({ isOpen: false, isBulk: false, user: null, target: 'all', subject: '', body: '', sending: false });
   const { t } = useLanguage();
   const { notify } = useAppDialog();
 
@@ -134,6 +136,22 @@ export default function UserManagementPage() {
     (user.email?.toLowerCase() || '').includes(search.toLowerCase())
   );
 
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedUsers(filteredUsers.map(u => u.id));
+    } else {
+      setSelectedUsers([]);
+    }
+  };
+
+  const handleSelectUser = (id: number, checked: boolean) => {
+    if (checked) {
+      setSelectedUsers([...selectedUsers, id]);
+    } else {
+      setSelectedUsers(selectedUsers.filter(userId => userId !== id));
+    }
+  };
+
   return (
     <div className="space-y-8 pb-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -142,9 +160,21 @@ export default function UserManagementPage() {
           <p className="text-muted-foreground mt-1">{t("admin.userManagementDesc") || "View and manage platform users, roles, and statuses."}</p>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-3 mt-4 sm:mt-0">
-          <Button variant="outline" onClick={() => setEmailComposer({ isOpen: true, isBulk: true, user: null, target: 'all', subject: '', body: '', sending: false })} className="border-border w-full sm:w-auto">
+          <Button 
+            variant="outline" 
+            onClick={() => setEmailComposer({ 
+              isOpen: true, 
+              isBulk: true, 
+              user: null, 
+              target: selectedUsers.length > 0 ? selectedUsers : 'all', 
+              subject: '', 
+              body: '', 
+              sending: false 
+            })} 
+            className="border-border w-full sm:w-auto"
+          >
             <Mail className="w-4 h-4 mr-2" />
-            {t("admin.bulkEmail") || "Bulk Email"}
+            {selectedUsers.length > 0 ? (t("admin.emailSelected") || `Email ${selectedUsers.length} Users`) : (t("admin.bulkEmail") || "Bulk Email")}
           </Button>
           <Button onClick={openCreateModal} className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-md w-full sm:w-auto">
             {t("admin.inviteUser") || "Invite User"}
@@ -175,6 +205,13 @@ export default function UserManagementPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[40px]">
+                    <Checkbox 
+                      checked={filteredUsers.length > 0 && selectedUsers.length === filteredUsers.length}
+                      onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+                      aria-label="Select all"
+                    />
+                  </TableHead>
                   <TableHead>{t("admin.colUser") || "User"}</TableHead>
                   <TableHead>{t("admin.colRole") || "Role"}</TableHead>
                   <TableHead>{t("admin.colStatus") || "Status"}</TableHead>
@@ -184,7 +221,14 @@ export default function UserManagementPage() {
               </TableHeader>
               <TableBody>
                 {filteredUsers.map((user) => (
-                  <TableRow key={user.id}>
+                  <TableRow key={user.id} className={selectedUsers.includes(user.id) ? "bg-muted/50" : ""}>
+                    <TableCell>
+                      <Checkbox 
+                        checked={selectedUsers.includes(user.id)}
+                        onCheckedChange={(checked) => handleSelectUser(user.id, checked as boolean)}
+                        aria-label={`Select ${user.username}`}
+                      />
+                    </TableCell>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-3">
                         <Avatar size="sm" src={user.profileImageUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username}`} fallback={user.username?.charAt(0) || "U"} />
@@ -327,14 +371,18 @@ export default function UserManagementPage() {
             {emailComposer.isBulk ? (
               <div className="text-sm text-muted-foreground border-b border-border pb-2 flex items-center gap-2">
                 <span className="font-medium text-foreground">To:</span> 
-                <select 
-                  className="bg-transparent border-0 text-sm focus:ring-0 p-0 text-foreground cursor-pointer outline-none"
-                  value={emailComposer.target}
-                  onChange={e => setEmailComposer({...emailComposer, target: e.target.value})}
-                >
-                  <option value="all">{t("admin.targetAll") || "All Users"}</option>
-                  <option value="active">{t("admin.targetActive") || "Active Users (Last 30 days)"}</option>
-                </select>
+                {Array.isArray(emailComposer.target) ? (
+                  <span className="font-semibold text-primary">{emailComposer.target.length} Selected Users</span>
+                ) : (
+                  <select 
+                    className="bg-transparent border-0 text-sm focus:ring-0 p-0 text-foreground cursor-pointer outline-none"
+                    value={emailComposer.target as string}
+                    onChange={e => setEmailComposer({...emailComposer, target: e.target.value})}
+                  >
+                    <option value="all">{t("admin.targetAll") || "All Users"}</option>
+                    <option value="active">{t("admin.targetActive") || "Active Users (Last 30 days)"}</option>
+                  </select>
+                )}
               </div>
             ) : (
               <div className="text-sm text-muted-foreground border-b border-border pb-2 flex items-center gap-2">
