@@ -10,6 +10,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const NAVIGATION = [
   { nameKey: "nav.home", defaultName: "Home", href: "/", icon: Home },
@@ -81,17 +82,7 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    import("@/lib/api").then(({ fetchAPI }) => {
-      fetchAPI('/auth/me')
-        .then(res => {
-          if (res.user) setUser(res.user);
-        })
-        .catch(() => {});
-    });
-  }, []);
+  const { profile: user, openLoginModal } = useAuth();
 
   return (
     <div className="flex h-[100dvh] flex-col lg:flex-row w-full bg-background overflow-hidden">
@@ -188,11 +179,9 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
               <Settings className="w-4 h-4 text-muted-foreground" />
             </div>
           ) : (
-            <Link href="/login" className="block w-full">
-              <Button className="w-full">
-                {t("nav.login") || "Đăng nhập"}
-              </Button>
-            </Link>
+            <Button onClick={openLoginModal} className="w-full">
+              {t("nav.login") || "Đăng nhập"}
+            </Button>
           )}
         </div>
       </aside>
