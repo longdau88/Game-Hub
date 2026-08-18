@@ -14,15 +14,18 @@ export default function LibraryPage() {
   const [recentGames, setRecentGames] = useState<Game[]>([]);
   const [savedGames, setSavedGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
-  const { t } = useLanguage();
+  const { locale: language, t } = useLanguage();
 
   useEffect(() => {
     setMounted(true);
-    // Since Library endpoints might not exist yet, we catch errors and set empty.
+    // Use correct user library endpoints
     Promise.all([
-      fetchAPI('/library/recent').catch(() => ({ data: [] })),
-      fetchAPI('/library/saved').catch(() => ({ data: [] }))
+      fetchAPI('/games/user/history').catch(() => []),
+      fetchAPI('/games/user/bookmarked').catch(() => [])
     ]).then(([recentRes, savedRes]) => {
+       const recentArray = Array.isArray(recentRes) ? recentRes : (recentRes?.data || []);
+       const savedArray = Array.isArray(savedRes) ? savedRes : (savedRes?.data || []);
+
        const mapGame = (g: any) => ({
           id: g.id,
           title: g.title,
@@ -30,10 +33,10 @@ export default function LibraryPage() {
           rating: g.averageRating || 0,
           playCount: g.playCount || 0,
           thumbnail: g.coverImageUrl || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80",
-          category: g.categories?.[0]?.category?.name || "Uncategorized"
+          category: g.categories?.[0]?.nameTranslations?.[language] || g.categories?.[0]?.name || "Uncategorized"
        });
-       setRecentGames((recentRes.data || []).map(mapGame));
-       setSavedGames((savedRes.data || []).map(mapGame));
+       setRecentGames(recentArray.map(mapGame));
+       setSavedGames(savedArray.map(mapGame));
     }).finally(() => setLoading(false));
   }, []);
 
