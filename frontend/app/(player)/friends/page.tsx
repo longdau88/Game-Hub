@@ -7,21 +7,46 @@ import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/ui/avatar";
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
+import CreatorProfileModal from "@/components/CreatorProfileModal";
 
 export default function FriendsPage() {
   const [mounted, setMounted] = useState(false);
   const [friends, setFriends] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { t } = useLanguage();
 
   useEffect(() => {
     setMounted(true);
     fetchAPI('/friends')
-      .then(res => setFriends(res.data || []))
+      .then(res => setFriends(res.data || res || []))
       .catch(() => setFriends([]))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!searchQuery.trim() || searchQuery.trim().length < 2) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+    
+    setIsSearching(true);
+    const timer = setTimeout(() => {
+      fetchAPI(`/friends/search?q=${encodeURIComponent(searchQuery)}`)
+        .then(res => {
+          setSearchResults(Array.isArray(res) ? res : res.data || []);
+        })
+        .catch(() => setSearchResults([]))
+        .finally(() => setIsSearching(false));
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   if (!mounted) return null;
 
@@ -43,41 +68,48 @@ export default function FriendsPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button className="shrink-0"><UserPlus className="w-4 h-4 md:mr-2" /><span className="hidden md:inline">{t("friends.add") || "Add Friend"}</span></Button>
         </div>
       </div>
 
       <div className="bg-surface border border-border rounded-2xl overflow-hidden">
-        {loading ? (
+        {loading || isSearching ? (
            <div className="p-8 text-center text-muted-foreground">{t("loading") || "Loading..."}</div>
         ) : (() => {
-          const filteredFriends = friends.filter(friend => 
-            friend.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-            friend.handle?.toLowerCase().includes(searchQuery.toLowerCase())
-          );
+          const displayList = searchQuery.trim().length >= 2 ? searchResults : friends;
           
-          return filteredFriends.length > 0 ? (
-            filteredFriends.map((friend, idx) => (
-            <div key={friend.id} className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors hover:bg-secondary/50 ${idx !== friends.length - 1 ? 'border-b border-border' : ''}`}>
-              <div className="flex items-center gap-4">
+          return displayList.length > 0 ? (
+            displayList.map((user, idx) => (
+            <div key={user.id} className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors hover:bg-secondary/50 ${idx !== displayList.length - 1 ? 'border-b border-border' : ''}`}>
+              <div className="flex items-center gap-4 cursor-pointer" onClick={() => { setSelectedUserId(user.id); setIsProfileOpen(true); }}>
                 <div className="relative">
-                  <Avatar size="lg" src={friend.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${friend.name}`} fallback={friend.name?.charAt(0) || "F"} />
-                  <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-surface ${
-                    friend.status === 'Online' ? 'bg-success' : 
-                    friend.status === 'In Game' ? 'bg-primary' : 'bg-muted-foreground'
-                  }`} />
+                  <Avatar size="lg" src={user.avatarUrl || user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.username || user.name}`} fallback={(user.username || user.name)?.charAt(0) || "U"} />
+                  {user.status && (
+                    <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-surface ${
+                      user.status === 'Online' ? 'bg-success' : 
+                      user.status === 'In Game' ? 'bg-primary' : 'bg-muted-foreground'
+                    }`} />
+                  )}
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg leading-tight">{friend.name}</h3>
-                  <p className="text-sm text-muted-foreground">{friend.handle}</p>
-                  {friend.playing && (
-                    <p className="text-xs font-medium text-primary mt-1">{t("friends.playing") || "Playing: "}{friend.playing}</p>
+                  <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors">{user.username || user.name}</h3>
+                  {(user.handle || user.level) && (
+                     <p className="text-sm text-muted-foreground">
+                        {user.handle ? user.handle : `Level ${user.level}`}
+                     </p>
+                  )}
+                  {user.playing && (
+                    <p className="text-xs font-medium text-primary mt-1">{t("friends.playing") || "Playing: "}{user.playing}</p>
                   )}
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm"><MessageSquare className="w-4 h-4 mr-2" /> {t("friends.message") || "Message"}</Button>
-                <Button variant="ghost" size="sm">{t("nav.profile") || "Profile"}</Button>
+                {user.friendshipStatus === 'accepted' ? (
+                  <Button variant="outline" size="sm"><MessageSquare className="w-4 h-4 mr-2" /> {t("friends.message") || "Message"}</Button>
+                ) : (
+                  <Button variant="ghost" size="sm" onClick={() => { setSelectedUserId(user.id); setIsProfileOpen(true); }}>
+                    {t("nav.profile") || "Profile"}
+                  </Button>
+                )}
               </div>
             </div>
           ))
@@ -90,6 +122,12 @@ export default function FriendsPage() {
         );
         })()}
       </div>
+
+      <CreatorProfileModal
+        creatorId={selectedUserId as number}
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+      />
 
     </div>
   );
