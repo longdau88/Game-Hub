@@ -16,7 +16,14 @@ export default function GameUploadWizard() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const { t } = useLanguage();
+
+  const toggleCategory = (id: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
+    );
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -116,11 +123,25 @@ export default function GameUploadWizard() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="category">{t("creator.category") || "Category"}</Label>
-                    <select id="category" multiple className="min-h-[100px] flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                      {categories.map((c) => (
-                        <option key={c.id} value={c.id}>{c.name}</option>
-                      ))}
-                    </select>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {categories.map((c) => {
+                        const isSelected = selectedCategories.includes(c.id);
+                        return (
+                          <button
+                            key={c.id}
+                            type="button"
+                            onClick={() => toggleCategory(c.id)}
+                            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors border ${
+                              isSelected 
+                                ? 'bg-indigo-600 border-indigo-600 text-white' 
+                                : 'bg-surface border-border text-muted-foreground hover:border-indigo-500/50 hover:text-foreground'
+                            }`}
+                          >
+                            {c.name}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="tags">{t("creator.tags") || "Tags (comma separated)"}</Label>
