@@ -18,7 +18,6 @@ const NAVIGATION = [
   { nameKey: "admin.tabDashboard", defaultName: "Dashboard", href: "/creator/dashboard", icon: LayoutDashboard },
   { nameKey: "profile.uploadedGames", defaultName: "My Games", href: "/creator/games", icon: Gamepad2 },
   { nameKey: "admin.tabAnalytics", defaultName: "Analytics", href: "/creator/analytics", icon: LineChart },
-  { nameKey: "nav.settings", defaultName: "Settings", href: "/creator/settings", icon: Settings },
 ];
 
 export default function CreatorLayout({ children }: { children: React.ReactNode }) {
