@@ -3,9 +3,18 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BookOpen, FileArchive, ShieldAlert, Code2, UploadCloud, Rocket, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useState, useEffect } from "react";
 
 export default function CreatorDocs() {
   const { t, locale } = useLanguage();
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
   const isVi = locale === "vi";
 
   return (
