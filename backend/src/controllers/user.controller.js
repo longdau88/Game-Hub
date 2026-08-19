@@ -147,6 +147,7 @@ class UserController {
       }
 
       let isFollowing = false;
+      let isFollower = false;
       let friendshipStatus = null;
 
       if (req.user) {
@@ -154,6 +155,11 @@ class UserController {
           where: { followerId_creatorId: { followerId: req.user.userId, creatorId: targetUserId } }
         });
         isFollowing = Boolean(follow);
+
+        const followerCheck = await prisma.creatorFollow.findUnique({
+          where: { followerId_creatorId: { followerId: targetUserId, creatorId: req.user.userId } }
+        });
+        isFollower = Boolean(followerCheck);
 
         const friendship = await prisma.friendship.findFirst({
           where: {
@@ -171,6 +177,7 @@ class UserController {
       res.json({
         ...user,
         isFollowing,
+        isFollower,
         friendshipStatus
       });
     } catch (error) {

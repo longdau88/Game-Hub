@@ -240,7 +240,11 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
                         )}
                         <div className="relative flex items-center gap-2 z-10">
                           {profile.isFollowing ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />} 
-                          {profile.isFollowing ? (t("creator.following") || "Đang theo dõi") : (t("creator.follow") || "Theo dõi")}
+                          {profile.isFollowing 
+                            ? (t("creator.following") || "Đang theo dõi") 
+                            : profile.isFollower 
+                            ? (t("creator.followBack") || "Theo dõi lại") 
+                            : (t("creator.follow") || "Theo dõi")}
                         </div>
                       </button>
                       

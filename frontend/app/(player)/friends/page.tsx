@@ -42,6 +42,33 @@ export default function FriendsPage() {
     setMounted(true);
   }, []);
 
+  const handleFollow = async (creatorId: number) => {
+    // Find who we are following
+    const userToFollow = followers.find((f: any) => f.id === creatorId) || searchResults.find((f: any) => f.id === creatorId);
+    if (!userToFollow) return;
+    
+    // Optimistic UI Update
+    const previousFollowing = [...following];
+    mutateFollowing([...previousFollowing, userToFollow], false);
+
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/api/users/${creatorId}/follow`, {
+        method: "POST",
+        headers: getAuthHeaders()
+      });
+      if (res.ok) {
+        await notify({ message: t("creator.followSuccess") || "Đã theo dõi", variant: "success" });
+        mutateFollowing(); // Revalidate
+      } else {
+        throw new Error("Failed");
+      }
+    } catch (error) {
+      mutateFollowing(previousFollowing, false); // Rollback
+      await notify({ message: t("dialog.genericError"), variant: "error" });
+    }
+  };
+
   const handleUnfollow = async (creatorId: number) => {
     if (!await confirm({ message: t("profile.confirmUnfollow") || "Are you sure you want to unfollow this creator?", variant: "warning" })) return;
     
@@ -268,6 +295,23 @@ export default function FriendsPage() {
                       {creator.username}
                     </h3>
                     <p className="text-xs text-muted-foreground line-clamp-1 mb-2">Level {creator.level || 1}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded">
+                        {creator.publishedGamesCount !== undefined ? `${creator.publishedGamesCount} ${t("profile.publishedGames") || "Games"}` : `Level ${creator.level || 1}`}
+                      </span>
+                      {following.some((f: any) => f.id === creator.id) ? (
+                        <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                          <UserCheck className="w-3 h-3" /> {t("creator.following") || "Đang theo dõi"}
+                        </span>
+                      ) : (
+                        <button 
+                          onClick={() => handleFollow(creator.id)}
+                          className="flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors"
+                        >
+                          <UserPlus className="w-3 h-3" /> {t("creator.followBack") || "Theo dõi lại"}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))
