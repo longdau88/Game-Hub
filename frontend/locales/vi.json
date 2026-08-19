@@ -754,5 +754,12 @@
   "creator.errorInvalidZip": "Định dạng file ZIP không hợp lệ",
   "creator.rejected": "Bị Từ Chối",
   "admin.actions": "Thao tác",
-  "admin.previewGame": "Xem trước Game"
+  "admin.previewGame": "Xem trước Game",
+  "creator.analytics": "Thống kê",
+  "creator.edit": "Chỉnh sửa",
+  "creator.delete": "Xoá",
+  "creator.deleteConfirmTitle": "Xoá Game",
+  "creator.deleteConfirmDesc": "Bạn có chắc chắn muốn xoá game này không? Hành động này không thể hoàn tác.",
+  "creator.deleteSuccess": "Xoá game thành công",
+  "creator.deleteFailed": "Xoá game thất bại"
 }

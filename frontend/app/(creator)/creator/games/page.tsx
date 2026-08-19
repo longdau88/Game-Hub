@@ -7,8 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Gamepad2, Search, Plus, MoreVertical, Edit, Trash, BarChart2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAppDialog } from "@/contexts/DialogContext";
 
 export default function CreatorGamesPage() {
   const [mounted, setMounted] = useState(false);
@@ -16,6 +18,8 @@ export default function CreatorGamesPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const { t } = useLanguage();
+  const router = useRouter();
+  const { notify, confirm } = useAppDialog();
 
   useEffect(() => {
     setMounted(true);
@@ -33,6 +37,19 @@ export default function CreatorGamesPage() {
   }, []);
 
   if (!mounted) return null;
+
+  
+  const handleDelete = async (id: string) => {
+    if (await confirm({ title: t("creator.deleteConfirmTitle") || "Delete Game", description: t("creator.deleteConfirmDesc") || "Are you sure you want to delete this game? This action cannot be undone." })) {
+      try {
+        await fetchAPI(`/games/${id}`, { method: 'DELETE' });
+        setGames(games.filter(g => g.id !== id));
+        notify({ message: t("creator.deleteSuccess") || "Game deleted successfully", variant: "success" });
+      } catch (err: any) {
+        notify({ message: err.message || t("creator.deleteFailed") || "Failed to delete game", variant: "error" });
+      }
+    }
+  };
 
   const filteredGames = games.filter(g => g.title?.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -115,13 +132,13 @@ export default function CreatorGamesPage() {
                   </div>
                   
                   <div className="flex items-center gap-2 self-end sm:self-auto">
-                    <Button variant="ghost" size="sm" title="Analytics">
+                    <Button variant="ghost" size="sm" title={t("creator.analytics") || "Analytics"} onClick={() => router.push('/creator/analytics')}>
                       <BarChart2 className="w-4 h-4 text-muted-foreground" />
                     </Button>
-                    <Button variant="ghost" size="sm" title="Edit">
+                    <Button variant="ghost" size="sm" title={t("creator.edit") || "Edit"} onClick={() => router.push(`/profile/edit-game/${game.id}`)}>
                       <Edit className="w-4 h-4 text-muted-foreground" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="hover:text-error">
+                    <Button variant="ghost" size="icon" className="hover:text-error" title={t("creator.delete") || "Delete"} onClick={() => handleDelete(game.id)}>
                       <Trash className="w-4 h-4" />
                     </Button>
                   </div>

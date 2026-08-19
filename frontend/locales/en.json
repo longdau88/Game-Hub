@@ -714,5 +714,12 @@
   "creator.errorNoIndexHtml": "Zip file does not contain an index.html at the root",
   "creator.errorInvalidZip": "Invalid zip file format",
   "creator.rejected": "Rejected",
-  "admin.previewGame": "Preview Game"
+  "admin.previewGame": "Preview Game",
+  "creator.analytics": "Analytics",
+  "creator.edit": "Edit",
+  "creator.delete": "Delete",
+  "creator.deleteConfirmTitle": "Delete Game",
+  "creator.deleteConfirmDesc": "Are you sure you want to delete this game? This action cannot be undone.",
+  "creator.deleteSuccess": "Game deleted successfully",
+  "creator.deleteFailed": "Failed to delete game"
 }
