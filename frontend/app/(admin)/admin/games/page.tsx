@@ -279,6 +279,15 @@ export default function GameManagementPage() {
                               <Button 
                                 variant="ghost" 
                                 size="icon" 
+                                className="h-8 w-8 text-indigo-500 hover:text-indigo-600 hover:bg-indigo-500/10"
+                                onClick={() => window.open(`/game/play?id=${game.id}`, '_blank')}
+                                title={t("admin.previewGame") || "Preview Game"}
+                              >
+                                <Play className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
                                 className="h-8 w-8 text-success hover:text-success hover:bg-success/10"
                                 onClick={() => handleApprove(game.id)}
                                 title={t("admin.approve") || "Approve"}

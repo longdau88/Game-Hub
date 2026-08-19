@@ -752,5 +752,7 @@
   "creator.uploadFailed": "Tải lên thất bại",
   "creator.errorNoIndexHtml": "File ZIP không chứa file index.html ở thư mục gốc",
   "creator.errorInvalidZip": "Định dạng file ZIP không hợp lệ",
-  "creator.rejected": "Bị Từ Chối"
+  "creator.rejected": "Bị Từ Chối",
+  "admin.actions": "Thao tác",
+  "admin.previewGame": "Xem trước Game"
 }
