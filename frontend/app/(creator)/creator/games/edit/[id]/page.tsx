@@ -130,10 +130,10 @@ export default function EditGamePage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-3xl">
       <div className="mb-6">
-        <Link href="/profile" className="inline-flex items-center text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white transition-colors">
+        <button onClick={() => router.back()} className="inline-flex items-center text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:text-white transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Profile
-        </Link>
+          {t("creator.back") || "Back"}
+        </button>
       </div>
       
       <div className="mb-8">
