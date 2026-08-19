@@ -117,7 +117,7 @@ export default function GameManagementPage() {
 
   const handleEditSave = async () => {
     if (!editingGame?.title || !editingGame?.description) {
-      notify({ message: "Title and description are required.", variant: "warning" });
+      notify({ message: t("admin.gameTitleDescRequired") || "Title and description are required.", variant: "warning" });
       return;
     }
     setSaving(true);
@@ -136,7 +136,7 @@ export default function GameManagementPage() {
         method: 'PUT', 
         body: formData 
       });
-      notify({ message: "Game updated successfully!", variant: "success" });
+      notify({ message: t("admin.gameUpdatedSuccess") || "Game updated successfully!", variant: "success" });
       setEditModalOpen(false);
       fetchGames(activeTab);
     } catch (err) {

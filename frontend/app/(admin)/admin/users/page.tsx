@@ -103,7 +103,7 @@ export default function UserManagementPage() {
 
   const handleSendEmail = async () => {
     if (!emailComposer.subject || !emailComposer.body) {
-      notify({ message: "Please enter subject and message.", variant: "warning" });
+      notify({ message: t("admin.emailSubjectMessageRequired") || "Please enter subject and message.", variant: "warning" });
       return;
     }
     

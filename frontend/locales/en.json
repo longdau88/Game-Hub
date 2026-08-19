@@ -746,5 +746,8 @@
   "admin.audit.colAdmin": "Admin",
   "admin.audit.colAction": "Action",
   "admin.audit.colEntity": "Entity",
-  "admin.audit.colDetails": "Details"
+  "admin.audit.colDetails": "Details",
+  "admin.gameTitleDescRequired": "Title and description are required.",
+  "admin.gameUpdatedSuccess": "Game updated successfully!",
+  "admin.emailSubjectMessageRequired": "Please enter subject and message."
 }

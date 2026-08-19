@@ -786,5 +786,8 @@
   "admin.audit.colAdmin": "Quản trị viên",
   "admin.audit.colAction": "Hành động",
   "admin.audit.colEntity": "Đối tượng",
-  "admin.audit.colDetails": "Chi tiết"
+  "admin.audit.colDetails": "Chi tiết",
+  "admin.gameTitleDescRequired": "Tiêu đề và mô tả là bắt buộc.",
+  "admin.gameUpdatedSuccess": "Cập nhật game thành công!",
+  "admin.emailSubjectMessageRequired": "Vui lòng nhập chủ đề và nội dung."
 }
