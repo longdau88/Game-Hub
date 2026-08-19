@@ -671,5 +671,16 @@
   "creator.publishGame": "Publish Game",
   "creator.uploading": "Uploading...",
   "creator.published": "Published",
-  "creator.inReview": "In Review"
+  "creator.inReview": "In Review",
+  "creator.revenuePlays": "Revenue & Plays (Last 30 Days)",
+  "creator.revenuePlaysDesc": "Performance metrics across all your published games.",
+  "creator.noChartData": "Not enough data to display chart.",
+  "creator.recentGames": "Recent Games",
+  "creator.recentGamesDesc": "Status of your latest uploads",
+  "creator.viewAll": "View All",
+  "creator.studio": "Creator Studio",
+  "creator.backToGameHub": "Back to GameHub",
+  "creator.needHelp": "Need Help?",
+  "creator.needHelpDesc": "Check out our creator documentation and guidelines.",
+  "creator.documentation": "Documentation"
 }

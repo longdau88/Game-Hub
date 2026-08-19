@@ -710,5 +710,16 @@
   "creator.publishGame": "Xuất Bản Game",
   "creator.uploading": "Đang Tải Lên...",
   "creator.published": "Đã Xuất Bản",
-  "creator.inReview": "Đang Chờ Duyệt"
+  "creator.inReview": "Đang Chờ Duyệt",
+  "creator.revenuePlays": "Doanh Thu & Lượt Chơi (30 Ngày Qua)",
+  "creator.revenuePlaysDesc": "Chỉ số hiệu suất trên tất cả các game đã phát hành của bạn.",
+  "creator.noChartData": "Không đủ dữ liệu để hiển thị biểu đồ.",
+  "creator.recentGames": "Game Gần Đây",
+  "creator.recentGamesDesc": "Trạng thái của các bản tải lên mới nhất",
+  "creator.viewAll": "Xem Tất Cả",
+  "creator.studio": "Creator Studio",
+  "creator.backToGameHub": "Về GameHub",
+  "creator.needHelp": "Cần Hỗ Trợ?",
+  "creator.needHelpDesc": "Xem tài liệu và hướng dẫn dành cho nhà phát triển của chúng tôi.",
+  "creator.documentation": "Tài Liệu"
 }

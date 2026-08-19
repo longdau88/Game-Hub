@@ -52,9 +52,9 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
             <Gamepad2 className="w-6 h-6 text-white" />
           </div>
           <div>
-            <span className="font-extrabold text-xl tracking-tight text-foreground block">Creator Studio</span>
+            <span className="font-extrabold text-xl tracking-tight text-foreground block">{t("creator.studio") || "Creator Studio"}</span>
             <Link href="/" className="text-xs text-muted-foreground hover:text-primary flex items-center mt-0.5">
-              <ArrowLeft className="w-3 h-3 mr-1" /> Back to GameHub
+              <ArrowLeft className="w-3 h-3 mr-1" /> {t("creator.backToGameHub") || "Back to GameHub"}
             </Link>
           </div>
         </div>
@@ -83,10 +83,10 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
           
           <div className="mt-auto space-y-4">
             <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
-              <h4 className="font-bold text-sm text-indigo-400 mb-2">Need Help?</h4>
-              <p className="text-xs text-muted-foreground mb-3">Check out our creator documentation and guidelines.</p>
+              <h4 className="font-bold text-sm text-indigo-400 mb-2">{t("creator.needHelp") || "Need Help?"}</h4>
+              <p className="text-xs text-muted-foreground mb-3">{t("creator.needHelpDesc") || "Check out our creator documentation and guidelines."}</p>
               <Button variant="outline" size="sm" className="w-full text-xs">
-                <HelpCircle className="w-4 h-4 mr-2" /> Documentation
+                <HelpCircle className="w-4 h-4 mr-2" />{t("creator.documentation") || "Documentation"}
               </Button>
             </div>
             

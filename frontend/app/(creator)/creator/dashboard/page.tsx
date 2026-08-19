@@ -27,10 +27,10 @@ export default function CreatorDashboard() {
         const totalPlays = gamesData.reduce((acc: number, g: any) => acc + (g.playCount || 0), 0);
         
         setStats([
-          { label: t("total_plays") || "Total Plays", value: totalPlays.toString(), trend: "+0%", isPositive: true, icon: MousePointerClick, color: "text-blue-500" },
-          { label: t("total_games") || "Total Games", value: gamesData.length.toString(), trend: "+0%", isPositive: true, icon: Gamepad2, color: "text-indigo-500" },
-          { label: t("estimated_revenue") || "Estimated Revenue", value: "$0", trend: "0%", isPositive: true, icon: DollarSign, color: "text-emerald-500" },
-          { label: t("avg_rating") || "Average Rating", value: "0.0", trend: "0", isPositive: false, icon: BarChart3, color: "text-amber-500" },
+          { label: t("total_plays") || "Total Plays", value: totalPlays.toString(), trend: "+0%", isPositive: true, icon: MousePointerClick, color: "text-blue-500", href: "/creator/analytics" },
+          { label: t("total_games") || "Total Games", value: gamesData.length.toString(), trend: "+0%", isPositive: true, icon: Gamepad2, color: "text-indigo-500", href: "/creator/games" },
+          { label: t("estimated_revenue") || "Estimated Revenue", value: "$0", trend: "0%", isPositive: true, icon: DollarSign, color: "text-emerald-500", href: "/creator/monetization" },
+          { label: t("avg_rating") || "Average Rating", value: "0.0", trend: "0", isPositive: false, icon: BarChart3, color: "text-amber-500", href: "/creator/analytics" },
         ]);
         
         setRecentGames(gamesData.slice(0, 3).map((g: any) => ({
@@ -45,10 +45,10 @@ export default function CreatorDashboard() {
       } catch (err) {
         console.error("Failed to load creator data:", err);
         setStats([
-          { label: t("total_plays") || "Total Plays", value: "0", trend: "0%", isPositive: true, icon: MousePointerClick, color: "text-blue-500" },
-          { label: t("total_games") || "Total Games", value: "0", trend: "0%", isPositive: true, icon: Gamepad2, color: "text-indigo-500" },
-          { label: t("estimated_revenue") || "Estimated Revenue", value: "$0", trend: "0%", isPositive: true, icon: DollarSign, color: "text-emerald-500" },
-          { label: t("avg_rating") || "Average Rating", value: "0.0", trend: "0", isPositive: false, icon: BarChart3, color: "text-amber-500" },
+          { label: t("total_plays") || "Total Plays", value: "0", trend: "0%", isPositive: true, icon: MousePointerClick, color: "text-blue-500", href: "/creator/analytics" },
+          { label: t("total_games") || "Total Games", value: "0", trend: "0%", isPositive: true, icon: Gamepad2, color: "text-indigo-500", href: "/creator/games" },
+          { label: t("estimated_revenue") || "Estimated Revenue", value: "$0", trend: "0%", isPositive: true, icon: DollarSign, color: "text-emerald-500", href: "/creator/monetization" },
+          { label: t("avg_rating") || "Average Rating", value: "0.0", trend: "0", isPositive: false, icon: BarChart3, color: "text-amber-500", href: "/creator/analytics" },
         ]);
       } finally {
         setLoading(false);
@@ -77,7 +77,8 @@ export default function CreatorDashboard() {
           <div className="col-span-full py-10 text-center text-muted-foreground">{t("loading") || "Loading..."}</div>
         ) : (
           stats.map((stat, idx) => (
-            <Card key={idx} className="bg-surface/50 border-border">
+            <Link key={idx} href={stat.href || "#"}>
+              <Card className="bg-surface/50 border-border hover:border-primary/50 transition-colors cursor-pointer h-full">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`p-3 rounded-xl bg-surface border border-border ${stat.color} bg-opacity-10`}>
@@ -94,6 +95,7 @@ export default function CreatorDashboard() {
                 </div>
               </CardContent>
             </Card>
+            </Link>
           ))
         )}
       </div>
@@ -104,15 +106,15 @@ export default function CreatorDashboard() {
         {/* Main Chart Area (Mocked visually) */}
         <Card className="lg:col-span-2 border-border bg-surface/30">
           <CardHeader>
-            <CardTitle>Revenue & Plays (Last 30 Days)</CardTitle>
-            <CardDescription>Performance metrics across all your published games.</CardDescription>
+            <CardTitle>{t("creator.revenuePlays") || "Revenue & Plays (Last 30 Days)"}</CardTitle>
+            <CardDescription>{t("creator.revenuePlaysDesc") || "Performance metrics across all your published games."}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-[300px] w-full flex items-center justify-center pt-4 px-2">
               <div className="text-center">
                 <BarChart3 className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
                 <p className="text-muted-foreground font-semibold">{t("not_available") || "Chưa có dữ liệu"}</p>
-                <p className="text-sm text-muted-foreground/70">{t("no_chart_data") || "Not enough data to display chart."}</p>
+                <p className="text-sm text-muted-foreground/70">{t("creator.noChartData") || "Not enough data to display chart."}</p>
               </div>
             </div>
           </CardContent>
@@ -122,11 +124,11 @@ export default function CreatorDashboard() {
         <Card className="border-border bg-surface/30">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div className="space-y-1">
-              <CardTitle>Recent Games</CardTitle>
-              <CardDescription>Status of your latest uploads</CardDescription>
+              <CardTitle>{t("creator.recentGames") || "Recent Games"}</CardTitle>
+              <CardDescription>{t("creator.recentGamesDesc") || "Status of your latest uploads"}</CardDescription>
             </div>
             <Link href="/creator/games">
-              <Button variant="ghost" size="sm" className="text-muted-foreground text-xs">View All</Button>
+              <Button variant="ghost" size="sm" className="text-muted-foreground text-xs">{t("creator.viewAll") || "View All"}</Button>
             </Link>
           </CardHeader>
           <CardContent className="grid gap-4 mt-4">
@@ -142,7 +144,7 @@ export default function CreatorDashboard() {
                       <Badge variant={game.status === "Published" ? "success" : "warning"} className="text-[10px] px-1.5 py-0">
                         {game.status}
                       </Badge>
-                      <span className="text-xs text-muted-foreground truncate">{game.plays} plays</span>
+                      <span className="text-xs text-muted-foreground truncate">{game.plays} {t("creator.plays") || "plays"}</span>
                     </div>
                   </div>
                 </div>
@@ -154,7 +156,7 @@ export default function CreatorDashboard() {
             
             <Link href="/creator/games/new" className="mt-2 block">
               <Button variant="outline" className="w-full border-dashed border-2 bg-transparent hover:bg-secondary">
-                Upload New Game
+                {t("creator.uploadNewGame") || "Upload New Game"}
               </Button>
             </Link>
           </CardContent>
