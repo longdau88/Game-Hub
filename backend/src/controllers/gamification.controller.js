@@ -140,15 +140,22 @@ exports.grantBadge = async (req, res) => {
 
 // Daily Quests
 const ensureDefaultQuests = async () => {
+  const defaultQuests = [
+    { title: 'Play a Game', targetType: 'play_game', targetValue: 1, rewardXp: 50 },
+    { title: 'Rate a Game', targetType: 'rate_game', targetValue: 1, rewardXp: 30 },
+    { title: 'Daily Login', targetType: 'login', targetValue: 1, rewardXp: 20 },
+    { title: 'Add a Friend', targetType: 'add_friend', targetValue: 1, rewardXp: 30 },
+    { title: 'Follow a Creator', targetType: 'follow_creator', targetValue: 1, rewardXp: 30 }
+  ];
+  
   const count = await prisma.dailyQuest.count();
-  if (count === 0) {
-    await prisma.dailyQuest.createMany({
-      data: [
-        { title: 'Play a Game', targetType: 'play_game', targetValue: 1, rewardXp: 50 },
-        { title: 'Rate a Game', targetType: 'rate_game', targetValue: 1, rewardXp: 30 },
-        { title: 'Daily Login', targetType: 'login', targetValue: 1, rewardXp: 20 }
-      ]
-    });
+  if (count < defaultQuests.length) {
+    for (const q of defaultQuests) {
+      const exists = await prisma.dailyQuest.findFirst({ where: { targetType: q.targetType } });
+      if (!exists) {
+        await prisma.dailyQuest.create({ data: q });
+      }
+    }
   }
 };
 

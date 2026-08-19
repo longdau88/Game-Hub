@@ -1,6 +1,7 @@
 const userService = require('../services/user.service');
 const prisma = require('../config/db');
 const { pushToUser } = require('./notification.controller');
+const gamificationController = require('./gamification.controller');
 
 class UserController {
   async getMe(req, res) {
@@ -79,6 +80,9 @@ class UserController {
         return res.json({ following: false });
       }
       await prisma.creatorFollow.create({ data: { followerId, creatorId } });
+      
+      // Advance Quest
+      gamificationController.advanceQuest(followerId, 'follow_creator').catch(console.error);
       
       // Notify the creator
       try {

@@ -1,5 +1,6 @@
 const prisma = require('../config/db');
 const { pushToUser } = require('./notification.controller');
+const gamificationController = require('./gamification.controller');
 
 exports.sendFriendRequest = async (req, res) => {
   try {
@@ -34,6 +35,9 @@ exports.sendFriendRequest = async (req, res) => {
         status: 'pending'
       }
     });
+
+    // Advance Quest
+    gamificationController.advanceQuest(userId, 'add_friend').catch(console.error);
 
     const senderUser = await prisma.user.findUnique({ where: { id: userId }, select: { username: true } });
 

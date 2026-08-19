@@ -546,7 +546,7 @@
   "featured.playNow": "Chơi Ngay",
   "featured.viewDetails": "Xem Chi Tiết",
   "quests.weekly_chest": "Rương Tuần",
-  "quests.weekly_chest_desc": "Hoàn thành 5 nhiệm vụ hàng ngày để mở khóa.",
+  "quests.weekly_chest_desc": "Hoàn thành tất cả nhiệm vụ hàng ngày để mở khóa.",
   "quests.quests_count": "Nhiệm Vụ",
   "quests_rewards": "Nhiệm Vụ & Phần Thưởng",
   "quests_subtitle": "Hoàn thành các thử thách để nhận XP và thăng cấp hồ sơ của bạn.",
@@ -681,5 +681,7 @@
   "featured.play": "Chơi Ngay",
   "popular.title": "Đang Phổ Biến",
   "popular.viewAll": "Xem tất cả",
-  "creator.followBack": "Theo dõi lại"
+  "creator.followBack": "Theo dõi lại",
+  "quests.add_friend": "Thêm một người bạn",
+  "quests.follow_creator": "Theo dõi một Creator"
 }

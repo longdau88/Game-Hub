@@ -22,6 +22,8 @@ export default function QuestsPage() {
     if (title === 'Play a Game') return t("quests.play_game") || title;
     if (title === 'Rate a Game') return t("quests.rate_game") || title;
     if (title === 'Daily Login') return t("quests.daily_login") || title;
+    if (title === 'Add a Friend') return t("quests.add_friend") || "Thêm một người bạn";
+    if (title === 'Follow a Creator') return t("quests.follow_creator") || "Theo dõi một Creator";
     return title;
   };
 
@@ -66,6 +68,10 @@ export default function QuestsPage() {
   
   if (!mounted) return null;
 
+  const completedQuestsCount = quests.filter(q => q.completed).length;
+  const totalQuestsCount = quests.length > 0 ? quests.length : 5; // Fallback to 5 if loading
+  const progressPercent = Math.min((completedQuestsCount / totalQuestsCount) * 100, 100);
+
   return (
     <div className="flex flex-col space-y-10 pb-10 max-w-4xl mx-auto">
       
@@ -79,11 +85,14 @@ export default function QuestsPage() {
           <CardContent className="p-6">
             <Gift className="w-8 h-8 mb-4 text-white/80" />
             <h3 className="text-xl font-bold mb-1">{t("quests.weekly_chest") || "Weekly Chest"}</h3>
-            <p className="text-indigo-100 text-sm mb-4">{t("quests.weekly_chest_desc") || "Complete 5 daily quests to unlock."}</p>
+            <p className="text-indigo-100 text-sm mb-4">{t("quests.weekly_chest_desc") || `Hoàn thành ${totalQuestsCount} nhiệm vụ để mở khóa.`}</p>
             <div className="w-full bg-black/20 rounded-full h-2 mb-2">
-              <div className="bg-white h-2 rounded-full w-3/5" />
+              <div 
+                className="bg-white h-2 rounded-full transition-all duration-1000 ease-out" 
+                style={{ width: `${progressPercent}%` }} 
+              />
             </div>
-            <p className="text-xs text-indigo-100 text-right">3/5 {t("quests.quests_count") || "Quests"}</p>
+            <p className="text-xs text-indigo-100 text-right">{completedQuestsCount}/{totalQuestsCount} {t("quests.quests_count") || "Quests"}</p>
           </CardContent>
         </Card>
         

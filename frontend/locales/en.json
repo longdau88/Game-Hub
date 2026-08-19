@@ -334,7 +334,7 @@
   "admin.btnCancel": "Cancel",
   "admin.btnReject": "Reject",
   "quests.weekly_chest": "Weekly Chest",
-  "quests.weekly_chest_desc": "Complete 5 daily quests to unlock.",
+  "quests.weekly_chest_desc": "Complete all daily quests to unlock.",
   "quests.quests_count": "Quests",
   "quests_rewards": "Quests & Rewards",
   "quests_subtitle": "Complete challenges to earn XP and level up your profile.",
@@ -642,5 +642,7 @@
   "featured.play": "Play Now",
   "popular.title": "Popular Right Now",
   "popular.viewAll": "View all",
-  "creator.followBack": "Follow Back"
+  "creator.followBack": "Follow Back",
+  "quests.add_friend": "Add a Friend",
+  "quests.follow_creator": "Follow a Creator"
 }
