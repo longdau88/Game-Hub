@@ -22,7 +22,7 @@ const NAVIGATION = [
 export default function CreatorLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user } = useAuth();
+  const { profile: user } = useAuth();
   const { t } = useLanguage();
 
   return (
