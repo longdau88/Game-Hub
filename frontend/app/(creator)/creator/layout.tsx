@@ -12,6 +12,7 @@ import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAppDialog } from "@/contexts/DialogContext";
+import NotificationDropdown from "@/components/NotificationDropdown";
 
 const NAVIGATION = [
   { nameKey: "admin.tabDashboard", defaultName: "Dashboard", href: "/creator/dashboard", icon: LayoutDashboard },
@@ -120,13 +121,10 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
               <LanguageSwitcher />
             </div>
 
-            <Button variant="ghost" size="icon" className="relative text-muted-foreground">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-500 rounded-full" />
-            </Button>
+            <NotificationDropdown />
             <Link href="/creator/games/new">
               <Button className="bg-indigo-600 hover:bg-indigo-700 text-white border-0 shadow-lg shadow-indigo-500/20">
-                <Upload className="w-4 h-4 mr-2" /> Upload Game
+                <Upload className="w-4 h-4 mr-2" /> {t("creator.uploadGame") || "Upload Game"}
               </Button>
             </Link>
           </div>
