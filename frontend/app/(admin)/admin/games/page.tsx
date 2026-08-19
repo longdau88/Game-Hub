@@ -58,7 +58,7 @@ export default function GameManagementPage() {
 
     try {
       await fetchAPI(`/admin/games/${id}/approve`, { method: 'PUT' });
-      notify({ message: "Game approved successfully", variant: "success" });
+      notify({ message: t("admin.gameApprovedSuccess") || "Game approved successfully", variant: "success" });
       fetchGames(activeTab);
     } catch (err) {
       notify({ message: t("game.loadError") || "Failed to approve game", variant: "error" });
@@ -71,7 +71,7 @@ export default function GameManagementPage() {
 
     try {
       await fetchAPI(`/admin/games/${id}/reject`, { method: 'PUT', body: JSON.stringify({ reason: "Rejected by admin" }) });
-      notify({ message: "Game rejected", variant: "success" });
+      notify({ message: t("admin.gameRejectedSuccess") || "Game rejected", variant: "success" });
       fetchGames(activeTab);
     } catch (err) {
       notify({ message: t("game.loadError") || "Failed to reject game", variant: "error" });
@@ -81,7 +81,7 @@ export default function GameManagementPage() {
   const handleFeature = async (id: string) => {
     try {
       await fetchAPI(`/admin/games/${id}/feature`, { method: 'PUT' });
-      notify({ message: "Featured status updated", variant: "success" });
+      notify({ message: t("admin.gameFeaturedSuccess") || "Featured status updated", variant: "success" });
       fetchGames(activeTab);
     } catch (err) {
       notify({ message: t("game.loadError") || "Failed to update featured status", variant: "error" });
@@ -94,7 +94,7 @@ export default function GameManagementPage() {
 
     try {
       await fetchAPI(`/admin/games/${id}`, { method: 'DELETE' });
-      notify({ message: "Game deleted", variant: "success" });
+      notify({ message: t("admin.gameDeletedSuccess") || "Game deleted", variant: "success" });
       fetchGames(activeTab);
     } catch (err) {
       notify({ message: t("game.loadError") || "Failed to delete game", variant: "error" });

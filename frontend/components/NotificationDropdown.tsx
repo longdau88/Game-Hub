@@ -114,6 +114,22 @@ export default function NotificationDropdown() {
   const getLocalizedMessage = (notif: any) => {
     if (!notif.type) return notif.message;
     
+    try {
+      // Attempt to parse JSON message format
+      const data = JSON.parse(notif.message);
+      if (data.key) {
+        let msg = t(data.key) || notif.message;
+        if (data.params) {
+          Object.keys(data.params).forEach(k => {
+            msg = msg.replace(`{${k}}`, data.params[k]);
+          });
+        }
+        return msg;
+      }
+    } catch (e) {
+      // Fallback to legacy string format
+    }
+    
     let match = notif.message.match(/"(.*?)"/);
     const gameTitle = match ? match[1] : '';
 
@@ -138,18 +154,18 @@ export default function NotificationDropdown() {
         return gameTitle ? t("notif.creatorGameUpdated").replace("{title}", gameTitle) : notif.message;
       case 'FRIEND_REQUEST': {
         const match = notif.message.match(/from (.*?)\.$/);
-        const username = match ? match[1] : 'Someone';
-        return t("notif.friendRequest") ? t("notif.friendRequest").replace("{username}", username) : notif.message;
+        const uname = match ? match[1] : 'Someone';
+        return t("notif.friendRequest") ? t("notif.friendRequest").replace("{username}", uname) : notif.message;
       }
       case 'FRIEND_ACCEPTED': {
         const match = notif.message.match(/^(.*?) accepted/);
-        const username = match ? match[1] : 'Someone';
-        return t("notif.friendAccepted") ? t("notif.friendAccepted").replace("{username}", username) : notif.message;
+        const uname = match ? match[1] : 'Someone';
+        return t("notif.friendAccepted") ? t("notif.friendAccepted").replace("{username}", uname) : notif.message;
       }
       case 'NEW_FOLLOWER': {
         const match = notif.message.match(/^(.*?) started following you/);
-        const username = match ? match[1] : 'Someone';
-        return t("notif.newFollower") ? t("notif.newFollower").replace("{username}", username) : notif.message;
+        const uname = match ? match[1] : 'Someone';
+        return t("notif.newFollower") ? t("notif.newFollower").replace("{username}", uname) : notif.message;
       }
       default:
         return notif.message;

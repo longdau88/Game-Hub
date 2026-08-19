@@ -3,6 +3,7 @@
 import { useLanguage } from "../contexts/LanguageContext";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function LanguageSwitcher() {
   const { locale, setLocale } = useLanguage();
@@ -17,9 +18,27 @@ export default function LanguageSwitcher() {
     return <div className="w-16 h-8 rounded-lg bg-zinc-100/50 dark:bg-zinc-800/50 animate-pulse"></div>;
   }
 
-  const changeLanguage = (newLocale: "en" | "vi") => {
+  const changeLanguage = async (newLocale: "en" | "vi") => {
     if (locale !== newLocale) {
       setLocale(newLocale);
+      
+      const token = Cookies.get("token");
+      if (token) {
+        try {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+          await fetch(`${apiUrl}/api/users/me`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ locale: newLocale })
+          });
+        } catch (error) {
+          console.error("Failed to update locale on backend", error);
+        }
+      }
+
       router.refresh();
     }
   };

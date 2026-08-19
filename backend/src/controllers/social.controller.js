@@ -105,7 +105,7 @@ exports.addComment = async (req, res) => {
           userId: game.uploaderId,
           type: 'NEW_COMMENT',
           title: 'New Comment',
-          message: `${comment.user.username} commented on your game "${game.title}".`,
+          message: JSON.stringify({ key: 'notif.newComment', params: { username: comment.user.username, title: game.title } }),
           link: `/game/play?id=${game.id}`
         }
       });

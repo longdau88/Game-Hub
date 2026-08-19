@@ -76,7 +76,7 @@ class UserController {
               userId: creatorId,
               type: 'NEW_FOLLOWER',
               title: 'New Follower',
-              message: `${followerUser.username} started following you.`,
+              message: JSON.stringify({ key: 'notif.newFollower', params: { username: followerUser.username } }),
               link: '/profile'
             }
           });

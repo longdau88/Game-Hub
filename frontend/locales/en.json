@@ -625,5 +625,11 @@
   "game.report": "Report",
   "game.creator": "Creator",
   "game.follow": "Follow",
-  "game.notFound": "Game not found"
+  "game.notFound": "Game not found",
+  "admin.searchGame": "Search by title or uploader...",
+  "admin.gameApprovedSuccess": "Game approved successfully!",
+  "admin.gameRejectedSuccess": "Game rejected successfully.",
+  "admin.gameDeletedSuccess": "Game deleted successfully.",
+  "admin.gameFeaturedSuccess": "Featured status updated.",
+  "admin.title": "Admin Dashboard"
 }

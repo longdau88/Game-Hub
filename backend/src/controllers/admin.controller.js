@@ -286,7 +286,7 @@ exports.rejectGame = async (req, res) => {
           userId: game.uploader.id,
           type: 'GAME_REJECTED',
           title: 'Game Rejected',
-          message: `Your game "${game.title}" was rejected. Reason: ${rejectReason || 'None specified.'}`,
+          message: JSON.stringify({ key: 'notif.gameRejected', params: { title: game.title, reason: rejectReason || 'None specified.' } }),
           link: '/creator'
         }
       });
@@ -300,16 +300,30 @@ exports.rejectGame = async (req, res) => {
     });
     
     if (game.uploader && game.uploader.email) {
-      await sendEmail({
-        to: game.uploader.email,
-        subject: `[Game Hub] Your game "${game.title}" was rejected`,
-        html: `
+      const isVi = game.uploader.locale === 'vi';
+      const subject = isVi 
+        ? `[Game Hub] Game "${game.title}" của bạn đã bị từ chối` 
+        : `[Game Hub] Your game "${game.title}" was rejected`;
+      const html = isVi 
+        ? `
+          <h3>Xin chào ${game.uploader.username},</h3>
+          <p>Rất tiếc, game <strong>${game.title}</strong> của bạn đã bị đội ngũ kiểm duyệt từ chối.</p>
+          <p><strong>Lý do:</strong> ${rejectReason || 'Không có lý do cụ thể.'}</p>
+          <p>Bạn có thể chỉnh sửa lại thông tin game và tải lên lại để được xét duyệt.</p>
+          <p>Trân trọng,<br/>Đội ngũ Game Hub</p>
+        `
+        : `
           <h3>Hello ${game.uploader.username},</h3>
           <p>Unfortunately, your game <strong>${game.title}</strong> has been rejected by our moderation team.</p>
           <p><strong>Reason:</strong> ${rejectReason || 'No specific reason provided.'}</p>
           <p>You can edit your game details and submit it again for approval.</p>
           <p>Best regards,<br/>The Game Hub Team</p>
-        `
+        `;
+
+      await sendEmail({
+        to: game.uploader.email,
+        subject,
+        html
       });
     }
     
@@ -354,7 +368,7 @@ exports.deleteGame = async (req, res) => {
           userId: game.uploaderId,
           type: 'GAME_DELETED',
           title: 'Game Deleted',
-          message: `Your game "${game.title}" was permanently deleted by an admin.`,
+          message: JSON.stringify({ key: 'notif.gameDeleted', params: { title: game.title } }),
           link: '/creator'
         }
       });

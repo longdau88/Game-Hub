@@ -43,7 +43,7 @@ exports.sendFriendRequest = async (req, res) => {
         userId: targetUser.id,
         type: 'FRIEND_REQUEST',
         title: 'New Friend Request',
-        message: `You have a new friend request from ${senderUser.username}.`,
+        message: JSON.stringify({ key: 'notif.friendRequest', params: { username: senderUser.username } }),
         link: '/profile'
       }
     });
@@ -78,7 +78,7 @@ exports.acceptFriendRequest = async (req, res) => {
         userId: friendship.userId,
         type: 'FRIEND_ACCEPTED',
         title: 'Friend Request Accepted',
-        message: `${receiverUser.username} accepted your friend request.`,
+        message: JSON.stringify({ key: 'notif.friendAccepted', params: { username: receiverUser.username } }),
         link: '/profile'
       }
     });

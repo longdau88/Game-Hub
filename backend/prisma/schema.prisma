@@ -21,6 +21,7 @@ model User {
   isBanned          Boolean       @default(false) @map("is_banned")
   verificationToken String?       @map("verification_token") @db.VarChar(255)
   avatarUrl         String?       @map("avatar_url") @db.Text
+  locale            String        @default("en") @db.VarChar(5)
   bio               String?       @db.Text
   xp                Int           @default(0)
   level             Int           @default(1)

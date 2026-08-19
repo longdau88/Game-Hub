@@ -6,7 +6,8 @@ const clients = new Map();
 
 // Helper: push notification to all SSE clients of a user
 exports.pushToUser = (userId, notification) => {
-  const userClients = clients.get(userId) || [];
+  const key = String(userId);
+  const userClients = clients.get(key) || [];
   userClients.forEach(res => {
     try {
       res.write(`data: ${JSON.stringify(notification)}\n\n`);
@@ -16,7 +17,7 @@ exports.pushToUser = (userId, notification) => {
 
 // SSE stream endpoint
 exports.streamNotifications = (req, res) => {
-  const userId = req.user.userId;
+  const key = String(req.user.userId);
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
@@ -24,8 +25,8 @@ exports.streamNotifications = (req, res) => {
   res.flushHeaders();
 
   // Register this client
-  if (!clients.has(userId)) clients.set(userId, []);
-  clients.get(userId).push(res);
+  if (!clients.has(key)) clients.set(key, []);
+  clients.get(key).push(res);
 
   // Send heartbeat every 25s to keep connection alive
   const heartbeat = setInterval(() => {
@@ -34,11 +35,11 @@ exports.streamNotifications = (req, res) => {
 
   req.on('close', () => {
     clearInterval(heartbeat);
-    const remaining = (clients.get(userId) || []).filter(r => r !== res);
+    const remaining = (clients.get(key) || []).filter(r => r !== res);
     if (remaining.length === 0) {
-      clients.delete(userId);
+      clients.delete(key);
     } else {
-      clients.set(userId, remaining);
+      clients.set(key, remaining);
     }
   });
 };

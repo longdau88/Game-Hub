@@ -263,7 +263,7 @@ exports.uploadGame = async (req, res) => {
               userId: admin.id,
               type: 'GAME_SUBMITTED',
               title: 'Game Mới Cần Duyệt',
-              message: `Game "${gameTitle}" vừa được tải lên và đang chờ bạn xét duyệt.`,
+              message: JSON.stringify({ key: 'notif.gameSubmitted', params: { title: gameTitle } }),
               link: '/admin/games'
             }
           });
@@ -697,7 +697,7 @@ exports.updateGame = async (req, res) => {
         const followers = await prisma.creatorFollow.findMany({ where: { creatorId: updatedGame.uploaderId }, select: { followerId: true } });
         await Promise.all(followers.map(async ({ followerId }) => {
           notifiedUsers.add(followerId);
-          const notification = await prisma.notification.create({ data: { userId: followerId, type: 'CREATOR_GAME_UPDATED', title: 'Game Updated', message: `A creator you follow updated "${updatedGame.title}".`, link: `/game/play?id=${updatedGame.id}` } });
+          const notification = await prisma.notification.create({ data: { userId: followerId, type: 'CREATOR_GAME_UPDATED', title: 'Game Updated', message: JSON.stringify({ key: 'notif.creatorGameUpdated', params: { title: updatedGame.title } }), link: `/game/play?id=${updatedGame.id}` } });
           pushToUser(followerId, notification);
         }));
       }
@@ -706,7 +706,7 @@ exports.updateGame = async (req, res) => {
       await Promise.all(bookmarkedUsers.map(async ({ userId }) => {
         if (!notifiedUsers.has(userId)) {
           notifiedUsers.add(userId);
-          const notification = await prisma.notification.create({ data: { userId, type: 'WISHLIST_GAME_UPDATED', title: 'Wishlist Update', message: `A game in your wishlist "${updatedGame.title}" has been updated.`, link: `/game/play?id=${updatedGame.id}` } });
+          const notification = await prisma.notification.create({ data: { userId, type: 'WISHLIST_GAME_UPDATED', title: 'Wishlist Update', message: JSON.stringify({ key: 'notif.wishlistGameUpdated', params: { title: updatedGame.title } }), link: `/game/play?id=${updatedGame.id}` } });
           pushToUser(userId, notification);
         }
       }));
@@ -826,7 +826,7 @@ exports.approveGame = async (req, res) => {
           userId: updatedGame.uploader.id,
           type: 'GAME_APPROVED',
           title: 'Game Approved',
-          message: `Your game "${updatedGame.title}" has been approved and is now live!`,
+          message: JSON.stringify({ key: 'notif.gameApproved', params: { title: updatedGame.title } }),
           link: `/game/play?id=${updatedGame.id}`
         }
       });
@@ -835,7 +835,7 @@ exports.approveGame = async (req, res) => {
 
     const followers = await prisma.creatorFollow.findMany({ where: { creatorId: updatedGame.uploaderId }, select: { followerId: true } });
     await Promise.all(followers.map(async ({ followerId }) => {
-      const notification = await prisma.notification.create({ data: { userId: followerId, type: 'CREATOR_GAME_PUBLISHED', title: 'New Game', message: `A creator you follow published "${updatedGame.title}".`, link: `/game/play?id=${updatedGame.id}` } });
+      const notification = await prisma.notification.create({ data: { userId: followerId, type: 'CREATOR_GAME_PUBLISHED', title: 'New Game', message: JSON.stringify({ key: 'notif.creatorGamePublished', params: { title: updatedGame.title } }), link: `/game/play?id=${updatedGame.id}` } });
       pushToUser(followerId, notification);
     }));
 
