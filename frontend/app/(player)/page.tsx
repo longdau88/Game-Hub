@@ -48,7 +48,12 @@ export default function PlayerHome() {
           <h1 className="text-3xl font-bold tracking-tight">{t("welcome_back") || "Welcome back"}{user?.username ? `, ${user.username}` : ''} 🎮</h1>
           <p className="text-muted-foreground mt-1">
             {user ? (
-              `${t("xp_away_1") || "You're"} ${(user.nextLevelXP || 1000) - (user.xp || 0)} ${t("xp_away_2") || "XP away from Level"} ${(user.level || 1) + 1}. ${t("keep_playing") || "Keep playing!"}`
+              (() => {
+                const level = user.level || 1;
+                const xp = user.xp || 0;
+                const nextLevelXP = Math.pow(level, 2) * 100;
+                return `${t("xp_away_1") || "You're"} ${nextLevelXP - xp} ${t("xp_away_2") || "XP away from Level"} ${level + 1}. ${t("keep_playing") || "Keep playing!"}`;
+              })()
             ) : (
               t("login_to_track") || "Log in to track your progress and level up!"
             )}
@@ -56,7 +61,7 @@ export default function PlayerHome() {
         </div>
         {user && (
           <div className="w-full md:w-64 bg-surface/50 p-4 rounded-xl border border-border">
-            <XPProgress level={user.level || 1} currentXP={user.xp || 0} nextLevelXP={user.nextLevelXP || 1000} />
+            <XPProgress level={user.level || 1} currentXP={user.xp || 0} nextLevelXP={Math.pow(user.level || 1, 2) * 100} />
           </div>
         )}
       </section>
