@@ -76,7 +76,7 @@ export default function GameManagementPage() {
     if (reason === null) return;
 
     try {
-      await fetchAPI(`/admin/games/${id}/reject`, { method: 'PUT', body: JSON.stringify({ reason: reason || "Rejected by admin" }) });
+      await fetchAPI(`/admin/games/${id}/reject`, { method: 'PUT', body: JSON.stringify({ rejectReason: reason || "Rejected by admin" }) });
       notify({ message: t("admin.gameRejectedSuccess") || "Game rejected", variant: "success" });
       fetchGames(activeTab);
     } catch (err) {
