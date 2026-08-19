@@ -778,5 +778,6 @@
   "creator.saveChanges": "Lưu Thay Đổi",
   "creator.passwordMismatch": "Mật khẩu xác nhận không khớp",
   "creator.profileUpdated": "Đã cập nhật hồ sơ thành công",
-  "creator.passwordUpdated": "Đã đổi mật khẩu thành công"
+  "creator.passwordUpdated": "Đã đổi mật khẩu thành công",
+  "nav.creatorStudio": "Creator Studio"
 }

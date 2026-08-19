@@ -17,7 +17,7 @@ const NAVIGATION = [
   { nameKey: "nav.home", defaultName: "Home", href: "/", icon: Home },
   { nameKey: "nav.discover", defaultName: "Discover", href: "/discover", icon: Compass },
   { nameKey: "nav.library", defaultName: "Library", href: "/library", icon: Library },
-
+  { nameKey: "nav.creatorStudio", defaultName: "Creator Studio", href: "/creator/dashboard", icon: Gamepad2 },
 ];
 
 const SOCIAL = [

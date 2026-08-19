@@ -738,5 +738,6 @@
   "creator.saveChanges": "Save Changes",
   "creator.passwordMismatch": "Passwords do not match",
   "creator.profileUpdated": "Profile updated successfully",
-  "creator.passwordUpdated": "Password changed successfully"
+  "creator.passwordUpdated": "Password changed successfully",
+  "nav.creatorStudio": "Creator Studio"
 }
