@@ -180,7 +180,19 @@ const seedAdmin = async () => {
   }
 };
 
+const imapService = require('./services/imap.service');
+
 app.listen(PORT, async () => {
   await seedAdmin();
+  
+  // Start IMAP Sync Service
+  await imapService.init();
+  if (imapService.client) {
+    // Run sync immediately, then every 1 minute
+    imapService.syncUnreadEmails();
+    setInterval(() => {
+      imapService.syncUnreadEmails();
+    }, 60 * 1000);
+  }
   console.log(`Server is running on port ${PORT}`);
 });
