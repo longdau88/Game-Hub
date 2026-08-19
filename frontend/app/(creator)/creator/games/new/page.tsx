@@ -17,6 +17,10 @@ export default function GameUploadWizard() {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [tags, setTags] = useState("");
+  const [isPublic, setIsPublic] = useState(true);
   const [zipFile, setZipFile] = useState<File | null>(null);
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const zipInputRef = useRef<HTMLInputElement>(null);
@@ -43,14 +47,41 @@ export default function GameUploadWizard() {
   const handleNext = () => setStep(s => Math.min(3, s + 1));
   const handlePrev = () => setStep(s => Math.max(1, s - 1));
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!zipFile) {
+      alert("Please select a game package (.zip)");
+      setStep(2);
+      return;
+    }
+
     setLoading(true);
-    // Simulate API upload
-    setTimeout(() => {
+    try {
+      const formData = new FormData();
+      formData.append('title', title || "Untitled");
+      formData.append('description', description);
+      if (selectedCategories.length > 0) {
+        formData.append('categoryIds', selectedCategories.join(','));
+      }
+      formData.append('tags', tags);
+      formData.append('visibility', isPublic ? "public" : "private");
+      formData.append('gameFile', zipFile);
+      if (coverImage) {
+        formData.append('coverImage', coverImage);
+      }
+
+      await fetchAPI('/games/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      router.push("/creator/games");
+    } catch (err: any) {
+      console.error(err);
+      alert(err.message || "Upload failed");
+    } finally {
       setLoading(false);
-      router.push("/creator/dashboard");
-    }, 1500);
+    }
   };
 
   return (
@@ -117,6 +148,8 @@ export default function GameUploadWizard() {
                   <Label htmlFor="description">{t("creator.description") || "Description"} <span className="text-error">*</span></Label>
                   <textarea 
                     id="description" 
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
                     rows={4}
                     className="flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     placeholder={t("creator.descPlaceholder") || "Describe your game..."}
@@ -149,7 +182,7 @@ export default function GameUploadWizard() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="tags">{t("creator.tags") || "Tags (comma separated)"}</Label>
-                    <Input id="tags" placeholder="cyberpunk, platformer, 2d" />
+                    <Input id="tags" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="cyberpunk, platformer, 2d" />
                   </div>
                 </div>
               </div>
@@ -215,8 +248,8 @@ export default function GameUploadWizard() {
                       <p className="font-semibold">{t("creator.visibility") || "Visibility"}</p>
                       <p className="text-sm text-muted-foreground">{t("creator.makePublicDesc") || "Make this game public immediately"}</p>
                     </div>
-                    <div className="w-12 h-6 rounded-full bg-success relative cursor-pointer">
-                      <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full" />
+                    <div onClick={() => setIsPublic(!isPublic)} className={`w-12 h-6 rounded-full relative cursor-pointer ${isPublic ? "bg-success" : "bg-muted"}`}>
+                      <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${isPublic ? "right-1" : "left-1"}`} />
                     </div>
                   </div>
                 </div>
