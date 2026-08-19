@@ -25,12 +25,14 @@ export default function CreatorDashboard() {
         
         // Calculate stats
         const totalPlays = gamesData.reduce((acc: number, g: any) => acc + (g.playCount || 0), 0);
+        const totalRating = gamesData.reduce((acc: number, g: any) => acc + parseFloat(g.averageRating || "0"), 0);
+        const avgRating = gamesData.length > 0 ? (totalRating / gamesData.length).toFixed(1) : "0.0";
         
         setStats([
           { label: t("total_plays") || "Total Plays", value: totalPlays.toString(), trend: "+0%", isPositive: true, icon: MousePointerClick, color: "text-blue-500", href: "/creator/analytics" },
           { label: t("total_games") || "Total Games", value: gamesData.length.toString(), trend: "+0%", isPositive: true, icon: Gamepad2, color: "text-indigo-500", href: "/creator/games" },
           { label: t("estimated_revenue") || "Estimated Revenue", value: "$0", trend: "0%", isPositive: true, icon: DollarSign, color: "text-emerald-500", href: "/creator/monetization" },
-          { label: t("avg_rating") || "Average Rating", value: "0.0", trend: "0", isPositive: false, icon: BarChart3, color: "text-amber-500", href: "/creator/analytics" },
+          { label: t("avg_rating") || "Average Rating", value: avgRating.toString(), trend: "0", isPositive: false, icon: BarChart3, color: "text-amber-500", href: "/creator/analytics" },
         ]);
         
         setRecentGames(gamesData.slice(0, 3).map((g: any) => ({

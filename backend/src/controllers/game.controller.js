@@ -512,10 +512,16 @@ exports.getMyGames = async (req, res) => {
       where: { uploaderId: req.user.userId },
       orderBy: { createdAt: 'desc' },
       include: {
-        categories: true
+        categories: true,
+        ratings: true
       }
     });
-    res.json(games);
+    const gamesWithRating = games.map(g => {
+       const avg = g.ratings.length ? g.ratings.reduce((acc, r) => acc + r.score, 0) / g.ratings.length : 0;
+       // We can remove the raw ratings array if we want to save bandwidth, but it's fine for now.
+       return { ...g, averageRating: avg.toFixed(1) };
+    });
+    res.json(gamesWithRating);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch my games' });
   }
