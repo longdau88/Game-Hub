@@ -18,8 +18,7 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("settings");
   
   const [profile, setProfile] = useState<any>(null);
-  const [uploadedGames, setUploadedGames] = useState<any[]>([]);
-
+  
   const [selectedCreatorId, setSelectedCreatorId] = useState<number | null>(null);
   const [isCreatorProfileOpen, setIsCreatorProfileOpen] = useState(false);
   
@@ -41,8 +40,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     fetchProfile();
-    fetchUploadedGames();
-  }, []);
+      }, []);
 
   const getAuthHeaders = () => {
     const token = Cookies.get("token");
@@ -80,42 +78,7 @@ export default function ProfilePage() {
     }
   };
 
-  const fetchUploadedGames = async () => {
-    if (!Cookies.get("token")) return;
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/games/creator/games`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        const data = await res.json();
-        setUploadedGames(data);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleDeleteGame = async (gameId: string) => {
-    if (!await confirm({ message: t("profile.confirmDelete"), variant: "warning" })) return;
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-      const res = await fetch(`${apiUrl}/api/games/${gameId}`, {
-        method: "DELETE",
-        headers: getAuthHeaders()
-      });
-      if (res.ok) {
-        await notify({ message: t("profile.deleteSuccess"), variant: "success" });
-        setUploadedGames(uploadedGames.filter(g => g.id !== gameId));
-        fetchProfile();
-      } else {
-        const data = await res.json();
-        await notify({ message: t("profile.deleteError"), variant: "error" });
-      }
-    } catch (error) {
-      await notify({ message: t("profile.deleteError"), variant: "error" });
-    }
-  };
-
-  const handleSave = async (e: React.FormEvent) => {
+      const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     setMessage({ text: "", isError: false });
@@ -254,20 +217,13 @@ export default function ProfilePage() {
               <p className="text-zinc-700 dark:text-zinc-300 max-w-xl text-sm leading-relaxed">{profile?.bio || t("profile.noBio")}</p>
             </div>
             
-            <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-6 md:mt-0">
-              <div className="text-center px-5 py-3 bg-white/50 dark:bg-zinc-800/50 rounded-2xl border border-white/60 dark:border-zinc-700/50 backdrop-blur-md shadow-sm transition-transform hover:scale-[1.02]">
-                <p className="text-2xl font-black text-blue-600 dark:text-blue-400 mb-0.5">{uploadedGames.length}</p>
-                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">{t("profile.myUploads")}</p>
-              </div>
-            </div>
-          </div>
+                      </div>
         </div>
 
         {/* Tabs */}
         <div className="flex overflow-x-auto hide-scrollbar gap-1 sm:gap-2 mb-8 bg-white/60 dark:bg-zinc-900/60 p-2 rounded-2xl border border-white/40 dark:border-zinc-800/80 w-full sm:w-fit mx-auto backdrop-blur-xl shadow-sm relative z-20">
           {[
-            { id: 'settings', icon: Settings, label: t("profile.tabSettings") },
-            { id: 'uploads', icon: UploadCloud, label: t("profile.myUploads") }
+            { id: 'settings', icon: Settings, label: t("profile.tabSettings") }
           ].map(tab => {
             const isActive = activeTab === tab.id;
             return (
@@ -418,60 +374,7 @@ export default function ProfilePage() {
                 </div>
               )}
 
-              {activeTab === 'uploads' && (
-                <div className="bg-white/70 dark:bg-zinc-900/50 border border-white/60 dark:border-zinc-800 rounded-3xl p-6 md:p-8 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none min-h-[400px]">
-                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-                    <h2 className="text-2xl font-bold">{t("profile.myUploads")}</h2>
-                    <Link href="/creator/upload" className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-colors flex items-center gap-2">
-                      <UploadCloud className="w-4 h-4" /> {t("profile.uploadNew")}
-                    </Link>
-                  </div>
-                  {uploadedGames.length === 0 ? (
-                    <div className="text-center py-12 text-zinc-500 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl">
-                      <p>{t("profile.noGamesUploaded")}</p>
-                    </div>
-                  ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead>
-                          <tr className="border-b border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 text-sm">
-                            <th className="py-4 font-medium">{t("profile.game")}</th>
-                            <th className="py-4 font-medium">{t("profile.status")}</th>
-                            <th className="py-4 font-medium text-right">{t("profile.actions")}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {uploadedGames.map(game => (
-                            <tr key={game.id} className="border-b border-zinc-200/50 dark:border-zinc-800/50 hover:bg-zinc-100/20 dark:bg-zinc-800/20 transition-colors">
-                              <td className="py-4">
-                                <div className="flex items-center gap-3">
-                                  <img src={game.coverImageUrl || '/placeholder.png'} className="w-12 h-12 rounded-lg object-cover" />
-                                  <div>
-                                    <p className="font-bold text-zinc-900 dark:text-white">{game.title}</p>
-                                    <p className="text-xs text-zinc-500">{new Date(game.createdAt).toLocaleDateString()}</p>
-                                  </div>
-                                </div>
-                              </td>
-                              <td className="py-4">
-                                <span className={`px-2 py-1 text-xs font-bold rounded ${game.status === 'published' ? 'bg-green-500/10 text-green-500' : game.status === 'rejected' ? 'bg-red-500/10 text-red-500' : 'bg-yellow-500/10 text-yellow-500'}`}>
-                                  {t(`profile.status_${game.status}`) || game.status}
-                                </span>
-                              </td>
-                              <td className="py-4 text-right">
-                                <div className="flex items-center justify-end gap-2">
-                                  {game.status === 'published' && (
-                                    <Link href={`/game/play?id=${game.id}`} className="text-xs font-medium px-3 py-1.5 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors">{t("profile.play")}</Link>
-                                  )}
-                                  <Link href={`/creator/edit/${game.id}`} className="text-xs font-medium px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:bg-zinc-700 rounded-lg transition-colors">{t("profile.edit")}</Link>
-                                  <button onClick={() => handleDeleteGame(game.id)} className="text-xs font-medium px-3 py-1.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg transition-colors">{t("profile.delete")}</button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+              
                 </div>
               )}
             </motion.div>

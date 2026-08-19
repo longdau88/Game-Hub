@@ -135,7 +135,7 @@ export default function CreatorGamesPage() {
                     <Button variant="ghost" size="sm" title={t("creator.analytics") || "Analytics"} onClick={() => router.push('/creator/analytics')}>
                       <BarChart2 className="w-4 h-4 text-muted-foreground" />
                     </Button>
-                    <Button variant="ghost" size="sm" title={t("creator.edit") || "Edit"} onClick={() => router.push(`/profile/edit-game/${game.id}`)}>
+                    <Button variant="ghost" size="sm" title={t("creator.edit") || "Edit"} onClick={() => router.push(`/creator/games/edit/${game.id}`)}>
                       <Edit className="w-4 h-4 text-muted-foreground" />
                     </Button>
                     <Button variant="ghost" size="icon" className="hover:text-error" title={t("creator.delete") || "Delete"} onClick={() => handleDelete(game.id)}>
