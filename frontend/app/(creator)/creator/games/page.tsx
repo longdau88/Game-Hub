@@ -40,7 +40,7 @@ export default function CreatorGamesPage() {
 
   
   const handleDelete = async (id: string) => {
-    if (await confirm({ title: t("creator.deleteConfirmTitle") || "Delete Game", description: t("creator.deleteConfirmDesc") || "Are you sure you want to delete this game? This action cannot be undone." })) {
+    if (await confirm({ title: t("creator.deleteConfirmTitle") || "Delete Game", message: t("creator.deleteConfirmDesc") || "Are you sure you want to delete this game? This action cannot be undone." })) {
       try {
         await fetchAPI(`/games/${id}`, { method: 'DELETE' });
         setGames(games.filter(g => g.id !== id));
