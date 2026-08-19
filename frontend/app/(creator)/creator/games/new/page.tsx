@@ -8,15 +8,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UploadCloud, FileArchive, Image as ImageIcon, CheckCircle2, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { fetchAPI } from "@/lib/api";
 
 export default function GameUploadWizard() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
   const { t } = useLanguage();
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    fetchAPI('/categories')
+      .then(res => {
+        if (res.data) setCategories(res.data);
+      })
+      .catch(console.error);
+  }, []);
+
   if (!mounted) return null;
 
   const handleNext = () => setStep(s => Math.min(3, s + 1));
@@ -106,11 +116,10 @@ export default function GameUploadWizard() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="category">{t("creator.category") || "Category"}</Label>
-                    <select id="category" multiple className="min-h-[100px] flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                      <option value="action">{t("creator.catAction") || "Action"}</option>
-                      <option value="puzzle">{t("creator.catPuzzle") || "Puzzle"}</option>
-                      <option value="adventure">{t("creator.catAdventure") || "Adventure"}</option>
-                      <option value="racing">{t("creator.catRacing") || "Racing"}</option>
+                    <select id="category" multiple className="min-h-[100px] flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                      {categories.map((c) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="space-y-2">
