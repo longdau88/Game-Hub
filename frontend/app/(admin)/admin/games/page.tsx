@@ -26,7 +26,7 @@ export default function GameManagementPage() {
   const [saving, setSaving] = useState(false);
   
   const { t } = useLanguage();
-  const { notify, confirm } = useAppDialog();
+  const { notify, confirm, prompt } = useAppDialog();
 
   useEffect(() => {
     setMounted(true);
@@ -66,11 +66,17 @@ export default function GameManagementPage() {
   };
 
   const handleReject = async (id: string) => {
-    const isConfirmed = await confirm({ message: t("admin.rejectPrompt") || "Are you sure you want to reject this game?", variant: "warning" });
-    if (!isConfirmed) return;
+    const reason = await prompt({ 
+      message: t("admin.rejectPrompt") || "Are you sure you want to reject this game?", 
+      variant: "warning",
+      placeholder: t("admin.rejectReasonPlaceholder") || "Enter reason for rejection...",
+      confirmLabel: t("admin.rejectConfirm") || "Reject"
+    });
+    
+    if (reason === null) return;
 
     try {
-      await fetchAPI(`/admin/games/${id}/reject`, { method: 'PUT', body: JSON.stringify({ reason: "Rejected by admin" }) });
+      await fetchAPI(`/admin/games/${id}/reject`, { method: 'PUT', body: JSON.stringify({ reason: reason || "Rejected by admin" }) });
       notify({ message: t("admin.gameRejectedSuccess") || "Game rejected", variant: "success" });
       fetchGames(activeTab);
     } catch (err) {
