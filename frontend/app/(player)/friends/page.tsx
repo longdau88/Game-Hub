@@ -357,7 +357,7 @@ export default function FriendsPage() {
       <CreatorProfileModal
         creatorId={selectedUserId as number}
         isOpen={isProfileOpen}
-        onClose={() => setIsProfileOpen(false)}
+        onClose={() => { setIsProfileOpen(false); fetchData(); }}
       />
 
     </div>
