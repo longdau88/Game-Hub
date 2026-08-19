@@ -279,7 +279,7 @@
   "admin.tabStorage": "Lưu trữ & Băng thông",
   "admin.tabMail": "Chiến dịch Email",
   "admin.tabCategories": "Thể Loại",
-  "admin.tabAudit": "Nhật ký Hoạt động",
+  "admin.tabAudit": "Lịch sử hoạt động",
   "admin.btnDeleteSelected": "Xóa đã chọn",
   "admin.btnDeleteAll": "Xóa toàn bộ",
   "admin.auditLogTitle": "Nhật ký Hoạt động Quản trị",
@@ -779,5 +779,12 @@
   "creator.passwordMismatch": "Mật khẩu xác nhận không khớp",
   "creator.profileUpdated": "Đã cập nhật hồ sơ thành công",
   "creator.passwordUpdated": "Đã đổi mật khẩu thành công",
-  "nav.creatorStudio": "Creator Studio"
+  "nav.creatorStudio": "Creator Studio",
+  "admin.audit.title": "Lịch sử hoạt động",
+  "admin.audit.desc": "Theo dõi toàn bộ thao tác của Admin trên hệ thống.",
+  "admin.audit.colTime": "Thời gian",
+  "admin.audit.colAdmin": "Quản trị viên",
+  "admin.audit.colAction": "Hành động",
+  "admin.audit.colEntity": "Đối tượng",
+  "admin.audit.colDetails": "Chi tiết"
 }

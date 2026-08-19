@@ -739,5 +739,12 @@
   "creator.passwordMismatch": "Passwords do not match",
   "creator.profileUpdated": "Profile updated successfully",
   "creator.passwordUpdated": "Password changed successfully",
-  "nav.creatorStudio": "Creator Studio"
+  "nav.creatorStudio": "Creator Studio",
+  "admin.audit.title": "Audit Logs",
+  "admin.audit.desc": "Track all Admin actions on the system.",
+  "admin.audit.colTime": "Time",
+  "admin.audit.colAdmin": "Admin",
+  "admin.audit.colAction": "Action",
+  "admin.audit.colEntity": "Entity",
+  "admin.audit.colDetails": "Details"
 }
