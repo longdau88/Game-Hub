@@ -13,7 +13,8 @@ export default function SupportInboxPage() {
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
   const [replyBody, setReplyBody] = useState("");
   const [isReplying, setIsReplying] = useState(false);
-  const { isVi } = useLanguage();
+  const { locale } = useLanguage();
+  const isVi = locale === "vi";
   const { notify, confirm } = useAppDialog();
 
   const fetchTickets = () => {
@@ -33,7 +34,7 @@ export default function SupportInboxPage() {
     e.stopPropagation();
     const confirmed = await confirm({
       title: isVi ? "Xóa tin nhắn?" : "Delete message?",
-      description: isVi ? "Bạn có chắc muốn xóa tin nhắn hỗ trợ này không?" : "Are you sure you want to delete this support message?"
+      message: isVi ? "Bạn có chắc muốn xóa tin nhắn hỗ trợ này không?" : "Are you sure you want to delete this support message?"
     });
     
     if (confirmed) {

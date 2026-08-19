@@ -15,7 +15,8 @@ export function ContactSupportModal({ isOpen, onClose, defaultEmail = '' }: Cont
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { isVi } = useLanguage();
+  const { locale } = useLanguage();
+  const isVi = locale === "vi";
   const { notify } = useAppDialog();
 
   if (!isOpen) return null;
