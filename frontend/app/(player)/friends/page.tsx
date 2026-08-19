@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Search, UserPlus, MessageSquare, UserMinus, Check, X } from "lucide-react";
+import { Users, Search, UserPlus, MessageSquare, UserMinus, Check, X, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar } from "@/components/ui/avatar";
