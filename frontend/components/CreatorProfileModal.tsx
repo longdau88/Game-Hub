@@ -22,7 +22,7 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
   const [loading, setLoading] = useState(true);
   const [followLoading, setFollowLoading] = useState(false);
   const [friendLoading, setFriendLoading] = useState(false);
-  const { token, requireAuth } = useAuth();
+  const { token, requireAuth, profile: currentUser } = useAuth();
 
   useEffect(() => {
     if (!isOpen || !creatorId) return;
@@ -214,44 +214,46 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
                     </div>
                   </div>
 
-                  <div className="flex gap-3">
-                    <button 
-                      onClick={handleFollow}
-                      disabled={followLoading}
-                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-50 relative overflow-hidden group ${
-                        profile.isFollowing 
-                          ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700" 
-                          : "text-white shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] hover:-translate-y-0.5"
-                      }`}
-                    >
-                      {!profile.isFollowing && (
-                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:from-blue-400 group-hover:to-purple-500 transition-colors" />
-                      )}
-                      <div className="relative flex items-center gap-2 z-10">
-                        {profile.isFollowing ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />} 
-                        {profile.isFollowing ? (t("creator.following") || "Đang theo dõi") : (t("creator.follow") || "Theo dõi")}
-                      </div>
-                    </button>
-                    
-                    <button
-                      onClick={handleAddFriend}
-                      disabled={friendLoading || profile.friendshipStatus === 'accepted' || profile.friendshipStatus === 'pending'}
-                      className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-50 ${
-                        profile.friendshipStatus === 'accepted'
-                          ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20"
-                          : profile.friendshipStatus === 'pending'
-                          ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 border border-zinc-200 dark:border-zinc-700"
-                          : "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-700 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-zinc-300 dark:hover:border-zinc-600"
-                      }`}
-                    >
-                      <UserPlus className="w-4 h-4" />
-                      {profile.friendshipStatus === 'accepted' 
-                        ? (t("creator.friend") || "Bạn bè") 
-                        : profile.friendshipStatus === 'pending' 
-                        ? (t("creator.friend_pending") || "Đã gửi Yêu cầu") 
-                        : (t("creator.add_friend") || "Kết bạn")}
-                    </button>
-                  </div>
+                  {currentUser?.id !== profile.id && (
+                    <div className="flex gap-3">
+                      <button 
+                        onClick={handleFollow}
+                        disabled={followLoading}
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-50 relative overflow-hidden group ${
+                          profile.isFollowing 
+                            ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700" 
+                            : "text-white shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] hover:-translate-y-0.5"
+                        }`}
+                      >
+                        {!profile.isFollowing && (
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 group-hover:from-blue-400 group-hover:to-purple-500 transition-colors" />
+                        )}
+                        <div className="relative flex items-center gap-2 z-10">
+                          {profile.isFollowing ? <UserCheck className="w-4 h-4" /> : <UserPlus className="w-4 h-4" />} 
+                          {profile.isFollowing ? (t("creator.following") || "Đang theo dõi") : (t("creator.follow") || "Theo dõi")}
+                        </div>
+                      </button>
+                      
+                      <button
+                        onClick={handleAddFriend}
+                        disabled={friendLoading || profile.friendshipStatus === 'accepted' || profile.friendshipStatus === 'pending'}
+                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all disabled:opacity-50 ${
+                          profile.friendshipStatus === 'accepted'
+                            ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20"
+                            : profile.friendshipStatus === 'pending'
+                            ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-500 border border-zinc-200 dark:border-zinc-700"
+                            : "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-700 shadow-sm hover:shadow-md hover:-translate-y-0.5 hover:border-zinc-300 dark:hover:border-zinc-600"
+                        }`}
+                      >
+                        <UserPlus className="w-4 h-4" />
+                        {profile.friendshipStatus === 'accepted' 
+                          ? (t("creator.friend") || "Bạn bè") 
+                          : profile.friendshipStatus === 'pending' 
+                          ? (t("creator.friend_pending") || "Đã gửi Yêu cầu") 
+                          : (t("creator.add_friend") || "Kết bạn")}
+                      </button>
+                    </div>
+                  )}
 
                   {/* Games List */}
                   {profile.games && profile.games.length > 0 && (
