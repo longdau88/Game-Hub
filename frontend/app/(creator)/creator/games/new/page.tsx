@@ -7,12 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UploadCloud, FileArchive, Image as ImageIcon, CheckCircle2, AlertCircle } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function GameUploadWizard() {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
@@ -33,8 +35,8 @@ export default function GameUploadWizard() {
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Upload New Game</h1>
-        <p className="text-muted-foreground mt-1">Share your creation with the GameHub community.</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t("creator.uploadNewGame") || "Upload New Game"}</h1>
+        <p className="text-muted-foreground mt-1">{t("creator.uploadDesc") || "Share your creation with the GameHub community."}</p>
       </div>
 
       {/* Progress Steps */}
@@ -46,9 +48,9 @@ export default function GameUploadWizard() {
         />
         
         {[
-          { num: 1, label: "Basic Info" },
-          { num: 2, label: "Assets" },
-          { num: 3, label: "Review" },
+          { num: 1, label: t("creator.step1") || "Basic Info" },
+          { num: 2, label: t("creator.step2") || "Assets" },
+          { num: 3, label: t("creator.step3") || "Review" },
         ].map((s) => (
           <div key={s.num} className="flex flex-col items-center gap-2">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 transition-colors ${
@@ -69,14 +71,14 @@ export default function GameUploadWizard() {
         <Card className="bg-surface/50 border-border">
           <CardHeader>
             <CardTitle>
-              {step === 1 && "Basic Information"}
-              {step === 2 && "Game Assets"}
-              {step === 3 && "Review & Publish"}
+              {step === 1 && (t("creator.step1Title") || "Basic Information")}
+              {step === 2 && (t("creator.step2Title") || "Game Assets")}
+              {step === 3 && (t("creator.step3Title") || "Review & Publish")}
             </CardTitle>
             <CardDescription>
-              {step === 1 && "Enter the primary details for your game."}
-              {step === 2 && "Upload your HTML5 game package and marketing assets."}
-              {step === 3 && "Verify all details before publishing to the platform."}
+              {step === 1 && (t("creator.step1Desc") || "Enter the primary details for your game.")}
+              {step === 2 && (t("creator.step2Desc") || "Upload your HTML5 game package and marketing assets.")}
+              {step === 3 && (t("creator.step3Desc") || "Verify all details before publishing to the platform.")}
             </CardDescription>
           </CardHeader>
           
@@ -86,33 +88,33 @@ export default function GameUploadWizard() {
             {step === 1 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
                 <div className="space-y-2">
-                  <Label htmlFor="title">Game Title <span className="text-error">*</span></Label>
-                  <Input id="title" placeholder="e.g. Neon District: Zero" required />
+                  <Label htmlFor="title">{t("creator.gameTitle") || "Game Title"} <span className="text-error">*</span></Label>
+                  <Input id="title" placeholder={t("creator.gameTitlePlaceholder") || "e.g. Neon District: Zero"} required />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="description">Description <span className="text-error">*</span></Label>
+                  <Label htmlFor="description">{t("creator.description") || "Description"} <span className="text-error">*</span></Label>
                   <textarea 
                     id="description" 
                     rows={4}
                     className="flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    placeholder="Describe your game..."
+                    placeholder={t("creator.descPlaceholder") || "Describe your game..."}
                     required
                   />
                 </div>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
+                    <Label htmlFor="category">{t("creator.category") || "Category"}</Label>
                     <select id="category" className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                      <option value="action">Action</option>
-                      <option value="puzzle">Puzzle</option>
+                      <option value="action">{t("creator.catAction") || "Action"}</option>
+                      <option value="puzzle">{t("creator.catPuzzle") || "Puzzle"}</option>
                       <option value="adventure">Adventure</option>
                       <option value="racing">Racing</option>
                     </select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="tags">Tags (comma separated)</Label>
+                    <Label htmlFor="tags">{t("creator.tags") || "Tags (comma separated)"}</Label>
                     <Input id="tags" placeholder="cyberpunk, platformer, 2d" />
                   </div>
                 </div>

@@ -1,0 +1,13 @@
+const fs = require('fs');
+const path = require('path');
+const viPath = path.join('frontend', 'locales', 'vi.json');
+const enPath = path.join('frontend', 'locales', 'en.json');
+let vi = JSON.parse(fs.readFileSync(viPath, 'utf8'));
+let en = JSON.parse(fs.readFileSync(enPath, 'utf8'));
+vi['creator.published'] = 'Đã Xuất Bản';
+vi['creator.inReview'] = 'Đang Chờ Duyệt';
+en['creator.published'] = 'Published';
+en['creator.inReview'] = 'In Review';
+fs.writeFileSync(viPath, JSON.stringify(vi, null, 2));
+fs.writeFileSync(enPath, JSON.stringify(en, null, 2));
+console.log('Locales updated!');

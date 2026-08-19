@@ -10,6 +10,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 const NAVIGATION = [
   { nameKey: "admin.tabDashboard", defaultName: "Dashboard", href: "/creator/dashboard", icon: LayoutDashboard },
@@ -21,18 +22,8 @@ const NAVIGATION = [
 export default function CreatorLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const { user } = useAuth();
   const { t } = useLanguage();
-
-  useEffect(() => {
-    import("@/lib/api").then(({ fetchAPI }) => {
-      fetchAPI('/auth/me')
-        .then(res => {
-          if (res.user) setUser(res.user);
-        })
-        .catch(() => {});
-    });
-  }, []);
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row w-full bg-background">

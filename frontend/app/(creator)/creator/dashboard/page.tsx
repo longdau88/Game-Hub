@@ -36,7 +36,7 @@ export default function CreatorDashboard() {
         setRecentGames(gamesData.slice(0, 3).map((g: any) => ({
           id: g.id,
           title: g.title,
-          status: g.isPublished ? "Published" : "In Review",
+          status: g.isPublished ? (t("creator.published") || "Published") : (t("creator.inReview") || "In Review"),
           plays: g.playCount?.toString() || "0",
           revenue: "$0",
           rating: g.averageRating?.toString() || "0.0"
