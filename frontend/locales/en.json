@@ -708,5 +708,9 @@
   "creator.reviewGuidelinesDesc": "Please review the platform guidelines. By publishing, you agree that this game does not contain malicious code and you have the rights to distribute it.",
   "creator.publishingSettings": "Publishing Settings",
   "creator.visibility": "Visibility",
-  "creator.makePublicDesc": "Make this game public immediately"
+  "creator.makePublicDesc": "Make this game public immediately",
+  "creator.selectZipFile": "Please select a game package (.zip)",
+  "creator.uploadFailed": "Upload failed",
+  "creator.errorNoIndexHtml": "Zip file does not contain an index.html at the root",
+  "creator.errorInvalidZip": "Invalid zip file format"
 }

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UploadCloud, FileArchive, Image as ImageIcon, CheckCircle2, AlertCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAppDialog } from "@/contexts/DialogContext";
 import { fetchAPI } from "@/lib/api";
 
 export default function GameUploadWizard() {
@@ -26,6 +27,7 @@ export default function GameUploadWizard() {
   const zipInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
   const { t } = useLanguage();
+  const { notify } = useAppDialog();
 
   const toggleCategory = (id: string) => {
     setSelectedCategories(prev => 
@@ -50,7 +52,7 @@ export default function GameUploadWizard() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!zipFile) {
-      alert("Please select a game package (.zip)");
+      notify({ message: t("creator.selectZipFile") || "Please select a game package (.zip)", variant: "error" });
       setStep(2);
       return;
     }
@@ -78,7 +80,13 @@ export default function GameUploadWizard() {
       router.push("/creator/games");
     } catch (err: any) {
       console.error(err);
-      alert(err.message || "Upload failed");
+      let msg = err.message || t("creator.uploadFailed") || "Upload failed";
+      if (msg.includes("does not contain an index.html")) {
+        msg = t("creator.errorNoIndexHtml") || msg;
+      } else if (msg.includes("Invalid zip file format")) {
+        msg = t("creator.errorInvalidZip") || msg;
+      }
+      notify({ message: msg, variant: "error" });
     } finally {
       setLoading(false);
     }

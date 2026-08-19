@@ -747,5 +747,9 @@
   "creator.reviewGuidelinesDesc": "Vui lòng xem lại nguyên tắc của nền tảng. Khi xuất bản, bạn đồng ý rằng trò chơi này không chứa mã độc và bạn có quyền phân phối nó.",
   "creator.publishingSettings": "Cài Đặt Xuất Bản",
   "creator.visibility": "Chế độ hiển thị",
-  "creator.makePublicDesc": "Hiển thị công khai game này ngay lập tức"
+  "creator.makePublicDesc": "Hiển thị công khai game này ngay lập tức",
+  "creator.selectZipFile": "Vui lòng chọn gói game (.zip)",
+  "creator.uploadFailed": "Tải lên thất bại",
+  "creator.errorNoIndexHtml": "File ZIP không chứa file index.html ở thư mục gốc",
+  "creator.errorInvalidZip": "Định dạng file ZIP không hợp lệ"
 }
