@@ -134,6 +134,7 @@ app.use(maintenanceCheck);
 
 // Routes
 const notificationRoutes = require('./routes/notification.routes');
+const supportRoutes = require('./routes/support.routes');
 
 app.use('/api/games', gameRoutes);
 app.use('/api/auth', authLimiter, authRoutes); // Apply stricter rate limiter here
@@ -148,6 +149,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/collections', collectionRoutes);
 app.use('/api/friends', friendRoutes);
 app.use('/api/leaderboards', leaderboardRoutes);
+app.use('/api/support', supportRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

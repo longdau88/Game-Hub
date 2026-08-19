@@ -492,3 +492,66 @@ exports.getAuditLogs = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch audit logs' });
   }
 };
+
+exports.getSupportTickets = async (req, res) => {
+  try {
+    const tickets = await prisma.supportTicket.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+    res.json({ success: true, data: tickets });
+  } catch (error) {
+    console.error('Get support tickets error:', error);
+    res.status(500).json({ error: 'Failed to fetch support tickets' });
+  }
+};
+
+exports.deleteSupportTicket = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.supportTicket.delete({ where: { id: parseInt(id) } });
+    
+    const adminId = req.user?.userId;
+    if (adminId) {
+      await auditLogService.log(adminId, 'DELETE_TICKET', 'SupportTicket', { ticketId: id });
+    }
+
+    res.json({ success: true, message: 'Ticket deleted' });
+  } catch (error) {
+    console.error('Delete ticket error:', error);
+    res.status(500).json({ error: 'Failed to delete ticket' });
+  }
+};
+
+exports.replySupportTicket = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { subject, body } = req.body;
+
+    const ticket = await prisma.supportTicket.findUnique({ where: { id: parseInt(id) } });
+    if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
+
+    // Send email using existing service
+    const { sendEmail } = require('../utils/email');
+    await sendEmail({
+      to: ticket.email,
+      subject: subject,
+      html: `<p>Hi there,</p><p>Regarding your request: <i>${ticket.subject}</i></p><p>${body.replace(/\n/g, '<br/>')}</p>`
+    });
+
+    // Update status
+    await prisma.supportTicket.update({
+      where: { id: parseInt(id) },
+      data: { status: 'REPLIED' }
+    });
+
+    const adminId = req.user?.userId;
+    if (adminId) {
+      await auditLogService.log(adminId, 'REPLY_TICKET', 'SupportTicket', { ticketId: id });
+    }
+
+    res.json({ success: true, message: 'Reply sent successfully' });
+  } catch (error) {
+    console.error('Reply ticket error:', error);
+    res.status(500).json({ error: 'Failed to reply to ticket' });
+  }
+};

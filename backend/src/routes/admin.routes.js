@@ -1,6 +1,6 @@
 const express = require('express');
 const { requireAuth, requireAdmin } = require('../middleware/auth.middleware');
-const { getDashboardStats, getAllUsers, toggleBanUser, changeUserRole, createUser, updateUser, sendEmailToUser, rejectGame, deleteGame, toggleFeaturedGame, garbageCollect, getAuditLogs } = require('../controllers/admin.controller');
+const { getDashboardStats, getAllUsers, toggleBanUser, changeUserRole, createUser, updateUser, sendEmailToUser, rejectGame, deleteGame, toggleFeaturedGame, garbageCollect, getAuditLogs, getSupportTickets, deleteSupportTicket, replySupportTicket } = require('../controllers/admin.controller');
 const { getPendingGames, getPublishedGames, approveGame } = require('../controllers/game.controller');
 const { 
   runGarbageCollection, 
@@ -63,6 +63,11 @@ router.delete('/mail/campaigns', requireAdmin, requireAuth, (req, res, next) => 
   // We need to import the function here or above
   require('../controllers/admin-advanced.controller').deleteEmailCampaigns(req, res).catch(next);
 });
+
+// Support Inbox
+router.get('/support', getSupportTickets);
+router.post('/support/:id/reply', replySupportTicket);
+router.delete('/support/:id', deleteSupportTicket);
 
 // Audit Logs
 router.get('/audit-logs', requireAdmin, requireAuth, (req, res, next) => {

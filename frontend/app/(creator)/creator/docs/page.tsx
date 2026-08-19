@@ -3,10 +3,12 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BookOpen, FileArchive, ShieldAlert, Code2, UploadCloud, Rocket, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ContactSupportModal } from "@/components/ContactSupportModal";
 import { useState, useEffect } from "react";
 
 export default function CreatorDocs() {
   const { t, locale } = useLanguage();
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
@@ -177,12 +179,16 @@ export default function CreatorDocs() {
         </CardContent>
       </Card>
       
-      <div className="text-center pt-4">
-        <p className="text-sm text-muted-foreground">
-          {isVi ? "Bạn cần hỗ trợ thêm?" : "Need more help?"} <a href="mailto:support@gamehub.com" className="text-indigo-500 hover:underline">support@gamehub.com</a>
+      <div className="mt-12 p-6 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-900/30 text-center">
+        <p className="text-zinc-600 dark:text-zinc-400">
+          {isVi ? "Bạn cần hỗ trợ thêm?" : "Need more help?"} <button onClick={() => setIsSupportModalOpen(true)} className="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">support@gamehub.com</button>
         </p>
       </div>
 
+      <ContactSupportModal 
+        isOpen={isSupportModalOpen} 
+        onClose={() => setIsSupportModalOpen(false)} 
+      />
     </div>
   );
 }

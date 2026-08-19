@@ -371,3 +371,14 @@ model Friendship {
   @@unique([userId, friendId])
   @@map("friendships")
 }
+
+model SupportTicket {
+  id        Int      @id @default(autoincrement())
+  email     String   @db.VarChar(255)
+  subject   String   @db.VarChar(255)
+  message   String   @db.Text
+  status    String   @default("OPEN") @db.VarChar(20) // OPEN, REPLIED
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("support_tickets")
+}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Gamepad2, ShieldAlert, LineChart, Settings, Bell, Menu, X, Server, ArrowLeft, LogOut, Activity } from "lucide-react";
+import { LayoutDashboard, Users, Gamepad2, ShieldAlert, LineChart, Settings, Bell, Menu, X, Server, ArrowLeft, LogOut, Activity, Mail } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ const NAVIGATION = [
   { nameKey: "admin.tabUsers", defaultName: "User Management", href: "/admin/users", icon: Users },
   { nameKey: "admin.tabGames", defaultName: "Games & Content", href: "/admin/games", icon: Gamepad2 },
   { nameKey: "admin.tabReports", defaultName: "Moderation", href: "/admin/moderation", icon: ShieldAlert },
+  { nameKey: "admin.tabSupport", defaultName: "Support Inbox", href: "/admin/support", icon: Mail },
   { nameKey: "admin.tabAnalytics", defaultName: "System Metrics", href: "/admin/metrics", icon: LineChart },
   { nameKey: "admin.tabAudit", defaultName: "Audit Logs", href: "/admin/audit", icon: Activity },
   { nameKey: "admin.tabStorage", defaultName: "Infrastructure", href: "/admin/infrastructure", icon: Server },
