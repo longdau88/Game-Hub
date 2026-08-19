@@ -5,8 +5,8 @@ import { BookOpen, FileArchive, ShieldAlert, Code2, UploadCloud, Rocket, CheckCi
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function CreatorDocs() {
-  const { t, language } = useLanguage();
-  const isVi = language === "vi";
+  const { t, locale } = useLanguage();
+  const isVi = locale === "vi";
 
   return (
     <div className="space-y-8 pb-10 max-w-4xl mx-auto">
