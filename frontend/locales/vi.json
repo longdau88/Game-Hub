@@ -751,5 +751,6 @@
   "creator.selectZipFile": "Vui lòng chọn gói game (.zip)",
   "creator.uploadFailed": "Tải lên thất bại",
   "creator.errorNoIndexHtml": "File ZIP không chứa file index.html ở thư mục gốc",
-  "creator.errorInvalidZip": "Định dạng file ZIP không hợp lệ"
+  "creator.errorInvalidZip": "Định dạng file ZIP không hợp lệ",
+  "creator.rejected": "Bị Từ Chối"
 }

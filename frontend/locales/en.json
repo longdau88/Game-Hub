@@ -712,5 +712,6 @@
   "creator.selectZipFile": "Please select a game package (.zip)",
   "creator.uploadFailed": "Upload failed",
   "creator.errorNoIndexHtml": "Zip file does not contain an index.html at the root",
-  "creator.errorInvalidZip": "Invalid zip file format"
+  "creator.errorInvalidZip": "Invalid zip file format",
+  "creator.rejected": "Rejected"
 }

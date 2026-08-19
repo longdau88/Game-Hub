@@ -95,8 +95,14 @@ export default function CreatorGamesPage() {
                     <div>
                       <h3 className="font-bold text-lg">{game.title}</h3>
                       <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-muted-foreground">
-                        <Badge variant={game.isPublished ? "success" : "warning"} className="text-[10px] uppercase font-bold">
-                          {game.isPublished ? (t("creator.published") || "Published") : (t("creator.inReview") || "In Review")}
+                        <Badge 
+                          variant={game.status === 'published' ? "success" : game.status === 'rejected' ? "destructive" : game.status === 'processing' ? "secondary" : "warning"} 
+                          className="text-[10px] uppercase font-bold"
+                        >
+                          {game.status === 'published' ? (t("creator.published") || "Published") 
+                            : game.status === 'rejected' ? (t("creator.rejected") || "Rejected")
+                            : game.status === 'processing' ? (t("creator.processing") || "Processing")
+                            : (t("creator.inReview") || "In Review")}
                         </Badge>
                         <span className="flex items-center gap-1">
                           <Gamepad2 className="w-4 h-4" /> {game.playCount || 0}

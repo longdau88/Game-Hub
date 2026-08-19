@@ -149,7 +149,7 @@ export default function GameUploadWizard() {
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
                 <div className="space-y-2">
                   <Label htmlFor="title">{t("creator.gameTitle") || "Game Title"} <span className="text-error">*</span></Label>
-                  <Input id="title" placeholder={t("creator.gameTitlePlaceholder") || "e.g. Neon District: Zero"} required />
+                  <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("creator.gameTitlePlaceholder") || "e.g. Neon District: Zero"} required />
                 </div>
                 
                 <div className="space-y-2">
