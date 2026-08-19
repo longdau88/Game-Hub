@@ -42,8 +42,8 @@ export default function AnalyticsPage() {
     }
     fetchAPI(url)
       .then(res => {
-        if (res.data) {
-          setStats(res.data);
+        if (res) {
+          setStats(res.data || res);
         }
       })
       .catch((err) => {
@@ -78,7 +78,7 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className={`grid grid-cols-1 md:grid-cols-${selectedGameId === "all" ? "3" : "2"} gap-6`}>
         <Card className="bg-surface/50 border-border">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
@@ -112,21 +112,23 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-surface/50 border-border">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-purple-500/10 text-purple-500">
-                <Gamepad2 className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">{t("total_games") || "Total Games"}</p>
-                <div className="flex items-baseline gap-2 mt-1">
-                  <h3 className="text-2xl font-black">{loading ? "..." : stats.totalGames}</h3>
+        {selectedGameId === "all" && (
+          <Card className="bg-surface/50 border-border">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-xl bg-purple-500/10 text-purple-500">
+                  <Gamepad2 className="w-6 h-6" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground">{t("total_games") || "Total Games"}</p>
+                  <div className="flex items-baseline gap-2 mt-1">
+                    <h3 className="text-2xl font-black">{loading ? "..." : stats.totalGames}</h3>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <div className="grid grid-cols-1 gap-6">
