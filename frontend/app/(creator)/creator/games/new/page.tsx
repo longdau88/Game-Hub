@@ -172,8 +172,8 @@ export default function GameUploadWizard() {
                     <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                       <ImageIcon className="w-8 h-8 text-emerald-500" />
                     </div>
-                    <h3 className="font-semibold text-lg mb-1">Upload Cover Art</h3>
-                    <p className="text-sm text-muted-foreground">1920x1080 recommended, PNG or JPG (Max 5MB)</p>
+                    <h3 className="font-semibold text-lg mb-1">{t("creator.uploadCoverArt") || "Upload Cover Art"}</h3>
+                    <p className="text-sm text-muted-foreground">{t("creator.coverArtHelpText") || "1920x1080 recommended, PNG or JPG (Max 5MB)"}</p>
                   </div>
                 </div>
               </div>
@@ -185,17 +185,17 @@ export default function GameUploadWizard() {
                 <div className="p-4 rounded-xl bg-warning/10 border border-warning/20 flex gap-4 items-start">
                   <AlertCircle className="w-6 h-6 text-warning shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-semibold text-warning">Almost done!</h4>
-                    <p className="text-sm text-warning/80 mt-1">Please review the platform guidelines. By publishing, you agree that this game does not contain malicious code and you have the rights to distribute it.</p>
+                    <h4 className="font-semibold text-warning">{t("creator.almostDone") || "Almost done!"}</h4>
+                    <p className="text-sm text-warning/80 mt-1">{t("creator.reviewGuidelinesDesc") || "Please review the platform guidelines. By publishing, you agree that this game does not contain malicious code and you have the rights to distribute it."}</p>
                   </div>
                 </div>
                 
                 <div className="border border-border rounded-xl p-6 bg-background space-y-4">
-                  <h3 className="font-bold text-lg border-b border-border pb-2">Publishing Settings</h3>
+                  <h3 className="font-bold text-lg border-b border-border pb-2">{t("creator.publishingSettings") || "Publishing Settings"}</h3>
                   <div className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border">
                     <div>
-                      <p className="font-semibold">Visibility</p>
-                      <p className="text-sm text-muted-foreground">Make this game public immediately</p>
+                      <p className="font-semibold">{t("creator.visibility") || "Visibility"}</p>
+                      <p className="text-sm text-muted-foreground">{t("creator.makePublicDesc") || "Make this game public immediately"}</p>
                     </div>
                     <div className="w-12 h-6 rounded-full bg-success relative cursor-pointer">
                       <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full" />

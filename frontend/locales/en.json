@@ -701,5 +701,12 @@
   "creator.gamePackage": "HTML5 Game Package (.zip)",
   "creator.clickToUpload": "Click to upload or drag and drop",
   "creator.zipHelpText": "ZIP file containing index.html (Max 200MB)",
-  "creator.coverImage": "Cover Image"
+  "creator.coverImage": "Cover Image",
+  "creator.uploadCoverArt": "Upload Cover Art",
+  "creator.coverArtHelpText": "1920x1080 recommended, PNG or JPG (Max 5MB)",
+  "creator.almostDone": "Almost done!",
+  "creator.reviewGuidelinesDesc": "Please review the platform guidelines. By publishing, you agree that this game does not contain malicious code and you have the rights to distribute it.",
+  "creator.publishingSettings": "Publishing Settings",
+  "creator.visibility": "Visibility",
+  "creator.makePublicDesc": "Make this game public immediately"
 }
