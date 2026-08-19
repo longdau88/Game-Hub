@@ -733,5 +733,12 @@
   "creator.searchGames": "Tìm kiếm game...",
   "creator.noGamesFound": "Không tìm thấy game",
   "creator.tryDifferentSearch": "Thử một từ khóa tìm kiếm khác",
-  "creator.startByUploading": "Bắt đầu xây dựng danh mục bằng cách tải lên game đầu tiên của bạn."
+  "creator.startByUploading": "Bắt đầu xây dựng danh mục bằng cách tải lên game đầu tiên của bạn.",
+  "creator.processing": "Đang Xử Lý...",
+  "creator.catAdventure": "Phiêu Lưu",
+  "creator.catRacing": "Đua Xe",
+  "creator.gamePackage": "Gói Game HTML5 (.zip)",
+  "creator.clickToUpload": "Bấm để tải lên hoặc kéo thả vào đây",
+  "creator.zipHelpText": "File ZIP chứa index.html (Tối đa 200MB)",
+  "creator.coverImage": "Ảnh Bìa Game"
 }

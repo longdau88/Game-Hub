@@ -106,11 +106,11 @@ export default function GameUploadWizard() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="category">{t("creator.category") || "Category"}</Label>
-                    <select id="category" className="flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    <select id="category" multiple className="min-h-[100px] flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                       <option value="action">{t("creator.catAction") || "Action"}</option>
                       <option value="puzzle">{t("creator.catPuzzle") || "Puzzle"}</option>
-                      <option value="adventure">Adventure</option>
-                      <option value="racing">Racing</option>
+                      <option value="adventure">{t("creator.catAdventure") || "Adventure"}</option>
+                      <option value="racing">{t("creator.catRacing") || "Racing"}</option>
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -126,18 +126,18 @@ export default function GameUploadWizard() {
               <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
                 
                 <div className="space-y-4">
-                  <Label>HTML5 Game Package (.zip) <span className="text-error">*</span></Label>
+                  <Label>{t("creator.gamePackage") || "HTML5 Game Package (.zip)"} <span className="text-error">*</span></Label>
                   <div className="border-2 border-dashed border-border rounded-2xl p-10 flex flex-col items-center justify-center text-center bg-background/50 hover:bg-secondary/50 transition-colors cursor-pointer group">
                     <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                       <FileArchive className="w-8 h-8 text-indigo-500" />
                     </div>
-                    <h3 className="font-semibold text-lg mb-1">Click to upload or drag and drop</h3>
-                    <p className="text-sm text-muted-foreground">ZIP file containing index.html (Max 200MB)</p>
+                    <h3 className="font-semibold text-lg mb-1">{t("creator.clickToUpload") || "Click to upload or drag and drop"}</h3>
+                    <p className="text-sm text-muted-foreground">{t("creator.zipHelpText") || "ZIP file containing index.html (Max 200MB)"}</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <Label>Cover Image <span className="text-error">*</span></Label>
+                  <Label>{t("creator.coverImage") || "Cover Image"} <span className="text-error">*</span></Label>
                   <div className="border-2 border-dashed border-border rounded-2xl p-10 flex flex-col items-center justify-center text-center bg-background/50 hover:bg-secondary/50 transition-colors cursor-pointer group">
                     <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                       <ImageIcon className="w-8 h-8 text-emerald-500" />
@@ -183,15 +183,13 @@ export default function GameUploadWizard() {
               variant="outline" 
               onClick={handlePrev} 
               disabled={step === 1 || loading}
-            >
-              Back
-            </Button>
+            >{t("creator.back") || "Back"}</Button>
             <Button 
               type="submit" 
               className="bg-indigo-600 hover:bg-indigo-700 text-white"
               disabled={loading}
             >
-              {loading ? "Processing..." : (step === 3 ? "Publish Game" : "Continue")}
+              {loading ? (t("creator.processing") || "Processing...") : (step === 3 ? (t("creator.publishGame") || "Publish Game") : (t("creator.continue") || "Continue"))}
             </Button>
           </CardFooter>
         </Card>

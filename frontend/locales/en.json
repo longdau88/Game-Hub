@@ -694,5 +694,12 @@
   "creator.searchGames": "Search games...",
   "creator.noGamesFound": "No games found",
   "creator.tryDifferentSearch": "Try a different search term",
-  "creator.startByUploading": "Start building your portfolio by uploading your first game."
+  "creator.startByUploading": "Start building your portfolio by uploading your first game.",
+  "creator.processing": "Processing...",
+  "creator.catAdventure": "Adventure",
+  "creator.catRacing": "Racing",
+  "creator.gamePackage": "HTML5 Game Package (.zip)",
+  "creator.clickToUpload": "Click to upload or drag and drop",
+  "creator.zipHelpText": "ZIP file containing index.html (Max 200MB)",
+  "creator.coverImage": "Cover Image"
 }
