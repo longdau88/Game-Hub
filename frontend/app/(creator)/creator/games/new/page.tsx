@@ -178,7 +178,7 @@ export default function GameUploadWizard() {
                 </div>
 
                 <div className="space-y-4">
-                  <Label>{t("creator.coverImage") || "Cover Image"} <span className="text-error">*</span></Label>
+                  <Label>{t("creator.coverImage") || "Cover Image"}</Label>
                   <input type="file" accept="image/png, image/jpeg" className="hidden" ref={coverInputRef} onChange={(e) => setCoverImage(e.target.files?.[0] || null)} />
                   <div 
                     onClick={() => coverInputRef.current?.click()}
