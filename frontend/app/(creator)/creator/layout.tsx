@@ -88,9 +88,11 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
             <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
               <h4 className="font-bold text-sm text-indigo-400 mb-2">{t("creator.needHelp") || "Need Help?"}</h4>
               <p className="text-xs text-muted-foreground mb-3">{t("creator.needHelpDesc") || "Check out our creator documentation and guidelines."}</p>
-              <Button variant="outline" size="sm" className="w-full text-xs" onClick={() => notify({ message: t("creator.docsComingSoon") || "Tài liệu đang được cập nhật...", variant: "info" })}>
-                <HelpCircle className="w-4 h-4 mr-2" />{t("creator.documentation") || "Documentation"}
-              </Button>
+              <Link href="/creator/docs" className="block w-full">
+                <Button variant="outline" size="sm" className="w-full text-xs">
+                  <HelpCircle className="w-4 h-4 mr-2" />{t("creator.documentation") || "Documentation"}
+                </Button>
+              </Link>
             </div>
             
             <div className="flex items-center gap-3 p-2 rounded-xl border border-border bg-background">
