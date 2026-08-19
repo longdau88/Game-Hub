@@ -761,5 +761,6 @@
   "creator.deleteConfirmTitle": "Xoá Game",
   "creator.deleteConfirmDesc": "Bạn có chắc chắn muốn xoá game này không? Hành động này không thể hoàn tác.",
   "creator.deleteSuccess": "Xoá game thành công",
-  "creator.deleteFailed": "Xoá game thất bại"
+  "creator.deleteFailed": "Xoá game thất bại",
+  "creator.docsComingSoon": "Tài liệu đang được cập nhật, vui lòng quay lại sau!"
 }

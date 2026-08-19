@@ -11,6 +11,7 @@ import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useAppDialog } from "@/contexts/DialogContext";
 
 const NAVIGATION = [
   { nameKey: "admin.tabDashboard", defaultName: "Dashboard", href: "/creator/dashboard", icon: LayoutDashboard },
@@ -24,6 +25,7 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { profile: user, logout } = useAuth();
   const { t } = useLanguage();
+  const { notify } = useAppDialog();
 
   return (
     <div className="flex h-screen overflow-hidden flex-col lg:flex-row w-full bg-background">
@@ -85,7 +87,7 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
             <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20">
               <h4 className="font-bold text-sm text-indigo-400 mb-2">{t("creator.needHelp") || "Need Help?"}</h4>
               <p className="text-xs text-muted-foreground mb-3">{t("creator.needHelpDesc") || "Check out our creator documentation and guidelines."}</p>
-              <Button variant="outline" size="sm" className="w-full text-xs">
+              <Button variant="outline" size="sm" className="w-full text-xs" onClick={() => notify({ message: t("creator.docsComingSoon") || "Tài liệu đang được cập nhật...", variant: "info" })}>
                 <HelpCircle className="w-4 h-4 mr-2" />{t("creator.documentation") || "Documentation"}
               </Button>
             </div>

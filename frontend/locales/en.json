@@ -721,5 +721,6 @@
   "creator.deleteConfirmTitle": "Delete Game",
   "creator.deleteConfirmDesc": "Are you sure you want to delete this game? This action cannot be undone.",
   "creator.deleteSuccess": "Game deleted successfully",
-  "creator.deleteFailed": "Failed to delete game"
+  "creator.deleteFailed": "Failed to delete game",
+  "creator.docsComingSoon": "Documentation is being updated, please check back later!"
 }
