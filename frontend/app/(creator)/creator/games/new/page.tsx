@@ -20,6 +20,7 @@ export default function GameUploadWizard() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [descriptionEn, setDescriptionEn] = useState("");
   const [tags, setTags] = useState("");
   const [isPublic, setIsPublic] = useState(true);
   const [zipFile, setZipFile] = useState<File | null>(null);
@@ -62,6 +63,7 @@ export default function GameUploadWizard() {
       const formData = new FormData();
       formData.append('title', title || "Untitled");
       formData.append('description', description);
+      formData.append('descriptionTranslations', JSON.stringify({ vi: description, en: descriptionEn }));
       if (selectedCategories.length > 0) {
         formData.append('categoryIds', selectedCategories.join(','));
       }
@@ -153,7 +155,7 @@ export default function GameUploadWizard() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="description">{t("creator.description") || "Description"} <span className="text-error">*</span></Label>
+                  <Label htmlFor="description">{t("creator.description") || "Description"} (VI) <span className="text-error">*</span></Label>
                   <textarea 
                     id="description" 
                     value={description}
@@ -162,6 +164,18 @@ export default function GameUploadWizard() {
                     className="flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     placeholder={t("creator.descPlaceholder") || "Describe your game..."}
                     required
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="descriptionEn">{t("creator.description") || "Description"} (EN)</Label>
+                  <textarea 
+                    id="descriptionEn" 
+                    value={descriptionEn}
+                    onChange={(e) => setDescriptionEn(e.target.value)}
+                    rows={4}
+                    className="flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    placeholder="Game description in English..."
                   />
                 </div>
                 
