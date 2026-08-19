@@ -87,7 +87,7 @@ export default function PlayerHome() {
               {t("featured.desc") || "Experience the most thrilling adventure of the year. Jump in and show your skills in this community favorite!"}
             </p>
             <div className="flex items-center gap-4">
-              <Link href={`/games/${mappedGames[0].id}`}>
+              <Link href={`/game/play?id=${mappedGames[0].id}`}>
                 <Button size="lg" className="rounded-xl px-8 font-bold bg-white text-zinc-950 hover:bg-zinc-200">
                   {t("featured.play") || "Play Now"}
                 </Button>
