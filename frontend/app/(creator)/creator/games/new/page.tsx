@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,10 @@ export default function GameUploadWizard() {
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [zipFile, setZipFile] = useState<File | null>(null);
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const zipInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
   const { t } = useLanguage();
 
   const toggleCategory = (id: string) => {
@@ -157,23 +161,37 @@ export default function GameUploadWizard() {
                 
                 <div className="space-y-4">
                   <Label>{t("creator.gamePackage") || "HTML5 Game Package (.zip)"} <span className="text-error">*</span></Label>
-                  <div className="border-2 border-dashed border-border rounded-2xl p-10 flex flex-col items-center justify-center text-center bg-background/50 hover:bg-secondary/50 transition-colors cursor-pointer group">
-                    <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <FileArchive className="w-8 h-8 text-indigo-500" />
+                  <input type="file" accept=".zip" className="hidden" ref={zipInputRef} onChange={(e) => setZipFile(e.target.files?.[0] || null)} />
+                  <div 
+                    onClick={() => zipInputRef.current?.click()}
+                    className={`border-2 border-dashed rounded-2xl p-10 flex flex-col items-center justify-center text-center transition-colors cursor-pointer group ${zipFile ? 'border-indigo-500 bg-indigo-500/5' : 'border-border bg-background/50 hover:bg-secondary/50'}`}>
+                    <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${zipFile ? 'bg-indigo-500 text-white' : 'bg-indigo-500/10 text-indigo-500'}`}>
+                      {zipFile ? <CheckCircle2 className="w-8 h-8" /> : <FileArchive className="w-8 h-8" />}
                     </div>
-                    <h3 className="font-semibold text-lg mb-1">{t("creator.clickToUpload") || "Click to upload or drag and drop"}</h3>
-                    <p className="text-sm text-muted-foreground">{t("creator.zipHelpText") || "ZIP file containing index.html (Max 200MB)"}</p>
+                    <h3 className="font-semibold text-lg mb-1">
+                      {zipFile ? zipFile.name : (t("creator.clickToUpload") || "Click to upload or drag and drop")}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {zipFile ? `${(zipFile.size / 1024 / 1024).toFixed(2)} MB` : (t("creator.zipHelpText") || "ZIP file containing index.html (Max 200MB)")}
+                    </p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <Label>{t("creator.coverImage") || "Cover Image"} <span className="text-error">*</span></Label>
-                  <div className="border-2 border-dashed border-border rounded-2xl p-10 flex flex-col items-center justify-center text-center bg-background/50 hover:bg-secondary/50 transition-colors cursor-pointer group">
-                    <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <ImageIcon className="w-8 h-8 text-emerald-500" />
+                  <input type="file" accept="image/png, image/jpeg" className="hidden" ref={coverInputRef} onChange={(e) => setCoverImage(e.target.files?.[0] || null)} />
+                  <div 
+                    onClick={() => coverInputRef.current?.click()}
+                    className={`border-2 border-dashed rounded-2xl p-10 flex flex-col items-center justify-center text-center transition-colors cursor-pointer group ${coverImage ? 'border-emerald-500 bg-emerald-500/5' : 'border-border bg-background/50 hover:bg-secondary/50'}`}>
+                    <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${coverImage ? 'bg-emerald-500 text-white' : 'bg-emerald-500/10 text-emerald-500'}`}>
+                      {coverImage ? <CheckCircle2 className="w-8 h-8" /> : <ImageIcon className="w-8 h-8" />}
                     </div>
-                    <h3 className="font-semibold text-lg mb-1">{t("creator.uploadCoverArt") || "Upload Cover Art"}</h3>
-                    <p className="text-sm text-muted-foreground">{t("creator.coverArtHelpText") || "1920x1080 recommended, PNG or JPG (Max 5MB)"}</p>
+                    <h3 className="font-semibold text-lg mb-1">
+                      {coverImage ? coverImage.name : (t("creator.uploadCoverArt") || "Upload Cover Art")}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {coverImage ? `${(coverImage.size / 1024 / 1024).toFixed(2)} MB` : (t("creator.coverArtHelpText") || "1920x1080 recommended, PNG or JPG (Max 5MB)")}
+                    </p>
                   </div>
                 </div>
               </div>
