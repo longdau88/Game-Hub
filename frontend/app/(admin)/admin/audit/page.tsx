@@ -19,6 +19,54 @@ export default function AuditLogsPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const getActionBadge = (action: string) => {
+    const translations: Record<string, string> = {
+      'BAN_USER': t("admin.audit.actions.BAN_USER") || "Cấm người dùng",
+      'UNBAN_USER': t("admin.audit.actions.UNBAN_USER") || "Bỏ cấm người dùng",
+      'CHANGE_USER_ROLE': t("admin.audit.actions.CHANGE_USER_ROLE") || "Đổi quyền người dùng",
+      'CREATE_USER': t("admin.audit.actions.CREATE_USER") || "Tạo người dùng mới",
+      'UPDATE_USER': t("admin.audit.actions.UPDATE_USER") || "Cập nhật người dùng",
+      'SEND_EMAIL_USER': t("admin.audit.actions.SEND_EMAIL_USER") || "Gửi Email",
+      'REJECT_GAME': t("admin.audit.actions.REJECT_GAME") || "Từ chối Game",
+      'DELETE_GAME': t("admin.audit.actions.DELETE_GAME") || "Xóa Game",
+      'FEATURE_GAME': t("admin.audit.actions.FEATURE_GAME") || "Đánh dấu nổi bật",
+      'UNFEATURE_GAME': t("admin.audit.actions.UNFEATURE_GAME") || "Hủy nổi bật",
+      'RUN_GC': t("admin.audit.actions.RUN_GC") || "Dọn rác hệ thống (GC)",
+      'SYNC_VECTOR_DATABASE': t("admin.audit.actions.SYNC_VECTOR_DATABASE") || "Đồng bộ Vector DB",
+      'APPROVE_GAME': t("admin.audit.actions.APPROVE_GAME") || "Duyệt Game",
+      'CREATE_CATEGORY': t("admin.audit.actions.CREATE_CATEGORY") || "Tạo danh mục",
+      'UPDATE_CATEGORY': t("admin.audit.actions.UPDATE_CATEGORY") || "Sửa danh mục",
+      'DELETE_CATEGORY': t("admin.audit.actions.DELETE_CATEGORY") || "Xóa danh mục",
+      'UPDATE_SYSTEM_SETTINGS': t("admin.audit.actions.UPDATE_SYSTEM_SETTINGS") || "Cập nhật cấu hình",
+      'RESOLVE_REPORT': t("admin.audit.actions.RESOLVE_REPORT") || "Xử lý báo cáo",
+      'CREATE_BADGE': t("admin.audit.actions.CREATE_BADGE") || "Tạo danh hiệu",
+      'DELETE_BADGE': t("admin.audit.actions.DELETE_BADGE") || "Xóa danh hiệu",
+      'GRANT_BADGE': t("admin.audit.actions.GRANT_BADGE") || "Tặng danh hiệu",
+      'CREATE_EMAIL_TEMPLATE': t("admin.audit.actions.CREATE_EMAIL_TEMPLATE") || "Tạo mẫu Email"
+    };
+
+    const label = translations[action] || action;
+    
+    let colorClass = "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300";
+    if (action.includes("DELETE") || action.includes("BAN") || action.includes("REJECT") || action.includes("UNFEATURE")) {
+      colorClass = "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
+    } else if (action.includes("CREATE") || action.includes("APPROVE") || action.includes("GRANT")) {
+      colorClass = "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400";
+    } else if (action.includes("UPDATE") || action.includes("CHANGE") || action.includes("RESOLVE")) {
+      colorClass = "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
+    } else if (action.includes("SYNC") || action.includes("RUN") || action.includes("SEND")) {
+      colorClass = "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400";
+    } else if (action.includes("FEATURE")) {
+      colorClass = "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
+    }
+
+    return (
+      <span className={`px-2.5 py-1 text-[11px] uppercase tracking-wider font-bold rounded-full whitespace-nowrap ${colorClass}`}>
+        {label}
+      </span>
+    );
+  };
+
   if (!mounted) return null;
 
   return (
@@ -73,9 +121,7 @@ export default function AuditLogsPage() {
                       </div>
                     </td>
                     <td className="py-3 px-6">
-                      <span className="px-2.5 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full whitespace-nowrap">
-                        {log.action}
-                      </span>
+                      {getActionBadge(log.action)}
                     </td>
                     <td className="py-3 px-6 text-sm font-medium text-zinc-700 dark:text-zinc-300">
                       {log.entity}
