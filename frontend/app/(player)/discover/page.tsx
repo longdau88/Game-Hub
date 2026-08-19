@@ -5,84 +5,26 @@ import { GameCard, Game } from "@/components/shared/GameCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, SlidersHorizontal, Gamepad2, ChevronDown, Check } from "lucide-react";
-import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
-
+import useSWR from "swr";
 
 export default function DiscoverPage() {
   const [mounted, setMounted] = useState(false);
   const [search, setSearch] = useState("");
-  const [games, setGames] = useState<Game[]>([]);
-  const [categories, setCategories] = useState<{name: string, active: boolean}[]>([{ name: "All", active: true }]);
-  const [loading, setLoading] = useState(true);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [sort, setSort] = useState("mostPlayed");
   const [isSortOpen, setIsSortOpen] = useState(false);
   const { locale: language, t } = useLanguage();
 
   useEffect(() => {
     setMounted(true);
-    const loadData = async () => {
-      try {
-        const [gamesData, catsData] = await Promise.all([
-          fetchAPI('/games').catch(() => ({ data: [] })),
-          fetchAPI('/categories').catch(() => ({ data: [] }))
-        ]);
-        const gamesArray = Array.isArray(gamesData) ? gamesData : (gamesData.data || []);
-        const mappedGames = gamesArray.map((g: any) => ({
-          id: g.id,
-          title: g.title,
-          creator: g.uploader?.username || "Unknown",
-          rating: g.averageRating || 0,
-          playCount: g.playCount || 0,
-          thumbnail: g.coverImageUrl || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80",
-          category: g.categories?.[0]?.name || "Uncategorized"
-        }));
-        setGames(mappedGames);
+  }, []);
 
-        const catsArray = Array.isArray(catsData) ? catsData : (catsData.data || []);
-        const mappedCats = catsArray.map((c: any) => ({ name: c.nameTranslations?.[language] || c.name, active: false }));
-        setCategories([{ name: t("category.all") || "All", active: true }, ...mappedCats]);
-      } catch (err) {
-        console.error("Failed to load data:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, [language, t]);
-
-  // Debounced Search Effect
+  // Debounce search input
   useEffect(() => {
-    if (!mounted) return;
-    
-    const delayDebounceFn = setTimeout(async () => {
-      setLoading(true);
-      try {
-        const queryParams = new URLSearchParams();
-        if (search) queryParams.append('search', search);
-        queryParams.append('sort', sort);
-        
-        const gamesData = await fetchAPI(`/games?${queryParams.toString()}`).catch(() => ({ data: [] }));
-        const gamesArray = Array.isArray(gamesData) ? gamesData : (gamesData.data || []);
-        const mappedGames = gamesArray.map((g: any) => ({
-          id: g.id,
-          title: g.title,
-          creator: g.uploader?.username || "Unknown",
-          rating: g.averageRating || 0,
-          playCount: g.playCount || 0,
-          thumbnail: g.coverImageUrl || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80",
-          category: g.categories?.[0]?.nameTranslations?.[language] || g.categories?.[0]?.name || "Uncategorized"
-        }));
-        setGames(mappedGames);
-      } catch (error) {
-        console.error("Search failed:", error);
-      } finally {
-        setLoading(false);
-      }
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [search, sort, language]);
+    const timer = setTimeout(() => setDebouncedSearch(search), 500);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   // Click outside to close sort dropdown
   useEffect(() => {
@@ -94,6 +36,33 @@ export default function DiscoverPage() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Fetch games with SWR
+  const queryParams = new URLSearchParams();
+  if (debouncedSearch) queryParams.append('search', debouncedSearch);
+  queryParams.append('sort', sort);
+
+  const { data: gamesData = [], isLoading: gamesLoading } = useSWR(`/games?${queryParams.toString()}`);
+  const { data: catsData = [], isLoading: catsLoading } = useSWR('/categories');
+
+  // Adapt data
+  const gamesArray = Array.isArray(gamesData) ? gamesData : (gamesData.data || []);
+  const mappedGames: Game[] = gamesArray.map((g: any) => ({
+    id: g.id,
+    title: g.title,
+    creator: g.uploader?.username || "Unknown",
+    rating: g.averageRating || 0,
+    playCount: g.playCount || 0,
+    thumbnail: g.coverImageUrl || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80",
+    category: g.categories?.[0]?.nameTranslations?.[language] || g.categories?.[0]?.name || "Uncategorized"
+  }));
+
+  const catsArray = Array.isArray(catsData) ? catsData : (catsData.data || []);
+  const mappedCats = catsArray.map((c: any) => ({ 
+    name: c.nameTranslations?.[language] || c.name, 
+    active: false 
+  }));
+  const categories = [{ name: t("category.all") || "All", active: true }, ...mappedCats];
 
   if (!mounted) return null;
 
@@ -123,15 +92,23 @@ export default function DiscoverPage() {
       {/* Categories */}
       <div className="relative w-full">
         <div className="flex items-center gap-2 overflow-x-auto pb-4 hide-scrollbar flex-nowrap w-full pr-8">
-          {categories.map(category => (
-            <Button 
-              key={category.name} 
-              variant="outline" 
-              className={`rounded-full shrink-0 transition-colors ${category.active ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90' : 'bg-surface hover:bg-secondary'}`}
-            >
-              {category.name}
-            </Button>
-          ))}
+          {catsLoading ? (
+            <div className="flex gap-2">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="w-24 h-10 rounded-full bg-secondary/50 animate-pulse shrink-0" />
+              ))}
+            </div>
+          ) : (
+            categories.map(category => (
+              <Button 
+                key={category.name} 
+                variant="outline" 
+                className={`rounded-full shrink-0 transition-colors ${category.active ? 'bg-primary text-primary-foreground border-primary hover:bg-primary/90' : 'bg-surface hover:bg-secondary'}`}
+              >
+                {category.name}
+              </Button>
+            ))
+          )}
         </div>
         {/* Gradient fade on the right to indicate scrolling */}
         <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none" />
@@ -191,10 +168,12 @@ export default function DiscoverPage() {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {loading ? (
-             <p className="text-muted-foreground col-span-full py-10 text-center">{t("loading") || "Loading..."}</p>
-          ) : games.length > 0 ? (
-            games.map(game => (
+          {gamesLoading ? (
+            [...Array(8)].map((_, i) => (
+              <div key={i} className="aspect-[4/3] rounded-2xl bg-secondary/50 animate-pulse" />
+            ))
+          ) : mappedGames.length > 0 ? (
+            mappedGames.map(game => (
               <GameCard key={game.id} game={game} />
             ))
           ) : (

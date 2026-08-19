@@ -57,7 +57,21 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
   const handleFollow = async () => {
     if (!requireAuth()) return;
     
-    setFollowLoading(true);
+    // Save previous state for rollback
+    const previousProfile = { ...profile };
+    const isNowFollowing = !profile.isFollowing;
+    
+    // Optimistic Update
+    setProfile((prev: any) => ({
+      ...prev,
+      isFollowing: isNowFollowing,
+      _count: {
+        ...prev._count,
+        followers: isNowFollowing ? prev._count.followers + 1 : prev._count.followers - 1
+      }
+    }));
+    if (onFollowChange) onFollowChange(isNowFollowing);
+
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
       const response = await fetch(`${apiUrl}/api/users/${creatorId}/follow`, {
@@ -67,24 +81,16 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
       const result = await response.json();
       
       if (response.ok) {
-        setProfile((prev: any) => ({
-          ...prev,
-          isFollowing: result.following,
-          _count: {
-            ...prev._count,
-            followers: result.following ? prev._count.followers + 1 : prev._count.followers - 1
-          }
-        }));
-        if (onFollowChange) onFollowChange(result.following);
         notify({ message: result.following ? (t("creator.followSuccess") || "Đã theo dõi") : (t("creator.unfollowSuccess") || "Đã bỏ theo dõi"), variant: "success" });
       } else {
-        notify({ message: result.error || "Lỗi khi cập nhật theo dõi", variant: "error" });
+        throw new Error(result.error || "Lỗi khi cập nhật theo dõi");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      notify({ message: t("creator.connection_error") || "Lỗi kết nối", variant: "error" });
-    } finally {
-      setFollowLoading(false);
+      // Rollback on failure
+      setProfile(previousProfile);
+      if (onFollowChange) onFollowChange(previousProfile.isFollowing);
+      notify({ message: error.message || t("creator.connection_error") || "Lỗi kết nối", variant: "error" });
     }
   };
 
@@ -96,7 +102,12 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
       return;
     }
 
-    setFriendLoading(true);
+    // Save previous state for rollback
+    const previousProfile = { ...profile };
+    
+    // Optimistic Update
+    setProfile((prev: any) => ({ ...prev, friendshipStatus: 'pending' }));
+
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
       const response = await fetch(`${apiUrl}/api/friends/request`, {
@@ -110,16 +121,15 @@ export default function CreatorProfileModal({ creatorId, isOpen, onClose, onFoll
       
       const result = await response.json();
       if (response.ok) {
-        setProfile((prev: any) => ({ ...prev, friendshipStatus: 'pending' }));
         notify({ message: t("creator.friend_request_sent") || "Đã gửi yêu cầu kết bạn", variant: "success" });
       } else {
-        notify({ message: result.error || (t("creator.friend_request_error") || "Lỗi gửi yêu cầu kết bạn"), variant: "error" });
+        throw new Error(result.error || (t("creator.friend_request_error") || "Lỗi gửi yêu cầu kết bạn"));
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      notify({ message: t("creator.connection_error") || "Lỗi kết nối", variant: "error" });
-    } finally {
-      setFriendLoading(false);
+      // Rollback on failure
+      setProfile(previousProfile);
+      notify({ message: error.message || t("creator.connection_error") || "Lỗi kết nối", variant: "error" });
     }
   };
 

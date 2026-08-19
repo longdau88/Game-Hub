@@ -7,53 +7,34 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Search, Flame, Trophy, Star, ChevronRight } from "lucide-react";
 
-
-
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
+import useSWR from "swr";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function PlayerHome() {
   const [mounted, setMounted] = useState(false);
-  const [games, setGames] = useState<Game[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
   const { t } = useLanguage();
+  
+  // Use AuthContext for user instead of refetching /auth/me manually
+  const { profile: user } = useAuth();
+
+  // SWR handles caching and fast loading
+  const { data: gamesData = [], isLoading } = useSWR('/games');
+  
+  // Adapt backend data
+  const mappedGames: Game[] = (Array.isArray(gamesData) ? gamesData : (gamesData.data || [])).map((g: any) => ({
+    id: g.id,
+    title: g.title,
+    creator: g.uploader?.username || "Unknown",
+    rating: g.averageRating || 0,
+    playCount: g.playCount || 0,
+    thumbnail: g.coverImageUrl || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80",
+    category: g.categories?.[0]?.name || "Uncategorized"
+  }));
 
   useEffect(() => {
     setMounted(true);
-    
-    // Fetch real games from backend
-    const loadGames = async () => {
-      try {
-        const data = await fetchAPI('/games');
-        // Adapt backend data to frontend Game interface
-        const gamesArray = Array.isArray(data) ? data : (data.data || []);
-        const mappedGames = gamesArray.map((g: any) => ({
-          id: g.id,
-          title: g.title,
-          creator: g.uploader?.username || "Unknown",
-          rating: g.averageRating || 0,
-          playCount: g.playCount || 0,
-          thumbnail: g.coverImageUrl || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=800&q=80",
-          category: g.categories?.[0]?.name || "Uncategorized"
-        }));
-        setGames(mappedGames);
-      } catch (err) {
-        console.error("Failed to load games:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const loadUser = async () => {
-      try {
-        const res = await fetchAPI('/auth/me');
-        if (res.user) setUser(res.user);
-      } catch (err) {}
-    };
-    
-    loadGames();
-    loadUser();
   }, []);
 
   if (!mounted) return null;
@@ -81,10 +62,10 @@ export default function PlayerHome() {
       </section>
 
       {/* Featured Game Hero */}
-      {!loading && games.length > 0 && (
+      {!isLoading && mappedGames.length > 0 && (
         <section className="relative rounded-3xl overflow-hidden aspect-[21/9] min-h-[300px] md:min-h-[400px] border border-border group cursor-pointer">
           <img 
-            src={games[0].thumbnail || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=1600&q=80"} 
+            src={mappedGames[0].thumbnail || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=1600&q=80"} 
             alt="Featured Game"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
@@ -96,14 +77,14 @@ export default function PlayerHome() {
                 <Flame className="w-3.5 h-3.5" /> {t("featured.badge") || "Editor's Choice"}
               </span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-4">{games[0].title}</h2>
+            <h2 className="text-3xl md:text-5xl font-black text-white mb-4">{mappedGames[0].title}</h2>
             <p className="text-zinc-300 text-sm md:text-base mb-6 line-clamp-2">
-              {t("featured.desc") || "Dive into the neon-lit streets of the future. An action-packed cyberpunk platformer with stunning visuals and intense boss fights."}
+              Experience the most thrilling adventure of the year. Jump in and show your skills in this community favorite!
             </p>
-            <div className="flex gap-4">
-              <Link href={`/game/play?id=${games[0].id}`}>
-                <Button size="lg" className="rounded-full shadow-lg shadow-primary/30">
-                  {t("featured.playNow") || "Play Now"}
+            <div className="flex items-center gap-4">
+              <Link href={`/games/${mappedGames[0].id}`}>
+                <Button size="lg" className="rounded-xl px-8 font-bold bg-white text-zinc-950 hover:bg-zinc-200">
+                  {t("featured.play") || "Play Now"}
                 </Button>
               </Link>
             </div>
@@ -111,64 +92,37 @@ export default function PlayerHome() {
         </section>
       )}
 
-      {/* Trending Games */}
-      <section>
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <Trophy className="w-6 h-6 text-warning" />
-            <h2 className="text-2xl font-bold">{t("trending_now") || "Trending Now"}</h2>
-          </div>
-          <Link href="/games/trending">
-            <Button variant="ghost" className="text-muted-foreground">
-              {t("view_all") || "View All"} <ChevronRight className="w-4 h-4 ml-1" />
-            </Button>
-          </Link>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {loading ? (
-            <p className="text-muted-foreground col-span-full py-10 text-center">{t("loading") || "Loading..."}</p>
-          ) : games.length > 0 ? (
-            games.slice(0, 4).map(game => (
-              <GameCard key={game.id} game={game} />
-            ))
-          ) : (
-            <div className="col-span-full py-12 text-center border border-dashed border-border rounded-xl">
-              <p className="text-muted-foreground font-semibold text-lg">{t("not_available") || "Chưa có"}</p>
-              <p className="text-sm text-muted-foreground/70">{t("no_games_found") || "No games currently available in the database."}</p>
-            </div>
-          )}
-        </div>
-      </section>
+      {isLoading && (
+        <div className="h-[300px] rounded-3xl bg-secondary/50 animate-pulse" />
+      )}
 
-      {/* New Releases */}
+      {/* Popular Games Section */}
       <section>
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <Star className="w-6 h-6 text-primary" />
-            <h2 className="text-2xl font-bold">{t("new_releases") || "New Releases"}</h2>
-          </div>
-          <Link href="/games/new">
-            <Button variant="ghost" className="text-muted-foreground">
-              {t("view_all") || "View All"} <ChevronRight className="w-4 h-4 ml-1" />
+          <h2 className="text-2xl font-black flex items-center gap-2">
+            <Star className="w-6 h-6 text-yellow-500" /> 
+            {t("popular.title") || "Popular Right Now"}
+          </h2>
+          <Link href="/discover">
+            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
+              {t("popular.viewAll") || "View all"} <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {loading ? (
-            <p className="text-muted-foreground col-span-full py-10 text-center">{t("loading") || "Loading..."}</p>
-          ) : games.length > 0 ? (
-            [...games].reverse().slice(0, 4).map(game => (
-              <GameCard key={`new-${game.id}`} game={game} />
-            ))
-          ) : (
-             <div className="col-span-full py-12 text-center border border-dashed border-border rounded-xl">
-              <p className="text-muted-foreground font-semibold text-lg">{t("not_available") || "Chưa có"}</p>
-              <p className="text-sm text-muted-foreground/70">{t("no_games_found") || "No games currently available in the database."}</p>
-            </div>
-          )}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="aspect-[4/3] rounded-2xl bg-secondary/50 animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {mappedGames.slice(0, 8).map(game => (
+              <GameCard key={game.id} game={game} />
+            ))}
+          </div>
+        )}
       </section>
 
     </div>

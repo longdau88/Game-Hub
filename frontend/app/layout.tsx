@@ -5,6 +5,7 @@ import { ThemeProvider } from "../components/ThemeProvider";
 import { LanguageProvider } from "../contexts/LanguageContext";
 import { DialogProvider } from "../contexts/DialogContext";
 import { AuthProvider } from "../contexts/AuthContext";
+import { SWRProvider } from "../components/SWRProvider";
 import LoginModal from "../components/LoginModal";
 import { cookies } from "next/headers";
 import Script from "next/script";
@@ -38,12 +39,14 @@ export default async function RootLayout({
       <body className={`${inter.className} overflow-x-hidden antialiased bg-background text-foreground`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <LanguageProvider initialLocale={initialLocale}>
-            <AuthProvider>
-              <DialogProvider>
-                {children}
-                <LoginModal />
-              </DialogProvider>
-            </AuthProvider>
+            <SWRProvider>
+              <AuthProvider>
+                <DialogProvider>
+                  {children}
+                  <LoginModal />
+                </DialogProvider>
+              </AuthProvider>
+            </SWRProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>
