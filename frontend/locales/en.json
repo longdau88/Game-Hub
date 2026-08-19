@@ -322,7 +322,7 @@
   "admin.feature": "Feature",
   "admin.featured": "Featured",
   "admin.rejectTitle": "Reject Game",
-  "featured.desc": "Dive into the neon-soaked streets of the future. A cyberpunk action platformer with stunning visuals and intense boss fights.",
+  "featured.desc": "Experience the most thrilling adventure of the year. Jump in and show your skills in this community favorite!",
   "global_leaderboards": "Global Leaderboards",
   "leaderboards_subtitle": "Top players across the entire GameHub platform.",
   "leaderboards.rank": "RANK",
@@ -637,5 +637,9 @@
   "friends.noRequests": "You don't have any pending friend requests.",
   "friends.noFollowers": "You don't have any followers yet.",
   "friends.acceptSuccess": "Friend request accepted.",
-  "friends.rejectSuccess": "Friend request rejected."
+  "friends.rejectSuccess": "Friend request rejected.",
+  "featured.badge": "Editor's Choice",
+  "featured.play": "Play Now",
+  "popular.title": "Popular Right Now",
+  "popular.viewAll": "View all"
 }

@@ -534,9 +534,9 @@
   "creator.friend_request_sent": "Đã gửi yêu cầu kết bạn",
   "creator.friend_request_error": "Lỗi gửi yêu cầu kết bạn",
   "creator.connection_error": "Lỗi kết nối",
-  "featured.badge": "Lựa chọn của BTV",
+  "featured.badge": "LỰA CHỌN CỦA BTV",
   "featured.title": "Neon District: Zero",
-  "featured.desc": "Đắm mình vào những con phố ngập tràn ánh đèn neon của tương lai. Một tựa game platformer hành động phong cách cyberpunk với hình ảnh tuyệt đẹp và những trận đấu trùm căng thẳng.",
+  "featured.desc": "Trải nghiệm cuộc phiêu lưu thú vị nhất trong năm. Hãy tham gia và thể hiện kỹ năng của bạn trong tựa game được cộng đồng yêu thích này!",
   "global_leaderboards": "Bảng Xếp Hạng Toàn Cầu",
   "leaderboards_subtitle": "Những người chơi xuất sắc nhất trên toàn hệ thống GameHub.",
   "leaderboards.rank": "HẠNG",
@@ -677,5 +677,8 @@
   "friends.noRequests": "Bạn không có lời mời kết bạn nào.",
   "friends.noFollowers": "Bạn chưa có người theo dõi nào.",
   "friends.acceptSuccess": "Đã chấp nhận lời mời kết bạn.",
-  "friends.rejectSuccess": "Đã từ chối lời mời kết bạn."
+  "friends.rejectSuccess": "Đã từ chối lời mời kết bạn.",
+  "featured.play": "Chơi Ngay",
+  "popular.title": "Đang Phổ Biến",
+  "popular.viewAll": "Xem tất cả"
 }

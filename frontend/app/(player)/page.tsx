@@ -79,7 +79,7 @@ export default function PlayerHome() {
             </div>
             <h2 className="text-3xl md:text-5xl font-black text-white mb-4">{mappedGames[0].title}</h2>
             <p className="text-zinc-300 text-sm md:text-base mb-6 line-clamp-2">
-              Experience the most thrilling adventure of the year. Jump in and show your skills in this community favorite!
+              {t("featured.desc") || "Experience the most thrilling adventure of the year. Jump in and show your skills in this community favorite!"}
             </p>
             <div className="flex items-center gap-4">
               <Link href={`/games/${mappedGames[0].id}`}>
