@@ -373,10 +373,6 @@ export default function ProfilePage() {
 
                 </div>
               )}
-
-              
-                </div>
-              )}
             </motion.div>
           </AnimatePresence>
         </div>
