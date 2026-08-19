@@ -14,6 +14,7 @@ router.get('/me', userController.getMe);
 router.put('/me', userController.updateMe);
 router.put('/me/password', userController.changePassword);
 router.get('/following', userController.getFollowing);
+router.get('/followers', userController.getFollowers);
 router.get('/:id/follow-status', userController.getFollowStatus);
 router.post('/:id/follow', userController.toggleFollow);
 

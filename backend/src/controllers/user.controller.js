@@ -43,6 +43,19 @@ class UserController {
     }
   }
 
+  async getFollowers(req, res) {
+    try {
+      const followers = await prisma.creatorFollow.findMany({
+        where: { creatorId: req.user.userId },
+        include: { follower: { select: { id: true, username: true, avatarUrl: true, bio: true, level: true, xp: true } } },
+        orderBy: { createdAt: 'desc' }
+      });
+      res.json(followers.map(follow => ({ ...follow.follower, followedAt: follow.createdAt })));
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch followers' });
+    }
+  }
+
   async getFollowStatus(req, res) {
     try {
       const creatorId = Number(req.params.id);

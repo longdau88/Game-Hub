@@ -609,7 +609,6 @@
   "admin.gameRejectedSuccess": "Từ chối game thành công.",
   "admin.gameDeletedSuccess": "Xoá game thành công.",
   "admin.gameFeaturedSuccess": "Cập nhật trạng thái nổi bật thành công.",
-  "admin.title": "Bảng Điều Khiển Admin",
   "admin.noGamesFound": "Không tìm thấy game nào.",
   "admin.editGame": "Chỉnh sửa Game",
   "admin.editGameTitle": "Sửa thông tin Game",
@@ -670,5 +669,13 @@
   "admin.bulkEmail": "Gửi Email Hàng loạt",
   "admin.emailSelected": "Gửi cho {count} người đã chọn",
   "admin.targetAll": "Tất cả Người dùng",
-  "admin.targetActive": "Người dùng hoạt động (30 ngày)"
+  "admin.targetActive": "Người dùng hoạt động (30 ngày)",
+  "friends.requests": "Lời mời kết bạn",
+  "friends.followers": "Người theo dõi",
+  "friends.accept": "Chấp nhận",
+  "friends.reject": "Từ chối",
+  "friends.noRequests": "Bạn không có lời mời kết bạn nào.",
+  "friends.noFollowers": "Bạn chưa có người theo dõi nào.",
+  "friends.acceptSuccess": "Đã chấp nhận lời mời kết bạn.",
+  "friends.rejectSuccess": "Đã từ chối lời mời kết bạn."
 }

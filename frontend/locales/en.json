@@ -133,7 +133,7 @@
   "register.hasAccount": "Already have an account?",
   "register.loginLink": "Sign in here",
   "register.success": "Registration successful! You can now log in.",
-  "admin.title": "Admin Panel",
+  "admin.title": "Admin Dashboard",
   "admin.pending": "Pending Games",
   "admin.approve": "Approve",
   "admin.approving": "Approving...",
@@ -626,10 +626,16 @@
   "game.creator": "Creator",
   "game.follow": "Follow",
   "game.notFound": "Game not found",
-  "admin.searchGame": "Search by title or uploader...",
   "admin.gameApprovedSuccess": "Game approved successfully!",
   "admin.gameRejectedSuccess": "Game rejected successfully.",
   "admin.gameDeletedSuccess": "Game deleted successfully.",
   "admin.gameFeaturedSuccess": "Featured status updated.",
-  "admin.title": "Admin Dashboard"
+  "friends.requests": "Friend Requests",
+  "friends.followers": "Followers",
+  "friends.accept": "Accept",
+  "friends.reject": "Reject",
+  "friends.noRequests": "You don't have any pending friend requests.",
+  "friends.noFollowers": "You don't have any followers yet.",
+  "friends.acceptSuccess": "Friend request accepted.",
+  "friends.rejectSuccess": "Friend request rejected."
 }
