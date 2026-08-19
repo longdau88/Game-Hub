@@ -764,5 +764,19 @@
   "creator.deleteFailed": "Xoá game thất bại",
   "creator.docsComingSoon": "Tài liệu đang được cập nhật, vui lòng quay lại sau!",
   "creator.uploadGame": "Tải Lên Game",
-  "creator.allGames": "Tất cả Game"
+  "creator.allGames": "Tất cả Game",
+  "creator.profileSettings": "Hồ Sơ Creator",
+  "creator.security": "Bảo Mật",
+  "creator.username": "Tên Hiển Thị",
+  "creator.email": "Email",
+  "creator.bio": "Tiểu Sử",
+  "creator.avatarUrl": "URL Ảnh Đại Diện",
+  "creator.changePassword": "Đổi Mật Khẩu",
+  "creator.currentPassword": "Mật khẩu hiện tại",
+  "creator.newPassword": "Mật khẩu mới",
+  "creator.confirmPassword": "Xác nhận mật khẩu mới",
+  "creator.saveChanges": "Lưu Thay Đổi",
+  "creator.passwordMismatch": "Mật khẩu xác nhận không khớp",
+  "creator.profileUpdated": "Đã cập nhật hồ sơ thành công",
+  "creator.passwordUpdated": "Đã đổi mật khẩu thành công"
 }

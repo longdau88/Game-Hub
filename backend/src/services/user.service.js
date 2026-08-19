@@ -23,7 +23,7 @@ class UserService {
     };
   }
 
-  async updateProfile(userId, { username, avatarUrl, locale }) {
+  async updateProfile(userId, { username, avatarUrl, locale, bio }) {
     const updateData = {};
 
     if (username) {
@@ -42,6 +42,10 @@ class UserService {
 
     if (locale !== undefined) {
       updateData.locale = locale;
+    }
+
+    if (bio !== undefined) {
+      updateData.bio = bio;
     }
 
     return userRepository.update(userId, updateData);

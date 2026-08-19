@@ -724,5 +724,19 @@
   "creator.deleteFailed": "Failed to delete game",
   "creator.docsComingSoon": "Documentation is being updated, please check back later!",
   "creator.uploadGame": "Upload Game",
-  "creator.allGames": "All Games"
+  "creator.allGames": "All Games",
+  "creator.profileSettings": "Creator Profile",
+  "creator.security": "Security",
+  "creator.username": "Display Name",
+  "creator.email": "Email",
+  "creator.bio": "Bio",
+  "creator.avatarUrl": "Avatar URL",
+  "creator.changePassword": "Change Password",
+  "creator.currentPassword": "Current Password",
+  "creator.newPassword": "New Password",
+  "creator.confirmPassword": "Confirm New Password",
+  "creator.saveChanges": "Save Changes",
+  "creator.passwordMismatch": "Passwords do not match",
+  "creator.profileUpdated": "Profile updated successfully",
+  "creator.passwordUpdated": "Password changed successfully"
 }
