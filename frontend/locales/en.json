@@ -682,5 +682,12 @@
   "creator.backToGameHub": "Back to GameHub",
   "creator.needHelp": "Need Help?",
   "creator.needHelpDesc": "Check out our creator documentation and guidelines.",
-  "creator.documentation": "Documentation"
+  "creator.documentation": "Documentation",
+  "creator.analyticsDesc": "Deep dive into your games performance metrics.",
+  "creator.activePlayers": "Active Players",
+  "creator.playTrends": "Play Trends (7 Days)",
+  "creator.playTrendsDesc": "Daily play count across your portfolio",
+  "creator.revenueMetrics": "Revenue Metrics",
+  "creator.revenueDesc": "Estimated ad revenue and tips",
+  "creator.settingsDesc": "Manage your creator profile and preferences."
 }

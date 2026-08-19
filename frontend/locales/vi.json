@@ -721,5 +721,12 @@
   "creator.backToGameHub": "Về GameHub",
   "creator.needHelp": "Cần Hỗ Trợ?",
   "creator.needHelpDesc": "Xem tài liệu và hướng dẫn dành cho nhà phát triển của chúng tôi.",
-  "creator.documentation": "Tài Liệu"
+  "creator.documentation": "Tài Liệu",
+  "creator.analyticsDesc": "Phân tích sâu các chỉ số hiệu suất của game.",
+  "creator.activePlayers": "Người Chơi Đang Trực Tuyến",
+  "creator.playTrends": "Xu Hướng Chơi (7 Ngày)",
+  "creator.playTrendsDesc": "Số lượt chơi hàng ngày trên danh mục của bạn",
+  "creator.revenueMetrics": "Chỉ Số Doanh Thu",
+  "creator.revenueDesc": "Ước tính doanh thu quảng cáo và tiền quyên góp",
+  "creator.settingsDesc": "Quản lý hồ sơ và các tùy chọn nhà phát triển của bạn."
 }
