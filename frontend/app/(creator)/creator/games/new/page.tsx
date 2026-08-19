@@ -168,7 +168,7 @@ export default function GameUploadWizard() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="descriptionEn">{t("creator.description") || "Description"} (EN)</Label>
+                  <Label htmlFor="descriptionEn">{t("creator.description") || "Description"} (EN) <span className="text-error">*</span></Label>
                   <textarea 
                     id="descriptionEn" 
                     value={descriptionEn}
@@ -176,6 +176,7 @@ export default function GameUploadWizard() {
                     rows={4}
                     className="flex w-full rounded-md border border-border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     placeholder="Game description in English..."
+                    required
                   />
                 </div>
                 
