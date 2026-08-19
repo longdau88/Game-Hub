@@ -45,7 +45,7 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
           <span className="font-bold text-lg tracking-tight">GameHub</span>
         </Link>
         <div className="flex items-center gap-2">
-          <NotificationBell />
+          <NotificationDropdown />
           <Avatar size="sm" src={user?.avatarUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub"} fallback={user?.username?.[0]?.toUpperCase() || "U"} className="cursor-pointer" />
           <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
