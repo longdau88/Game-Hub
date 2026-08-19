@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { LineChart as LineChartIcon, Activity, MousePointerClick, Gamepad2, ArrowUpRight, TrendingUp } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -8,9 +9,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { fetchAPI } from "@/lib/api";
 
 export default function AnalyticsPage() {
+  const searchParams = useSearchParams();
+  const initialGameId = searchParams?.get("gameId") || "all";
   const [mounted, setMounted] = useState(false);
   const [games, setGames] = useState<any[]>([]);
-  const [selectedGameId, setSelectedGameId] = useState<string>("all");
+  const [selectedGameId, setSelectedGameId] = useState<string>(initialGameId);
   const [stats, setStats] = useState<any>({
     totalPlays: 0,
     activePlayers: 0,

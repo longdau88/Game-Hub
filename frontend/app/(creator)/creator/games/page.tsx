@@ -132,7 +132,7 @@ export default function CreatorGamesPage() {
                   </div>
                   
                   <div className="flex items-center gap-2 self-end sm:self-auto">
-                    <Button variant="ghost" size="sm" title={t("creator.analytics") || "Analytics"} onClick={() => router.push('/creator/analytics')}>
+                    <Button variant="ghost" size="sm" title={t("creator.analytics") || "Analytics"} onClick={() => router.push(`/creator/analytics?gameId=${game.id}`)}>
                       <BarChart2 className="w-4 h-4 text-muted-foreground" />
                     </Button>
                     <Button variant="ghost" size="sm" title={t("creator.edit") || "Edit"} onClick={() => router.push(`/creator/games/edit/${game.id}`)}>
