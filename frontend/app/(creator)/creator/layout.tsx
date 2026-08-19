@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Gamepad2, LineChart, Wallet, Settings, Bell, Upload, HelpCircle, ChevronRight, Menu, X, ArrowLeft } from "lucide-react";
+import { LayoutDashboard, Gamepad2, LineChart, Wallet, Settings, Bell, Upload, HelpCircle, ChevronRight, Menu, X, ArrowLeft, LogOut } from "lucide-react";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ const NAVIGATION = [
 export default function CreatorLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { profile: user } = useAuth();
+  const { profile: user, logout } = useAuth();
   const { t } = useLanguage();
 
   return (
@@ -91,11 +91,14 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
             </div>
             
             <div className="flex items-center gap-3 p-2 rounded-xl border border-border bg-background">
-              <Avatar size="sm" fallback={user?.username?.[0]?.toUpperCase() || "U"} />
+              <Avatar size="sm" src={user?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username || 'Guest'}`} fallback={user?.username?.[0]?.toUpperCase() || "U"} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-foreground truncate">{user?.username || t("nav.guest") || "Guest"}</p>
                 <p className="text-xs text-muted-foreground">{user?.role === 'CREATOR' ? 'Creator' : 'Pro Creator'}</p>
               </div>
+              <Button variant="ghost" size="icon" onClick={() => logout()} title={t("nav.logout") || "Log out"}>
+                <LogOut className="w-4 h-4 text-muted-foreground hover:text-error transition-colors" />
+              </Button>
             </div>
           </div>
         </div>
