@@ -7,14 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useAppDialog } from "@/components/ui/app-dialog";
+import { useAppDialog } from "@/contexts/DialogContext";
 import { fetchAPI } from "@/lib/api";
 import { Loader2, Save, User, Shield } from "lucide-react";
 
 export default function SettingsPage() {
   const [mounted, setMounted] = useState(false);
   const { t } = useLanguage();
-  const { toast } = useAppDialog();
+  const { notify } = useAppDialog();
   
   // Profile State
   const [profileLoading, setProfileLoading] = useState(false);
@@ -62,17 +62,9 @@ export default function SettingsPage() {
           avatarUrl: profileForm.avatarUrl
         })
       });
-      toast({
-        title: "Thành công",
-        description: t("creator.profileUpdated") || "Profile updated successfully",
-        type: "success"
-      });
+      notify(t("creator.profileUpdated") || "Profile updated successfully", "success");
     } catch (err: any) {
-      toast({
-        title: "Lỗi",
-        description: err.message || "Failed to update profile",
-        type: "error"
-      });
+      notify(err.message || "Failed to update profile", "error");
     } finally {
       setProfileLoading(false);
     }
@@ -81,11 +73,7 @@ export default function SettingsPage() {
   const handlePasswordUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      toast({
-        title: "Lỗi",
-        description: t("creator.passwordMismatch") || "Passwords do not match",
-        type: "error"
-      });
+      notify(t("creator.passwordMismatch") || "Passwords do not match", "error");
       return;
     }
 
@@ -98,18 +86,10 @@ export default function SettingsPage() {
           newPassword: passwordForm.newPassword
         })
       });
-      toast({
-        title: "Thành công",
-        description: t("creator.passwordUpdated") || "Password changed successfully",
-        type: "success"
-      });
+      notify(t("creator.passwordUpdated") || "Password changed successfully", "success");
       setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
     } catch (err: any) {
-      toast({
-        title: "Lỗi",
-        description: err.message || "Failed to change password",
-        type: "error"
-      });
+      notify(err.message || "Failed to change password", "error");
     } finally {
       setPasswordLoading(false);
     }
@@ -144,7 +124,7 @@ export default function SettingsPage() {
                 <Label>{t("creator.username") || "Display Name"}</Label>
                 <Input 
                   value={profileForm.username} 
-                  onChange={e => setProfileForm({...profileForm, username: e.target.value})}
+                  onChange={(e: any) => setProfileForm({...profileForm, username: e.target.value})}
                   required
                 />
               </div>
@@ -153,7 +133,7 @@ export default function SettingsPage() {
                 <Label>{t("creator.avatarUrl") || "Avatar URL"}</Label>
                 <Input 
                   value={profileForm.avatarUrl} 
-                  onChange={e => setProfileForm({...profileForm, avatarUrl: e.target.value})}
+                  onChange={(e: any) => setProfileForm({...profileForm, avatarUrl: e.target.value})}
                   placeholder="https://example.com/avatar.png"
                 />
               </div>
@@ -162,7 +142,7 @@ export default function SettingsPage() {
                 <Label>{t("creator.bio") || "Bio"}</Label>
                 <Textarea 
                   value={profileForm.bio} 
-                  onChange={e => setProfileForm({...profileForm, bio: e.target.value})}
+                  onChange={(e: any) => setProfileForm({...profileForm, bio: e.target.value})}
                   className="resize-none h-24"
                   placeholder="Tell your players about yourself..."
                 />
@@ -193,7 +173,7 @@ export default function SettingsPage() {
                 <Input 
                   type="password"
                   value={passwordForm.currentPassword} 
-                  onChange={e => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
+                  onChange={(e: any) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
                   required
                 />
               </div>
@@ -203,7 +183,7 @@ export default function SettingsPage() {
                 <Input 
                   type="password"
                   value={passwordForm.newPassword} 
-                  onChange={e => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+                  onChange={(e: any) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
                   required
                 />
               </div>
@@ -213,7 +193,7 @@ export default function SettingsPage() {
                 <Input 
                   type="password"
                   value={passwordForm.confirmPassword} 
-                  onChange={e => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
+                  onChange={(e: any) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
                   required
                 />
               </div>
