@@ -689,5 +689,10 @@
   "creator.playTrendsDesc": "Daily play count across your portfolio",
   "creator.revenueMetrics": "Revenue Metrics",
   "creator.revenueDesc": "Estimated ad revenue and tips",
-  "creator.settingsDesc": "Manage your creator profile and preferences."
+  "creator.settingsDesc": "Manage your creator profile and preferences.",
+  "creator.myGamesDesc": "Manage your game portfolio and track performance.",
+  "creator.searchGames": "Search games...",
+  "creator.noGamesFound": "No games found",
+  "creator.tryDifferentSearch": "Try a different search term",
+  "creator.startByUploading": "Start building your portfolio by uploading your first game."
 }

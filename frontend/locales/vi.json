@@ -728,5 +728,10 @@
   "creator.playTrendsDesc": "Số lượt chơi hàng ngày trên danh mục của bạn",
   "creator.revenueMetrics": "Chỉ Số Doanh Thu",
   "creator.revenueDesc": "Ước tính doanh thu quảng cáo và tiền quyên góp",
-  "creator.settingsDesc": "Quản lý hồ sơ và các tùy chọn nhà phát triển của bạn."
+  "creator.settingsDesc": "Quản lý hồ sơ và các tùy chọn nhà phát triển của bạn.",
+  "creator.myGamesDesc": "Quản lý danh mục game và theo dõi hiệu suất.",
+  "creator.searchGames": "Tìm kiếm game...",
+  "creator.noGamesFound": "Không tìm thấy game",
+  "creator.tryDifferentSearch": "Thử một từ khóa tìm kiếm khác",
+  "creator.startByUploading": "Bắt đầu xây dựng danh mục bằng cách tải lên game đầu tiên của bạn."
 }
