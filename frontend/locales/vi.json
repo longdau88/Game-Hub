@@ -763,5 +763,6 @@
   "creator.deleteSuccess": "Xoá game thành công",
   "creator.deleteFailed": "Xoá game thất bại",
   "creator.docsComingSoon": "Tài liệu đang được cập nhật, vui lòng quay lại sau!",
-  "creator.uploadGame": "Tải Lên Game"
+  "creator.uploadGame": "Tải Lên Game",
+  "creator.allGames": "Tất cả Game"
 }

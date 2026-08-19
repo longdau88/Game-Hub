@@ -4,6 +4,7 @@ const gameController = require('../controllers/game.controller');
 const { uploadGame, getPublishedGames, getGameDetails, getMyGames, logSession, logCrash } = gameController;
 const { requireAuth, optionalAuth } = require('../middleware/auth.middleware');
 const { cacheMiddleware } = require('../middleware/cache.middleware');
+const creatorAnalyticsController = require('../controllers/creator-analytics.controller');
 
 const router = express.Router();
 
@@ -19,6 +20,7 @@ router.get('/search', gameController.semanticSearch);
 router.get('/featured', cacheMiddleware(60), gameController.getFeaturedGames);
 router.post('/upload', requireAuth, upload.fields([{ name: 'gameFile', maxCount: 1 }, { name: 'coverImage', maxCount: 1 }]), uploadGame);
 router.get('/creator/games', requireAuth, getMyGames);
+router.get('/creator/analytics', requireAuth, creatorAnalyticsController.getCreatorAnalytics);
 router.get('/user/bookmarked', requireAuth, gameController.getBookmarkedGames);
 router.get('/user/history', requireAuth, gameController.getGameHistory);
 router.get('/recommendations', requireAuth, gameController.getRecommendations);

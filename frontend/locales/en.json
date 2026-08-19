@@ -723,5 +723,6 @@
   "creator.deleteSuccess": "Game deleted successfully",
   "creator.deleteFailed": "Failed to delete game",
   "creator.docsComingSoon": "Documentation is being updated, please check back later!",
-  "creator.uploadGame": "Upload Game"
+  "creator.uploadGame": "Upload Game",
+  "creator.allGames": "All Games"
 }
