@@ -62,9 +62,9 @@ export default function SettingsPage() {
           avatarUrl: profileForm.avatarUrl
         })
       });
-      notify(t("creator.profileUpdated") || "Profile updated successfully", "success");
+      notify({ message: t("creator.profileUpdated") || "Profile updated successfully", variant: "success" });
     } catch (err: any) {
-      notify(err.message || "Failed to update profile", "error");
+      notify({ message: err.message || "Failed to update profile", variant: "error" });
     } finally {
       setProfileLoading(false);
     }
@@ -73,7 +73,7 @@ export default function SettingsPage() {
   const handlePasswordUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      notify(t("creator.passwordMismatch") || "Passwords do not match", "error");
+      notify({ message: t("creator.passwordMismatch") || "Passwords do not match", variant: "error" });
       return;
     }
 
@@ -86,10 +86,10 @@ export default function SettingsPage() {
           newPassword: passwordForm.newPassword
         })
       });
-      notify(t("creator.passwordUpdated") || "Password changed successfully", "success");
+      notify({ message: t("creator.passwordUpdated") || "Password changed successfully", variant: "success" });
       setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
     } catch (err: any) {
-      notify(err.message || "Failed to change password", "error");
+      notify({ message: err.message || "Failed to change password", variant: "error" });
     } finally {
       setPasswordLoading(false);
     }
