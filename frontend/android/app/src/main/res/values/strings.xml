@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Game Hub</string>
+    <string name="title_activity_main">Game Hub</string>
+    <string name="package_name">com.longdau88.gamehub</string>
+    <string name="custom_url_scheme">com.longdau88.gamehub</string>
+</resources>

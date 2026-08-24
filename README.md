@@ -9,7 +9,8 @@ Game Hub là một nền tảng phân phối game web tương tự như Steam, �
 - **Lưu trữ (Storage)**: Tích hợp Cloudflare R2 Object Storage để lưu game.
 - **Xác thực (Authentication)**: Đăng nhập bằng JWT (JSON Web Tokens) qua Cookie bảo mật, mã hóa mật khẩu bằng bcrypt.
 - **Phân quyền (Authorization)**: Phân chia Role rõ ràng (Admin / User thường).
-- **Xác minh Email**: Tự động gửi email kích hoạt tài khoản qua Nodemailer khi người dùng đăng ký mới.
+- **Hệ thống Nhiệm vụ (Gamification)**: Hỗ trợ tạo các nhiệm vụ (Quests) với 4 mốc thời gian: Hàng ngày (Daily), Hàng tuần (Weekly), Hàng tháng (Monthly), và Trọn đời (Lifetime) cho phép người chơi cày cuốc để kiếm điểm/phần thưởng.
+- **Xác minh Email**: Tự động gửi email kích hoạt tài khoản qua Nodemailer / Resend.
 
 ## Cấu Trúc Dự Án (Monolith)
 Để tối ưu hóa việc triển khai (deploy), toàn bộ Frontend (Next.js) đã được thiết lập để **build ra file tĩnh** (`out/`) và được host chung trên cùng một port của **Backend Express**.
@@ -117,3 +118,110 @@ Tất cả các route này yêu cầu đăng nhập với quyền `admin`.
 - `PUT /games/:id/approve`: Duyệt game để hiển thị ra trang chủ.
 - `PUT /games/:id/reject`: Từ chối game.
 - `DELETE /games/:id`: Xóa game khỏi CSDL và R2.
+
+### 7. Gamification & Nhiệm Vụ (Quests) - `/api/gamification`
+Hệ thống xử lý logic tính điểm và tiến độ hoàn thành nhiệm vụ theo chu kỳ (`periodKey` ví dụ `2026-W34` cho tuần).
+- `GET /quests/active`: Trả về danh sách nhiệm vụ được chia theo chu kỳ (Daily, Weekly, Monthly, Lifetime) kèm theo tiến trình (progress) của người dùng hiện tại.
+
+---
+
+## Giải pháp WebView cho Mobile (Khuyên Dùng)
+
+Vì Next.js của dự án sử dụng **Dynamic Routes** (VD: `/creator/games/edit/[id]`), việc xuất file tĩnh hoàn toàn (`output: export`) để nhúng vào App Mobile sẽ gặp lỗi nếu không biết trước `id`.
+
+Để khắc phục mà không cần đổi code Next.js, chúng ta cấu hình Capacitor hoạt động như một **WebView Wrapper** trỏ thẳng đến trang Frontend đã deploy (ví dụ: Vercel):
+1. Sửa `frontend/capacitor.config.ts`:
+   ```typescript
+   import type { CapacitorConfig } from '@capacitor/cli';
+   const config: CapacitorConfig = {
+     appId: 'com.longdau88.gamehub',
+     appName: 'Game Hub',
+     webDir: 'out',
+     server: {
+       url: 'https://game-hub-frontend.vercel.app', // Thay bằng domain thật
+       cleartext: true
+     }
+   };
+   export default config;
+   ```
+2. Mở App ra, nội dung sẽ được kéo trực tiếp từ Web về, App đóng vai trò như một trình duyệt Native mượt mà.
+
+---
+
+## Hướng Dẫn Build Đa Nền Tảng (Mobile & PC)
+
+Dự án này sử dụng CapacitorJS để đóng gói Frontend thành ứng dụng Mobile và PC. Kết quả build sẽ được lưu vào thư mục `build_outputs`.
+
+### 1. Kịch Bản Tự Động (PowerShell Script)
+Cách dễ nhất để tự động build và copy toàn bộ các bản release ra thư mục `build_outputs`.
+Tạo file `build-all.ps1` ở thư mục gốc:
+
+```powershell
+Write-Host "Bắt đầu quy trình Build Đa Nền Tảng..."
+
+# 1. Build Frontend Next.js
+cd frontend
+npm run build
+npx cap sync
+
+# 2. Build Android APK
+cd android
+./gradlew assembleDebug
+cd ..
+New-Item -ItemType Directory -Force -Path "../build_outputs/android"
+Copy-Item "android/app/build/outputs/apk/debug/app-debug.apk" -Destination "../build_outputs/android/GameHub-test.apk"
+
+# 3. Build Windows App (yêu cầu cài đặt @capacitor-community/electron)
+# cd electron
+# npm run electron:build
+
+Write-Host "XONG! File của bạn đã được xuất ra thư mục build_outputs!"
+```
+
+### 2. Build Thủ Công Từng Nền Tảng
+
+**Build Android APK (để Test):**
+```bash
+cd frontend/android
+./gradlew assembleDebug
+mkdir -p ../../build_outputs/android
+cp app/build/outputs/apk/debug/app-debug.apk ../../build_outputs/android/game-hub-test.apk
+```
+
+**Build Android AAB (để Upload CH Play):**
+```bash
+cd frontend/android
+./gradlew bundleRelease
+mkdir -p ../../build_outputs/android
+cp app/build/outputs/bundle/release/app-release.aab ../../build_outputs/android/game-hub-release.aab
+```
+
+**Build iOS và macOS (App Store) thông qua Xcode:**
+> Việc upload lên App Store Apple yêu cầu phải thao tác qua phần mềm **Xcode** trên máy tính **macOS**. Capacitor có sẵn tính năng tương thích để 1 project chạy được cả trên iPhone (iOS) và máy Mac (macOS - Mac Catalyst).
+
+```bash
+# 1. Chuyển vào thư mục frontend và thêm nền tảng iOS
+cd frontend
+npm install @capacitor/ios
+npx cap add ios
+npx cap sync
+
+# 2. Mở dự án trực tiếp bằng Xcode
+npx cap open ios
+```
+**Khi Xcode đã mở lên, bạn làm theo các bước sau để Build và Upload:**
+1. **Để hỗ trợ thêm macOS (Tùy chọn):** Ở cột bên trái, bấm vào thư mục `App` (Màu xanh dương) -> Chọn Target là `App` -> Ở tab **General**, tìm mục **Supported Destinations** -> Bấm nút `+` và chọn **Mac (Mac Catalyst)**. Giờ App của bạn đã chạy được mượt mà trên cả iPhone và Macbook.
+2. **Ký chứng chỉ (Signing):** Chuyển sang tab **Signing & Capabilities**, tick vào *Automatically manage signing* và chọn Team (Tài khoản Apple Developer của bạn).
+3. **Build & Archive:** Nhìn lên thanh menu trên cùng của máy Mac, chọn thiết bị đích là **Any iOS Device (arm64)** (hoặc **Any Mac** nếu build cho macOS). Tiếp theo bấm vào menu `Product > Archive`.
+4. **Upload App Store:** Khi quá trình Archive chạy xong, cửa sổ *Organizer* sẽ hiện ra, bạn chỉ việc bấm nút **Distribute App** màu xanh dương, chọn **App Store Connect** và Next liên tục để đẩy thẳng bản build lên hệ thống chờ duyệt của Apple.
+
+**Build Windows PC (.exe):**
+Sử dụng Electron wrapper thông qua plugin `@capacitor-community/electron`.
+```bash
+cd frontend
+npm install @capacitor-community/electron
+npx cap add @capacitor-community/electron
+cd electron
+npm run electron:build
+```
+> Cấu hình đường dẫn xuất trong `frontend/electron/electron-builder.config.json` thành `"directories": { "output": "../../build_outputs/" }`.
