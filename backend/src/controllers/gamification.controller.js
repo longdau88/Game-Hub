@@ -161,11 +161,33 @@ const getPeriodKey = (frequency) => {
 
 const ensureDefaultQuests = async () => {
   const defaultQuests = [
-    { title: 'Play a Game', targetType: 'play_game', targetValue: 1, rewardXp: 50, frequency: 'DAILY' },
-    { title: 'Rate a Game', targetType: 'rate_game', targetValue: 1, rewardXp: 30, frequency: 'DAILY' },
-    { title: 'Daily Login', targetType: 'login', targetValue: 1, rewardXp: 20, frequency: 'DAILY' },
-    { title: 'Play 5 Games', targetType: 'play_game', targetValue: 5, rewardXp: 200, frequency: 'WEEKLY' },
-    { title: 'Follow a Creator', targetType: 'follow_creator', targetValue: 1, rewardXp: 30, frequency: 'LIFETIME' }
+    // DAILY
+    { title: 'Play a Game', targetType: 'play_game', targetValue: 1, rewardXp: 50, frequency: 'DAILY', description: 'Chơi bất kỳ một game nào trong hôm nay.' },
+    { title: 'Rate a Game', targetType: 'rate_game', targetValue: 1, rewardXp: 30, frequency: 'DAILY', description: 'Đánh giá 1 game.' },
+    { title: 'Daily Login', targetType: 'login', targetValue: 1, rewardXp: 20, frequency: 'DAILY', description: 'Đăng nhập vào hệ thống.' },
+    { title: 'Add a Friend', targetType: 'add_friend', targetValue: 1, rewardXp: 30, frequency: 'DAILY', description: 'Kết bạn với 1 người mới.' },
+    { title: 'Play 3 Games', targetType: 'play_game', targetValue: 3, rewardXp: 100, frequency: 'DAILY', description: 'Hoàn thành 3 game trong ngày hôm nay.' },
+    
+    // WEEKLY
+    { title: 'Play 10 Games', targetType: 'play_game', targetValue: 10, rewardXp: 500, frequency: 'WEEKLY', description: 'Chơi 10 lượt game trong tuần.' },
+    { title: 'Rate 3 Games', targetType: 'rate_game', targetValue: 3, rewardXp: 200, frequency: 'WEEKLY', description: 'Để lại đánh giá cho 3 game khác nhau.' },
+    { title: 'Follow 2 Creators', targetType: 'follow_creator', targetValue: 2, rewardXp: 150, frequency: 'WEEKLY', description: 'Theo dõi 2 Creator mới.' },
+    { title: 'Make 3 Friends', targetType: 'add_friend', targetValue: 3, rewardXp: 200, frequency: 'WEEKLY', description: 'Thêm 3 người bạn mới trong tuần này.' },
+    { title: 'Play 25 Games', targetType: 'play_game', targetValue: 25, rewardXp: 1500, frequency: 'WEEKLY', description: 'Cày 25 lượt game trong 1 tuần!' },
+
+    // MONTHLY
+    { title: 'Monthly Gamer', targetType: 'play_game', targetValue: 50, rewardXp: 3000, frequency: 'MONTHLY', description: 'Chơi tổng cộng 50 game trong tháng này.' },
+    { title: 'Monthly Critic', targetType: 'rate_game', targetValue: 10, rewardXp: 1000, frequency: 'MONTHLY', description: 'Đánh giá 10 game trong tháng.' },
+    { title: 'Social Butterfly', targetType: 'add_friend', targetValue: 10, rewardXp: 1000, frequency: 'MONTHLY', description: 'Có 10 người bạn mới trong tháng.' },
+    { title: 'Support Creators', targetType: 'follow_creator', targetValue: 5, rewardXp: 800, frequency: 'MONTHLY', description: 'Theo dõi 5 Creator trong tháng.' },
+    { title: 'Monthly Champion', targetType: 'play_game', targetValue: 100, rewardXp: 10000, frequency: 'MONTHLY', description: 'Thành tích cực khủng: Chơi 100 game trong tháng!' },
+
+    // LIFETIME
+    { title: 'Veteran Gamer', targetType: 'play_game', targetValue: 500, rewardXp: 50000, frequency: 'LIFETIME', description: 'Cột mốc cày cuốc: Chơi tổng cộng 500 game.' },
+    { title: 'Master Critic', targetType: 'rate_game', targetValue: 50, rewardXp: 10000, frequency: 'LIFETIME', description: 'Viết 50 đánh giá trên nền tảng.' },
+    { title: 'Popular Player', targetType: 'add_friend', targetValue: 50, rewardXp: 15000, frequency: 'LIFETIME', description: 'Kết bạn với 50 người.' },
+    { title: 'Creator Fan', targetType: 'follow_creator', targetValue: 20, rewardXp: 10000, frequency: 'LIFETIME', description: 'Theo dõi 20 Creators.' },
+    { title: 'The Legend', targetType: 'play_game', targetValue: 2000, rewardXp: 200000, frequency: 'LIFETIME', description: 'Huyền thoại Game Hub: Chơi 2000 lượt game.' }
   ];
   
   const count = await prisma.quest.count();
