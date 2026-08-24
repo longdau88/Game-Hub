@@ -498,10 +498,39 @@ exports.getSupportTickets = async (req, res) => {
     const tickets = await prisma.supportTicket.findMany({
       orderBy: { createdAt: 'desc' }
     });
-    res.json({ success: true, data: tickets });
+    
+    // Attach user info if email matches an existing user
+    const ticketsWithUser = await Promise.all(tickets.map(async (t) => {
+      const user = await prisma.user.findUnique({
+        where: { email: t.email },
+        select: { id: true, username: true, avatarUrl: true }
+      });
+      return { ...t, user };
+    }));
+
+    res.json({ success: true, data: ticketsWithUser });
   } catch (error) {
     console.error('Get support tickets error:', error);
     res.status(500).json({ error: 'Failed to fetch support tickets' });
+  }
+};
+
+exports.markTicketAsRead = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const ticket = await prisma.supportTicket.findUnique({ where: { id: parseInt(id) } });
+    if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
+    
+    if (ticket.status === 'OPEN') {
+      await prisma.supportTicket.update({
+        where: { id: parseInt(id) },
+        data: { status: 'READ' }
+      });
+    }
+    res.json({ success: true, message: 'Ticket marked as read' });
+  } catch (error) {
+    console.error('Mark ticket as read error:', error);
+    res.status(500).json({ error: 'Failed to mark ticket as read' });
   }
 };
 

@@ -67,6 +67,9 @@ router.delete('/mail/campaigns', requireAdmin, requireAuth, (req, res, next) => 
 // Support Inbox
 router.get('/support', getSupportTickets);
 router.post('/support/:id/reply', replySupportTicket);
+router.patch('/support/:id/read', requireAdmin, requireAuth, (req, res, next) => {
+  require('../controllers/admin.controller').markTicketAsRead(req, res).catch(next);
+});
 router.delete('/support/:id', deleteSupportTicket);
 
 // Audit Logs

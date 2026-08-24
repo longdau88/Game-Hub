@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAppDialog } from "@/contexts/DialogContext";
@@ -17,18 +17,54 @@ export default function SupportInboxPage() {
   const isVi = locale === "vi";
   const { notify, confirm } = useAppDialog();
 
-  const fetchTickets = () => {
-    setLoading(true);
-    fetchAPI('/admin/support')
-      .then(res => setTickets(res.data || []))
-      .catch(console.error)
-      .finally(() => setLoading(false));
+  const prevLatestIdRef = useRef<number | null>(null);
+
+  const fetchTickets = async (isPolling = false) => {
+    if (!isPolling) setLoading(true);
+    try {
+      const res = await fetchAPI('/admin/support');
+      const data = res.data || [];
+      
+      if (isPolling && data.length > 0 && prevLatestIdRef.current !== null && data[0].id > prevLatestIdRef.current) {
+        notify({ message: isVi ? "Có tin nhắn hỗ trợ mới!" : "New support message arrived!", variant: "success" });
+      }
+      
+      if (data.length > 0) {
+        prevLatestIdRef.current = data[0].id;
+      }
+      
+      setTickets(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      if (!isPolling) setLoading(false);
+    }
   };
 
   useEffect(() => {
     setMounted(true);
     fetchTickets();
+    
+    // Poll every 15 seconds
+    const interval = setInterval(() => {
+      fetchTickets(true);
+    }, 15000);
+    
+    return () => clearInterval(interval);
   }, []);
+
+  const handleSelectTicket = async (ticket: any) => {
+    setSelectedTicket(ticket);
+    if (ticket.status === 'OPEN') {
+      try {
+        await fetchAPI(`/admin/support/${ticket.id}/read`, { method: 'PATCH' });
+        setTickets(prev => prev.map(t => t.id === ticket.id ? { ...t, status: 'READ' } : t));
+        setSelectedTicket({ ...ticket, status: 'READ' });
+      } catch (err) {
+        console.error('Failed to mark read', err);
+      }
+    }
+  };
 
   const handleDelete = async (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
@@ -110,7 +146,7 @@ export default function SupportInboxPage() {
               tickets.map(ticket => (
                 <div 
                   key={ticket.id} 
-                  onClick={() => setSelectedTicket(ticket)}
+                  onClick={() => handleSelectTicket(ticket)}
                   className={`p-4 rounded-xl cursor-pointer transition-all border ${selectedTicket?.id === ticket.id ? 'bg-primary/5 border-primary/30 ring-1 ring-primary/20' : 'bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 border-zinc-200 dark:border-zinc-800'}`}
                 >
                   <div className="flex items-start justify-between mb-1">
@@ -123,7 +159,14 @@ export default function SupportInboxPage() {
                       <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-1" />
                     )}
                   </div>
-                  <p className="text-sm text-zinc-500 truncate mb-3">{ticket.email}</p>
+                  <p className="text-sm text-zinc-500 truncate mb-2">{ticket.email}</p>
+                  {ticket.user && (
+                    <div className="mb-3">
+                      <span className="inline-flex items-center text-xs font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                        User: {ticket.user.username}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex items-center justify-between text-xs text-zinc-400">
                     <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {new Date(ticket.createdAt).toLocaleDateString()}</span>
                     <button onClick={(e) => handleDelete(e, ticket.id)} className="p-1.5 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 rounded-md transition-colors">
@@ -151,7 +194,14 @@ export default function SupportInboxPage() {
                       {selectedTicket.email[0].toUpperCase()}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{selectedTicket.email}</p>
+                      <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                        {selectedTicket.email}
+                        {selectedTicket.user && (
+                          <span className="ml-2 inline-flex items-center text-xs font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                            User: {selectedTicket.user.username}
+                          </span>
+                        )}
+                      </p>
                       <p className="text-xs text-zinc-500">{new Date(selectedTicket.createdAt).toLocaleString()}</p>
                     </div>
                   </div>
