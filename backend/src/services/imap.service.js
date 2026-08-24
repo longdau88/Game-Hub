@@ -46,7 +46,13 @@ class ImapService {
     try {
       // Connect if disconnected
       if (!this.client.usable) {
-        await this.client.connect();
+        console.log('[IMAP] Client not usable, re-initializing...');
+        try { await this.client.logout(); } catch(e) {}
+        await this.init();
+        if (!this.client || !this.client.usable) {
+          this.isRunning = false;
+          return;
+        }
       }
 
       let lock = await this.client.getMailboxLock('INBOX');
