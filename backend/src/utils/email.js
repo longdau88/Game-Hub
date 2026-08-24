@@ -26,9 +26,9 @@ const sendEmail = async ({ to, subject, html }) => {
       console.error('Error fetching emailProvider setting:', e);
     }
 
-    if (provider === 'nodemailer') {
+    if (provider === 'nodemailer' || provider === 'smtp') {
       const info = await transporter.sendMail({
-        from: `"Game Hub" <${process.env.EMAIL_USER}>`,
+        from: `"Game Hub Support" <support@gamehub.best>`,
         to,
         subject,
         html
@@ -36,7 +36,7 @@ const sendEmail = async ({ to, subject, html }) => {
       return { success: true, data: info };
     } else {
       const { data, error } = await resend.emails.send({
-        from: 'Game Hub <no-reply@game-hub.best>', 
+        from: 'Game Hub Support <support@gamehub.best>', 
         to,
         subject,
         html
