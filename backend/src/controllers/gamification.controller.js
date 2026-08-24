@@ -138,59 +138,75 @@ exports.grantBadge = async (req, res) => {
   }
 };
 
-// Daily Quests
+// Quests
+const getPeriodKey = (frequency) => {
+  const now = new Date();
+  switch (frequency) {
+    case 'DAILY':
+      return now.toISOString().split('T')[0];
+    case 'WEEKLY': {
+      const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+      d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+      const weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+      return `${d.getUTCFullYear()}-W${weekNo}`;
+    }
+    case 'MONTHLY':
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    case 'LIFETIME':
+    default:
+      return 'LIFETIME';
+  }
+};
+
 const ensureDefaultQuests = async () => {
   const defaultQuests = [
-    { title: 'Play a Game', targetType: 'play_game', targetValue: 1, rewardXp: 50 },
-    { title: 'Rate a Game', targetType: 'rate_game', targetValue: 1, rewardXp: 30 },
-    { title: 'Daily Login', targetType: 'login', targetValue: 1, rewardXp: 20 },
-    { title: 'Add a Friend', targetType: 'add_friend', targetValue: 1, rewardXp: 30 },
-    { title: 'Follow a Creator', targetType: 'follow_creator', targetValue: 1, rewardXp: 30 }
+    { title: 'Play a Game', targetType: 'play_game', targetValue: 1, rewardXp: 50, frequency: 'DAILY' },
+    { title: 'Rate a Game', targetType: 'rate_game', targetValue: 1, rewardXp: 30, frequency: 'DAILY' },
+    { title: 'Daily Login', targetType: 'login', targetValue: 1, rewardXp: 20, frequency: 'DAILY' },
+    { title: 'Play 5 Games', targetType: 'play_game', targetValue: 5, rewardXp: 200, frequency: 'WEEKLY' },
+    { title: 'Follow a Creator', targetType: 'follow_creator', targetValue: 1, rewardXp: 30, frequency: 'LIFETIME' }
   ];
   
-  const count = await prisma.dailyQuest.count();
-  if (count < defaultQuests.length) {
+  const count = await prisma.quest.count();
+  if (count === 0) {
     for (const q of defaultQuests) {
-      const exists = await prisma.dailyQuest.findFirst({ where: { targetType: q.targetType } });
-      if (!exists) {
-        await prisma.dailyQuest.create({ data: q });
-      }
+      await prisma.quest.create({ data: q });
     }
   }
 };
 
-exports.getDailyQuests = async (req, res) => {
+exports.getQuests = async (req, res) => {
   try {
     await ensureDefaultQuests();
     const userId = req.user.userId;
-    const today = new Date().toISOString().split('T')[0];
 
-    const quests = await prisma.dailyQuest.findMany();
+    const quests = await prisma.quest.findMany();
     
     // Get or create progress
     const progressList = await Promise.all(quests.map(async (q) => {
+      const periodKey = getPeriodKey(q.frequency);
       let prog = await prisma.userQuestProgress.findUnique({
-        where: { userId_questId_date: { userId, questId: q.id, date: today } }
+        where: { userId_questId_periodKey: { userId, questId: q.id, periodKey } }
       });
+      
       if (!prog) {
-        // Automatically complete the 'login' quest since they are fetching quests
+        // Automatically start the 'login' quest since they are fetching quests
         let initialVal = 0;
-        let isCompleted = false;
         if (q.targetType === 'login') {
           initialVal = 1;
-          isCompleted = true; // Wait, they have to claim it.
         }
         prog = await prisma.userQuestProgress.create({
-          data: { userId, questId: q.id, date: today, currentVal: initialVal }
+          data: { userId, questId: q.id, periodKey, currentVal: initialVal }
         });
-      } else if (q.targetType === 'login' && prog.currentVal < q.targetValue) {
-         // Failsafe: if login wasn't recorded
+      } else if (q.targetType === 'login' && prog.currentVal < q.targetValue && q.frequency === 'DAILY') {
+         // Failsafe: if daily login wasn't recorded
          prog = await prisma.userQuestProgress.update({
-           where: { userId_questId_date: { userId, questId: q.id, date: today } },
+           where: { userId_questId_periodKey: { userId, questId: q.id, periodKey } },
            data: { currentVal: 1 }
          });
       }
-      return { ...q, progress: prog };
+      return { ...q, progress: prog, periodKey };
     }));
 
     res.json(progressList);
@@ -204,23 +220,23 @@ exports.claimQuestReward = async (req, res) => {
   try {
     const userId = req.user.userId;
     const { questId } = req.body;
-    const today = new Date().toISOString().split('T')[0];
 
-    const quest = await prisma.dailyQuest.findUnique({ where: { id: parseInt(questId) } });
+    const quest = await prisma.quest.findUnique({ where: { id: parseInt(questId) } });
     if (!quest) return res.status(404).json({ error: 'Quest not found' });
 
+    const periodKey = getPeriodKey(quest.frequency);
     const progress = await prisma.userQuestProgress.findUnique({
-      where: { userId_questId_date: { userId, questId: quest.id, date: today } }
+      where: { userId_questId_periodKey: { userId, questId: quest.id, periodKey } }
     });
 
-    if (!progress) return res.status(400).json({ error: 'No progress found for today' });
+    if (!progress) return res.status(400).json({ error: 'No progress found' });
     if (progress.isCompleted) return res.status(400).json({ error: 'Reward already claimed' });
     if (progress.currentVal < quest.targetValue) return res.status(400).json({ error: 'Quest not completed yet' });
 
     // Mark as completed
     await prisma.userQuestProgress.update({
-      where: { userId_questId_date: { userId, questId: quest.id, date: today } },
-      data: { isCompleted: true }
+      where: { userId_questId_periodKey: { userId, questId: quest.id, periodKey } },
+      data: { isCompleted: true, claimedAt: new Date() }
     });
 
     // Reward XP
@@ -243,23 +259,26 @@ exports.claimQuestReward = async (req, res) => {
 // Internal utility to advance quest progress
 exports.advanceQuest = async (userId, targetType, amount = 1) => {
   try {
-    const today = new Date().toISOString().split('T')[0];
-    const quest = await prisma.dailyQuest.findFirst({ where: { targetType } });
-    if (!quest) return; // Quest doesn't exist
+    const quests = await prisma.quest.findMany({ where: { targetType } });
+    if (!quests.length) return; // No quests exist for this target type
 
-    let prog = await prisma.userQuestProgress.findUnique({
-      where: { userId_questId_date: { userId, questId: quest.id, date: today } }
-    });
+    for (const quest of quests) {
+      const periodKey = getPeriodKey(quest.frequency);
+      
+      let prog = await prisma.userQuestProgress.findUnique({
+        where: { userId_questId_periodKey: { userId, questId: quest.id, periodKey } }
+      });
 
-    if (!prog) {
-      prog = await prisma.userQuestProgress.create({
-        data: { userId, questId: quest.id, date: today, currentVal: amount }
-      });
-    } else if (prog.currentVal < quest.targetValue) {
-      await prisma.userQuestProgress.update({
-        where: { userId_questId_date: { userId, questId: quest.id, date: today } },
-        data: { currentVal: Math.min(prog.currentVal + amount, quest.targetValue) }
-      });
+      if (!prog) {
+        prog = await prisma.userQuestProgress.create({
+          data: { userId, questId: quest.id, periodKey, currentVal: amount }
+        });
+      } else if (prog.currentVal < quest.targetValue) {
+        await prisma.userQuestProgress.update({
+          where: { userId_questId_periodKey: { userId, questId: quest.id, periodKey } },
+          data: { currentVal: Math.min(prog.currentVal + amount, quest.targetValue) }
+        });
+      }
     }
   } catch (error) {
     console.error('Advance quest error:', error);
@@ -269,7 +288,7 @@ exports.advanceQuest = async (userId, targetType, amount = 1) => {
 // Admin: Get all quests
 exports.getAllQuests = async (req, res) => {
   try {
-    const quests = await prisma.dailyQuest.findMany({
+    const quests = await prisma.quest.findMany({
       orderBy: { id: 'asc' }
     });
     res.json(quests);
@@ -281,18 +300,19 @@ exports.getAllQuests = async (req, res) => {
 // Admin: Create Quest
 exports.createQuest = async (req, res) => {
   try {
-    const { title, description, targetType, targetValue, rewardXp } = req.body;
-    const quest = await prisma.dailyQuest.create({
+    const { title, description, targetType, targetValue, rewardXp, frequency } = req.body;
+    const quest = await prisma.quest.create({
       data: {
         title,
         description,
         targetType,
         targetValue: parseInt(targetValue) || 1,
-        rewardXp: parseInt(rewardXp) || 10
+        rewardXp: parseInt(rewardXp) || 10,
+        frequency: frequency || 'DAILY'
       }
     });
     const auditLogService = require('../services/auditLog.service');
-    await auditLogService.log(req.user.userId, 'CREATE_QUEST', 'DailyQuest', { questId: quest.id });
+    await auditLogService.log(req.user.userId, 'CREATE_QUEST', 'Quest', { questId: quest.id });
     res.status(201).json(quest);
   } catch (error) {
     res.status(500).json({ error: 'Failed to create quest' });
@@ -303,19 +323,20 @@ exports.createQuest = async (req, res) => {
 exports.updateQuest = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, targetType, targetValue, rewardXp } = req.body;
-    const quest = await prisma.dailyQuest.update({
+    const { title, description, targetType, targetValue, rewardXp, frequency } = req.body;
+    const quest = await prisma.quest.update({
       where: { id: parseInt(id) },
       data: {
         title,
         description,
         targetType,
         targetValue: parseInt(targetValue) || 1,
-        rewardXp: parseInt(rewardXp) || 10
+        rewardXp: parseInt(rewardXp) || 10,
+        frequency: frequency || 'DAILY'
       }
     });
     const auditLogService = require('../services/auditLog.service');
-    await auditLogService.log(req.user.userId, 'UPDATE_QUEST', 'DailyQuest', { questId: quest.id });
+    await auditLogService.log(req.user.userId, 'UPDATE_QUEST', 'Quest', { questId: quest.id });
     res.json(quest);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update quest' });
@@ -326,11 +347,11 @@ exports.updateQuest = async (req, res) => {
 exports.deleteQuest = async (req, res) => {
   try {
     const { id } = req.params;
-    await prisma.dailyQuest.delete({
+    await prisma.quest.delete({
       where: { id: parseInt(id) }
     });
     const auditLogService = require('../services/auditLog.service');
-    await auditLogService.log(req.user.userId, 'DELETE_QUEST', 'DailyQuest', { questId: id });
+    await auditLogService.log(req.user.userId, 'DELETE_QUEST', 'Quest', { questId: id });
     res.json({ message: 'Quest deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete quest' });

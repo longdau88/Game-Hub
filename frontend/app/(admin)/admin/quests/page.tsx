@@ -25,7 +25,8 @@ export default function QuestManagementPage() {
     description: "",
     targetType: "play_game",
     targetValue: 1,
-    rewardXp: 10
+    rewardXp: 10,
+    frequency: "DAILY"
   });
   
   const { t, locale } = useLanguage();
@@ -61,7 +62,8 @@ export default function QuestManagementPage() {
         description: quest.description || "",
         targetType: quest.targetType || "play_game",
         targetValue: quest.targetValue || 1,
-        rewardXp: quest.rewardXp || 10
+        rewardXp: quest.rewardXp || 10,
+        frequency: quest.frequency || "DAILY"
       });
     } else {
       setEditingQuest(null);
@@ -70,7 +72,8 @@ export default function QuestManagementPage() {
         description: "",
         targetType: "play_game",
         targetValue: 1,
-        rewardXp: 10
+        rewardXp: 10,
+        frequency: "DAILY"
       });
     }
     setModalOpen(true);
@@ -168,6 +171,7 @@ export default function QuestManagementPage() {
                 <TableRow className="border-border hover:bg-transparent">
                   <TableHead className="w-16">ID</TableHead>
                   <TableHead>{isVi ? "Tên Nhiệm vụ" : "Title"}</TableHead>
+                  <TableHead>{isVi ? "Tần suất" : "Frequency"}</TableHead>
                   <TableHead>{isVi ? "Loại / Target" : "Target Type"}</TableHead>
                   <TableHead className="text-center">{isVi ? "Mục tiêu" : "Value"}</TableHead>
                   <TableHead className="text-center">{isVi ? "Phần thưởng" : "Reward XP"}</TableHead>
@@ -197,6 +201,16 @@ export default function QuestManagementPage() {
                       <TableCell>
                         <div className="font-bold text-foreground">{q.title}</div>
                         <div className="text-xs text-muted-foreground line-clamp-1">{q.description}</div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className={`font-bold ${
+                          q.frequency === 'WEEKLY' ? 'bg-purple-500/10 text-purple-500 border-purple-500/20' : 
+                          q.frequency === 'MONTHLY' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 
+                          q.frequency === 'LIFETIME' ? 'bg-red-500/10 text-red-500 border-red-500/20' : 
+                          'bg-blue-500/10 text-blue-500 border-blue-500/20'
+                        }`}>
+                          {q.frequency}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20">
@@ -251,19 +265,34 @@ export default function QuestManagementPage() {
                   onChange={e => setFormData({...formData, description: e.target.value})} 
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-semibold">{isVi ? "Loại Mục tiêu (Target Type)" : "Target Type"}</label>
-                <select 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  value={formData.targetType}
-                  onChange={e => setFormData({...formData, targetType: e.target.value})}
-                >
-                  <option value="play_game">{isVi ? "Chơi Game (play_game)" : "Play Game (play_game)"}</option>
-                  <option value="rate_game">{isVi ? "Đánh giá Game (rate_game)" : "Rate Game (rate_game)"}</option>
-                  <option value="login">{isVi ? "Đăng nhập (login)" : "Login (login)"}</option>
-                  <option value="add_friend">{isVi ? "Kết bạn (add_friend)" : "Add Friend (add_friend)"}</option>
-                  <option value="follow_creator">{isVi ? "Theo dõi Creator (follow_creator)" : "Follow Creator (follow_creator)"}</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold">{isVi ? "Tần suất" : "Frequency"}</label>
+                  <select 
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    value={formData.frequency}
+                    onChange={e => setFormData({...formData, frequency: e.target.value})}
+                  >
+                    <option value="DAILY">{isVi ? "Hàng Ngày (DAILY)" : "Daily (DAILY)"}</option>
+                    <option value="WEEKLY">{isVi ? "Hàng Tuần (WEEKLY)" : "Weekly (WEEKLY)"}</option>
+                    <option value="MONTHLY">{isVi ? "Hàng Tháng (MONTHLY)" : "Monthly (MONTHLY)"}</option>
+                    <option value="LIFETIME">{isVi ? "Trọn Đời (LIFETIME)" : "Lifetime (LIFETIME)"}</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold">{isVi ? "Loại Mục tiêu" : "Target Type"}</label>
+                  <select 
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    value={formData.targetType}
+                    onChange={e => setFormData({...formData, targetType: e.target.value})}
+                  >
+                    <option value="play_game">{isVi ? "Chơi Game" : "Play Game"}</option>
+                    <option value="rate_game">{isVi ? "Đánh giá Game" : "Rate Game"}</option>
+                    <option value="login">{isVi ? "Đăng nhập" : "Login"}</option>
+                    <option value="add_friend">{isVi ? "Kết bạn" : "Add Friend"}</option>
+                    <option value="follow_creator">{isVi ? "Theo dõi Creator" : "Follow Creator"}</option>
+                  </select>
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">

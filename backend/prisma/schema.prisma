@@ -330,31 +330,35 @@ model UserBadge {
   @@map("user_badges")
 }
 
-model DailyQuest {
+model Quest {
   id          Int      @id @default(autoincrement())
   title       String   @db.VarChar(100)
   description String?  @db.Text
-  targetType  String   @map("target_type") @db.VarChar(50) // play_game, rate_game, login
+  targetType  String   @map("target_type") @db.VarChar(50) // play_game, rate_game, login, add_friend, follow_creator
   targetValue Int      @map("target_value")
   rewardXp    Int      @map("reward_xp")
+  frequency   String   @default("DAILY") @db.VarChar(20) // DAILY, WEEKLY, MONTHLY, LIFETIME
   createdAt   DateTime @default(now()) @map("created_at")
 
   progress UserQuestProgress[]
 
-  @@map("daily_quests")
+  @@map("quests")
 }
 
 model UserQuestProgress {
   userId      Int      @map("user_id")
   questId     Int      @map("quest_id")
+  periodKey   String   @map("period_key") @db.VarChar(50) // e.g., '2026-08-24' (daily), '2026-W34' (weekly), '2026-08' (monthly), 'LIFETIME'
   currentVal  Int      @default(0) @map("current_val")
   isCompleted Boolean  @default(false) @map("is_completed")
-  date        String   @db.VarChar(10) // "YYYY-MM-DD"
-  
-  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  quest       DailyQuest @relation(fields: [questId], references: [id], onDelete: Cascade)
+  claimedAt   DateTime? @map("claimed_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
-  @@id([userId, questId, date])
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quest       Quest      @relation(fields: [questId], references: [id], onDelete: Cascade)
+
+  @@id([userId, questId, periodKey])
   @@map("user_quest_progress")
 }
 

@@ -8,7 +8,7 @@ router.get('/leaderboard/:gameId', gamificationController.getLeaderboard);
 
 // Authenticated endpoints (Players)
 router.post('/score/:gameId', requireAuth, gamificationController.submitScore);
-router.get('/quests/daily', requireAuth, gamificationController.getDailyQuests);
+router.get('/quests/active', requireAuth, gamificationController.getQuests);
 router.post('/quests/claim', requireAuth, gamificationController.claimQuestReward);
 
 // Admin endpoints (Badges)

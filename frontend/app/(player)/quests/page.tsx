@@ -15,9 +15,11 @@ export default function QuestsPage() {
   const [mounted, setMounted] = useState(false);
   const [quests, setQuests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const { t } = useLanguage();
+  const [activeTab, setActiveTab] = useState("DAILY");
+  const { t, locale } = useLanguage();
   const { notify } = useAppDialog();
   const { updateProfile } = useAuth();
+  const isVi = locale === 'vi';
 
   const translateQuestTitle = (title: string) => {
     if (title === 'Play a Game') return t("quests.play_game") || title;
@@ -41,12 +43,12 @@ export default function QuestsPage() {
 
   useEffect(() => {
     setMounted(true);
-    fetchAPI('/gamification/quests/daily')
+    fetchAPI('/gamification/quests/active')
       .then(res => {
          const data = Array.isArray(res) ? res : (res.data || []);
          setQuests(data.map((q: any) => ({
            id: q.id,
-           type: 'Daily',
+           type: q.frequency,
            title: q.title,
            desc: q.description || '',
            targetType: q.targetType,
@@ -110,20 +112,36 @@ export default function QuestsPage() {
         </Card>
         
         <div className="md:col-span-2 space-y-4">
-          <h2 className="text-xl font-bold flex items-center gap-2 border-b border-border pb-2">
-            <Zap className="w-5 h-5 text-warning" /> {t("active_quests") || "Active Quests"}
-          </h2>
-          
-          <div className="space-y-4">
+          <div className="flex bg-surface border border-border rounded-lg overflow-hidden">
+            {['DAILY', 'WEEKLY', 'MONTHLY', 'LIFETIME'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 py-2 text-sm font-bold transition-colors ${activeTab === tab ? 'bg-primary/10 text-primary border-b-2 border-primary' : 'text-muted-foreground hover:bg-surface-hover'}`}
+              >
+                {tab === 'DAILY' && (isVi ? "Hàng Ngày" : "Daily")}
+                {tab === 'WEEKLY' && (isVi ? "Hàng Tuần" : "Weekly")}
+                {tab === 'MONTHLY' && (isVi ? "Hàng Tháng" : "Monthly")}
+                {tab === 'LIFETIME' && (isVi ? "Trọn Đời" : "Lifetime")}
+              </button>
+            ))}
+          </div>
+            
+          <div className="mt-4 space-y-4">
             {loading ? (
               <div className="p-8 text-center text-muted-foreground">{t("loading") || "Loading..."}</div>
-            ) : quests.length > 0 ? (
-              quests.map(quest => (
+            ) : quests.filter(q => q.type === activeTab).length > 0 ? (
+              quests.filter(q => q.type === activeTab).map(quest => (
                 <div key={quest.id} className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition-colors ${quest.completed ? 'bg-success/10 border-success/30' : 'bg-surface border-border hover:border-primary/50'}`}>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${quest.type === 'Daily' ? 'bg-blue-500/20 text-blue-500' : 'bg-purple-500/20 text-purple-500'}`}>
-                        {quest.type === 'Daily' ? (t("quests.daily") || "Daily") : quest.type}
+                      <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${
+                        quest.type === 'WEEKLY' ? 'bg-purple-500/20 text-purple-500' : 
+                        quest.type === 'MONTHLY' ? 'bg-amber-500/20 text-amber-500' : 
+                        quest.type === 'LIFETIME' ? 'bg-red-500/20 text-red-500' : 
+                        'bg-blue-500/20 text-blue-500'
+                      }`}>
+                        {quest.type}
                       </span>
                       <h3 className="font-bold text-foreground">{translateQuestTitle(quest.title)}</h3>
                     </div>
@@ -159,15 +177,13 @@ export default function QuestsPage() {
                 </div>
               ))
             ) : (
-              <div className="p-12 text-center border border-dashed border-border rounded-xl">
-                 <p className="text-muted-foreground font-semibold">{t("not_available") || "Chưa có"}</p>
-                 <p className="text-sm text-muted-foreground/70">{t("no_quests") || "No active quests at the moment."}</p>
+              <div className="p-8 text-center text-muted-foreground border border-dashed rounded-xl border-border bg-surface/50">
+                {isVi ? "Không có nhiệm vụ nào." : "No quests available."}
               </div>
             )}
           </div>
         </div>
       </div>
-
     </div>
   );
 }
