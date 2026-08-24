@@ -38,6 +38,7 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
           <span className="font-bold text-lg tracking-tight">Studio</span>
         </Link>
         <div className="flex items-center gap-2">
+          <NotificationDropdown />
           <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </Button>
@@ -92,6 +93,18 @@ export default function CreatorLayout({ children }: { children: React.ReactNode 
                   <HelpCircle className="w-4 h-4 mr-2" />{t("creator.documentation") || "Documentation"}
                 </Button>
               </Link>
+            </div>
+            
+            <div className="lg:hidden flex flex-col gap-3">
+              <Link href="/creator/games/new" onClick={() => setIsMobileMenuOpen(false)}>
+                <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white border-0 shadow-lg shadow-indigo-500/20">
+                  <Upload className="w-4 h-4 mr-2" /> {t("creator.uploadGame") || "Upload Game"}
+                </Button>
+              </Link>
+              <div className="flex justify-between items-center px-2">
+                <ThemeToggle />
+                <LanguageSwitcher />
+              </div>
             </div>
             
             <div className="flex items-center gap-3 p-2 rounded-xl border border-border bg-background">

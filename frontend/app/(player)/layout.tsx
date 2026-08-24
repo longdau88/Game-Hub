@@ -136,7 +136,18 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
         </div>
 
         {/* User Profile Area */}
-        <div className="p-4 border-t border-border bg-surface/50">
+        <div className="p-4 border-t border-border bg-surface/50 mt-auto">
+          <div className="lg:hidden flex flex-col gap-3 mb-4">
+             <Link href="/creator/games/new" onClick={() => setIsMobileMenuOpen(false)}>
+               <Button variant="outline" className="w-full">
+                 {t("nav.submitGame") || "Submit Game"}
+               </Button>
+             </Link>
+             <div className="flex justify-between items-center px-2">
+               <ThemeToggle />
+               <LanguageSwitcher />
+             </div>
+          </div>
           {user ? (
             <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-secondary transition-colors">
               <Link href="/profile" className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer">

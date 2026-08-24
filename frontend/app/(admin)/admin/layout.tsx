@@ -42,6 +42,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <span className="font-bold text-lg tracking-tight">Admin Console</span>
         </Link>
         <div className="flex items-center gap-2">
+          <NotificationDropdown />
           <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </Button>
@@ -89,7 +90,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
         
         {/* Profile Area */}
-        <div className="p-4 border-t border-border bg-surface/50">
+        <div className="p-4 border-t border-border bg-surface/50 mt-auto">
+          <div className="lg:hidden flex justify-between items-center mb-4 px-2">
+            <ThemeToggle />
+            <LanguageSwitcher />
+          </div>
           <div className="flex items-center gap-3 p-2 rounded-xl">
             <Avatar size="sm" src={user?.avatarUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub"} fallback={user?.username?.[0]?.toUpperCase() || "A"} />
             <div className="flex-1 min-w-0">
