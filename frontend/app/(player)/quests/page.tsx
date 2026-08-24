@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { CheckSquare, Gift, Zap, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,6 +28,17 @@ export default function QuestsPage() {
     return title;
   };
 
+  const getQuestLink = (targetType: string) => {
+    switch (targetType) {
+      case 'play_game': return '/';
+      case 'rate_game': return '/discover';
+      case 'login': return '/profile';
+      case 'add_friend': return '/friends';
+      case 'follow_creator': return '/discover';
+      default: return '/';
+    }
+  };
+
   useEffect(() => {
     setMounted(true);
     fetchAPI('/gamification/quests/daily')
@@ -37,6 +49,7 @@ export default function QuestsPage() {
            type: 'Daily',
            title: q.title,
            desc: q.description || '',
+           targetType: q.targetType,
            xp: q.rewardXp,
            completed: q.progress?.isCompleted || false,
            progress: q.progress?.currentVal || 0,
@@ -127,9 +140,17 @@ export default function QuestsPage() {
                       )}
                     </div>
                     {!quest.completed && (
-                      <Button variant="outline" size="sm" disabled={quest.progress < quest.total} onClick={() => quest.progress >= quest.total && handleClaim(quest.id)}>
-                        {quest.progress >= quest.total ? (t("claim") || "Claim") : (t("play_now") || "Play Now")}
-                      </Button>
+                      quest.progress >= quest.total ? (
+                        <Button variant="outline" size="sm" onClick={() => handleClaim(quest.id)}>
+                          {t("claim") || "Claim"}
+                        </Button>
+                      ) : (
+                        <Link href={getQuestLink(quest.targetType)}>
+                          <Button variant="outline" size="sm">
+                            {t("quests.complete_now") || "Hoàn thành ngay"}
+                          </Button>
+                        </Link>
+                      )
                     )}
                     {quest.completed && (
                       <Button className="bg-success text-white" size="sm" disabled>{t("quests.completed") || "Completed"}</Button>

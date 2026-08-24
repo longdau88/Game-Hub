@@ -16,5 +16,10 @@ router.get('/admin/badges', requireAuth, requireAdmin, gamificationController.ge
 router.post('/admin/badges', requireAuth, requireAdmin, gamificationController.createBadge);
 router.delete('/admin/badges/:id', requireAuth, requireAdmin, gamificationController.deleteBadge);
 router.post('/admin/badges/grant', requireAuth, requireAdmin, gamificationController.grantBadge);
+// Admin endpoints (Quests)
+router.get('/admin/quests', requireAuth, requireAdmin, gamificationController.getAllQuests);
+router.post('/admin/quests', requireAuth, requireAdmin, gamificationController.createQuest);
+router.put('/admin/quests/:id', requireAuth, requireAdmin, gamificationController.updateQuest);
+router.delete('/admin/quests/:id', requireAuth, requireAdmin, gamificationController.deleteQuest);
 
 module.exports = router;

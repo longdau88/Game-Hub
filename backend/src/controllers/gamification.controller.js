@@ -265,3 +265,75 @@ exports.advanceQuest = async (userId, targetType, amount = 1) => {
     console.error('Advance quest error:', error);
   }
 };
+
+// Admin: Get all quests
+exports.getAllQuests = async (req, res) => {
+  try {
+    const quests = await prisma.dailyQuest.findMany({
+      orderBy: { id: 'asc' }
+    });
+    res.json(quests);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch quests' });
+  }
+};
+
+// Admin: Create Quest
+exports.createQuest = async (req, res) => {
+  try {
+    const { title, description, targetType, targetValue, rewardXp } = req.body;
+    const quest = await prisma.dailyQuest.create({
+      data: {
+        title,
+        description,
+        targetType,
+        targetValue: parseInt(targetValue) || 1,
+        rewardXp: parseInt(rewardXp) || 10
+      }
+    });
+    const auditLogService = require('../services/auditLog.service');
+    await auditLogService.log(req.user.userId, 'CREATE_QUEST', 'DailyQuest', { questId: quest.id });
+    res.status(201).json(quest);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create quest' });
+  }
+};
+
+// Admin: Update Quest
+exports.updateQuest = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, targetType, targetValue, rewardXp } = req.body;
+    const quest = await prisma.dailyQuest.update({
+      where: { id: parseInt(id) },
+      data: {
+        title,
+        description,
+        targetType,
+        targetValue: parseInt(targetValue) || 1,
+        rewardXp: parseInt(rewardXp) || 10
+      }
+    });
+    const auditLogService = require('../services/auditLog.service');
+    await auditLogService.log(req.user.userId, 'UPDATE_QUEST', 'DailyQuest', { questId: quest.id });
+    res.json(quest);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update quest' });
+  }
+};
+
+// Admin: Delete Quest
+exports.deleteQuest = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.dailyQuest.delete({
+      where: { id: parseInt(id) }
+    });
+    const auditLogService = require('../services/auditLog.service');
+    await auditLogService.log(req.user.userId, 'DELETE_QUEST', 'DailyQuest', { questId: id });
+    res.json({ message: 'Quest deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete quest' });
+  }
+};
+
