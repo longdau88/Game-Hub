@@ -10,7 +10,6 @@ import { Search, Plus, Pencil, Trash2, CheckSquare } from "lucide-react";
 import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAppDialog } from "@/contexts/DialogContext";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 
 export default function QuestManagementPage() {
   const [mounted, setMounted] = useState(false);
@@ -224,75 +223,79 @@ export default function QuestManagementPage() {
         </CardContent>
       </Card>
 
-      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>{editingQuest ? (isVi ? "Sửa Nhiệm vụ" : "Edit Quest") : (isVi ? "Tạo Nhiệm vụ" : "Create Quest")}</DialogTitle>
-            <DialogDescription>
-              {isVi ? "Thiết lập thông tin cho nhiệm vụ." : "Set up quest details."}
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSave} className="space-y-4 py-4">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">{isVi ? "Tiêu đề" : "Title"}</label>
-              <Input 
-                value={formData.title} 
-                onChange={e => setFormData({...formData, title: e.target.value})} 
-                placeholder={isVi ? "VD: Chơi một Game" : "E.g. Play a Game"}
-                required
-              />
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in">
+          <div className="bg-background rounded-lg shadow-xl w-full max-w-[425px] overflow-hidden animate-in zoom-in-95">
+            <div className="px-6 py-4 border-b border-border">
+              <h2 className="text-lg font-semibold">{editingQuest ? (isVi ? "Sửa Nhiệm vụ" : "Edit Quest") : (isVi ? "Tạo Nhiệm vụ" : "Create Quest")}</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                {isVi ? "Thiết lập thông tin cho nhiệm vụ." : "Set up quest details."}
+              </p>
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">{isVi ? "Mô tả (không bắt buộc)" : "Description (optional)"}</label>
-              <Input 
-                value={formData.description} 
-                onChange={e => setFormData({...formData, description: e.target.value})} 
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-semibold">{isVi ? "Loại Mục tiêu (Target Type)" : "Target Type"}</label>
-              <select 
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={formData.targetType}
-                onChange={e => setFormData({...formData, targetType: e.target.value})}
-              >
-                <option value="play_game">{isVi ? "Chơi Game (play_game)" : "Play Game (play_game)"}</option>
-                <option value="rate_game">{isVi ? "Đánh giá Game (rate_game)" : "Rate Game (rate_game)"}</option>
-                <option value="login">{isVi ? "Đăng nhập (login)" : "Login (login)"}</option>
-                <option value="add_friend">{isVi ? "Kết bạn (add_friend)" : "Add Friend (add_friend)"}</option>
-                <option value="follow_creator">{isVi ? "Theo dõi Creator (follow_creator)" : "Follow Creator (follow_creator)"}</option>
-              </select>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
+            
+            <form onSubmit={handleSave} className="space-y-4 px-6 py-4">
               <div className="space-y-2">
-                <label className="text-sm font-semibold">{isVi ? "Số lượng yêu cầu" : "Target Value"}</label>
+                <label className="text-sm font-semibold">{isVi ? "Tiêu đề" : "Title"}</label>
                 <Input 
-                  type="number" min="1"
-                  value={formData.targetValue} 
-                  onChange={e => setFormData({...formData, targetValue: parseInt(e.target.value) || 1})} 
+                  value={formData.title} 
+                  onChange={e => setFormData({...formData, title: e.target.value})} 
+                  placeholder={isVi ? "VD: Chơi một Game" : "E.g. Play a Game"}
+                  required
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold">{isVi ? "Phần thưởng XP" : "Reward XP"}</label>
+                <label className="text-sm font-semibold">{isVi ? "Mô tả (không bắt buộc)" : "Description (optional)"}</label>
                 <Input 
-                  type="number" min="1"
-                  value={formData.rewardXp} 
-                  onChange={e => setFormData({...formData, rewardXp: parseInt(e.target.value) || 10})} 
+                  value={formData.description} 
+                  onChange={e => setFormData({...formData, description: e.target.value})} 
                 />
               </div>
-            </div>
-            <DialogFooter className="pt-4">
-              <Button type="button" variant="outline" onClick={() => setModalOpen(false)}>
-                {isVi ? "Hủy" : "Cancel"}
-              </Button>
-              <Button type="submit" disabled={saving}>
-                {saving && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />}
-                {isVi ? "Lưu lại" : "Save"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold">{isVi ? "Loại Mục tiêu (Target Type)" : "Target Type"}</label>
+                <select 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={formData.targetType}
+                  onChange={e => setFormData({...formData, targetType: e.target.value})}
+                >
+                  <option value="play_game">{isVi ? "Chơi Game (play_game)" : "Play Game (play_game)"}</option>
+                  <option value="rate_game">{isVi ? "Đánh giá Game (rate_game)" : "Rate Game (rate_game)"}</option>
+                  <option value="login">{isVi ? "Đăng nhập (login)" : "Login (login)"}</option>
+                  <option value="add_friend">{isVi ? "Kết bạn (add_friend)" : "Add Friend (add_friend)"}</option>
+                  <option value="follow_creator">{isVi ? "Theo dõi Creator (follow_creator)" : "Follow Creator (follow_creator)"}</option>
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold">{isVi ? "Số lượng yêu cầu" : "Target Value"}</label>
+                  <Input 
+                    type="number" min="1"
+                    value={formData.targetValue} 
+                    onChange={e => setFormData({...formData, targetValue: parseInt(e.target.value) || 1})} 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold">{isVi ? "Phần thưởng XP" : "Reward XP"}</label>
+                  <Input 
+                    type="number" min="1"
+                    value={formData.rewardXp} 
+                    onChange={e => setFormData({...formData, rewardXp: parseInt(e.target.value) || 10})} 
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end gap-2 pt-4 border-t border-border mt-4">
+                <Button type="button" variant="outline" onClick={() => setModalOpen(false)}>
+                  {isVi ? "Hủy" : "Cancel"}
+                </Button>
+                <Button type="submit" disabled={saving}>
+                  {saving && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />}
+                  {isVi ? "Lưu lại" : "Save"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
