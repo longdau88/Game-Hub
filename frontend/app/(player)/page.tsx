@@ -68,7 +68,7 @@ export default function PlayerHome() {
 
       {/* Featured Game Hero */}
       {!isLoading && mappedGames.length > 0 && (
-        <section className="relative rounded-3xl overflow-hidden w-full aspect-[4/3] sm:aspect-video lg:aspect-[21/9] min-h-[350px] border border-border group cursor-pointer">
+        <section className="relative rounded-3xl overflow-hidden w-full h-[350px] sm:h-[400px] lg:h-auto lg:aspect-[21/9] border border-border group cursor-pointer">
           <img 
             src={mappedGames[0].thumbnail || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=1600&q=80"} 
             alt="Featured Game"
