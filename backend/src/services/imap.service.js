@@ -78,7 +78,8 @@ class ImapService {
 
               console.log(`[IMAP] Saved ticket from ${email}: ${subject}`);
             } else {
-              console.log(`[IMAP] Ignored non-support email`);
+              // Optionally log in debug mode only, but for now we just ignore quietly
+              // console.log(`[IMAP] Ignored non-support email`);
             }
             
             uids.push(msg.uid);
