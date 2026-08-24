@@ -181,7 +181,7 @@ export default function CreatorDocs() {
       
       <div className="mt-12 p-6 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-900/30 text-center">
         <p className="text-zinc-600 dark:text-zinc-400">
-          {isVi ? "Bạn cần hỗ trợ thêm?" : "Need more help?"} <button onClick={() => setIsSupportModalOpen(true)} className="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">support@gamehub.com</button>
+          {isVi ? "Bạn cần hỗ trợ thêm?" : "Need more help?"} <button onClick={() => setIsSupportModalOpen(true)} className="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">support@game-hub.best</button>
         </p>
       </div>
 
