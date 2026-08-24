@@ -53,54 +53,61 @@ class ImapService {
       try {
         const uids = [];
         
-        // Fetch all UNSEEN emails
-        for await (let msg of this.client.fetch({ seen: false }, { source: true, uid: true })) {
-          try {
-            const parsed = await simpleParser(msg.source);
-            
-            const toAddresses = parsed.to?.value?.map(v => v.address?.toLowerCase()) || [];
-            const ccAddresses = parsed.cc?.value?.map(v => v.address?.toLowerCase()) || [];
-            const bccAddresses = parsed.bcc?.value?.map(v => v.address?.toLowerCase()) || [];
-            
-            const deliveredTo = parsed.headers.get('delivered-to') || '';
-            const xForwardedTo = parsed.headers.get('x-forwarded-to') || '';
-            const rawTo = parsed.headers.get('to') || '';
-            const rawCc = parsed.headers.get('cc') || '';
-            
-            const allRecipients = [...toAddresses, ...ccAddresses, ...bccAddresses].join(' ') + ` ${deliveredTo} ${xForwardedTo} ${rawTo} ${rawCc}`;
-            const isSupportEmail = allRecipients.toLowerCase().includes('support@game-hub.best') || allRecipients.toLowerCase().includes('support@gamehub.best');
+        // Search for unseen UIDs first (fast)
+        const unseenUids = await this.client.search({ seen: false }, { uid: true });
+        
+        if (unseenUids && unseenUids.length > 0) {
+          // Process at most the last 20 unseen emails to avoid connection timeouts
+          const uidsToProcess = unseenUids.slice(-20);
+          const processedUids = [];
 
-            if (isSupportEmail) {
-              // Extract useful fields
-              const email = parsed.replyTo?.value[0]?.address || parsed.from?.value[0]?.address || 'unknown@example.com';
-              const subject = parsed.subject || 'No Subject';
-              const message = parsed.text || parsed.html || 'No Content';
+          for (const uid of uidsToProcess) {
+            try {
+              const msg = await this.client.fetchOne(uid, { source: true }, { uid: true });
+              if (!msg) continue;
+              
+              const parsed = await simpleParser(msg.source);
+              
+              const toAddresses = parsed.to?.value?.map(v => v.address?.toLowerCase()) || [];
+              const ccAddresses = parsed.cc?.value?.map(v => v.address?.toLowerCase()) || [];
+              const bccAddresses = parsed.bcc?.value?.map(v => v.address?.toLowerCase()) || [];
+              
+              const deliveredTo = parsed.headers.get('delivered-to') || '';
+              const xForwardedTo = parsed.headers.get('x-forwarded-to') || '';
+              const rawTo = parsed.headers.get('to') || '';
+              const rawCc = parsed.headers.get('cc') || '';
+              
+              const allRecipients = [...toAddresses, ...ccAddresses, ...bccAddresses].join(' ') + ` ${deliveredTo} ${xForwardedTo} ${rawTo} ${rawCc}`;
+              const isSupportEmail = allRecipients.toLowerCase().includes('support@game-hub.best') || allRecipients.toLowerCase().includes('support@gamehub.best');
 
-              await prisma.supportTicket.create({
-                data: {
-                  email,
-                  subject,
-                  message: message.trim(),
-                  status: 'OPEN'
-                }
-              });
+              if (isSupportEmail) {
+                // Extract useful fields
+                const email = parsed.replyTo?.value[0]?.address || parsed.from?.value[0]?.address || 'unknown@example.com';
+                const subject = parsed.subject || 'No Subject';
+                const message = parsed.text || parsed.html || 'No Content';
 
-              console.log(`[IMAP] Saved ticket from ${email}: ${subject}`);
-            } else {
-              // Optionally log in debug mode only, but for now we just ignore quietly
-              // console.log(`[IMAP] Ignored non-support email`);
+                await prisma.supportTicket.create({
+                  data: {
+                    email,
+                    subject,
+                    message: message.trim(),
+                    status: 'OPEN'
+                  }
+                });
+
+                console.log(`[IMAP] Saved ticket from ${email}: ${subject}`);
+              }
+              
+              processedUids.push(uid);
+            } catch (parseErr) {
+              console.error(`[IMAP] Failed to parse message UID ${uid}:`, parseErr);
             }
-            
-            uids.push(msg.uid);
-          } catch (parseErr) {
-            console.error('[IMAP] Failed to parse message:', parseErr);
           }
-        }
 
-        // Mark all fetched as SEEN
-        if (uids.length > 0) {
-          await this.client.messageFlagsAdd(uids, ['\\Seen'], { uid: true });
-          console.log(`[IMAP] Marked ${uids.length} messages as SEEN`);
+          if (processedUids.length > 0) {
+            await this.client.messageFlagsAdd(processedUids, ['\\Seen'], { uid: true });
+            console.log(`[IMAP] Marked ${processedUids.length} messages as SEEN`);
+          }
         }
 
       } finally {
