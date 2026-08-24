@@ -58,8 +58,17 @@ class ImapService {
           try {
             const parsed = await simpleParser(msg.source);
             
-            const toAddresses = parsed.to?.value?.map(v => v.address.toLowerCase()) || [];
-            const isSupportEmail = toAddresses.some(addr => addr.includes('support@game-hub.best') || addr.includes('support@gamehub.best'));
+            const toAddresses = parsed.to?.value?.map(v => v.address?.toLowerCase()) || [];
+            const ccAddresses = parsed.cc?.value?.map(v => v.address?.toLowerCase()) || [];
+            const bccAddresses = parsed.bcc?.value?.map(v => v.address?.toLowerCase()) || [];
+            
+            const deliveredTo = parsed.headers.get('delivered-to') || '';
+            const xForwardedTo = parsed.headers.get('x-forwarded-to') || '';
+            const rawTo = parsed.headers.get('to') || '';
+            const rawCc = parsed.headers.get('cc') || '';
+            
+            const allRecipients = [...toAddresses, ...ccAddresses, ...bccAddresses].join(' ') + ` ${deliveredTo} ${xForwardedTo} ${rawTo} ${rawCc}`;
+            const isSupportEmail = allRecipients.toLowerCase().includes('support@game-hub.best') || allRecipients.toLowerCase().includes('support@gamehub.best');
 
             if (isSupportEmail) {
               // Extract useful fields
