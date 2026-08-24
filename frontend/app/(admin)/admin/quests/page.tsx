@@ -35,7 +35,7 @@ export default function QuestManagementPage() {
   const fetchQuests = async () => {
     setLoading(true);
     try {
-      const res = await fetchAPI('/admin/quests');
+      const res = await fetchAPI('/gamification/admin/quests');
       setQuests(Array.isArray(res) ? res : []);
     } catch (err) {
       console.error("Failed to fetch quests", err);
@@ -85,13 +85,13 @@ export default function QuestManagementPage() {
     setSaving(true);
     try {
       if (editingQuest) {
-        await fetchAPI(`/admin/quests/${editingQuest.id}`, {
+        await fetchAPI(`/gamification/admin/quests/${editingQuest.id}`, {
           method: 'PUT',
           body: JSON.stringify(formData)
         });
         notify({ message: isVi ? "Cập nhật thành công" : "Quest updated successfully", variant: "success" });
       } else {
-        await fetchAPI('/admin/quests', {
+        await fetchAPI('/gamification/admin/quests', {
           method: 'POST',
           body: JSON.stringify(formData)
         });
@@ -115,7 +115,7 @@ export default function QuestManagementPage() {
     if (!isConfirmed) return;
 
     try {
-      await fetchAPI(`/admin/quests/${id}`, { method: 'DELETE' });
+      await fetchAPI(`/gamification/admin/quests/${id}`, { method: 'DELETE' });
       notify({ message: isVi ? "Xóa thành công" : "Quest deleted", variant: "success" });
       fetchQuests();
     } catch (err) {
