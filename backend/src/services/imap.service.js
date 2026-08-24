@@ -59,12 +59,18 @@ class ImapService {
       try {
         const uids = [];
         
-        // Search for unseen UIDs first (fast)
-        const unseenUids = await this.client.search({ seen: false }, { uid: true });
+        const totalMessages = this.client.mailbox.exists;
         
-        if (unseenUids && unseenUids.length > 0) {
-          // Process at most the last 20 unseen emails to avoid connection timeouts
-          const uidsToProcess = unseenUids.slice(-20);
+        if (totalMessages > 0) {
+          // Lấy 20 email mới nhất (bất kể đã đọc hay chưa đọc)
+          const startSeq = Math.max(1, totalMessages - 20);
+          
+          // Chỉ fetch UID trước để lấy danh sách
+          const uidsToProcess = [];
+          for await (let msg of this.client.fetch(`${startSeq}:*`, { uid: true })) {
+            uidsToProcess.push(msg.uid);
+          }
+
           const processedUids = [];
 
           for (const uid of uidsToProcess) {
@@ -90,18 +96,24 @@ class ImapService {
                 // Extract useful fields
                 const email = parsed.replyTo?.value[0]?.address || parsed.from?.value[0]?.address || 'unknown@example.com';
                 const subject = parsed.subject || 'No Subject';
-                const message = parsed.text || parsed.html || 'No Content';
+                const message = (parsed.text || parsed.html || 'No Content').trim();
 
-                await prisma.supportTicket.create({
-                  data: {
-                    email,
-                    subject,
-                    message: message.trim(),
-                    status: 'OPEN'
-                  }
+                // Kiểm tra xem ticket này đã tồn tại trong DB chưa để tránh trùng lặp
+                const existingTicket = await prisma.supportTicket.findFirst({
+                  where: { email, subject, message }
                 });
 
-                console.log(`[IMAP] Saved ticket from ${email}: ${subject}`);
+                if (!existingTicket) {
+                  await prisma.supportTicket.create({
+                    data: {
+                      email,
+                      subject,
+                      message,
+                      status: 'OPEN'
+                    }
+                  });
+                  console.log(`[IMAP] Saved ticket from ${email}: ${subject}`);
+                }
               }
               
               processedUids.push(uid);
@@ -111,8 +123,8 @@ class ImapService {
           }
 
           if (processedUids.length > 0) {
+            // Vẫn nên mark là SEEN để đồng bộ trạng thái đọc trên Gmail
             await this.client.messageFlagsAdd(processedUids, ['\\Seen'], { uid: true });
-            console.log(`[IMAP] Marked ${processedUids.length} messages as SEEN`);
           }
         }
 
