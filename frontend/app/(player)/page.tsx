@@ -68,7 +68,7 @@ export default function PlayerHome() {
 
       {/* Featured Game Hero */}
       {!isLoading && mappedGames.length > 0 && (
-        <section className="relative rounded-3xl overflow-hidden aspect-[21/9] min-h-[300px] md:min-h-[400px] border border-border group cursor-pointer">
+        <section className="relative rounded-3xl overflow-hidden w-full aspect-[4/3] sm:aspect-video lg:aspect-[21/9] min-h-[350px] border border-border group cursor-pointer">
           <img 
             src={mappedGames[0].thumbnail || "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=1600&q=80"} 
             alt="Featured Game"
@@ -82,8 +82,8 @@ export default function PlayerHome() {
                 <Flame className="w-3.5 h-3.5" /> {t("featured.badge") || "Editor's Choice"}
               </span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-black text-white mb-4">{mappedGames[0].title}</h2>
-            <p className="text-zinc-300 text-sm md:text-base mb-6 line-clamp-2">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-3 md:mb-4 line-clamp-2">{mappedGames[0].title}</h2>
+            <p className="text-zinc-300 text-sm md:text-base mb-5 md:mb-6 line-clamp-2 sm:line-clamp-3">
               {t("featured.desc") || "Experience the most thrilling adventure of the year. Jump in and show your skills in this community favorite!"}
             </p>
             <div className="flex items-center gap-4">
