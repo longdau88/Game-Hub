@@ -39,7 +39,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="bg-error p-2 rounded-lg">
             <ShieldAlert className="w-5 h-5 text-white" />
           </div>
-          <span className="font-bold text-lg tracking-tight">Admin Console</span>
+          <span className="font-bold text-lg tracking-tight">{t("admin.title") || "Admin Console"}</span>
         </Link>
         <div className="flex items-center gap-2">
           <NotificationDropdown />
@@ -59,9 +59,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <ShieldAlert className="w-6 h-6 text-white" />
           </div>
           <div>
-            <span className="font-extrabold text-xl tracking-tight text-foreground block">Admin Console</span>
+            <span className="font-extrabold text-xl tracking-tight text-foreground block">{t("admin.title") || "Admin Console"}</span>
             <Link href="/" className="text-xs text-muted-foreground hover:text-primary flex items-center mt-0.5">
-              <ArrowLeft className="w-3 h-3 mr-1" /> Exit Admin
+              <ArrowLeft className="w-3 h-3 mr-1" /> {t("nav.exitAdmin") || "Exit Admin"}
             </Link>
           </div>
         </div>
@@ -99,7 +99,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Avatar size="sm" src={user?.avatarUrl || "https://api.dicebear.com/7.x/avataaars/svg?seed=GameHub"} fallback={user?.username?.[0]?.toUpperCase() || "A"} />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-foreground truncate">{user?.username || "Admin"}</p>
-              <p className="text-xs text-error font-bold">{(user?.role === 'ADMIN' || user?.role === 'admin') ? 'System Admin' : 'Admin Role'}</p>
+              <p className="text-xs text-error font-bold">{(user?.role === 'ADMIN' || user?.role === 'admin') ? (t("admin.roleSystemAdmin") || "System Admin") : (t("admin.roleAdmin") || "Admin Role")}</p>
             </div>
             <Button variant="ghost" size="icon" onClick={logout} className="text-muted-foreground hover:text-error hover:bg-error/10 shrink-0" title={t("admin.logout") || "Logout"}>
               <LogOut className="w-4 h-4" />

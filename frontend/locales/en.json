@@ -771,5 +771,9 @@
   "admin.audit.actions.CREATE_BADGE": "Create Badge",
   "admin.audit.actions.DELETE_BADGE": "Delete Badge",
   "admin.audit.actions.GRANT_BADGE": "Grant Badge",
-  "admin.audit.actions.CREATE_EMAIL_TEMPLATE": "Create Email Template"
+  "admin.audit.actions.CREATE_EMAIL_TEMPLATE": "Create Email Template",
+  "admin.tabSupport": "Support Inbox",
+  "admin.roleSystemAdmin": "System Admin",
+  "admin.roleAdmin": "Admin",
+  "nav.exitAdmin": "Exit Admin"
 }

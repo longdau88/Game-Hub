@@ -811,5 +811,9 @@
   "admin.audit.actions.CREATE_BADGE": "Tạo danh hiệu",
   "admin.audit.actions.DELETE_BADGE": "Xóa danh hiệu",
   "admin.audit.actions.GRANT_BADGE": "Tặng danh hiệu",
-  "admin.audit.actions.CREATE_EMAIL_TEMPLATE": "Tạo mẫu Email"
+  "admin.audit.actions.CREATE_EMAIL_TEMPLATE": "Tạo mẫu Email",
+  "admin.tabSupport": "Hộp thư Hỗ trợ",
+  "admin.roleSystemAdmin": "Quản trị viên Hệ thống",
+  "admin.roleAdmin": "Quản trị viên",
+  "nav.exitAdmin": "Thoát Admin"
 }
