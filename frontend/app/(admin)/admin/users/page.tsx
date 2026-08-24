@@ -124,7 +124,7 @@ export default function UserManagementPage() {
       setEmailComposer({ isOpen: false, isBulk: false, user: null, target: 'all', subject: '', body: '', sending: false });
     } catch (err) {
       console.error("Failed to send email", err);
-      notify({ message: t("game.loadError") || "Failed to send email", variant: "error" });
+      notify({ message: isVi ? "Không thể gửi email." : "Failed to send email", variant: "error" });
       setEmailComposer({ ...emailComposer, sending: false });
     }
   };

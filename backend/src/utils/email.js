@@ -28,7 +28,7 @@ const sendEmail = async ({ to, subject, html }) => {
 
     if (provider === 'nodemailer' || provider === 'smtp') {
       const info = await transporter.sendMail({
-        from: `"Game Hub Support" <support@gamehub.best>`,
+        from: `"Game Hub Support" <support@game-hub.best>`,
         to,
         subject,
         html
@@ -36,7 +36,7 @@ const sendEmail = async ({ to, subject, html }) => {
       return { success: true, data: info };
     } else {
       const { data, error } = await resend.emails.send({
-        from: 'Game Hub Support <support@gamehub.best>', 
+        from: 'Game Hub Support <support@game-hub.best>', 
         to,
         subject,
         html
