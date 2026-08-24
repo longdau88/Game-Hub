@@ -36,7 +36,8 @@ export default function QuestManagementPage() {
     setLoading(true);
     try {
       const res = await fetchAPI('/gamification/admin/quests');
-      setQuests(Array.isArray(res) ? res : []);
+      const data = Array.isArray(res) ? res : (res.data || []);
+      setQuests(data);
     } catch (err) {
       console.error("Failed to fetch quests", err);
       notify({ message: isVi ? "Không thể tải danh sách nhiệm vụ" : "Failed to fetch quests", variant: "error" });
