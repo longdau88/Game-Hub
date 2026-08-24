@@ -58,22 +58,29 @@ class ImapService {
           try {
             const parsed = await simpleParser(msg.source);
             
-            // Extract useful fields
-            const email = parsed.replyTo?.value[0]?.address || parsed.from?.value[0]?.address || 'unknown@example.com';
-            const subject = parsed.subject || 'No Subject';
-            const message = parsed.text || parsed.html || 'No Content';
+            const toAddresses = parsed.to?.value?.map(v => v.address.toLowerCase()) || [];
+            const isSupportEmail = toAddresses.some(addr => addr.includes('support@game-hub.best') || addr.includes('support@gamehub.best'));
 
-            // Check if ticket already exists (idempotency by message-id if possible, but simplest is just by insertion time since we mark SEEN)
-            await prisma.supportTicket.create({
-              data: {
-                email,
-                subject,
-                message: message.trim(),
-                status: 'OPEN'
-              }
-            });
+            if (isSupportEmail) {
+              // Extract useful fields
+              const email = parsed.replyTo?.value[0]?.address || parsed.from?.value[0]?.address || 'unknown@example.com';
+              const subject = parsed.subject || 'No Subject';
+              const message = parsed.text || parsed.html || 'No Content';
 
-            console.log(`[IMAP] Saved ticket from ${email}: ${subject}`);
+              await prisma.supportTicket.create({
+                data: {
+                  email,
+                  subject,
+                  message: message.trim(),
+                  status: 'OPEN'
+                }
+              });
+
+              console.log(`[IMAP] Saved ticket from ${email}: ${subject}`);
+            } else {
+              console.log(`[IMAP] Ignored non-support email`);
+            }
+            
             uids.push(msg.uid);
           } catch (parseErr) {
             console.error('[IMAP] Failed to parse message:', parseErr);
