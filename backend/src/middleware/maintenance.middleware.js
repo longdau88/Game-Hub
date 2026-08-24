@@ -4,6 +4,7 @@ const prisma = require('../config/db');
 let cachedSettings = {
   maintenanceMode: false,
   registrationEnabled: true,
+  emailProvider: 'resend',
   lastFetched: 0
 };
 
@@ -14,21 +15,30 @@ const getSystemSettings = async () => {
   }
   try {
     const settings = await prisma.systemSetting.findMany({
-      where: { key: { in: ['maintenanceMode', 'registrationEnabled'] } }
+      where: { key: { in: ['maintenanceMode', 'registrationEnabled', 'emailProvider'] } }
     });
     
     let foundRegistration = false;
+    let foundEmailProvider = false;
     settings.forEach(s => {
       if (s.key === 'maintenanceMode') cachedSettings.maintenanceMode = s.value === 'true';
       if (s.key === 'registrationEnabled') {
         cachedSettings.registrationEnabled = s.value === 'true';
         foundRegistration = true;
       }
+      if (s.key === 'emailProvider') {
+        cachedSettings.emailProvider = s.value;
+        foundEmailProvider = true;
+      }
     });
     
     // Default to true if not set in DB yet
     if (!foundRegistration) {
       cachedSettings.registrationEnabled = true;
+    }
+    
+    if (!foundEmailProvider) {
+      cachedSettings.emailProvider = 'resend';
     }
     
     cachedSettings.lastFetched = now;

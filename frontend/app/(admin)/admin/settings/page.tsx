@@ -19,7 +19,8 @@ export default function AdminSettingsPage() {
   const [settings, setSettings] = useState({
     maintenanceMode: "false",
     registrationEnabled: "true",
-    maxUploadSizeMB: "100"
+    maxUploadSizeMB: "100",
+    emailProvider: "resend"
   });
 
   const loadData = async () => {
@@ -30,7 +31,8 @@ export default function AdminSettingsPage() {
         setSettings({
           maintenanceMode: settingsRes.maintenanceMode || "false",
           registrationEnabled: settingsRes.registrationEnabled || "true",
-          maxUploadSizeMB: settingsRes.maxUploadSizeMB || "100"
+          maxUploadSizeMB: settingsRes.maxUploadSizeMB || "100",
+          emailProvider: settingsRes.emailProvider || "resend"
         });
       }
     } catch (err) {
@@ -114,6 +116,21 @@ export default function AdminSettingsPage() {
                   value={settings.maxUploadSizeMB}
                   onChange={e => setSettings({...settings, maxUploadSizeMB: e.target.value})}
                 />
+              </div>
+
+              <div className="space-y-2">
+                <label className="font-medium text-foreground block">{t("admin.emailProvider") || "Email Provider"}</label>
+                <select 
+                  className="flex h-10 w-full max-w-[200px] rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={settings.emailProvider}
+                  onChange={e => setSettings({...settings, emailProvider: e.target.value})}
+                >
+                  <option value="resend">Resend API</option>
+                  <option value="smtp">SMTP (Gmail)</option>
+                </select>
+                <p className="text-xs text-muted-foreground mt-1">
+                  SMTP utilizes the EMAIL_USER and EMAIL_PASS configured in the .env file.
+                </p>
               </div>
 
               <Button onClick={handleSaveSettings} disabled={savingSettings} className="w-full sm:w-auto">

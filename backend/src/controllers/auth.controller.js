@@ -42,7 +42,10 @@ class AuthController {
           id: data.user.id,
           username: data.user.username,
           email: data.user.email,
-          role: data.user.role
+          role: data.user.role,
+          level: data.user.level,
+          xp: data.user.xp,
+          avatarUrl: data.user.avatarUrl
         }
       });
     } catch (error) {

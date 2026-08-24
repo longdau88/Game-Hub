@@ -25,6 +25,10 @@ class ImapService {
       logger: false // Set to true for debugging
     });
 
+    this.client.on('error', err => {
+      console.error('[IMAP] Background error:', err.message);
+    });
+
     try {
       await this.client.connect();
       console.log('[IMAP] Connected to Gmail IMAP successfully');
@@ -55,7 +59,7 @@ class ImapService {
             const parsed = await simpleParser(msg.source);
             
             // Extract useful fields
-            const email = parsed.from?.value[0]?.address || 'unknown@example.com';
+            const email = parsed.replyTo?.value[0]?.address || parsed.from?.value[0]?.address || 'unknown@example.com';
             const subject = parsed.subject || 'No Subject';
             const message = parsed.text || parsed.html || 'No Content';
 

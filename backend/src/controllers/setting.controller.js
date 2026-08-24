@@ -16,6 +16,7 @@ exports.getSettings = async (req, res) => {
     if (!settingsObj['maintenanceMode']) settingsObj['maintenanceMode'] = 'false';
     if (!settingsObj['registrationEnabled']) settingsObj['registrationEnabled'] = 'true';
     if (!settingsObj['maxUploadSizeMB']) settingsObj['maxUploadSizeMB'] = '100';
+    if (!settingsObj['emailProvider']) settingsObj['emailProvider'] = 'resend';
     
     res.json(settingsObj);
   } catch (error) {
