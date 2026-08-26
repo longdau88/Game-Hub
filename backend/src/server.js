@@ -55,7 +55,7 @@ app.use((req, res, next) => {
 });
 
 // Enable CORS securely
-const defaultOrigins = ['http://localhost:3000', 'https://www.game-hub.best', 'https://game-hub.best'];
+const defaultOrigins = ['http://localhost:3000', 'http://localhost', 'capacitor://localhost', 'https://www.game-hub.best', 'https://game-hub.best'];
 const allowedOrigins = process.env.ALLOWED_ORIGIN 
   ? process.env.ALLOWED_ORIGIN.split(',').map(o => o.trim().replace(/\/$/, ''))
   : defaultOrigins;
