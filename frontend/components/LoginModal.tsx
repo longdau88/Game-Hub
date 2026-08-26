@@ -99,7 +99,12 @@ export default function LoginModal() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">{t("login.password")}</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("login.password")}</label>
+                <Link href="/forgot-password" onClick={closeLoginModal} className="text-sm font-medium text-blue-500 hover:text-blue-400 transition-colors">
+                  {t("login.forgotPassword")}
+                </Link>
+              </div>
               <input
                 type="password"
                 required

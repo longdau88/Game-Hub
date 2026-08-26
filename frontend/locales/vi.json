@@ -826,5 +826,13 @@
   "register.otpSent": "Mã xác nhận đã được gửi đến email của bạn.",
   "register.enterCode": "Nhập mã gồm 8 ký tự",
   "login.forgotPassword": "Quên mật khẩu?",
-  "login.enterEmail": "Nhập email của bạn để đăng nhập"
+  "login.enterEmail": "Nhập email của bạn để đăng nhập",
+  "forgotPassword.title": "Quên Mật Khẩu",
+  "forgotPassword.enterEmail": "Nhập email của bạn để lấy lại mật khẩu",
+  "forgotPassword.noAccount": "Chưa có tài khoản tương ứng với email này.",
+  "forgotPassword.emailSent": "Mã xác nhận đã được gửi đến email của bạn.",
+  "forgotPassword.newPassword": "Mật khẩu mới",
+  "forgotPassword.confirmPassword": "Xác nhận mật khẩu mới",
+  "forgotPassword.submit": "Khôi Phục Mật Khẩu",
+  "forgotPassword.success": "Đổi mật khẩu thành công. Bạn có thể đăng nhập ngay."
 }

@@ -69,6 +69,23 @@ class AuthController {
     } catch (error) {
       res.status(error.statusCode || 500).json({ error: error.message || 'Internal Server Error' });
     }
+  async forgotPassword(req, res) {
+    try {
+      const { email } = req.body;
+      await authService.forgotPassword(email);
+      res.json({ message: 'Password reset OTP sent to email' });
+    } catch (error) {
+      res.status(error.statusCode || 500).json({ error: error.message || 'Internal Server Error' });
+    }
+  }
+
+  async resetPassword(req, res) {
+    try {
+      await authService.resetPassword(req.body);
+      res.json({ message: 'Password reset successfully' });
+    } catch (error) {
+      res.status(error.statusCode || 500).json({ error: error.message || 'Internal Server Error' });
+    }
   }
 }
 

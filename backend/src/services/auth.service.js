@@ -2,7 +2,7 @@ const authRepository = require('../repositories/auth.repository');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const { sendOtpEmail } = require('../config/mailer');
+const { sendOtpEmail, sendPasswordResetOtpEmail } = require('../config/mailer');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey123';
 
@@ -164,6 +164,64 @@ class AuthService {
     const updatedUser = { ...user, loginStreak: newStreak, xp: newXp, level: newLevel };
 
     return { token, user: updatedUser };
+  async forgotPassword(email) {
+    if (!email) {
+      const error = new Error('Email is required');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const user = await authRepository.findUserByEmail(email);
+    if (!user) {
+      // User specifically requested this behavior:
+      const error = new Error('No corresponding account found for this email');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const code = crypto.randomBytes(4).toString('hex').toUpperCase();
+    const expiresAt = new Date(Date.now() + 5 * 60000); // 5 minutes
+
+    await authRepository.upsertOtp(email, code, expiresAt);
+    await sendPasswordResetOtpEmail(email, code);
+  }
+
+  async resetPassword({ email, code, newPassword }) {
+    if (!email || !code || !newPassword) {
+      const error = new Error('Missing required fields');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const user = await authRepository.findUserByEmail(email);
+    if (!user) {
+      const error = new Error('User not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const otpRecord = await authRepository.findOtpByEmail(email);
+    if (!otpRecord) {
+      const error = new Error('Please request a password reset code first.');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (otpRecord.code !== code) {
+      const error = new Error('Invalid verification code.');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    if (otpRecord.expiresAt < new Date()) {
+      const error = new Error('Verification code has expired. Please request a new one.');
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await authRepository.updatePassword(user.id, passwordHash);
+    await authRepository.deleteOtp(email);
   }
 }
 

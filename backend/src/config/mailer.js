@@ -107,3 +107,51 @@ exports.sendOtpEmail = async (to, code) => {
     console.error('Email OTP sending failed:', error);
   }
 };
+
+exports.sendPasswordResetOtpEmail = async (to, code) => {
+  try {
+    if (!process.env.RESEND_API_KEY && !process.env.EMAIL_USER) {
+      console.log("Mock Password Reset OTP Sent to:", to);
+      console.log("OTP Code:", code);
+      return;
+    }
+
+    const settings = await getSystemSettings();
+    const provider = settings.emailProvider || 'resend';
+    
+    const htmlContent = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+        <h2 style="color: #2563eb; text-align: center;">Game Hub Password Reset</h2>
+        <p style="font-size: 16px; color: #333;">Hello,</p>
+        <p style="font-size: 16px; color: #333;">We received a request to reset your password. Your password reset code is:</p>
+        <div style="background-color: #f3f4f6; padding: 15px; text-align: center; border-radius: 5px; margin: 20px 0;">
+          <h1 style="margin: 0; font-family: monospace; letter-spacing: 5px; color: #1f2937;">${code}</h1>
+        </div>
+        <p style="font-size: 14px; color: #666;">This code will expire in 5 minutes.</p>
+        <p style="font-size: 14px; color: #666;">If you did not request a password reset, please ignore this email.</p>
+      </div>
+    `;
+
+    if (provider === 'smtp') {
+      await smtpTransporter.sendMail({
+        from: `"Game Hub" <${FROM_EMAIL}>`,
+        to: to,
+        subject: 'Game Hub Password Reset',
+        html: htmlContent
+      });
+    } else {
+      const { data, error } = await resend.emails.send({
+        from: `Game Hub <${FROM_EMAIL}>`,
+        to: [to],
+        subject: 'Game Hub Password Reset',
+        html: htmlContent
+      });
+
+      if (error) {
+        console.error('Resend Password Reset email failed:', error);
+      }
+    }
+  } catch (error) {
+    console.error('Password Reset Email sending failed:', error);
+  }
+};

@@ -786,5 +786,13 @@
   "register.otpSent": "Verification code sent to your email.",
   "register.enterCode": "Enter the 8-character code",
   "login.forgotPassword": "Forgot password?",
-  "login.enterEmail": "Enter your email to sign in to your account"
+  "login.enterEmail": "Enter your email to sign in to your account",
+  "forgotPassword.title": "Forgot Password",
+  "forgotPassword.enterEmail": "Enter your email to reset password",
+  "forgotPassword.noAccount": "No corresponding account found for this email.",
+  "forgotPassword.emailSent": "Password reset code sent to your email.",
+  "forgotPassword.newPassword": "New Password",
+  "forgotPassword.confirmPassword": "Confirm Password",
+  "forgotPassword.submit": "Reset Password",
+  "forgotPassword.success": "Password reset successfully. You can now log in."
 }
