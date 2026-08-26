@@ -25,6 +25,7 @@ export default function RootLayout({
 
   return (
     <html lang={initialLocale} suppressHydrationWarning>
+      <head />
       <body className={`${inter.className} overflow-x-hidden antialiased bg-background text-foreground`} suppressHydrationWarning>
         <AdSense clientId="ca-pub-7121527745227718" />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
