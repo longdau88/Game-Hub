@@ -62,7 +62,25 @@ exports.getDashboardStats = async (req, res) => {
     });
     const totalStorageBytes = Number(sizeAggregation._sum.sizeBytes || 0);
     
-    res.json({ pendingGamesCount, publishedGamesCount, totalUsersCount, totalStorageBytes });
+    // Calculate 7-day trends
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    const usersTrend = await prisma.user.count({ where: { createdAt: { gte: sevenDaysAgo } } });
+    const gamesTrend = await prisma.game.count({ where: { createdAt: { gte: sevenDaysAgo }, status: 'published' } });
+    const pendingTrend = await prisma.game.count({ where: { createdAt: { gte: sevenDaysAgo }, status: 'pending' } });
+    
+    res.json({ 
+      pendingGamesCount, 
+      publishedGamesCount, 
+      totalUsersCount, 
+      totalStorageBytes,
+      trends: {
+        users: `+${usersTrend}`,
+        games: `+${gamesTrend}`,
+        pending: `+${pendingTrend}`
+      }
+    });
   } catch (error) {
     console.error("Dashboard stats error:", error);
     res.status(500).json({ error: 'Failed to fetch dashboard stats' });

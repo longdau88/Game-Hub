@@ -21,9 +21,9 @@ export default function AdminDashboard() {
         const data = await fetchAPI('/admin/stats', { cache: 'no-store' });
         // Adapt backend data to frontend stats format
         const fetchedStats = [
-          { label: t("total_users") || "Total Users", value: data.totalUsersCount?.toString() || "0", trend: "+0", isPositive: true, icon: Users, color: "text-blue-500", href: "/admin/users" },
-          { label: t("active_games") || "Active Games", value: data.publishedGamesCount?.toString() || "0", trend: "+0", isPositive: true, icon: Gamepad2, color: "text-indigo-500", href: "/admin/games" },
-          { label: t("pending_moderation") || "Pending Moderation", value: data.pendingGamesCount?.toString() || "0", trend: "0", isPositive: true, icon: ShieldAlert, color: "text-warning", href: "/admin/moderation" },
+          { label: t("total_users") || "Total Users", value: data.totalUsersCount?.toString() || "0", trend: data.trends?.users || "+0", isPositive: true, icon: Users, color: "text-blue-500", href: "/admin/users" },
+          { label: t("active_games") || "Active Games", value: data.publishedGamesCount?.toString() || "0", trend: data.trends?.games || "+0", isPositive: true, icon: Gamepad2, color: "text-indigo-500", href: "/admin/games" },
+          { label: t("pending_moderation") || "Pending Moderation", value: data.pendingGamesCount?.toString() || "0", trend: data.trends?.pending || "+0", isPositive: true, icon: ShieldAlert, color: "text-warning", href: "/admin/moderation" },
           { label: t("storage_used") || "Storage Used", value: data.totalStorageBytes ? (data.totalStorageBytes / (1024*1024*1024)).toFixed(2) + " GB" : "0 GB", trend: "", isPositive: true, icon: Server, color: "text-success", href: "/admin/infrastructure" },
         ];
         setStats(fetchedStats);
