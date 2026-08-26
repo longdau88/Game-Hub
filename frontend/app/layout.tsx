@@ -7,7 +7,7 @@ import { DialogProvider } from "../contexts/DialogContext";
 import { AuthProvider } from "../contexts/AuthContext";
 import { SWRProvider } from "../components/SWRProvider";
 import LoginModal from "../components/LoginModal";
-import AdSense from "../components/AdSense";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,14 +25,13 @@ export default function RootLayout({
 
   return (
     <html lang={initialLocale} suppressHydrationWarning>
-      <head>
-        <script 
-          async 
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7121527745227718" 
-          crossOrigin="anonymous"
-        ></script>
-      </head>
       <body className={`${inter.className} overflow-x-hidden antialiased bg-background text-foreground`} suppressHydrationWarning>
+        <Script
+          id="adsbygoogle-init"
+          strategy="afterInteractive"
+          crossOrigin="anonymous"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7121527745227718"
+        />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <LanguageProvider initialLocale={initialLocale}>
             <SWRProvider>
