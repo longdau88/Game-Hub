@@ -371,7 +371,7 @@
   "admin.passwordPlaceholderEdit": "Leave blank to keep unchanged",
   "admin.role": "Role",
   "admin.roleUser": "Standard User",
-  "admin.roleAdmin": "Administrator",
+  "admin.roleAdmin": "Admin",
   "admin.save": "Save",
   "admin.cancel": "Cancel",
   "admin.composeEmail": "New Message",
@@ -776,7 +776,6 @@
   "admin.audit.actions.CREATE_EMAIL_TEMPLATE": "Create Email Template",
   "admin.tabSupport": "Support Inbox",
   "admin.roleSystemAdmin": "System Admin",
-  "admin.roleAdmin": "Admin",
   "nav.exitAdmin": "Exit Admin",
   "auth.backToHome": "Back to Home",
   "auth.quote": "\"GameHub is the ultimate destination for discovering, playing, and sharing HTML5 games directly in the browser.\"",
@@ -794,5 +793,7 @@
   "forgotPassword.newPassword": "New Password",
   "forgotPassword.confirmPassword": "Confirm Password",
   "forgotPassword.submit": "Reset Password",
-  "forgotPassword.success": "Password reset successfully. You can now log in."
+  "forgotPassword.success": "Password reset successfully. You can now log in.",
+  "admin.newUsers": "New Users",
+  "admin.last1Day": "Last 24 Hours"
 }

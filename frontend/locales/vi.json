@@ -629,7 +629,7 @@
   "admin.metrics": "Chỉ số & Phân tích",
   "admin.metricsDesc": "Theo dõi hoạt động người chơi và hiệu suất game.",
   "admin.totalSessions": "Tổng lượt chơi",
-  "admin.uniquePlayers": "Người chơi Unique",
+  "admin.uniquePlayers": "Người chơi độc lập",
   "admin.playTime": "Tổng thời gian chơi",
   "admin.crashRate": "Tỷ lệ lỗi (Crash)",
   "admin.activityTrend": "Xu hướng hoạt động",
@@ -816,7 +816,6 @@
   "admin.audit.actions.CREATE_EMAIL_TEMPLATE": "Tạo mẫu Email",
   "admin.tabSupport": "Hộp thư Hỗ trợ",
   "admin.roleSystemAdmin": "Quản trị viên Hệ thống",
-  "admin.roleAdmin": "Quản trị viên",
   "nav.exitAdmin": "Thoát Admin",
   "auth.backToHome": "Về trang chủ",
   "auth.quote": "\"GameHub là điểm đến tuyệt vời nhất để khám phá, trải nghiệm và chia sẻ các trò chơi HTML5 trực tiếp trên trình duyệt.\"",
@@ -834,5 +833,7 @@
   "forgotPassword.newPassword": "Mật khẩu mới",
   "forgotPassword.confirmPassword": "Xác nhận mật khẩu mới",
   "forgotPassword.submit": "Khôi Phục Mật Khẩu",
-  "forgotPassword.success": "Đổi mật khẩu thành công. Bạn có thể đăng nhập ngay."
+  "forgotPassword.success": "Đổi mật khẩu thành công. Bạn có thể đăng nhập ngay.",
+  "admin.newUsers": "Người dùng mới",
+  "admin.last1Day": "24 Giờ qua"
 }
