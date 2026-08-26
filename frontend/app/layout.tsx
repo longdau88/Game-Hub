@@ -14,7 +14,7 @@ import Script from "next/script";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Game Hub - The Ultimate HTML5 Gaming Platform",
+  title: "Game Hub",
   description: "Play awesome web games directly in your browser. Discover, play, and share HTML5 games.",
 };
 

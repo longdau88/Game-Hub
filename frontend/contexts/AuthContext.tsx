@@ -49,6 +49,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  useEffect(() => {
+    if (profile && profile.username) {
+      document.title = `Game Hub - ${profile.username}`;
+    } else {
+      document.title = "Game Hub";
+    }
+  }, [profile]);
+
   const openLoginModal = useCallback(() => setIsLoginModalOpen(true), []);
   const closeLoginModal = useCallback(() => setIsLoginModalOpen(false), []);
 
