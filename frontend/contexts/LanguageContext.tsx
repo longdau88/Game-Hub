@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from "react";
 import Cookies from "js-cookie";
 import en from "../locales/en.json";
 import vi from "../locales/vi.json";
@@ -50,17 +50,19 @@ export function LanguageProvider({
     }
   }, [initialLocale]);
 
-  const setLocale = (newLocale: Locale) => {
+  const setLocale = useCallback((newLocale: Locale) => {
     setLocaleState(newLocale);
     Cookies.set("NEXT_LOCALE", newLocale, { expires: 365, path: "/" });
-  };
+  }, []);
 
-  const t = (key: string): string => {
+  const t = useCallback((key: string): string => {
     return translations[locale]?.[key] || "";
-  };
+  }, [locale]);
+
+  const value = useMemo(() => ({ locale, setLocale, t }), [locale, setLocale, t]);
 
   return (
-    <LanguageContext.Provider value={{ locale, setLocale, t }}>
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );
