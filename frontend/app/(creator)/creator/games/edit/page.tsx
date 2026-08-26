@@ -1,16 +1,18 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Cookies from "js-cookie";
 import { Save, FileType2, Loader2, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAppDialog } from "@/contexts/DialogContext";
 import Link from "next/link";
 
-export default function EditGamePage() {
-  const params = useParams();
-  const id = params?.id as string;
+import { Suspense } from "react";
+
+function EditGameForm() {
+  const searchParams = useSearchParams();
+  const id = searchParams?.get("id") as string;
   const router = useRouter();
   const { t } = useLanguage();
   const { notify } = useAppDialog();
@@ -292,5 +294,13 @@ export default function EditGamePage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function EditGamePage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-24 flex justify-center"><Loader2 className="w-10 h-10 animate-spin text-blue-500" /></div>}>
+      <EditGameForm />
+    </Suspense>
   );
 }

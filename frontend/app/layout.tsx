@@ -7,7 +7,6 @@ import { DialogProvider } from "../contexts/DialogContext";
 import { AuthProvider } from "../contexts/AuthContext";
 import { SWRProvider } from "../components/SWRProvider";
 import LoginModal from "../components/LoginModal";
-import { cookies } from "next/headers";
 import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -17,14 +16,12 @@ export const metadata: Metadata = {
   description: "Play awesome web games directly in your browser. Discover, play, and share HTML5 games.",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const localeCookie = cookieStore.get("NEXT_LOCALE")?.value as "en" | "vi" | undefined;
-  const initialLocale = localeCookie === "vi" ? "vi" : "en";
+  const initialLocale = "en";
 
   return (
     <html lang={initialLocale} suppressHydrationWarning>

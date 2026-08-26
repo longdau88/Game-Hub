@@ -8,7 +8,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useLanguage } from "@/contexts/LanguageContext";
 import { fetchAPI } from "@/lib/api";
 
-export default function AnalyticsPage() {
+import { Suspense } from "react";
+
+function AnalyticsContent() {
   const searchParams = useSearchParams();
   const initialGameId = searchParams?.get("gameId") || "all";
   const [mounted, setMounted] = useState(false);
@@ -171,5 +173,13 @@ export default function AnalyticsPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function AnalyticsPage() {
+  return (
+    <Suspense fallback={<div>Loading analytics...</div>}>
+      <AnalyticsContent />
+    </Suspense>
   );
 }
