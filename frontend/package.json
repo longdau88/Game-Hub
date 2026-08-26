@@ -23,6 +23,7 @@
     "files": [
       "electron/**/*",
       "assets/**/*",
+      "out/**/*",
       "node_modules/**/*",
       "package.json"
     ],
