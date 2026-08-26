@@ -25,15 +25,13 @@ export default function RootLayout({
 
   return (
     <html lang={initialLocale} suppressHydrationWarning>
-      <head>
+      <body className={`${inter.className} overflow-x-hidden antialiased bg-background text-foreground`} suppressHydrationWarning>
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7121527745227718"
           crossOrigin="anonymous"
-          strategy="beforeInteractive"
+          strategy="lazyOnload"
         />
-      </head>
-      <body className={`${inter.className} overflow-x-hidden antialiased bg-background text-foreground`}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <LanguageProvider initialLocale={initialLocale}>
             <SWRProvider>
