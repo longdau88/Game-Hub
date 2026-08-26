@@ -3,8 +3,9 @@ Write-Host "================================================"
 
 Set-Location frontend
 
-# Sync Capacitor (không cần build Next.js vì dùng WebView wrapper)
-Write-Host "[1/3] Đồng bộ Capacitor..."
+# Build Next.js (Dành cho PC) & Sync Capacitor
+Write-Host "[1/3] Build Next.js & Đồng bộ Capacitor..."
+npm run build
 npx cap sync
 
 # --- ANDROID APK ---
