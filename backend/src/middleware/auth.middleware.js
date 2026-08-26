@@ -53,7 +53,7 @@ exports.optionalAuth = async (req, res, next) => {
 };
 
 exports.requireAdmin = (req, res, next) => {
-  if (!req.user || req.user.role !== 'admin') {
+  if (!req.user || typeof req.user.role !== 'string' || req.user.role.toLowerCase() !== 'admin') {
     return res.status(403).json({ error: 'Forbidden: Admin access required' });
   }
   next();
