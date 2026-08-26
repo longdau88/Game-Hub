@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Search, MoreHorizontal, UserX, UserCheck, Shield, ShieldAlert, Mail, Pencil, X } from "lucide-react";
+import { Search, MoreHorizontal, UserX, UserCheck, Shield, ShieldAlert, Mail, Pencil, X, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { fetchAPI } from "@/lib/api";
@@ -60,6 +60,19 @@ export default function UserManagementPage() {
       setUsers(users.map(u => u.id === userId ? { ...u, isBanned } : u));
     } catch (err) {
       console.error("Failed to toggle ban status", err);
+    }
+  };
+
+  const handleDeleteUser = async (userId: number, username: string) => {
+    if (!window.confirm((t("admin.deleteUserConfirm") || "Are you sure you want to permanently delete user: ") + username + "?")) return;
+    
+    try {
+      await fetchAPI(`/admin/users/${userId}`, { method: 'DELETE' });
+      setUsers(users.filter(u => u.id !== userId));
+      notify({ message: t("admin.userDeletedSuccess") || "User deleted successfully", variant: "success" });
+    } catch (err: any) {
+      console.error("Failed to delete user", err);
+      notify({ message: err.message || t("admin.userDeleteError") || "Failed to delete user", variant: "error" });
     }
   };
 
@@ -279,15 +292,26 @@ export default function UserManagementPage() {
                           {(user.role === 'ADMIN' || user.role === 'admin') ? <ShieldAlert className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
                         </Button>
                         {user.role !== 'ADMIN' && (
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            title={user.isBanned ? (t("admin.unban") || "Unban") : (t("admin.ban") || "Ban")}
-                            onClick={() => handleBanToggle(user.id, !user.isBanned)}
-                            className={`h-8 w-8 ${user.isBanned ? 'text-success hover:text-success hover:bg-success/10' : 'text-error hover:text-error hover:bg-error/10'}`}
-                          >
-                            {user.isBanned ? <UserCheck className="h-4 w-4" /> : <UserX className="h-4 w-4" />}
-                          </Button>
+                          <>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              title={user.isBanned ? (t("admin.unban") || "Unban") : (t("admin.ban") || "Ban")}
+                              onClick={() => handleBanToggle(user.id, !user.isBanned)}
+                              className={`h-8 w-8 ${user.isBanned ? 'text-success hover:text-success hover:bg-success/10' : 'text-error hover:text-error hover:bg-error/10'}`}
+                            >
+                              {user.isBanned ? <UserCheck className="h-4 w-4" /> : <UserX className="h-4 w-4" />}
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              title={t("admin.deleteUser") || "Delete User"}
+                              onClick={() => handleDeleteUser(user.id, user.username)}
+                              className="h-8 w-8 text-error hover:text-error hover:bg-error/10"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </>
                         )}
                       </div>
                     </TableCell>

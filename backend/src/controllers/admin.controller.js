@@ -584,3 +584,43 @@ exports.replySupportTicket = async (req, res) => {
     res.status(500).json({ error: 'Failed to reply to ticket' });
   }
 };
+
+exports.deleteUser = async (req, res) => {
+  try {
+    const adminId = req.user.userId;
+    const { id } = req.params;
+    const userId = parseInt(id);
+
+    if (adminId === userId) {
+      return res.status(400).json({ error: 'Cannot delete yourself' });
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    // Set games' uploaderId to null instead of deleting games
+    await prisma.game.updateMany({
+      where: { uploaderId: userId },
+      data: { uploaderId: null }
+    });
+
+    await prisma.$transaction([
+      prisma.userLibrary.deleteMany({ where: { userId } }),
+      prisma.rating.deleteMany({ where: { userId } }),
+      prisma.comment.deleteMany({ where: { userId } }),
+      prisma.report.deleteMany({ where: { userId } }),
+      prisma.auditLog.deleteMany({ where: { adminId: userId } }),
+      prisma.user.delete({ where: { id: userId } })
+    ]);
+
+    await logAudit(adminId, 'DELETE_USER', 'User', {
+      targetUserId: userId,
+      targetUsername: user.username
+    });
+
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error("Delete user error:", error);
+    res.status(500).json({ error: 'Failed to delete user' });
+  }
+};
