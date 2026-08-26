@@ -39,9 +39,7 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
       {/* Mobile Topbar */}
       <div className="lg:hidden flex items-center justify-between p-4 border-b border-border bg-surface sticky top-0 z-50">
         <Link href="/" className="flex items-center gap-2">
-          <div className="bg-primary p-2 rounded-lg">
-            <Gamepad2 className="w-5 h-5 text-primary-foreground" />
-          </div>
+          <img src="/icon.png" alt="GameHub" className="w-9 h-9 rounded-xl" />
           <span className="font-bold text-lg tracking-tight">GameHub</span>
         </Link>
         <div className="flex items-center gap-2">
@@ -59,9 +57,7 @@ export default function PlayerLayout({ children }: { children: React.ReactNode }
         isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="hidden lg:flex items-center gap-3 p-6 pb-2">
-          <div className="bg-primary p-2.5 rounded-xl shadow-lg shadow-primary/20">
-            <Gamepad2 className="w-6 h-6 text-primary-foreground" />
-          </div>
+          <img src="/icon.png" alt="GameHub" className="w-10 h-10 rounded-xl shadow-lg" />
           <span className="font-extrabold text-xl tracking-tight text-foreground">GameHub</span>
         </div>
 
