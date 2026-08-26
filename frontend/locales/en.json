@@ -784,5 +784,7 @@
   "register.checkEmail": "Check your email for the verification code",
   "register.enterDetails": "Enter your details to get started on GameHub",
   "register.otpSent": "Verification code sent to your email.",
-  "register.enterCode": "Enter the 8-character code"
+  "register.enterCode": "Enter the 8-character code",
+  "login.forgotPassword": "Forgot password?",
+  "login.enterEmail": "Enter your email to sign in to your account"
 }

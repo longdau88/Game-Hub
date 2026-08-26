@@ -66,9 +66,9 @@ export default function LoginPage() {
         <div className="lg:hidden flex justify-center mb-4">
           <Gamepad2 className="h-10 w-10 text-primary" />
         </div>
-        <h1 className="text-3xl font-semibold tracking-tight">Welcome back</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">{t("login.title")}</h1>
         <p className="text-sm text-muted-foreground">
-          Enter your email to sign in to your account
+          {t("login.enterEmail")}
         </p>
       </div>
       
@@ -80,7 +80,7 @@ export default function LoginPage() {
         )}
         
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">{t("login.email")}</Label>
           <Input
             id="email"
             type="email"
@@ -94,9 +94,9 @@ export default function LoginPage() {
         
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("login.password")}</Label>
             <Link href="/forgot-password" className="text-sm font-medium text-primary hover:underline">
-              Forgot password?
+              {t("login.forgotPassword")}
             </Link>
           </div>
           <Input
@@ -111,14 +111,14 @@ export default function LoginPage() {
 
         <Button type="submit" className="w-full" disabled={loading} size="lg">
           {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Sign In
+          {t("login.submit")}
         </Button>
       </form>
 
       <div className="text-center text-sm text-muted-foreground mt-4">
-        Don't have an account?{" "}
+        {t("login.noAccount")}{" "}
         <Link href="/register" className="font-semibold text-primary hover:underline">
-          Sign up
+          {t("login.registerLink")}
         </Link>
       </div>
     </div>

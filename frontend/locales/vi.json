@@ -824,5 +824,7 @@
   "register.checkEmail": "Vui lòng kiểm tra email để lấy mã xác nhận",
   "register.enterDetails": "Nhập thông tin của bạn để tham gia GameHub",
   "register.otpSent": "Mã xác nhận đã được gửi đến email của bạn.",
-  "register.enterCode": "Nhập mã gồm 8 ký tự"
+  "register.enterCode": "Nhập mã gồm 8 ký tự",
+  "login.forgotPassword": "Quên mật khẩu?",
+  "login.enterEmail": "Nhập email của bạn để đăng nhập"
 }
