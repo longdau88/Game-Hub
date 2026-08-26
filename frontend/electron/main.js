@@ -61,12 +61,6 @@ function createWindow() {
       contextIsolation: true,
       webSecurity: false,
     },
-    titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#0a0a0a',
-      symbolColor: '#ffffff',
-      height: 40,
-    },
     backgroundColor: '#0a0a0a',
     show: false,
   });
