@@ -25,9 +25,14 @@ export default function RootLayout({
 
   return (
     <html lang={initialLocale} suppressHydrationWarning>
-      <head />
+      <head>
+        <script 
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7121527745227718" 
+          crossOrigin="anonymous"
+        ></script>
+      </head>
       <body className={`${inter.className} overflow-x-hidden antialiased bg-background text-foreground`} suppressHydrationWarning>
-        <AdSense clientId="ca-pub-7121527745227718" />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <LanguageProvider initialLocale={initialLocale}>
             <SWRProvider>

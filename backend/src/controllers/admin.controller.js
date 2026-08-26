@@ -541,7 +541,7 @@ exports.deleteSupportTicket = async (req, res) => {
     
     const adminId = req.user?.userId;
     if (adminId) {
-      await auditLogService.log(adminId, 'DELETE_TICKET', 'SupportTicket', { ticketId: id });
+      await logAudit(adminId, 'DELETE_TICKET', 'SupportTicket', { ticketId: id });
     }
 
     res.json({ success: true, message: 'Ticket deleted' });
@@ -575,7 +575,7 @@ exports.replySupportTicket = async (req, res) => {
 
     const adminId = req.user?.userId;
     if (adminId) {
-      await auditLogService.log(adminId, 'REPLY_TICKET', 'SupportTicket', { ticketId: id });
+      await logAudit(adminId, 'REPLY_TICKET', 'SupportTicket', { ticketId: id });
     }
 
     res.json({ success: true, message: 'Reply sent successfully' });
