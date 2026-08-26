@@ -84,9 +84,9 @@ export default function RegisterPage() {
         <div className="lg:hidden flex justify-center mb-4">
           <Gamepad2 className="h-10 w-10 text-primary" />
         </div>
-        <h1 className="text-3xl font-semibold tracking-tight">Create an account</h1>
+        <h1 className="text-3xl font-semibold tracking-tight">{t("register.title")}</h1>
         <p className="text-sm text-muted-foreground">
-          {step === 1 ? "Enter your details to get started on GameHub" : "Check your email for the verification code"}
+          {step === 1 ? t("register.enterDetails") : t("register.checkEmail")}
         </p>
       </div>
       
@@ -99,7 +99,7 @@ export default function RegisterPage() {
           )}
           
           <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor="username">{t("register.username")}</Label>
             <Input
               id="username"
               type="text"
@@ -112,7 +112,7 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("register.email")}</Label>
             <Input
               id="email"
               type="email"
@@ -125,7 +125,7 @@ export default function RegisterPage() {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("register.password")}</Label>
             <Input
               id="password"
               type="password"
@@ -138,7 +138,7 @@ export default function RegisterPage() {
 
           <Button type="submit" className="w-full" disabled={loading} size="lg">
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Send Verification Code
+            {t("register.sendCode")}
           </Button>
         </form>
       ) : (
@@ -156,7 +156,7 @@ export default function RegisterPage() {
           )}
           
           <div className="space-y-2">
-            <Label htmlFor="code">Verification Code</Label>
+            <Label htmlFor="code">{t("register.code")}</Label>
             <Input
               id="code"
               type="text"
@@ -172,20 +172,20 @@ export default function RegisterPage() {
 
           <div className="flex gap-2">
             <Button type="button" variant="outline" className="w-1/3" disabled={loading} onClick={() => setStep(1)}>
-              Back
+              {t("creator.back")}
             </Button>
             <Button type="submit" className="w-2/3" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Create Account
+              {t("register.submit")}
             </Button>
           </div>
         </form>
       )}
 
       <div className="text-center text-sm text-muted-foreground mt-4">
-        Already have an account?{" "}
+        {t("register.hasAccount")}{" "}
         <Link href="/login" className="font-semibold text-primary hover:underline">
-          Sign in
+          {t("register.loginLink")}
         </Link>
       </div>
     </div>

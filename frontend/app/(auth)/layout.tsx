@@ -1,11 +1,16 @@
+"use client";
+
 import Link from "next/link"
 import { Gamepad2 } from "lucide-react"
+import { useLanguage } from "@/contexts/LanguageContext"
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const { t } = useLanguage();
+
   return (
     <div className="relative min-h-screen grid lg:grid-cols-2">
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
@@ -24,9 +29,9 @@ export default function AuthLayout({
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg font-medium leading-relaxed">
-              "GameHub is the ultimate destination for discovering, playing, and sharing HTML5 games directly in the browser."
+              {t("auth.quote")}
             </p>
-            <footer className="text-sm text-zinc-400">Join thousands of players today</footer>
+            <footer className="text-sm text-zinc-400">{t("auth.join")}</footer>
           </blockquote>
         </div>
       </div>
@@ -34,7 +39,7 @@ export default function AuthLayout({
       <div className="flex items-center justify-center p-8 h-screen bg-background relative">
         <div className="absolute top-4 right-4 md:top-8 md:right-8">
           <Link href="/" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-            Back to Home
+            {t("auth.backToHome")}
           </Link>
         </div>
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]">

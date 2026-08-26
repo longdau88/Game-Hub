@@ -817,5 +817,10 @@
   "admin.tabSupport": "Hộp thư Hỗ trợ",
   "admin.roleSystemAdmin": "Quản trị viên Hệ thống",
   "admin.roleAdmin": "Quản trị viên",
-  "nav.exitAdmin": "Thoát Admin"
+  "nav.exitAdmin": "Thoát Admin",
+  "auth.backToHome": "Về trang chủ",
+  "auth.quote": "\"GameHub là điểm đến tuyệt vời nhất để khám phá, trải nghiệm và chia sẻ các trò chơi HTML5 trực tiếp trên trình duyệt.\"",
+  "auth.join": "Tham gia cùng hàng ngàn người chơi ngay hôm nay",
+  "register.checkEmail": "Vui lòng kiểm tra email để lấy mã xác nhận",
+  "register.enterDetails": "Nhập thông tin của bạn để tham gia GameHub"
 }
