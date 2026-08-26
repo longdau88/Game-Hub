@@ -15,9 +15,11 @@ const cacheMiddleware = (durationInSeconds = 60) => {
 
     if (cachedResponse) {
       console.log(`[Cache Hit] ${key}`);
+      res.setHeader('Cache-Control', `public, max-age=${durationInSeconds}`);
       return res.json(cachedResponse);
     } else {
       console.log(`[Cache Miss] ${key}`);
+      res.setHeader('Cache-Control', `public, max-age=${durationInSeconds}`);
       // Override res.json to intercept the response before sending it
       const originalJson = res.json;
       res.json = (body) => {

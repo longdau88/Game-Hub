@@ -18,7 +18,7 @@ export default function AdminDashboard() {
     setMounted(true);
     const loadStats = async () => {
       try {
-        const data = await fetchAPI('/admin/stats');
+        const data = await fetchAPI('/admin/stats', { cache: 'no-store' });
         // Adapt backend data to frontend stats format
         const fetchedStats = [
           { label: t("total_users") || "Total Users", value: data.totalUsersCount?.toString() || "0", trend: "+0", isPositive: true, icon: Users, color: "text-blue-500", href: "/admin/users" },
