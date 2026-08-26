@@ -55,7 +55,7 @@ app.use((req, res, next) => {
 });
 
 // Enable CORS securely
-const defaultOrigins = ['http://localhost:3000', 'http://localhost', 'capacitor://localhost', 'https://www.game-hub.best', 'https://game-hub.best'];
+const defaultOrigins = ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:4173', 'http://localhost', 'capacitor://localhost', 'https://www.game-hub.best', 'https://game-hub.best'];
 const allowedOrigins = process.env.ALLOWED_ORIGIN 
   ? process.env.ALLOWED_ORIGIN.split(',').map(o => o.trim().replace(/\/$/, ''))
   : defaultOrigins;
@@ -66,10 +66,15 @@ app.use(cors({
     if (!origin) return callback(null, true);
     
     // Check if the origin matches any of the allowed origins exactly, or if it's a subdomain/variation we trust
-    const isAllowed = allowedOrigins.some(allowed => origin === allowed || origin.endsWith(allowed.replace(/^https?:\/\//, '')));
+    const isAllowed = allowedOrigins.some(allowed => origin === allowed || origin.endsWith(allowed.replace(/^https?:\/\//, ''))) ||
+                      /^https?:\/\/localhost(:\d+)?$/.test(origin) ||
+                      origin.endsWith('.onrender.com') ||
+                      origin.endsWith('.vercel.app') ||
+                      origin.endsWith('.netlify.app') ||
+                      origin.endsWith('.ngrok-free.app');
     
     if (!isAllowed) {
-      var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      var msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
       return callback(new Error(msg), false);
     }
     return callback(null, true);
