@@ -822,5 +822,7 @@
   "auth.quote": "\"GameHub là điểm đến tuyệt vời nhất để khám phá, trải nghiệm và chia sẻ các trò chơi HTML5 trực tiếp trên trình duyệt.\"",
   "auth.join": "Tham gia cùng hàng ngàn người chơi ngay hôm nay",
   "register.checkEmail": "Vui lòng kiểm tra email để lấy mã xác nhận",
-  "register.enterDetails": "Nhập thông tin của bạn để tham gia GameHub"
+  "register.enterDetails": "Nhập thông tin của bạn để tham gia GameHub",
+  "register.otpSent": "Mã xác nhận đã được gửi đến email của bạn.",
+  "register.enterCode": "Nhập mã gồm 8 ký tự"
 }

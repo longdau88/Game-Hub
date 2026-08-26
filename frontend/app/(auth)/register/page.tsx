@@ -40,7 +40,7 @@ export default function RegisterPage() {
 
       if (res.ok) {
         setStep(2);
-        setSuccessMsg(data.message || "Verification code sent to your email.");
+        setSuccessMsg(t("register.otpSent"));
       } else {
         setError(data.error || t("error.default"));
       }
@@ -160,7 +160,7 @@ export default function RegisterPage() {
             <Input
               id="code"
               type="text"
-              placeholder="Enter the 8-character code"
+              placeholder={t("register.enterCode")}
               value={code}
               onChange={(e) => setCode(e.target.value)}
               required

@@ -782,5 +782,7 @@
   "auth.quote": "\"GameHub is the ultimate destination for discovering, playing, and sharing HTML5 games directly in the browser.\"",
   "auth.join": "Join thousands of players today",
   "register.checkEmail": "Check your email for the verification code",
-  "register.enterDetails": "Enter your details to get started on GameHub"
+  "register.enterDetails": "Enter your details to get started on GameHub",
+  "register.otpSent": "Verification code sent to your email.",
+  "register.enterCode": "Enter the 8-character code"
 }
