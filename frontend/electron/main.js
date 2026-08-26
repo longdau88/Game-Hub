@@ -7,7 +7,7 @@ function createWindow() {
     height: 800,
     minWidth: 900,
     minHeight: 600,
-    icon: path.join(__dirname, '../assets/icon.png'),
+    icon: path.join(__dirname, '../assets/icon.ico'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -22,14 +22,11 @@ function createWindow() {
     show: false,
   });
 
-  // Load the deployed web app
-  win.loadURL('https://game-hub.best');
+  // Load bundled static files from the out/ directory
+  win.loadFile(path.join(__dirname, '../out/index.html'));
 
-  // Open external links in browser
+  // Open external links in default browser
   win.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('https://game-hub.best') || url.startsWith('http://localhost')) {
-      return { action: 'allow' };
-    }
     shell.openExternal(url);
     return { action: 'deny' };
   });

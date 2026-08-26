@@ -21,3 +21,8 @@ build/
 # Temp files
 /tmp/
 .DS_Store
+
+build_outputs/windows/
+build_outputs/android/*.apk
+frontend/electron-dist/
+frontend/out/
