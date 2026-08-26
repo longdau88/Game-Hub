@@ -225,3 +225,28 @@ cd electron
 npm run electron:build
 ```
 > Cấu hình đường dẫn xuất trong `frontend/electron/electron-builder.config.json` thành `"directories": { "output": "../../build_outputs/" }`.
+
+### 3. Hướng Dẫn Nâng Cấp Phiên Bản (Version)
+
+Để nâng cấp version của ứng dụng khi xuất bản bản cập nhật mới (ví dụ từ `0.1.0` lên `0.2.0`), bạn cần cập nhật ở các vị trí sau:
+
+**1. Bản PC (Windows .exe):**
+Mở file `frontend/package.json` và sửa lại giá trị của `"version"`:
+```json
+{
+  "name": "game-hub",
+  "version": "0.2.0"
+}
+```
+
+**2. Bản Mobile (Android APK/AAB):**
+Mở file `frontend/android/app/build.gradle`, tìm khối `defaultConfig` và cập nhật `versionCode` (tăng thêm 1 mỗi lần ra mắt) và `versionName`:
+```gradle
+defaultConfig {
+    versionCode 2
+    versionName "0.2.0"
+}
+```
+
+**3. Cập nhật Kịch bản Build (`build-all.ps1`):**
+Mở file `build-all.ps1` và thay thế toàn bộ chuỗi phiên bản cũ (ví dụ `0.1.0`) thành phiên bản mới (`0.2.0`) tại các dòng lệnh `Copy-Item` để tên file xuất ra trong thư mục `build_outputs` được đồng bộ.
