@@ -1,5 +1,9 @@
 const { app, BrowserWindow, shell } = require('electron');
 const path = require('path');
+const serve = require('electron-serve');
+
+// Create the app scheme serving the 'out' directory
+const loadURL = serve({ directory: path.join(__dirname, '../out') });
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -22,8 +26,8 @@ function createWindow() {
     show: false,
   });
 
-  // Load bundled static files from the out/ directory
-  win.loadFile(path.join(__dirname, '../out/index.html'));
+  // Load the app via the custom protocol created by electron-serve
+  loadURL(win);
 
   // Open external links in default browser
   win.webContents.setWindowOpenHandler(({ url }) => {
