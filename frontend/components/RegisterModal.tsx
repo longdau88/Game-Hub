@@ -71,10 +71,10 @@ export default function RegisterModal() {
       const data = await res.json();
 
       if (res.ok) {
-        notify({
+        await notify({
           variant: "success",
           title: t("dialog.noticeTitle"),
-          message: "Registration successful. You can now log in.",
+          message: t("register.success") || "Registration successful. You can now log in.",
         });
         closeRegisterModal();
         openLoginModal();

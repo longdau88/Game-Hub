@@ -81,7 +81,7 @@ export default function ForgotPasswordModal() {
       const data = await res.json();
 
       if (res.ok) {
-        notify({
+        await notify({
           variant: "success",
           title: t("dialog.noticeTitle"),
           message: t("forgotPassword.success") || "Password reset successfully. You can now log in.",
