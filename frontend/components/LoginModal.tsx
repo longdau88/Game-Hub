@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 export default function LoginModal() {
   const { t } = useLanguage();
-  const { isLoginModalOpen, closeLoginModal, login } = useAuth();
+  const { isLoginModalOpen, closeLoginModal, login, openRegisterModal, openForgotPasswordModal } = useAuth();
   const router = useRouter();
   
   const [email, setEmail] = useState("");
@@ -74,9 +74,9 @@ export default function LoginModal() {
           <h2 className="mt-6 text-2xl font-extrabold text-zinc-900 dark:text-white">{t("login.title")}</h2>
           <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
             {t("login.noAccount")}{" "}
-            <Link href="/register" onClick={closeLoginModal} className="font-medium text-blue-500 hover:text-blue-400 transition-colors">
+            <button type="button" onClick={() => { closeLoginModal(); openRegisterModal(); }} className="font-medium text-blue-500 hover:text-blue-400 transition-colors">
               {t("login.registerLink")}
-            </Link>
+            </button>
           </p>
         </div>
         
@@ -101,9 +101,9 @@ export default function LoginModal() {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">{t("login.password")}</label>
-                <Link href="/forgot-password" onClick={closeLoginModal} className="text-sm font-medium text-blue-500 hover:text-blue-400 transition-colors">
+                <button type="button" onClick={() => { closeLoginModal(); openForgotPasswordModal(); }} className="text-sm font-medium text-blue-500 hover:text-blue-400 transition-colors">
                   {t("login.forgotPassword")}
-                </Link>
+                </button>
               </div>
               <input
                 type="password"

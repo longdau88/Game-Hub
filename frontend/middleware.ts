@@ -5,9 +5,7 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
   const role = request.cookies.get('role')?.value;
   
-  const isAuthPage = request.nextUrl.pathname.startsWith('/login') || 
-                     request.nextUrl.pathname.startsWith('/register') ||
-                     request.nextUrl.pathname.startsWith('/verify-email');
+  const isAuthPage = request.nextUrl.pathname.startsWith('/verify-email');
                      
   const isAdminPage = request.nextUrl.pathname.startsWith('/admin');
   

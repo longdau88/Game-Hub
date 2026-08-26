@@ -7,6 +7,8 @@ import { DialogProvider } from "../contexts/DialogContext";
 import { AuthProvider } from "../contexts/AuthContext";
 import { SWRProvider } from "../components/SWRProvider";
 import LoginModal from "../components/LoginModal";
+import RegisterModal from "../components/RegisterModal";
+import ForgotPasswordModal from "../components/ForgotPasswordModal";
 import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -39,6 +41,8 @@ export default function RootLayout({
                 <DialogProvider>
                   {children}
                   <LoginModal />
+                  <RegisterModal />
+                  <ForgotPasswordModal />
                 </DialogProvider>
               </AuthProvider>
             </SWRProvider>

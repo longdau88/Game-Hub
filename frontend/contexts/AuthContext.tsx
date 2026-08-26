@@ -10,6 +10,12 @@ type AuthContextType = {
   isLoginModalOpen: boolean;
   openLoginModal: () => void;
   closeLoginModal: () => void;
+  isRegisterModalOpen: boolean;
+  openRegisterModal: () => void;
+  closeRegisterModal: () => void;
+  isForgotPasswordModalOpen: boolean;
+  openForgotPasswordModal: () => void;
+  closeForgotPasswordModal: () => void;
   requireAuth: (action?: () => void) => boolean;
   login: (token: string, role: string, userProfile?: any) => void;
   logout: () => void;
@@ -23,6 +29,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<string | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
 
   useEffect(() => {
     const tokenCookie = Cookies.get("token") || null;
@@ -43,6 +51,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const openLoginModal = useCallback(() => setIsLoginModalOpen(true), []);
   const closeLoginModal = useCallback(() => setIsLoginModalOpen(false), []);
+
+  const openRegisterModal = useCallback(() => setIsRegisterModalOpen(true), []);
+  const closeRegisterModal = useCallback(() => setIsRegisterModalOpen(false), []);
+
+  const openForgotPasswordModal = useCallback(() => setIsForgotPasswordModalOpen(true), []);
+  const closeForgotPasswordModal = useCallback(() => setIsForgotPasswordModalOpen(false), []);
 
   const requireAuth = useCallback((action?: () => void) => {
     if (token) {
@@ -79,8 +93,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider value={{
       token, role, profile, isLoginModalOpen,
-      openLoginModal, closeLoginModal, requireAuth,
-      login, logout, updateProfile
+      openLoginModal, closeLoginModal,
+      isRegisterModalOpen, openRegisterModal, closeRegisterModal,
+      isForgotPasswordModalOpen, openForgotPasswordModal, closeForgotPasswordModal,
+      requireAuth, login, logout, updateProfile
     }}>
       {children}
     </AuthContext.Provider>
