@@ -153,7 +153,7 @@ exports.syncVectorDB = async (req, res) => {
 
 // 3. Analytics
 const getAnalyticsStartDate = (range) => {
-  const days = { '7d': 7, '30d': 30, '90d': 90 }[range] || 30;
+  const days = { '1d': 1, '7d': 7, '30d': 30, '90d': 90 }[range] || 30;
   const start = new Date();
   start.setHours(0, 0, 0, 0);
   start.setDate(start.getDate() - (days - 1));
@@ -170,7 +170,10 @@ exports.getAnalyticsOverview = async (req, res) => {
     const sessionWhere = { ...gameFilter, startedAt: { gte: start } };
     const crashWhere = { ...gameFilter, createdAt: { gte: start } };
 
-    const [sessions, allTrackedSessions, crashes, publishedGames, approvedGames, availableGames] = await Promise.all([
+    const previousStart = new Date(start);
+    previousStart.setDate(start.getDate() - days);
+
+    const [sessions, allTrackedSessions, crashes, publishedGames, approvedGames, availableGames, currentNewUsersCount, previousNewUsersCount, previousSessions] = await Promise.all([
       prisma.gameSession.findMany({
         where: sessionWhere,
         select: { gameId: true, userId: true, sessionLength: true, startedAt: true }
@@ -195,7 +198,13 @@ exports.getAnalyticsOverview = async (req, res) => {
         where: { action: 'APPROVE_GAME', createdAt: { gte: start } },
         select: { id: true }
       }),
-      prisma.game.findMany({ where: { status: 'published' }, select: { id: true, title: true }, orderBy: { title: 'asc' } })
+      prisma.game.findMany({ where: { status: 'published' }, select: { id: true, title: true }, orderBy: { title: 'asc' } }),
+      gameId ? Promise.resolve(0) : prisma.user.count({ where: { createdAt: { gte: start } } }),
+      gameId ? Promise.resolve(0) : prisma.user.count({ where: { createdAt: { gte: previousStart, lt: start } } }),
+      prisma.gameSession.findMany({
+        where: { ...gameFilter, startedAt: { gte: previousStart, lt: start } },
+        select: { sessionLength: true, userId: true }
+      })
     ]);
 
     const gamesById = new Map(publishedGames.map(game => [game.id, game]));
@@ -260,10 +269,25 @@ exports.getAnalyticsOverview = async (req, res) => {
     }
 
     const totalDuration = sessions.reduce((sum, session) => sum + session.sessionLength, 0);
+    const previousTotalDuration = previousSessions.reduce((sum, s) => sum + s.sessionLength, 0);
+    const previousUniquePlayers = new Set(previousSessions.map(s => s.userId).filter(Boolean)).size;
+
+    const newUsersGrowth = previousNewUsersCount === 0 ? (currentNewUsersCount > 0 ? 100 : 0) : Number(((currentNewUsersCount - previousNewUsersCount) / previousNewUsersCount * 100).toFixed(1));
+    const durationGrowth = previousTotalDuration === 0 ? (totalDuration > 0 ? 100 : 0) : Number(((totalDuration - previousTotalDuration) / previousTotalDuration * 100).toFixed(1));
+    const sessionsGrowth = previousSessions.length === 0 ? (sessions.length > 0 ? 100 : 0) : Number(((sessions.length - previousSessions.length) / previousSessions.length * 100).toFixed(1));
+    const playersGrowth = previousUniquePlayers === 0 ? (knownUsers.size > 0 ? 100 : 0) : Number(((knownUsers.size - previousUniquePlayers) / previousUniquePlayers * 100).toFixed(1));
+
     res.json({
       success: true,
       data: {
-        summary: { sessions: sessions.length, uniquePlayers: knownUsers.size, totalDuration, approvedGames: approvedGames.length, crashes: crashes.length, crashRate: sessions.length ? Number((crashes.length / sessions.length * 100).toFixed(2)) : 0 },
+        summary: { 
+          sessions: sessions.length, sessionsGrowth,
+          uniquePlayers: knownUsers.size, playersGrowth,
+          totalDuration, durationGrowth,
+          newUsers: currentNewUsersCount, newUsersGrowth,
+          approvedGames: approvedGames.length, 
+          crashes: crashes.length, crashRate: sessions.length ? Number((crashes.length / sessions.length * 100).toFixed(2)) : 0 
+        },
         trend: [...daily.values()].map(day => ({ date: day.date, sessions: day.sessions, uniquePlayers: day.users.size, crashes: day.crashes })),
         topGames,
         retention,

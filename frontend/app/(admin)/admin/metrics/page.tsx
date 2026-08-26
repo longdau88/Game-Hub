@@ -5,7 +5,7 @@ import { fetchAPI } from "@/lib/api";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
-import { Activity, Users, Clock, AlertTriangle } from "lucide-react";
+import { Activity, Users, Clock, AlertTriangle, UserPlus, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 export default function MetricsPage() {
   const { t } = useLanguage();
@@ -49,6 +49,7 @@ export default function MetricsPage() {
           onChange={e => setDateRange(e.target.value)}
           className="bg-surface border border-border text-foreground text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5"
         >
+          <option value="1d">{t("admin.last1Day") || "Last 24 Hours"}</option>
           <option value="7d">{t("admin.last7Days") || "Last 7 Days"}</option>
           <option value="30d">{t("admin.last30Days") || "Last 30 Days"}</option>
           <option value="90d">{t("admin.last90Days") || "Last 90 Days"}</option>
@@ -62,14 +63,35 @@ export default function MetricsPage() {
       ) : metrics ? (
         <>
           {/* Summary Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <Card className="bg-surface border-border">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">{t("admin.newUsers") || "New Users"}</CardTitle>
+                <UserPlus className="h-4 w-4 text-pink-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-foreground">{metrics.summary.newUsers?.toLocaleString() || 0}</div>
+                {metrics.summary.newUsersGrowth !== undefined && (
+                  <div className={`text-xs mt-1 flex items-center font-medium ${metrics.summary.newUsersGrowth >= 0 ? 'text-success' : 'text-error'}`}>
+                    {metrics.summary.newUsersGrowth >= 0 ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
+                    {Math.abs(metrics.summary.newUsersGrowth)}%
+                  </div>
+                )}
+              </CardContent>
+            </Card>
             <Card className="bg-surface border-border">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">{t("admin.totalSessions") || "Total Sessions"}</CardTitle>
                 <Activity className="h-4 w-4 text-indigo-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-foreground">{metrics.summary.sessions.toLocaleString()}</div>
+                <div className="text-2xl font-bold text-foreground">{metrics.summary.sessions?.toLocaleString() || 0}</div>
+                {metrics.summary.sessionsGrowth !== undefined && (
+                  <div className={`text-xs mt-1 flex items-center font-medium ${metrics.summary.sessionsGrowth >= 0 ? 'text-success' : 'text-error'}`}>
+                    {metrics.summary.sessionsGrowth >= 0 ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
+                    {Math.abs(metrics.summary.sessionsGrowth)}%
+                  </div>
+                )}
               </CardContent>
             </Card>
             <Card className="bg-surface border-border">
@@ -78,7 +100,13 @@ export default function MetricsPage() {
                 <Users className="h-4 w-4 text-emerald-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-foreground">{metrics.summary.uniquePlayers.toLocaleString()}</div>
+                <div className="text-2xl font-bold text-foreground">{metrics.summary.uniquePlayers?.toLocaleString() || 0}</div>
+                {metrics.summary.playersGrowth !== undefined && (
+                  <div className={`text-xs mt-1 flex items-center font-medium ${metrics.summary.playersGrowth >= 0 ? 'text-success' : 'text-error'}`}>
+                    {metrics.summary.playersGrowth >= 0 ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
+                    {Math.abs(metrics.summary.playersGrowth)}%
+                  </div>
+                )}
               </CardContent>
             </Card>
             <Card className="bg-surface border-border">
@@ -87,7 +115,13 @@ export default function MetricsPage() {
                 <Clock className="h-4 w-4 text-amber-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-foreground">{Math.round(metrics.summary.totalDuration / 3600).toLocaleString()} h</div>
+                <div className="text-2xl font-bold text-foreground">{Math.round((metrics.summary.totalDuration || 0) / 3600).toLocaleString()} h</div>
+                {metrics.summary.durationGrowth !== undefined && (
+                  <div className={`text-xs mt-1 flex items-center font-medium ${metrics.summary.durationGrowth >= 0 ? 'text-success' : 'text-error'}`}>
+                    {metrics.summary.durationGrowth >= 0 ? <ArrowUpRight className="h-3 w-3 mr-1" /> : <ArrowDownRight className="h-3 w-3 mr-1" />}
+                    {Math.abs(metrics.summary.durationGrowth)}%
+                  </div>
+                )}
               </CardContent>
             </Card>
             <Card className="bg-surface border-border">
