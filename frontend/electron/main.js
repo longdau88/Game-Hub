@@ -62,6 +62,7 @@ function createWindow() {
       webSecurity: false,
     },
     backgroundColor: '#0a0a0a',
+    autoHideMenuBar: true,
     show: false,
   });
 
