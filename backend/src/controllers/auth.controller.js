@@ -69,6 +69,8 @@ class AuthController {
     } catch (error) {
       res.status(error.statusCode || 500).json({ error: error.message || 'Internal Server Error' });
     }
+  }
+
   async forgotPassword(req, res) {
     try {
       const { email } = req.body;

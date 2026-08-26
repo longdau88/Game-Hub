@@ -164,6 +164,8 @@ class AuthService {
     const updatedUser = { ...user, loginStreak: newStreak, xp: newXp, level: newLevel };
 
     return { token, user: updatedUser };
+  }
+
   async forgotPassword(email) {
     if (!email) {
       const error = new Error('Email is required');
